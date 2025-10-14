@@ -1,0 +1,16 @@
+/* Diretivas base do Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos base para a aplicação */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    /* Aplicando o fundo gradiente e a cor de texto padrão */
+    @apply bg-gradient-to-tr from-[#0f172a] to-[#1e293b] text-white overflow-x-hidden;
+  }
+}
