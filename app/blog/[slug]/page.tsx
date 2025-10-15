@@ -9,14 +9,14 @@ import { Suspense } from 'react';
 
 // Tipagem para o post com o roteiro relacionado expandido
 type PostComRoteiro = BlogPost & {
-  nomade_roteiros: Pick<Roteiro, 'titulo' | 'slug'> | null;
+  nomade_roteiros: Pick<Roteiro, 'titulo' | 'slug' | 'imagem_url'> | null;
 };
 
-// Função para buscar um post pelo slug
+// Função para buscar um post pelo slug (com a imagem do roteiro)
 async function getPost(slug: string): Promise<PostComRoteiro | null> {
     const { data, error } = await supabase
     .from('nomade_blog_posts')
-    .select('*, nomade_roteiros(titulo, slug)')
+    .select('*, nomade_roteiros(titulo, slug, imagem_url)')
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
@@ -54,54 +54,115 @@ export async function generateStaticParams() {
   return posts?.map(({ slug }) => ({ slug })) || [];
 }
 
+// --- FUNÇÃO PARA RENDERIZAR MARKDOWN SIMPLES ---
+function renderMarkdown(text: string | null): string {
+  if (!text) return '';
+
+  return text
+    .split(/\n{2,}/) // Divide o texto em parágrafos (2+ quebras de linha)
+    .map(paragraph => {
+      // Converte títulos
+      if (paragraph.startsWith('# ')) {
+        return `<h2>${paragraph.substring(2)}</h2>`;
+      }
+      if (paragraph.startsWith('## ')) {
+        return `<h2>${paragraph.substring(3)}</h2>`;
+      }
+      if (paragraph.startsWith('### ')) {
+        return `<h3>${paragraph.substring(4)}</h3>`;
+      }
+      // Converte linha horizontal
+      if (paragraph.startsWith('---')) {
+        return '<hr />';
+      }
+      // Converte negrito e quebras de linha simples
+      const processedParagraph = paragraph
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br />');
+      
+      return `<p>${processedParagraph}</p>`;
+    })
+    .join('');
+}
+
+
 // Componente da página
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
     const post = await getPost(params.slug);
     if (!post) notFound();
 
-    // Simples conversor de Markdown para HTML
-    const renderMarkdown = (text: string) => {
-        return text
-            .replace(/### (.*)/g, '<h3 class="text-2xl font-bold text-white mt-8 mb-4">$1</h3>')
-            .replace(/## (.*)/g, '<h2 class="text-3xl font-bold text-white mt-10 mb-6">$1</h2>')
-            .replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br />');
-    };
+    const formattedContent = renderMarkdown(post.conteudo);
 
     return (
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white">Carregando post...</div>}>
-            <article className="pt-32 container mx-auto px-4 max-w-3xl pb-20">
-                <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden mb-8 shadow-2xl shadow-slate-950/50">
-                    <Image 
-                        src={post.imagem_capa_url || '/placeholder.jpg'} 
-                        alt={post.imagem_alt_text || post.titulo} 
-                        fill 
-                        className="object-cover" 
-                        priority
-                    />
+            <div className="container mx-auto max-w-6xl px-4 py-16 pt-32">
+                <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12">
+
+                    {/* Coluna Principal: Conteúdo do Artigo */}
+                    <article className="lg:col-span-2">
+                        <header className="mb-12">
+                            <p className="text-primary font-semibold uppercase tracking-wider">{post.categoria}</p>
+                            <h1 className="mt-2 text-4xl font-bold leading-tight text-white md:text-5xl">{post.titulo}</h1>
+                        </header>
+
+                        <div className="relative mb-12 h-64 overflow-hidden rounded-2xl shadow-2xl md:h-96">
+                            <Image 
+                                src={post.imagem_capa_url || '/placeholder.jpg'} 
+                                alt={post.imagem_alt_text || post.titulo} 
+                                fill 
+                                className="object-cover" 
+                                priority
+                            />
+                        </div>
+
+                        <div 
+                            className="prose prose-invert max-w-none prose-p:text-slate-300 prose-strong:text-white prose-h2:text-3xl prose-h3:text-2xl lg:prose-xl"
+                            dangerouslySetInnerHTML={{ __html: formattedContent }} 
+                        />
+                    </article>
+
+                    {/* Coluna Lateral: CTAs Fixos */}
+                    <aside className="mt-12 lg:mt-0">
+                        <div className="sticky top-32 space-y-8">
+                            
+                            {/* CTA 1: Gerar Roteiro */}
+                            <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center shadow-lg">
+                                <h3 className="text-lg font-bold text-white">Crie a Sua Própria Aventura</h3>
+                                <p className="mt-2 mb-4 text-sm text-slate-400">Use a nossa IA para gerar um roteiro personalizado em segundos.</p>
+                                <Link href="/?popup=true" className="inline-block w-full rounded-lg bg-white px-6 py-3 font-bold text-primary transition-transform hover:scale-105">
+                                    Gerar Roteiro ✨
+                                </Link>
+                            </div>
+
+                            {/* CTA 2: Roteiro Relacionado */}
+                            {post.nomade_roteiros && (
+                                <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center shadow-lg">
+                                    <h3 className="mb-4 text-lg font-bold text-white">Roteiro Relacionado</h3>
+                                    
+                                    <div className="group relative aspect-video overflow-hidden rounded-lg">
+                                        <Image
+                                            src={post.nomade_roteiros.imagem_url || '/placeholder.jpg'}
+                                            alt={post.nomade_roteiros.titulo}
+                                            fill
+                                            className="object-cover transition-transform duration-300 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/40"></div>
+                                        <div className="absolute bottom-4 left-4 text-left">
+                                            <h4 className="font-bold text-white shadow-lg">{post.nomade_roteiros.titulo}</h4>
+                                        </div>
+                                    </div>
+
+                                    <Link href={`/destinos/${post.nomade_roteiros.slug}`} className="mt-4 inline-block w-full rounded-lg bg-primary px-6 py-3 font-bold text-white transition-transform hover:scale-105">
+                                        Ver Roteiro
+                                    </Link>
+                                </div>
+                            )}
+
+                        </div>
+                    </aside>
+
                 </div>
-
-                <header className="text-center mb-12">
-                    <p className="text-primary font-semibold uppercase tracking-wider">{post.categoria}</p>
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 leading-tight">{post.titulo}</h1>
-                </header>
-
-                <div 
-                    className="prose prose-invert lg:prose-xl mx-auto prose-p:text-slate-300 prose-strong:text-white"
-                    dangerouslySetInnerHTML={{ __html: post.conteudo ? renderMarkdown(post.conteudo) : '' }} 
-                />
-                
-                {post.nomade_roteiros && (
-                    <div className="mt-20 p-8 bg-slate-800 rounded-2xl text-center border border-slate-700">
-                        <h3 className="text-xl font-bold text-white">Gostou deste post?</h3>
-                        <p className="text-slate-400 mt-2 mb-6">Este conteúdo está relacionado com o nosso roteiro:</p>
-                        <Link href={`/destinos/${post.nomade_roteiros.slug}`} className="bg-gradient-to-r from-primary to-denary text-white font-bold py-3 px-8 rounded-full inline-block hover:scale-105 transition-transform">
-                            Ver Roteiro: {post.nomade_roteiros.titulo}
-                        </Link>
-                    </div>
-                )}
-            </article>
+            </div>
         </Suspense>
     );
 }
-

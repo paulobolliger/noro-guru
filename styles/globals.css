@@ -13,4 +13,21 @@
     /* Aplicando o fundo gradiente e a cor de texto padrão */
     @apply bg-gradient-to-tr from-[#0f172a] to-[#1e293b] text-white overflow-x-hidden;
   }
+
+  /* Estilização da Barra de Rolagem Personalizada */
+  ::-webkit-scrollbar {
+    width: 18px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded-full border-4 border-solid border-neutral-dark;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-dark;
+  }
 }

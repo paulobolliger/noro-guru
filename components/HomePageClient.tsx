@@ -76,12 +76,12 @@ function RoteiroPopup({ showPopup, setShowPopup }: { showPopup: boolean, setShow
           <p className="text-sm text-slate-400 mb-6">Etapa {etapaAtual} de 5</p>
           <form onSubmit={handleSubmit}>
             {/* Etapas 1 a 6 do formulário, exatamente como antes */}
-             {etapaAtual === 1 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">👋 Como você se chama?</h3> <input type="text" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} placeholder="Digite seu nome..." required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <button type="button" onClick={avancarEtapa} disabled={!formData.nome} className="w-full mt-6 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-denary transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> )}
-             {etapaAtual === 2 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">📧 Qual seu melhor e-mail?</h3> <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="seu@email.com" required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.email} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-denary transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
-             {etapaAtual === 3 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">🌍 Para onde você quer ir?</h3> <input type="text" value={formData.destino} onChange={(e) => setFormData({...formData, destino: e.target.value})} placeholder="Ex: Japão, Paris, Patagônia..." required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.destino} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-denary transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
-             {etapaAtual === 4 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">📅 Quantos dias de viagem?</h3> <input type="number" value={formData.duracao} onChange={(e) => setFormData({...formData, duracao: e.target.value})} placeholder="Ex: 7" min="1" required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.duracao} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-denary transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
+             {etapaAtual === 1 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">👋 Como você se chama?</h3> <input type="text" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} placeholder="Digite seu nome..." required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <button type="button" onClick={avancarEtapa} disabled={!formData.nome} className="w-full mt-6 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> )}
+             {etapaAtual === 2 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">📧 Qual seu melhor e-mail?</h3> <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="seu@email.com" required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.email} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
+             {etapaAtual === 3 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">🌍 Para onde você quer ir?</h3> <input type="text" value={formData.destino} onChange={(e) => setFormData({...formData, destino: e.target.value})} placeholder="Ex: Japão, Paris, Patagônia..." required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.destino} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
+             {etapaAtual === 4 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">📅 Quantos dias de viagem?</h3> <input type="number" value={formData.duracao} onChange={(e) => setFormData({...formData, duracao: e.target.value})} placeholder="Ex: 7" min="1" required autoFocus className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary" /> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors"> ← Voltar </button> <button type="button" onClick={avancarEtapa} disabled={!formData.duracao} className="w-2/3 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed"> Continuar → </button> </div> </div> )}
              {etapaAtual === 5 && ( <div className="animate-fade-in"> <h3 className="text-lg font-semibold text-white mb-4">🎯 Quais serviços você precisa?</h3> <div className="grid grid-cols-2 gap-3 text-sm"> {['Passagem Aérea', 'Hotel', 'Aluguel de Temporada', 'Passeios', 'Seguro Viagem', 'Aluguel de Carro', 'Transfer', 'Outros'].map(service => ( <label key={service} className="flex items-center p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 transition-colors has-[:checked]:bg-primary has-[:checked]:text-white"> <input type="checkbox" className="sr-only" checked={formData.interesses.includes(service)} onChange={() => handleServiceToggle(service)} /> <span>{service}</span> </label> ))} </div> <div className="flex gap-4 mt-6"> <button type="button" onClick={voltarEtapa} className="w-1/3 p-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-500 transition-colors">← Voltar</button> <button type="submit" disabled={loading || !formData.interesses} className="w-2/3 p-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-500 transition-colors disabled:bg-slate-600 disabled:cursor-not-allowed">{loading ? '✨ Gerando...' : '✨ Gerar Roteiro'}</button> </div> </div> )}
-             {etapaAtual === 6 && resultado && ( <div className="animate-fade-in"> <h3 className="text-xl font-bold text-white mb-4">🎉 Seu roteiro está pronto!</h3> <div className="prose prose-invert prose-sm max-h-60 overflow-y-auto bg-slate-900/50 p-4 rounded-lg" dangerouslySetInnerHTML={{ __html: resultado }} /> <button type="button" onClick={() => { setShowPopup(false); setEtapaAtual(1); setFormData({ nome: '', email: '', destino: '', duracao: '', interesses: '' }); setResultado(''); }} className="w-full mt-6 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-denary transition-colors">Fechar</button> </div> )}
+             {etapaAtual === 6 && resultado && ( <div className="animate-fade-in"> <h3 className="text-xl font-bold text-white mb-4">🎉 Seu roteiro está pronto!</h3> <div className="prose prose-invert prose-sm max-h-60 overflow-y-auto bg-slate-900/50 p-4 rounded-lg" dangerouslySetInnerHTML={{ __html: resultado }} /> <button type="button" onClick={() => { setShowPopup(false); setEtapaAtual(1); setFormData({ nome: '', email: '', destino: '', duracao: '', interesses: '' }); setResultado(''); }} className="w-full mt-6 p-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors">Fechar</button> </div> )}
           </form>
         </div>
       </div>
@@ -115,46 +115,81 @@ function HomePageContent({ destinosDestaque }: { destinosDestaque: Roteiro[] }) 
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
         <div className="relative z-10 max-w-3xl animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-snug">
             Viaje com propósito, viva com liberdade
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-8">
-            Crie seu roteiro personalizado e descubra novas fronteiras com nossa tecnologia de IA e curadoria humana.
+            Crie seu roteiro personalizado e descubra novas fronteiras com a força da IA e o toque da nossa curadoria humana.
           </p>
-          <button onClick={() => setShowPopup(true)} className="bg-gradient-to-r from-primary to-denary text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transition-transform">
+          <button onClick={() => setShowPopup(true)} className="bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-4 px-10 rounded-full text-lg hover:scale-105 transition-transform">
             Experimente Agora ✨
           </button>
         </div>
       </section>
 
       {/* Seção de Diferenciais */}
-      <section className="py-20 bg-slate-900">
+      <section className="py-16 bg-slate-900">
         <div className="container mx-auto px-4 text-center">
-             <h2 className="text-3xl font-bold text-white mb-12">Nossos Diferenciais</h2>
-             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+             <h2 className="text-3xl font-bold text-white mb-4">Por Que Escolher a Nomade Guru</h2>
+             <p className="text-slate-400 mb-12 max-w-3xl mx-auto">Porque viajar vai muito além do destino — é sobre viver experiências com propósito.</p>
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-6xl mx-auto">
                 {/* Item 1 */}
-                <div className="bg-slate-800 p-8 rounded-lg">
-                    <h3 className="text-xl font-semibold text-white mb-4">Tecnologia com Propósito</h3>
-                    <p className="text-slate-400">IA avançada para criar roteiros únicos em segundos.</p>
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-microchip"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Tecnologia com propósito</h3>
+                    <p className="text-slate-400">IA avançada cria roteiros únicos em segundos — combinando dados, preferências e inspiração real.</p>
                 </div>
                 {/* Item 2 */}
-                <div className="bg-slate-800 p-8 rounded-lg">
-                    <h3 className="text-xl font-semibold text-white mb-4">Curadoria Humana</h3>
-                    <p className="text-slate-400">Especialistas refinam cada detalhe da sua jornada.</p>
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-user-check"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Curadoria humana especializada</h3>
+                    <p className="text-slate-400">Nossos especialistas refinam cada detalhe da sua jornada, garantindo experiências com alma e excelência.</p>
                 </div>
                 {/* Item 3 */}
-                <div className="bg-slate-800 p-8 rounded-lg">
-                    <h3 className="text-xl font-semibold text-white mb-4">Experiências Autênticas</h3>
-                    <p className="text-slate-400">Roteiros exclusivos que vão além do óbvio.</p>
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-map-signs"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Roteiros autênticos e exclusivos</h3>
+                    <p className="text-slate-400">Nada de pacotes genéricos: criamos viagens originais, que revelam o verdadeiro espírito de cada destino.</p>
+                </div>
+                {/* Item 4 */}
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Suporte inteligente e humano</h3>
+                    <p className="text-slate-400">Um acompanhamento híbrido — tecnologia ágil com atenção humana em cada etapa da sua viagem.</p>
+                </div>
+                {/* Item 5 */}
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-leaf"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Viagens com propósito e impacto positivo</h3>
+                    <p className="text-slate-400">Conecte-se a experiências sustentáveis que valorizam culturas locais e respeitam o planeta.</p>
+                </div>
+                {/* Item 6 */}
+                <div className="text-center">
+                    <div className="flex items-center justify-center h-16 w-16 mx-auto mb-4 rounded-full bg-slate-800 text-primary text-3xl">
+                      <i className="fa-solid fa-compass-drafting"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Liberdade total para personalizar</h3>
+                    <p className="text-slate-400">Escolha o ritmo, o estilo e os destinos. A Nomade Guru cuida do resto — para você viajar no seu próprio compasso.</p>
                 </div>
              </div>
         </div>
       </section>
 
        {/* Seção Destinos em Destaque */}
-      <section className="py-20 bg-slate-800/50">
+      <section className="py-16 bg-slate-800/50">
           <div className="container mx-auto px-4 text-center">
-              <h2 className="text-3xl font-bold text-white mb-12">Destinos em Destaque</h2>
+              <h2 className="text-3xl font-bold text-white mb-4">Destinos que contam histórias</h2>
+              <p className="text-slate-400 mb-12 max-w-2xl mx-auto">Roteiros autênticos, experiências memoráveis, curadoria com propósito.</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {destinosDestaque.map(roteiro => (
                       <Link href={`/destinos/${roteiro.slug}`} key={roteiro.id} className="block bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-primary/50 transition-shadow">
@@ -168,7 +203,51 @@ function HomePageContent({ destinosDestaque }: { destinosDestaque: Roteiro[] }) 
                       </Link>
                   ))}
               </div>
+              <div className="mt-12">
+                <Link href="/destinos" className="bg-slate-700 text-white font-bold py-3 px-8 rounded-full hover:bg-slate-600 transition-colors">
+                    Ver Todos os Destinos
+                </Link>
+              </div>
           </div>
+      </section>
+
+      {/* NOVA SEÇÃO COMBINADA: COMO FUNCIONA + CTA */}
+      <section className="py-16 bg-slate-900">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-white mb-12">Como Criamos a Sua Jornada</h2>
+          <div className="grid md:grid-cols-3 gap-12 max-w-4xl mx-auto mb-20">
+            {/* Passo 1 */}
+            <div className="text-center">
+              <div className="relative mx-auto mb-4 h-16 w-16 flex items-center justify-center rounded-full bg-slate-800 text-primary font-bold text-2xl ring-4 ring-slate-700">1</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Compartilhe seus sonhos</h3>
+              <p className="text-slate-400">Conte-nos o estilo, o ritmo e o propósito da sua próxima viagem.</p>
+            </div>
+            {/* Passo 2 */}
+            <div className="text-center">
+              <div className="relative mx-auto mb-4 h-16 w-16 flex items-center justify-center rounded-full bg-slate-800 text-primary font-bold text-2xl ring-4 ring-slate-700">2</div>
+              <h3 className="text-xl font-semibold text-white mb-2">A IA dá vida ao seu roteiro</h3>
+              <p className="text-slate-400">Em segundos, criamos uma proposta exclusiva, feita sob medida para você.</p>
+            </div>
+            {/* Passo 3 */}
+            <div className="text-center">
+              <div className="relative mx-auto mb-4 h-16 w-16 flex items-center justify-center rounded-full bg-slate-800 text-primary font-bold text-2xl ring-4 ring-slate-700">3</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Curadoria humana refina cada detalhe</h3>
+              <p className="text-slate-400">Nossos especialistas transformam o plano em uma experiência inesquecível.</p>
+            </div>
+          </div>
+
+          {/* CTA Inserido Aqui */}
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-dark p-10 text-center text-white">
+                <h2 className="text-3xl font-bold mb-4">Pronto para sua próxima aventura?</h2>
+                <p className="text-lg text-white/90 mb-6">Crie seu roteiro personalizado agora mesmo com nossa IA.</p>
+                <button onClick={() => setShowPopup(true)} className="inline-block rounded-full bg-white px-10 py-3 font-bold text-primary shadow-lg transition-transform hover:scale-105">
+                    Começar Agora ✨
+                </button>
+            </div>
+          </div>
+
+        </div>
       </section>
 
       <RoteiroPopup showPopup={showPopup} setShowPopup={setShowPopup} />

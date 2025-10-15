@@ -9,61 +9,98 @@ import { usePathname } from 'next/navigation';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [pageTitle, setPageTitle] = useState('');
   const pathname = usePathname();
 
+  // Efeito para controlar o estado de rolagem
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Efeito para definir o título da página com base na URL
   useEffect(() => {
+    switch (true) {
+      case pathname === '/blog':
+        setPageTitle('Blog');
+        break;
+      case pathname.startsWith('/blog/'):
+        setPageTitle('Blog');
+        break;
+      case pathname === '/destinos':
+        setPageTitle('Destinos');
+        break;
+      case pathname.startsWith('/destinos/'):
+        setPageTitle('Destinos');
+        break;
+      case pathname === '/sobre':
+        setPageTitle('Sobre Nós');
+        break;
+      case pathname === '/depoimentos':
+        setPageTitle('Depoimentos');
+        break;
+      case pathname === '/contato':
+        setPageTitle('Contato');
+        break;
+      case pathname === '/faq':
+        setPageTitle('FAQ');
+        break;
+      default:
+        setPageTitle(''); // Não mostra título na página inicial
+        break;
+    }
+
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
   }, [pathname]);
 
-  const isHomePage = pathname === '/';
-
-  // --- LÓGICA DE ESTILO RESTAURADA ---
-  // O header tem fundo escuro se (1) o scroll passou de 50px OU (2) não estamos na página inicial.
-  const hasDarkBg = scrolled || !isHomePage;
+  const hasDarkBg = scrolled;
 
   const headerClasses = `fixed top-0 w-full z-50 transition-all duration-300 ${
-    hasDarkBg ? 'bg-secondary2 shadow-lg py-2' : 'bg-white py-4'
+    hasDarkBg ? 'bg-secondary shadow-lg py-2' : 'bg-white py-4'
   }`;
   
-  const elementColorClass = hasDarkBg ? 'text-white' : 'text-secondary2';
+  const elementColorClass = hasDarkBg ? 'text-white' : 'text-secondary';
   
   const linkClasses = `relative font-medium after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full ${elementColorClass} hover:text-primary`;
 
   const logoSrc = hasDarkBg
       ? 'https://res.cloudinary.com/dhqvjxgue/image/upload/c_crop,ar_4:3/v1744736404/logo_branco_sem_fundo_rucnug.png'
       : 'https://res.cloudinary.com/dhqvjxgue/image/upload/v1744736403/logo_nomade_guru_iskhl8.png';
-  // --- FIM DA LÓGICA DE ESTILO ---
 
   return (
     <header className={headerClasses}>
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/">
-          <div className="relative h-14 w-40">
-            <Image
-              src={logoSrc}
-              alt="Logo Nomade Guru"
-              fill
-              className="object-contain"
-              sizes="160px"
-              priority
-            />
+        <div className="flex items-center gap-6">
+          <Link href="/">
+            <div className="relative h-14 w-40">
+              <Image
+                src={logoSrc}
+                alt="Logo Nomade Guru"
+                fill
+                className="object-contain"
+                sizes="160px"
+                priority
+              />
+            </div>
+          </Link>
+
+          {/* Título da Página (só aparece com scroll) */}
+          <div className={`transition-opacity duration-300 ${scrolled && pageTitle ? 'opacity-100' : 'opacity-0'}`}>
+            <span className="hidden sm:block border-l border-white/20 pl-6 text-sm font-semibold text-white">
+              {pageTitle}
+            </span>
           </div>
-        </Link>
+        </div>
 
         <nav className="hidden md:flex items-center gap-8">
           <Link href="/destinos" className={linkClasses}>Destinos</Link>
           <Link href="/blog" className={linkClasses}>Blog</Link>
-          <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-denary text-white font-bold py-2 px-6 rounded-full hover:scale-105 transition-transform">
+          <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-2 px-6 rounded-full hover:scale-105 transition-transform">
             Crie Seu Roteiro
           </Link>
         </nav>
@@ -84,7 +121,7 @@ export default function Header() {
         <nav className="flex flex-col items-center justify-center h-full gap-8 -mt-16">
             <Link href="/destinos" className="text-white text-xl font-semibold">Destinos</Link>
             <Link href="/blog" className="text-white text-xl font-semibold">Blog</Link>
-            <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-denary text-white font-bold py-3 px-8 rounded-full text-lg">
+            <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 px-8 rounded-full text-lg">
                 Crie Seu Roteiro
             </Link>
         </nav>
@@ -92,4 +129,3 @@ export default function Header() {
     </header>
   );
 }
-

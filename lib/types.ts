@@ -50,7 +50,7 @@ export interface Roteiro {
   duracao_dias: number | null;
   preco_base: number | null;
   descricao_curta: string | null;
-  imagem_url: string | null;
+  imagem_url: string | null; // Esta continua correta para os roteiros
   imagem_alt_text?: string | null;
   detalhes: DetalheDia[] | null;
   categoria?: RoteiroCategoria | null;
@@ -77,7 +77,7 @@ export interface BlogPost {
   destaque?: boolean | null;
   resumo: string | null;
   conteudo: string | null;
-  imagem_url: string | null;
+  imagem_capa_url: string | null; // <-- CORREÇÃO APLICADA AQUI
   imagem_alt_text?: string | null;
   categoria?: BlogCategoria | null;
   roteiro_relacionado_id?: string | null;
@@ -94,4 +94,3 @@ export interface BlogPost {
   og_image_url?: string | null;
   og_image_alt_text?: string | null;
 }
-

@@ -1,8 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 
 // --- METADADOS (SEO) ---
 export const metadata: Metadata = {
@@ -59,68 +57,61 @@ const testimonialsData = [
 // --- COMPONENTE DA PÁGINA ---
 export default function DepoimentosPage() {
   return (
-    <>
-      <Header onCrieRoteiroClick={() => {}} />
+    <main className="pt-20 bg-neutral-dark text-white">
+      {/* Cabeçalho da Página */}
+      <section className="bg-gradient-to-r from-primary to-primary-dark py-8 text-center text-white">
+        <div className="container mx-auto px-5">
+          <h1 className="text-4xl font-bold md:text-5xl">Vozes dos Nossos Viajantes</h1>
+          <p className="mt-4 text-lg text-white/90">
+            Histórias e memórias de quem viajou connosco.
+          </p>
+        </div>
+      </section>
 
-      <main className="pt-24 md:pt-32 bg-neutral-dark text-white">
-        {/* Cabeçalho da Página */}
-        <section className="bg-gradient-to-r from-primary to-primary-dark py-16 text-center text-white">
-          <div className="container mx-auto px-5">
-            <h1 className="text-4xl font-bold md:text-5xl">Vozes dos Nossos Viajantes</h1>
-            <p className="mt-4 text-lg text-white/90">
-              Histórias e memórias de quem viajou connosco.
-            </p>
-          </div>
-        </section>
-
-        {/* Grelha de Depoimentos */}
-        <section className="py-20">
-          <div className="container mx-auto max-w-7xl px-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {testimonialsData.map((testimonial, index) => (
-                <div key={index} className="flex flex-col rounded-2xl bg-secondary-dark p-8 shadow-lg border border-white/5">
-                  <div className="flex items-center gap-4 mb-5">
-                    <Image 
-                      src={testimonial.imageUrl} 
-                      alt={`Foto de ${testimonial.author}`} 
-                      width={60}
-                      height={60}
-                      className="rounded-full object-cover border-2 border-primary"
-                    />
-                    <div>
-                      <h3 className="font-bold text-white text-lg">{testimonial.author}</h3>
-                      <p className="text-sm text-white/60">{testimonial.location}</p>
-                    </div>
+      {/* Grelha de Depoimentos */}
+      <section className="py-16">
+        <div className="container mx-auto max-w-7xl px-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonialsData.map((testimonial, index) => (
+              <div key={index} className="flex flex-col rounded-2xl bg-secondary p-8 shadow-lg border border-white/5">
+                <div className="flex items-center gap-4 mb-5">
+                  <Image 
+                    src={testimonial.imageUrl} 
+                    alt={`Foto de ${testimonial.author}`} 
+                    width={60}
+                    height={60}
+                    className="rounded-full object-cover border-2 border-primary"
+                  />
+                  <div>
+                    <h3 className="font-bold text-white text-lg">{testimonial.author}</h3>
+                    <p className="text-sm text-white/60">{testimonial.location}</p>
                   </div>
-                  <div className="mb-4 text-yellow-400">
-                    {'★'.repeat(testimonial.rating)}
-                    {'☆'.repeat(5 - testimonial.rating)}
-                  </div>
-                  <p className="text-white/80 leading-relaxed flex-grow">
-                    "{testimonial.text}"
-                  </p>
                 </div>
-              ))}
-            </div>
+                <div className="mb-4 text-yellow-400">
+                  {'★'.repeat(testimonial.rating)}
+                  {'☆'.repeat(5 - testimonial.rating)}
+                </div>
+                <p className="text-white/80 leading-relaxed flex-grow">
+                  "{testimonial.text}"
+                </p>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA Final */}
-        <section className="pb-20">
-            <div className="container mx-auto max-w-4xl px-5 text-center">
-                <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-dark p-10 text-center text-white">
-                    <h2 className="text-3xl font-bold mb-4">Quer viver a sua própria experiência?</h2>
-                    <p className="text-lg text-white/90 mb-6">Fale com a Nomade Guru e comece a planear a viagem que se vai tornar história.</p>
-                    <Link href="/#contato" className="inline-block rounded-full bg-white px-10 py-3 font-bold text-primary shadow-lg transition-transform hover:scale-105">
-                        Começar Agora ✨
-                    </Link>
-                </div>
+      {/* CTA Final */}
+      <section className="pb-">
+        <div className="container mx-auto max-w-4xl px-5 text-center">
+            <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-dark p-10 text-center text-white">
+                <h2 className="text-3xl font-bold mb-4">Quer viver a sua própria experiência?</h2>
+                <p className="text-lg text-white/90 mb-6">Fale com a Nomade Guru e comece a planear a viagem que se vai tornar história.</p>
+                <Link href="/?popup=true" className="inline-block rounded-full bg-white px-10 py-3 font-bold text-primary shadow-lg transition-transform hover:scale-105">
+                    Começar Agora ✨
+                </Link>
             </div>
-        </section>
-
-      </main>
-
-      <Footer />
-    </>
+        </div>
+      </section>
+    </main>
   );
 }

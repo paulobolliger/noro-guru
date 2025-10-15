@@ -1,43 +1,37 @@
+// app/sitemap.ts
+
 import { MetadataRoute } from 'next';
+import { supabase } from '@/lib/supabaseClient';
 
-const YOUR_SITE_URL = 'https://www.nomade.guru';
-
-// Interfaces para tipificar os dados do Strapi
-interface StrapiDataItem {
-  documentId: string;
-  updatedAt: string;
-}
-
-interface StrapiResponse {
-  data: StrapiDataItem[];
-}
+// Use uma variável de ambiente para a URL do site
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.nomade.guru';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL;
-  if (!apiUrl) {
-    console.error('URL da API do Strapi não configurada para o sitemap.');
-    return [];
-  }
+  // 1. Buscar Roteiros do Supabase
+  const { data: roteiros } = await supabase
+    .from('nomade_roteiros')
+    .select('slug, updated_at')
+    .eq('status', 'published');
 
-  // 1. Buscar Roteiros
-  const roteirosRes = await fetch(`${apiUrl}/api/roteiros`);
-  const roteirosData: StrapiResponse = await roteirosRes.json();
-  const roteirosUrls = roteirosData.data?.map(roteiro => ({
-    url: `${YOUR_SITE_URL}/roteiro/${roteiro.documentId}`,
-    lastModified: new Date(roteiro.updatedAt),
+  const roteirosUrls = roteiros?.map(({ slug, updated_at }) => ({
+    url: `${SITE_URL}/destinos/${slug}`,
+    lastModified: new Date(updated_at || new Date()),
     priority: 0.9,
   })) || [];
 
-  // 2. Buscar Posts do Blog
-  const blogRes = await fetch(`${apiUrl}/api/blogs`);
-  const blogData: StrapiResponse = await blogRes.json();
-  const blogUrls = blogData.data?.map(post => ({
-    url: `${YOUR_SITE_URL}/blog/${post.documentId}`,
-    lastModified: new Date(post.updatedAt),
+  // 2. Buscar Posts do Blog do Supabase
+  const { data: posts } = await supabase
+    .from('nomade_blog_posts')
+    .select('slug, updated_at')
+    .eq('status', 'published');
+
+  const blogUrls = posts?.map(({ slug, updated_at }) => ({
+    url: `${SITE_URL}/blog/${slug}`,
+    lastModified: new Date(updated_at || new Date()),
     priority: 0.7,
   })) || [];
 
-  // 3. Páginas Estáticas
+  // 3. Páginas Estáticas (com /depoimentos adicionado)
   const staticPages = [
     '/',
     '/destinos',
@@ -47,9 +41,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacidade',
     '/termos-de-uso',
     '/sobre',
-    '/depoimentos',
+    '/depoimentos', // <-- ADICIONADO AQUI
   ].map(route => ({
-    url: `${YOUR_SITE_URL}${route}`,
+    url: `${SITE_URL}${route}`,
     lastModified: new Date(),
     priority: route === '/' ? 1.0 : 0.8,
   }));

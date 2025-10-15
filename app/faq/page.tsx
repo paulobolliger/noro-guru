@@ -1,16 +1,6 @@
 'use client';
 
 import { useState, useRef, FC } from 'react';
-import { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-
-// --- METADADOS (não pode ser exportado de um Client Component, mas mantido para referência) ---
-// Em projetos reais, isto seria movido para um `layout.tsx`
-// const metadata: Metadata = {
-//   title: 'FAQ - Perguntas Frequentes',
-//   description: 'Tire as suas dúvidas sobre como planeamos a sua viagem de sonho.',
-// };
 
 // --- TIPAGEM DOS DADOS ---
 interface FaqItemProps {
@@ -64,40 +54,34 @@ const FaqItem: FC<FaqItemProps> = ({ question, answer }) => {
 // --- COMPONENTE PRINCIPAL DA PÁGINA ---
 export default function FaqPage() {
   return (
-    <>
-      <Header onCrieRoteiroClick={() => {}} />
+    <main className="pt-20 bg-neutral-dark text-white">
+      {/* Cabeçalho da Página */}
+      <section className="bg-gradient-to-r from-primary to-primary-dark py-8 text-center text-white">
+        <div className="container mx-auto px-5">
+          <h1 className="text-4xl font-bold md:text-5xl">Perguntas Frequentes</h1>
+          <p className="mt-4 text-lg text-white/90">
+            Encontre aqui as respostas para as dúvidas mais comuns sobre os nossos serviços.
+          </p>
+        </div>
+      </section>
 
-      <main className="pt-24 md:pt-32 bg-neutral-dark text-white">
-        {/* Cabeçalho da Página */}
-        <section className="bg-gradient-to-r from-primary to-primary-dark py-16 text-center text-white">
-          <div className="container mx-auto px-5">
-            <h1 className="text-4xl font-bold md:text-5xl">Perguntas Frequentes</h1>
-            <p className="mt-4 text-lg text-white/90">
-              Encontre aqui as respostas para as dúvidas mais comuns sobre os nossos serviços.
-            </p>
-          </div>
-        </section>
-
-        {/* Conteúdo do FAQ */}
-        <section className="py-20">
-          <div className="container mx-auto max-w-4xl px-5">
-            {faqCategories.map((category) => (
-              <div key={category.category} className="mb-12">
-                <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-                  {category.category}
-                </h2>
-                <div className="space-y-2">
-                  {category.items.map((item, index) => (
-                    <FaqItem key={index} question={item.question} answer={item.answer} />
-                  ))}
-                </div>
+      {/* Conteúdo do FAQ */}
+      <section className="py-16">
+        <div className="container mx-auto max-w-4xl px-5">
+          {faqCategories.map((category) => (
+            <div key={category.category} className="mb-12">
+              <h2 className="text-3xl font-bold text-primary mb-8 text-center">
+                {category.category}
+              </h2>
+              <div className="space-y-2">
+                {category.items.map((item, index) => (
+                  <FaqItem key={index} question={item.question} answer={item.answer} />
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }

@@ -4,7 +4,7 @@ import { Poppins } from 'next/font/google';
 import '../styles/globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Suspense } from 'react';
+import Script from 'next/script'; // Importe o componente Script
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,15 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        {/* Adicione esta linha para carregar os ícones */}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
+      </head>
       <body className={`${poppins.className} bg-slate-900`}>
-        {/* Usamos Suspense porque o Header é um Client Component que usa hooks. */}
-        <Suspense>
-          <Header />
-        </Suspense>
+        <Header />
         <main>{children}</main>
         <Footer />
       </body>
     </html>
   );
 }
-

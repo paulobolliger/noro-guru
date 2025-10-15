@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
-      <Header onCrieRoteiroClick={() => {}} />
+      <Header />
       <main className="pt-24 md:pt-32 bg-neutral-dark text-white">
         <div className="flex items-center justify-center py-20 min-h-[60vh]">
           <div className="container mx-auto px-5 text-center">

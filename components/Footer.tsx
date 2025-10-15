@@ -44,13 +44,19 @@ export default function Footer() {
           {/* Coluna Social */}
           <div>
             <h3 className="font-semibold text-white mb-5">Siga-nos</h3>
-            {/* Ícones de redes sociais podem ser adicionados aqui */}
+            {/* Ícones de redes sociais adicionados aqui */}
+            <div className="flex gap-4">
+              <a href="https://www.facebook.com/nomadeguru" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-xl transition hover:text-primary"><i className="fa-brands fa-facebook-f"></i></a>
+              <a href="https://www.instagram.com/nomade.guru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-xl transition hover:text-primary"><i className="fa-brands fa-instagram"></i></a>
+              <a href="https://www.youtube.com/@NomadeGuru" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-xl transition hover:text-primary"><i className="fa-brands fa-youtube"></i></a>
+              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Spotify" className="text-xl transition hover:text-primary"><i className="fa-brands fa-spotify"></i></a>
+            </div>
           </div>
         </div>
       </div>
       <div className="border-t border-white/10 py-6">
         <p className="text-center text-xs text-white/50">
-          © {new Date().getFullYear()} Nomade Guru TAC Ltda. Todos os direitos reservados.
+          © 2009–{new Date().getFullYear()} Nomade Guru TAC Ltda — Inspiring purposeful travel. All rights reserved
         </p>
       </div>
     </footer>
