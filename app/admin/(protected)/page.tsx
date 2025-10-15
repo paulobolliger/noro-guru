@@ -1,20 +1,21 @@
-// app/admin/page.tsx
+// app/admin/(protected)/page.tsx
+import { getDashboardMetrics, getLeads, getTarefas } from '@/lib/supabase/admin'; // Removido getSupabaseAdmin
+import { supabaseAdmin } from '@/lib/supabase/admin'; // Adiciona importação direta
+import AdminDashboard from '@/components/admin/AdminDashboard';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { getDashboardMetrics, getLeads, getTarefas, supabaseAdmin } from '@/lib/supabase/admin';
-import AdminDashboard from '@/components/admin/AdminDashboard';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect('/admin/login?redirect=/admin');
+  
+  if (!session || !session.user) {
+    redirect('/admin/login?redirect=/admin'); 
   }
-
-  const authUser = session.user;
+  
+  const authUser = session.user; 
 
   // Buscar perfil do usuário
   const { data: userProfile } = await supabase
@@ -26,10 +27,11 @@ export default async function AdminDashboardPage() {
   // Criar perfil se não existir
   if (!userProfile) {
     console.log(`⚠️ Perfil não encontrado. Criando...`);
-
+    
+    // USAR supabaseAdmin DIRETAMENTE AQUI
     const nomePadrao = authUser.user_metadata.full_name || authUser.email?.split('@')[0] || 'Novo Admin';
 
-    const { error: insertError } = await supabaseAdmin
+    const { error: insertError } = await supabaseAdmin // USANDO A CONSTANTE EXPORTADA
       .from('nomade_users')
       .insert({
         id: authUser.id,
