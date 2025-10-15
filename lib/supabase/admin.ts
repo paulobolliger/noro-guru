@@ -1,15 +1,24 @@
 // lib/supabase/admin.ts
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { Database } from '@/types/supabase';
+import { createClient } from '@supabase/supabase-js'
 
-export const supabaseAdmin = createClientComponentClient<Database>();
+// Cliente admin com service role (apenas para server-side)
+export const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
+)
 
 // =====================================================
 // DASHBOARD METRICS
 // =====================================================
 export async function getDashboardMetrics(periodoDias: number = 30) {
   const { data, error } = await supabaseAdmin
-    .rpc('get_dashboard_metrics', { periodo_dias: periodoDias });
+    .rpc('get_dashboard_metrics', { periodo_dias: periodoDias } as any);
 
   if (error) {
     console.error('Erro ao buscar métricas:', error);
@@ -77,7 +86,7 @@ export async function getLeadById(id: string) {
 export async function createLead(lead: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_leads')
-    .insert(lead)
+    .insert(lead as any)
     .select()
     .single();
 
@@ -92,7 +101,7 @@ export async function createLead(lead: any) {
 export async function updateLead(id: string, updates: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_leads')
-    .update(updates)
+    .update(updates as any)
     .eq('id', id)
     .select()
     .single();
@@ -138,7 +147,7 @@ export async function getInteracoes(leadId: string) {
 export async function createInteracao(interacao: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_interacoes')
-    .insert(interacao)
+    .insert(interacao as any)
     .select()
     .single();
 
@@ -198,7 +207,7 @@ export async function getOrcamentoById(id: string) {
 export async function createOrcamento(orcamento: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_orcamentos')
-    .insert(orcamento)
+    .insert(orcamento as any)
     .select()
     .single();
 
@@ -213,7 +222,7 @@ export async function createOrcamento(orcamento: any) {
 export async function updateOrcamento(id: string, updates: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_orcamentos')
-    .update(updates)
+    .update(updates as any)
     .eq('id', id)
     .select()
     .single();
@@ -269,7 +278,7 @@ export async function getPedidoById(id: string) {
 export async function createPedido(pedido: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_pedidos')
-    .insert(pedido)
+    .insert(pedido as any)
     .select()
     .single();
 
@@ -284,7 +293,7 @@ export async function createPedido(pedido: any) {
 export async function updatePedido(id: string, updates: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_pedidos')
-    .update(updates)
+    .update(updates as any)
     .eq('id', id)
     .select()
     .single();
@@ -340,7 +349,7 @@ export async function getTransacoes(filters?: {
 export async function createTransacao(transacao: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_transacoes')
-    .insert(transacao)
+    .insert(transacao as any)
     .select()
     .single();
 
@@ -355,7 +364,7 @@ export async function createTransacao(transacao: any) {
 export async function updateTransacao(id: string, updates: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_transacoes')
-    .update(updates)
+    .update(updates as any)
     .eq('id', id)
     .select()
     .single();
@@ -413,7 +422,7 @@ export async function getTarefas(filters?: {
 export async function createTarefa(tarefa: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_tarefas')
-    .insert(tarefa)
+    .insert(tarefa as any)
     .select()
     .single();
 
@@ -428,7 +437,7 @@ export async function createTarefa(tarefa: any) {
 export async function updateTarefa(id: string, updates: any) {
   const { data, error } = await supabaseAdmin
     .from('nomade_tarefas')
-    .update(updates)
+    .update(updates as any)
     .eq('id', id)
     .select()
     .single();
@@ -475,7 +484,7 @@ export async function getNotificacoes(userId: string, limit: number = 10) {
 export async function marcarNotificacaoLida(id: string) {
   const { error } = await supabaseAdmin
     .from('nomade_notificacoes')
-    .update({ lida: true, lida_em: new Date().toISOString() })
+    .update({ lida: true, lida_em: new Date().toISOString() } as any)
     .eq('id', id);
 
   if (error) {
@@ -512,20 +521,6 @@ export async function getNewsletterSubscribers(filters?: {
 // =====================================================
 // USUÁRIOS
 // =====================================================
-export async function getCurrentUser() {
-  const { data: { user } } = await supabaseAdmin.auth.getUser();
-  
-  if (!user) return null;
-
-  const { data: profile } = await supabaseAdmin
-    .from('nomade_users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  return profile;
-}
-
 export async function getUsers() {
   const { data, error } = await supabaseAdmin
     .from('nomade_users')

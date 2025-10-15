@@ -1,62 +1,60 @@
 // app/admin/page.tsx
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { getCurrentUser, getDashboardMetrics, getLeads, getTarefas, supabaseAdmin } from '@/lib/supabase/admin';
-import AdminDashboard from '@/components/admin/AdminDashboard';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getDashboardMetrics, getLeads, getTarefas, supabaseAdmin } from '@/lib/supabase/admin';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
 
-  // 1. Redirecionamento de Segurança (O Layout já faz isso)
   if (!session) {
     redirect('/admin/login?redirect=/admin');
   }
 
-  let userProfile = await getCurrentUser();
   const authUser = session.user;
 
-  // 2. CORREÇÃO: Criação de Perfil na primeira vez
-  if (!userProfile) {
-    console.log(`⚠️ Perfil na tabela nomade_users não encontrado para o usuário ${authUser.email}. Criando perfil...`);
+  // Buscar perfil do usuário
+  const { data: userProfile } = await supabase
+    .from('nomade_users')
+    .select('*')
+    .eq('id', authUser.id)
+    .single();
 
-    // Tenta obter um nome do metadata (útil para login com Google)
+  // Criar perfil se não existir
+  if (!userProfile) {
+    console.log(`⚠️ Perfil não encontrado. Criando...`);
+
     const nomePadrao = authUser.user_metadata.full_name || authUser.email?.split('@')[0] || 'Novo Admin';
 
-    // Insere o registro básico na tabela nomade_users
     const { error: insertError } = await supabaseAdmin
       .from('nomade_users')
       .insert({
         id: authUser.id,
-        email: authUser.email,
+        email: authUser.email!,
         nome: nomePadrao,
-        role: 'admin', // Define o papel padrão para quem acessa o admin
+        role: 'admin',
       });
 
     if (insertError) {
-      console.error('❌ Erro ao criar perfil (insert):', insertError);
-      // Caso a criação falhe, desloga para evitar o loop
+      console.error('❌ Erro ao criar perfil:', insertError);
       await supabase.auth.signOut();
-      redirect(`/admin/login?error=${encodeURIComponent('Erro ao criar perfil. Tente novamente.')}`);
+      redirect(`/admin/login?error=${encodeURIComponent('Erro ao criar perfil')}`);
     }
 
-    // Perfil criado. Redireciona para recarregar a página e carregar o perfil corretamente
-    console.log('✅ Perfil criado com sucesso. Recarregando dashboard.');
-    redirect('/admin'); 
-    return null; // Evita a renderização do código abaixo
+    console.log('✅ Perfil criado');
+    redirect('/admin');
+    return null;
   }
 
-  // 3. Busca dos dados da dashboard (se o perfil foi encontrado ou recém-criado)
   const [metrics, leadsRecentes, tarefas] = await Promise.all([
     getDashboardMetrics(30),
     getLeads({ limit: 5 }),
     getTarefas({ status: 'pendente', responsavel: authUser.id }),
   ]);
   
-  // 4. Renderiza o dashboard
   return (
     <AdminDashboard 
       user={userProfile} 
