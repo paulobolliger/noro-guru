@@ -2,6 +2,7 @@
 import ConfiguracoesClient from '@/components/admin/ConfiguracoesClient';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getConfiguracaoSistema, getConfiguracaoUsuario } from './config-actions';
 
 export default async function ConfiguracoesPage() {
   const supabase = createServerSupabaseClient();
@@ -11,10 +12,19 @@ export default async function ConfiguracoesPage() {
     return redirect('/admin/login');
   }
 
-  // No futuro, podemos buscar dados do servidor aqui, como a lista de usuários,
-  // e passá-los para o componente de cliente.
+  // Buscar lista de usuários
   const { data: users } = await supabase.from('nomade_users').select('*');
 
-  return <ConfiguracoesClient serverUsers={users || []} />;
-}
+  // Buscar configurações do sistema e do usuário
+  const configSistema = await getConfiguracaoSistema();
+  const configUsuario = await getConfiguracaoUsuario(user.id);
 
+  return (
+    <ConfiguracoesClient 
+      serverUsers={users || []} 
+      configSistema={configSistema}
+      configUsuario={configUsuario}
+      currentUserId={user.id}
+    />
+  );
+}

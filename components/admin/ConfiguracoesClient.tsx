@@ -4,20 +4,28 @@
 import { useState, useTransition } from 'react';
 import { Plug, Users, SlidersHorizontal, Trash2, Edit, Mail, Lock, Server, Bot, Phone, MessageSquare, CreditCard, Palette, Send, Cog, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
 import InviteUserModal from './InviteUserModal';
-import EditUserModal from './EditUserModal'; // Importar o modal de edição
-import DeleteUserModal from './DeleteUserModal'; // Importar o modal de exclusão
+import EditUserModal from './EditUserModal';
+import DeleteUserModal from './DeleteUserModal';
+import PreferenciasTab from './PreferenciasTab';
 import { saveSecretAction } from '../../app/admin/(protected)/configuracoes/actions';
+import type { ConfiguracaoSistema, ConfiguracaoUsuario } from '@/app/admin/(protected)/configuracoes/config-actions';
 
-// Definir um tipo para o utilizador para facilitar a passagem de props
 type User = {
   id: string;
   nome: string | null;
   email: string;
   role: string;
-  avatar_url?: string | null; // Opcional, mas útil
+  avatar_url?: string | null;
 };
 
 type Tab = 'integracoes' | 'utilizadores' | 'preferencias';
+
+interface ConfiguracoesClientProps {
+  serverUsers: User[];
+  configSistema: ConfiguracaoSistema;
+  configUsuario: ConfiguracaoUsuario;
+  currentUserId: string;
+}
 
 const servicosApi = [
     { name: 'Supabase URL', key: 'NEXT_PUBLIC_SUPABASE_URL', icon: Server, category: 'Base' },
@@ -40,10 +48,9 @@ const servicosApi = [
     { name: 'Admin Session Secret', key: 'ADMIN_SESSION_SECRET', icon: Cog, category: 'Sistema' },
 ];
 
-export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User[] }) {
+export default function ConfiguracoesClient({ serverUsers, configSistema, configUsuario, currentUserId }: ConfiguracoesClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('utilizadores');
   
-  // --- NOVOS ESTADOS PARA GERIR OS MODAIS ---
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -52,7 +59,6 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User
   const [isSaving, startSavingTransition] = useTransition();
   const [saveStatus, setSaveStatus] = useState<{[key: string]: {success: boolean, message: string} | null}>({});
 
-  // --- FUNÇÕES PARA ABRIR OS MODAIS DE EDIÇÃO E EXCLUSÃO ---
   const handleOpenEditModal = (user: User) => {
     setSelectedUser(user);
     setIsEditModalOpen(true);
@@ -83,7 +89,6 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User
 
   return (
     <>
-      {/* Modais agora são controlados por seus próprios estados */}
       <InviteUserModal isOpen={isInviteModalOpen} onClose={() => setIsInviteModalOpen(false)} />
       <EditUserModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={selectedUser} />
       <DeleteUserModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} user={selectedUser} />
@@ -179,7 +184,6 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User
                             </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            {/* BOTÕES ATUALIZADOS PARA USAR AS NOVAS FUNÇÕES */}
                             <button onClick={() => handleOpenEditModal(user)} className="text-indigo-600 hover:text-indigo-900 mr-4"><Edit size={18} /></button>
                             <button onClick={() => handleOpenDeleteModal(user)} className="text-red-600 hover:text-red-900"><Trash2 size={18} /></button>
                             </td>
@@ -192,10 +196,11 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User
           )}
 
           {activeTab === 'preferencias' && (
-             <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
-                <h2 className="text-xl font-semibold text-gray-800">Em Construção</h2>
-                <p className="text-gray-500 mt-2">A área de preferências do sistema está a ser desenvolvida.</p>
-            </div>
+            <PreferenciasTab 
+              configSistema={configSistema}
+              configUsuario={configUsuario}
+              userId={currentUserId}
+            />
           )}
         </div>
       </div>
