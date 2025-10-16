@@ -1,8 +1,10 @@
-import { getSupabaseAdmin } from './admin';
+import { supabaseAdmin } from './admin';
+import type Database from '@/types/supabase'; // CORRIGIDO: Importação default
+
+type PedidoInsert = Database['public']['Tables']['nomade_pedidos']['Insert'];
 
 export async function getAllPedidos() {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('nomade_pedidos')
     .select('*')
     .order('created_at', { ascending: false });
@@ -10,11 +12,10 @@ export async function getAllPedidos() {
   return data;
 }
 
-export async function addPedido(pedido: any) {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+export async function addPedido(pedido: PedidoInsert) {
+  const { data, error } = await supabaseAdmin
     .from('nomade_pedidos')
-    .insert([pedido])
+    .insert(pedido)
     .select();
   if (error) throw new Error(error.message);
   return data?.[0];

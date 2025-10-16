@@ -1,8 +1,10 @@
-import { getSupabaseAdmin } from './admin';
+import { supabaseAdmin } from './admin';
+import type Database from '@/types/supabase'; // CORRIGIDO: Importação default
+
+type OrcamentoInsert = Database['public']['Tables']['nomade_orcamentos']['Insert'];
 
 export async function getAllOrcamentos() {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('nomade_orcamentos')
     .select('*')
     .order('created_at', { ascending: false });
@@ -10,11 +12,10 @@ export async function getAllOrcamentos() {
   return data;
 }
 
-export async function addOrcamento(orcamento: any) {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
+export async function addOrcamento(orcamento: OrcamentoInsert) {
+  const { data, error } = await supabaseAdmin
     .from('nomade_orcamentos')
-    .insert([orcamento])
+    .insert(orcamento)
     .select();
   if (error) throw new Error(error.message);
   return data?.[0];

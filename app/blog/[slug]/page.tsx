@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { supabase } from '@/lib/supabaseClient';
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { BlogPost, Roteiro } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -7,13 +7,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-// Tipagem para o post com o roteiro relacionado expandido
 type PostComRoteiro = BlogPost & {
   nomade_roteiros: Pick<Roteiro, 'titulo' | 'slug' | 'imagem_url'> | null;
 };
 
-// Função para buscar um post pelo slug (com a imagem do roteiro)
 async function getPost(slug: string): Promise<PostComRoteiro | null> {
+    const supabase = createServerSupabaseClient(); // CORRIGIDO
     const { data, error } = await supabase
     .from('nomade_blog_posts')
     .select('*, nomade_roteiros(titulo, slug, imagem_url)')
@@ -28,7 +27,6 @@ async function getPost(slug: string): Promise<PostComRoteiro | null> {
   return data as PostComRoteiro;
 }
 
-// Geração de metadados para SEO
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getPost(params.slug);
   if (!post) return { title: 'Post não encontrado' };
@@ -48,20 +46,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// Pré-renderização das páginas
 export async function generateStaticParams() {
+  const supabase = createServerSupabaseClient(); // CORRIGIDO
   const { data: posts } = await supabase.from('nomade_blog_posts').select('slug').eq('status', 'published');
   return posts?.map(({ slug }) => ({ slug })) || [];
 }
 
-// --- FUNÇÃO PARA RENDERIZAR MARKDOWN SIMPLES ---
 function renderMarkdown(text: string | null): string {
   if (!text) return '';
 
   return text
-    .split(/\n{2,}/) // Divide o texto em parágrafos (2+ quebras de linha)
+    .split(/\n{2,}/) 
     .map(paragraph => {
-      // Converte títulos
       if (paragraph.startsWith('# ')) {
         return `<h2>${paragraph.substring(2)}</h2>`;
       }
@@ -71,11 +67,9 @@ function renderMarkdown(text: string | null): string {
       if (paragraph.startsWith('### ')) {
         return `<h3>${paragraph.substring(4)}</h3>`;
       }
-      // Converte linha horizontal
       if (paragraph.startsWith('---')) {
         return '<hr />';
       }
-      // Converte negrito e quebras de linha simples
       const processedParagraph = paragraph
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\n/g, '<br />');
@@ -85,8 +79,6 @@ function renderMarkdown(text: string | null): string {
     .join('');
 }
 
-
-// Componente da página
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
     const post = await getPost(params.slug);
     if (!post) notFound();
@@ -97,8 +89,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white">Carregando post...</div>}>
             <div className="container mx-auto max-w-6xl px-4 py-16 pt-32">
                 <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-12">
-
-                    {/* Coluna Principal: Conteúdo do Artigo */}
                     <article className="lg:col-span-2">
                         <header className="mb-12">
                             <p className="text-primary font-semibold uppercase tracking-wider">{post.categoria}</p>
@@ -121,11 +111,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                         />
                     </article>
 
-                    {/* Coluna Lateral: CTAs Fixos */}
                     <aside className="mt-12 lg:mt-0">
                         <div className="sticky top-32 space-y-8">
-                            
-                            {/* CTA 1: Gerar Roteiro */}
                             <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center shadow-lg">
                                 <h3 className="text-lg font-bold text-white">Crie a Sua Própria Aventura</h3>
                                 <p className="mt-2 mb-4 text-sm text-slate-400">Use a nossa IA para gerar um roteiro personalizado em segundos.</p>
@@ -134,7 +121,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                                 </Link>
                             </div>
 
-                            {/* CTA 2: Roteiro Relacionado */}
                             {post.nomade_roteiros && (
                                 <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-center shadow-lg">
                                     <h3 className="mb-4 text-lg font-bold text-white">Roteiro Relacionado</h3>

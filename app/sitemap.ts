@@ -1,12 +1,14 @@
 // app/sitemap.ts
 
 import { MetadataRoute } from 'next';
-import { supabase } from '@/lib/supabaseClient';
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 
 // Use uma variável de ambiente para a URL do site
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.nomade.guru';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const supabase = createServerSupabaseClient(); // CORRIGIDO
+
   // 1. Buscar Roteiros do Supabase
   const { data: roteiros } = await supabase
     .from('nomade_roteiros')
@@ -31,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   })) || [];
 
-  // 3. Páginas Estáticas (com /depoimentos adicionado)
+  // 3. Páginas Estáticas
   const staticPages = [
     '/',
     '/destinos',
@@ -41,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/privacidade',
     '/termos-de-uso',
     '/sobre',
-    '/depoimentos', // <-- ADICIONADO AQUI
+    '/depoimentos',
   ].map(route => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date(),

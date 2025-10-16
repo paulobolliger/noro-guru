@@ -3,7 +3,10 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Package, FileText, Users, MessageSquare, Mail, DollarSign, BarChart3, Settings, Calendar, Instagram, Menu, X, LogOut } from 'lucide-react';
+import { 
+  Home, Package, FileText, Users, MessageSquare, Mail, DollarSign, 
+  BarChart3, Settings, Calendar, Instagram, Menu, X, LogOut, UserCheck
+} from 'lucide-react';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -32,6 +35,7 @@ export default function Sidebar({ user }: SidebarProps) {
   const menuItems = [
     { href: '/admin', icon: Home, label: 'Dashboard' },
     { href: '/admin/leads', icon: Users, label: 'Leads' },
+    { href: '/admin/clientes', icon: UserCheck, label: 'Clientes' }, // NOVO LINK ADICIONADO
     { href: '/admin/orcamentos', icon: FileText, label: 'Orçamentos' },
     { href: '/admin/pedidos', icon: Package, label: 'Pedidos' },
     { href: '/admin/financeiro', icon: DollarSign, label: 'Financeiro' },
@@ -64,7 +68,7 @@ export default function Sidebar({ user }: SidebarProps) {
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}

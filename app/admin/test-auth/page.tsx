@@ -2,20 +2,11 @@
 'use client';
 
 import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client'; // Importa o nosso novo cliente unificado
 
 export default function TestAuthPage() {
   const [result, setResult] = useState<any>(null);
-
-  // Cliente "normal" front-end
-  const supabase = createClientComponentClient();
-
-  // Cliente admin usando service role (apenas para testes)
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createClient();
 
   // ============================
   // Testes de Conexão
@@ -24,12 +15,11 @@ export default function TestAuthPage() {
     console.log('🧪 Testando conexão com Supabase...');
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     setResult({
+      type: 'connection',
       url,
-      anonKey: anonKey?.substring(0, 20) + '...',
-      serviceKey: serviceKey?.substring(0, 20) + '...',
+      anonKey: anonKey ? `${anonKey.substring(0, 20)}...` : 'NÃO ENCONTRADA',
       timestamp: new Date().toISOString(),
     });
   };
@@ -38,168 +28,116 @@ export default function TestAuthPage() {
   // Signup / Signin / Logout
   // ============================
   const testSignUp = async () => {
-    const email = 'teste@nomade.guru';
-    const password = '123456';
+    setResult(null);
+    const email = `teste-${Date.now()}@nomade.guru`;
+    const password = 'password123';
 
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
-      setResult({ type: 'signup', data, error: error?.message });
-    } catch (err) {
-      setResult({ type: 'signup', error: String(err) });
+      if (error) throw error;
+      setResult({ type: 'signup', data, message: 'Conta de teste criada! Verifique o console.' });
+    } catch (err: any) {
+      setResult({ type: 'signup', error: err.message });
     }
   };
 
   const testSignIn = async () => {
-    const email = 'teste@nomade.guru';
-    const password = '123456';
+    setResult(null);
+    const email = prompt("Digite o email da conta de teste para entrar:", "teste@nomade.guru");
+    const password = prompt("Digite a senha:", "123456");
+
+    if (!email || !password) {
+        setResult({type: 'signin', error: 'Email e senha são necessários.'});
+        return;
+    }
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
       setResult({
         type: 'signin',
         user: data.user?.id,
         session: data.session ? 'OK' : 'FALHOU',
         error: error?.message,
       });
-    } catch (err) {
-      setResult({ type: 'signin', error: String(err) });
+    } catch (err: any) {
+      setResult({ type: 'signin', error: err.message });
     }
   };
 
   const testSignOut = async () => {
+    setResult(null);
     const { error } = await supabase.auth.signOut();
     if (error) {
       setResult({ type: 'signout', error: error.message });
     } else {
-      setResult({ type: 'signout', message: 'Logout OK' });
+      setResult({ type: 'signout', message: 'Logout efetuado com sucesso.' });
     }
   };
 
   const checkSession = async () => {
+    setResult(null);
     const { data: { session } } = await supabase.auth.getSession();
-    setResult({ type: 'session', session: session ? 'LOGADO' : 'DESLOGADO', user: session?.user?.email });
-  };
-
-  // ============================
-  // Operações Admin (Service Key)
-  // ============================
-  const testAdminCRUD = async () => {
-    try {
-      // Criar lead
-      const lead = {
-        nome: 'Teste Admin',
-        email: `teste_admin_${Date.now()}@nomade.guru`,
-        origem: 'teste',
-        status: 'novo',
-      };
-
-      const { data: createdLead, error: createError } = await supabaseAdmin
-        .from('nomade_leads')
-        .insert(lead)
-        .select()
-        .single();
-
-      if (createError) throw createError;
-
-      // Atualizar lead
-      const { data: updatedLead, error: updateError } = await supabaseAdmin
-        .from('nomade_leads')
-        .update({ status: 'contatado' })
-        .eq('id', createdLead.id)
-        .select()
-        .single();
-
-      if (updateError) throw updateError;
-
-      // Buscar lead pelo ID
-      const { data: fetchedLead, error: fetchError } = await supabaseAdmin
-        .from('nomade_leads')
-        .select('*')
-        .eq('id', createdLead.id)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      // Deletar lead
-      const { error: deleteError } = await supabaseAdmin
-        .from('nomade_leads')
-        .delete()
-        .eq('id', createdLead.id);
-
-      if (deleteError) throw deleteError;
-
-      setResult({
-        type: 'adminCRUD',
-        createdLead,
-        updatedLead,
-        fetchedLead,
-        deletedLead: true,
-      });
-    } catch (err: any) {
-      setResult({ type: 'adminCRUD', error: String(err) });
-    }
+    setResult({ type: 'session', session: session ? 'LOGADO' : 'NÃO LOGADO', user: session?.user?.email });
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-6">🧪 Teste de Autenticação e Admin</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">🧪 Teste de Autenticação e Cliente</h1>
+        <p className="text-sm text-gray-600 mb-6">
+          Esta página executa testes de autenticação seguros no lado do cliente.
+          As operações de administrador que requerem a `service_role_key` foram removidas por segurança.
+        </p>
 
         <div className="space-y-4">
           <button
             onClick={testConnection}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
           >
-            1. Testar Conexão Supabase
+            1. Testar Variáveis de Ambiente
           </button>
 
           <button
             onClick={testSignUp}
-            className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600"
+            className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
           >
-            2. Criar Conta (teste@nomade.guru)
+            2. Criar Nova Conta de Teste
           </button>
 
           <button
             onClick={testSignIn}
-            className="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600"
+            className="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors"
           >
-            3. Fazer Login (teste@nomade.guru)
-          </button>
-
-          <button
-            onClick={testSignOut}
-            className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600"
-          >
-            4. Logout
+            3. Fazer Login
           </button>
 
           <button
             onClick={checkSession}
-            className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600"
+            className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors"
           >
-            5. Verificar Sessão Atual
+            4. Verificar Sessão Atual
           </button>
 
           <button
-            onClick={testAdminCRUD}
-            className="w-full bg-teal-500 text-white py-3 rounded-lg font-semibold hover:bg-teal-600"
+            onClick={testSignOut}
+            className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
           >
-            6. Testar CRUD Admin (Service Role)
+            5. Logout
           </button>
         </div>
 
         {result && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-            <h2 className="font-bold mb-2">Resultado:</h2>
-            <pre className="text-xs overflow-auto">
+          <div className="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h2 className="font-bold mb-2 text-gray-700">Resultado:</h2>
+            <pre className="text-xs text-gray-800 overflow-auto bg-gray-100 p-2 rounded">
               {JSON.stringify(result, null, 2)}
             </pre>
           </div>
         )}
 
-        <div className="mt-6 text-sm text-gray-600">
-          <p><strong>Console do navegador:</strong> Abra F12 para ver logs detalhados</p>
+        <div className="mt-6 text-xs text-gray-500 text-center">
+          <p>Abra o console do navegador (F12) para ver logs mais detalhados.</p>
         </div>
       </div>
     </div>

@@ -30,4 +30,31 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-primary-dark;
   }
+
+  /* === NOVOS ESTILOS PARA FORMULÁRIOS === */
+  /* Garante que todos os inputs e selects tenham uma aparência consistente */
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  select,
+  textarea {
+    @apply bg-gray-100 text-gray-900 placeholder-gray-500;
+  }
+
+  /* Estilos específicos para o dark mode ou áreas escuras, como o admin */
+  .dark input[type='text'],
+  .dark input[type='email'],
+  .dark input[type='password'],
+  .dark input[type='number'],
+  .dark select,
+  .dark textarea,
+  body:not(.light) input[type='text'],
+  body:not(.light) input[type='email'],
+  body:not(.light) input[type='password'],
+  body:not(.light) input[type='number'],
+  body:not(.light) select,
+  body:not(.light) textarea {
+    @apply bg-slate-700 text-white placeholder-slate-400 border-slate-600;
+  }
 }

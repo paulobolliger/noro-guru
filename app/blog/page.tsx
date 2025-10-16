@@ -1,11 +1,11 @@
 // app/blog/page.tsx
-
-import { supabase } from '@/lib/supabaseClient';
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { BlogPost } from '@/lib/types';
-import BlogClient from '@/components/BlogClient'; // <-- Importa o novo componente
+import BlogClient from '@/components/BlogClient';
 
 // Função que busca os dados no servidor
 async function getBlogPosts(): Promise<BlogPost[]> {
+  const supabase = createServerSupabaseClient(); // CORRIGIDO
   const { data, error } = await supabase
     .from('nomade_blog_posts')
     .select('*')

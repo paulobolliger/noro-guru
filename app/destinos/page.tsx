@@ -1,11 +1,11 @@
 // app/destinos/page.tsx
-
-import { supabase } from '@/lib/supabaseClient';
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { Roteiro } from '@/lib/types';
-import DestinosClient from '@/components/DestinosClient'; // <-- Importa o novo componente
+import DestinosClient from '@/components/DestinosClient';
 
 // Função que busca os dados no servidor
 async function getRoteiros(): Promise<Roteiro[]> {
+  const supabase = createServerSupabaseClient(); // CORRIGIDO
   const { data, error } = await supabase
     .from('nomade_roteiros')
     .select('*')

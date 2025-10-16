@@ -1,8 +1,9 @@
-import { supabase } from '@/lib/supabaseClient';
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { Roteiro } from '@/lib/types';
 import HomePageClient from '@/components/HomePageClient';
 
 async function getDestinosDestaque(): Promise<Roteiro[]> {
+  const supabase = createServerSupabaseClient(); // CORRIGIDO
   const { data, error } = await supabase
     .from('nomade_roteiros')
     .select('*')
@@ -22,4 +23,3 @@ export default async function Home() {
 
   return <HomePageClient destinosDestaque={destinosDestaque} />;
 }
-

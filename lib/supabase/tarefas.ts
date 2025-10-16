@@ -1,21 +1,23 @@
-import { getSupabaseAdmin } from './admin';
+  import { supabaseAdmin } from './admin';
+  import type Database from '@/types/supabase';
 
-export async function getAllTarefas() {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('nomade_tarefas')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw new Error(error.message);
-  return data;
-}
+  type TarefaInsert = Database['public']['Tables']['nomade_tarefas']['Insert'];
 
-export async function addTarefa(tarefa: any) {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from('nomade_tarefas')
-    .insert([tarefa])
-    .select();
-  if (error) throw new Error(error.message);
-  return data?.[0];
-}
+  export async function getAllTarefas() {
+    const { data, error } = await supabaseAdmin
+      .from('nomade_tarefas')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data;
+  }
+
+  export async function addTarefa(tarefa: TarefaInsert) {
+    const { data, error } = await supabaseAdmin
+      .from('nomade_tarefas')
+      .insert(tarefa)
+      .select();
+    if (error) throw new Error(error.message);
+    return data?.[0];
+  }
+  

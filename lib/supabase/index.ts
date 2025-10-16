@@ -1,6 +1,6 @@
 export * from './admin';
 export * from './client';
-export * from './leads';
+// A linha './leads' foi removida
 export * from './orcamentos';
 export * from './pedidos';
 export * from './tarefas';

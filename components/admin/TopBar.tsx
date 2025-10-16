@@ -4,29 +4,27 @@
 import { Search, Bell, Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getNotificacoes } from '@/lib/supabase/admin';
+import type { Database } from '@/types/supabase';
+
+type NomadeUser = Database['public']['Tables']['nomade_users']['Row'];
+type Notificacao = Database['public']['Tables']['nomade_notificacoes']['Row'];
 
 interface TopBarProps {
-  user: {
-    id: string;
-    nome: string | null;
-    email: string;
-  };
+  user: NomadeUser;
+  initialNotificacoes: Notificacao[];
 }
 
-export default function TopBar({ user }: TopBarProps) {
+export default function TopBar({ user, initialNotificacoes }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [notificacoes, setNotificacoes] = useState<any[]>([]);
+  // Inicializa o estado com as notificações recebidas do servidor
+  const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  // O useEffect pode ser usado no futuro para buscar novas notificações em tempo real,
+  // mas a busca inicial de dados foi removida.
   useEffect(() => {
-    loadNotificacoes();
-  }, [user.id]);
-
-  const loadNotificacoes = async () => {
-    const data = await getNotificacoes(user.id, 5);
-    setNotificacoes(data);
-  };
+    // Exemplo: Lógica de real-time com Supabase subscriptions pode vir aqui
+  }, []);
 
   const naoLidas = notificacoes.filter(n => !n.lida).length;
 
@@ -119,3 +117,4 @@ export default function TopBar({ user }: TopBarProps) {
     </div>
   );
 }
+
