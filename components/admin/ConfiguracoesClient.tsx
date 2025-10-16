@@ -1,10 +1,21 @@
 // components/admin/ConfiguracoesClient.tsx
 'use client';
 
-import { useState, useTransition, useRef } from 'react';
+import { useState, useTransition } from 'react';
 import { Plug, Users, SlidersHorizontal, Trash2, Edit, Mail, Lock, Server, Bot, Phone, MessageSquare, CreditCard, Palette, Send, Cog, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
 import InviteUserModal from './InviteUserModal';
+import EditUserModal from './EditUserModal'; // Importar o modal de edição
+import DeleteUserModal from './DeleteUserModal'; // Importar o modal de exclusão
 import { saveSecretAction } from '../../app/admin/(protected)/configuracoes/actions';
+
+// Definir um tipo para o utilizador para facilitar a passagem de props
+type User = {
+  id: string;
+  nome: string | null;
+  email: string;
+  role: string;
+  avatar_url?: string | null; // Opcional, mas útil
+};
 
 type Tab = 'integracoes' | 'utilizadores' | 'preferencias';
 
@@ -29,17 +40,33 @@ const servicosApi = [
     { name: 'Admin Session Secret', key: 'ADMIN_SESSION_SECRET', icon: Cog, category: 'Sistema' },
 ];
 
-export default function ConfiguracoesClient({ serverUsers }: { serverUsers: any[] }) {
-  const [activeTab, setActiveTab] = useState<Tab>('integracoes');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function ConfiguracoesClient({ serverUsers }: { serverUsers: User[] }) {
+  const [activeTab, setActiveTab] = useState<Tab>('utilizadores');
+  
+  // --- NOVOS ESTADOS PARA GERIR OS MODAIS ---
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
   const [isSaving, startSavingTransition] = useTransition();
   const [saveStatus, setSaveStatus] = useState<{[key: string]: {success: boolean, message: string} | null}>({});
+
+  // --- FUNÇÕES PARA ABRIR OS MODAIS DE EDIÇÃO E EXCLUSÃO ---
+  const handleOpenEditModal = (user: User) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const handleOpenDeleteModal = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteModalOpen(true);
+  };
 
   const handleSaveSecret = (secretName: string) => {
     const input = document.getElementById(`api-key-${secretName}`) as HTMLInputElement;
     const secretValue = input.value;
     
-    // Limpa o estado anterior
     setSaveStatus(prev => ({...prev, [secretName]: null}));
 
     if (!secretValue) {
@@ -50,14 +77,16 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: any[
     startSavingTransition(async () => {
         const result = await saveSecretAction(secretName, secretValue);
         setSaveStatus(prev => ({...prev, [secretName]: result}));
-        // Limpa a mensagem após 3 segundos
         setTimeout(() => setSaveStatus(prev => ({...prev, [secretName]: null})), 3000);
     });
   };
 
   return (
     <>
-      <InviteUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Modais agora são controlados por seus próprios estados */}
+      <InviteUserModal isOpen={isInviteModalOpen} onClose={() => setIsInviteModalOpen(false)} />
+      <EditUserModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={selectedUser} />
+      <DeleteUserModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} user={selectedUser} />
 
       <div>
         <div className="flex items-center justify-between mb-8">
@@ -117,7 +146,7 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: any[
              <div className="bg-white p-6 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold text-gray-900">Gerir Equipa</h2>
-                    <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    <button onClick={() => setIsInviteModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                     + Convidar Utilizador
                     </button>
                 </div>
@@ -150,8 +179,9 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: any[
                             </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button className="text-indigo-600 hover:text-indigo-900 mr-4"><Edit size={18} /></button>
-                            <button className="text-red-600 hover:text-red-900"><Trash2 size={18} /></button>
+                            {/* BOTÕES ATUALIZADOS PARA USAR AS NOVAS FUNÇÕES */}
+                            <button onClick={() => handleOpenEditModal(user)} className="text-indigo-600 hover:text-indigo-900 mr-4"><Edit size={18} /></button>
+                            <button onClick={() => handleOpenDeleteModal(user)} className="text-red-600 hover:text-red-900"><Trash2 size={18} /></button>
                             </td>
                         </tr>
                         ))}
@@ -172,4 +202,3 @@ export default function ConfiguracoesClient({ serverUsers }: { serverUsers: any[
     </>
   );
 }
-

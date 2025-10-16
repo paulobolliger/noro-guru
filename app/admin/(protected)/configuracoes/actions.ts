@@ -73,23 +73,15 @@ export async function saveSecretAction(secretName: string, secretValue: string) 
 
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    // Tenta atualizar primeiro, que é a operação mais comum
-    const { error: updateError } = await supabaseAdmin.rpc('vault.update_secret', {
-      name: secretName,
-      secret: secretValue,
+    
+    // CORREÇÃO: Chamando a função 'upsert_secret' que agora está no schema 'public'.
+    // Como 'public' está no search_path padrão, não precisamos especificar 'public.upsert_secret'.
+    const { error } = await supabaseAdmin.rpc('upsert_secret', {
+      p_name: secretName,
+      p_secret: secretValue,
     });
 
-    // Se a chave não existir, o updateError terá um código específico ou mensagem
-    // Neste caso, tentamos criar. (A verificação exata do erro pode precisar de ajuste)
-    if (updateError && updateError.message.includes('secret not found')) {
-      const { error: createError } = await supabaseAdmin.rpc('vault.create_secret', {
-        name: secretName,
-        secret: secretValue,
-      });
-      if (createError) throw createError; // Se a criação também falhar, lança o erro
-    } else if (updateError) {
-      throw updateError; // Lança outros erros de atualização
-    }
+    if (error) throw error;
     
     revalidatePath('/admin/configuracoes');
     return { success: true, message: `Chave guardada com sucesso!` };
