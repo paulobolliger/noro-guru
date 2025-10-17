@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { createServerSupabaseClient } from '@/lib/supabase/server'; 
+import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { Roteiro } from '@/lib/types';
 import { Metadata } from 'next';
 
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export async function generateStaticParams() {
-  const supabase = createServerSupabaseClient();
+  const supabase = createServiceRoleSupabaseClient();
   const { data: roteiros, error } = await supabase
     .from('nomade_roteiros')
     .select('slug')

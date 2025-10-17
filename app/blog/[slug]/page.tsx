@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
+import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { BlogPost, Roteiro } from '@/lib/types';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -12,7 +12,7 @@ type PostComRoteiro = BlogPost & {
 };
 
 async function getPost(slug: string): Promise<PostComRoteiro | null> {
-    const supabase = createServerSupabaseClient(); // CORRIGIDO
+    const supabase = createServerSupabaseClient();
     const { data, error } = await supabase
     .from('nomade_blog_posts')
     .select('*, nomade_roteiros(titulo, slug, imagem_url)')
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export async function generateStaticParams() {
-  const supabase = createServerSupabaseClient(); // CORRIGIDO
+  const supabase = createServiceRoleSupabaseClient();
   const { data: posts } = await supabase.from('nomade_blog_posts').select('slug').eq('status', 'published');
   return posts?.map(({ slug }) => ({ slug })) || [];
 }
