@@ -2,7 +2,7 @@
 'use client';
 
 import { Search, Bell, ChevronRight, LogOut, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -19,7 +19,8 @@ interface TopBarProps {
   topbarColor?: string;
 }
 
-const generateBreadcrumbs = (pathname: string) => {
+// FUNÇÃO ATUALIZADA para receber o nome do cliente
+const generateBreadcrumbs = (pathname: string, clienteNome: string | null) => {
   if (pathname === '/admin') {
     return [{ label: 'Dashboard', href: '/admin' }];
   }
@@ -29,14 +30,25 @@ const generateBreadcrumbs = (pathname: string) => {
 
   let currentPath = '/admin';
   parts.forEach((part, index) => {
-    const label = part.charAt(0).toUpperCase() + part.slice(1);
+    const isLastPart = index === parts.length - 1;
+    let label = part.charAt(0).toUpperCase() + part.slice(1);
+
+    // LÓGICA PRINCIPAL DA CORREÇÃO
+    // Se for a última parte da URL, estivermos na página de clientes e já tivermos o nome, use o nome!
+    if (isLastPart && pathname.includes('/admin/clientes/') && clienteNome) {
+      label = clienteNome;
+    } 
+    // Se estiver carregando, mostre uma mensagem temporária
+    else if (isLastPart && pathname.includes('/admin/clientes/')) {
+        label = 'Carregando cliente...'
+    }
+
     currentPath += `/${part}`;
     
-    if (index === parts.length - 1) {
-       breadcrumbs.push({ label, href: '' });
-    } else {
-       breadcrumbs.push({ label, href: currentPath });
-    }
+    breadcrumbs.push({ 
+      label, 
+      href: isLastPart ? '' : currentPath 
+    });
   });
 
   return breadcrumbs;
@@ -51,6 +63,39 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  
+  // NOVO ESTADO E LÓGICA PARA BUSCAR O NOME DO CLIENTE
+  const [clienteNome, setClienteNome] = useState<string | null>(null);
+
+  useEffect(() => {
+    const parts = pathname.split('/');
+    // Verifica se a URL é do tipo /admin/clientes/[id] e se o ID não é 'novo'
+    if (parts[1] === 'admin' && parts[2] === 'clientes' && parts.length === 4 && parts[3] && parts[3] !== 'novo') {
+      const clienteId = parts[3];
+      
+      const fetchClienteName = async () => {
+        setClienteNome('Carregando...'); // Mostra um estado de carregamento
+        const { data, error } = await supabase
+          .from('noro_clientes')
+          .select('nome')
+          .eq('id', clienteId)
+          .single();
+        
+        if (data?.nome) {
+          setClienteNome(data.nome);
+        } else {
+          // Se não encontrar, mostra o ID truncado como fallback
+          setClienteNome(clienteId.substring(0, 8) + '...');
+        }
+      };
+
+      fetchClienteName();
+    } else {
+      // Limpa o nome para outras páginas
+      setClienteNome(null);
+    }
+  }, [pathname, supabase]);
+  // FIM DA NOVA LÓGICA
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -59,14 +104,14 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
     router.refresh();
   };
 
-  const breadcrumbs = generateBreadcrumbs(pathname);
+  // ATUALIZADA a chamada da função para passar o nome do cliente
+  const breadcrumbs = generateBreadcrumbs(pathname, clienteNome);
   const naoLidas = notificacoes.filter(n => !n.lida).length;
   
   const finalLogoUrl = logoUrl || "https://res.cloudinary.com/dhqvjxgue/image/upload/c_crop,ar_4:3/v1744736404/logo_branco_sem_fundo_rucnug.png";
 
   return (
     <div 
-      // A AÇÃO ESTÁ AQUI: Ajustei o padding para centralizar o logo de 60px. A altura total será de 76px.
       className="flex items-center border-b border-white/10 px-6 py-2 sticky top-0 z-20 text-white"
       style={{ backgroundColor: topbarColor || '#232452' }}
     >
@@ -74,7 +119,6 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
         {/* Lado Esquerdo: Logo e Breadcrumbs */}
         <div className="flex items-center gap-4">
           <Link href="/admin">
-            {/* E A AÇÃO ESTÁ AQUI: Contêiner do logo com as novas dimensões */}
             <div className="relative h-[60px] w-[240px]">
               <Image
                 src={finalLogoUrl}
