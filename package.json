@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "NEXT_PUBLIC_APP_VERSION=$(node -p \"require('./package.json').version\")-$(git rev-parse --short HEAD) next build",
-  "start": "next start"
+    "dev": "next dev",
+    "build": "NEXT_PUBLIC_APP_VERSION=$(node -p \"require('./package.json').version\")-$(git rev-parse --short HEAD) next build",
+    "start": "next start"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.910.0",
@@ -20,6 +20,7 @@
     "react-email": "^4.3.0",
     "recharts": "^3.2.1",
     "resend": "^6.1.2",
+    "tailwind": "^4.0.0",
     "twilio": "^5.10.3",
     "zustand": "^5.0.8"
   },
