@@ -54,7 +54,7 @@ export interface Roteiro {
   imagem_alt_text?: string | null;
   detalhes: DetalheDia[] | null;
   categoria?: RoteiroCategoria | null;
-  // SEO Fields
+  // Campos de SEO
   meta_title?: string | null;
   meta_description?: string | null;
   keywords?: string[] | null;
@@ -81,7 +81,7 @@ export interface BlogPost {
   imagem_alt_text?: string | null;
   categoria?: BlogCategoria | null;
   roteiro_relacionado_id?: string | null;
-  // Opcional: para quando pedirmos para o Supabase trazer o roteiro completo
+  // Opcional: para quando o Supabase traz o roteiro completo relacionado
   nomade_roteiros?: Roteiro | null;
   // SEO Fields
   meta_title?: string | null;

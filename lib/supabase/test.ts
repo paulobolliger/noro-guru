@@ -7,7 +7,7 @@
     try {
       // Teste básico de leitura
       const { data, error } = await supabaseAdmin
-        .from('nomade_leads')
+        .from('noro_leads')
         .select('id, email, origem, created_at') // Seleciona colunas específicas
         .limit(3);
 
@@ -18,7 +18,7 @@
       if (data && data.length > 0) {
         console.table(data);
       } else {
-        console.log('ℹ️ Nenhum registro encontrado em "nomade_leads".');
+        console.log('ℹ️ Nenhum registro encontrado em "noro_leads".');
       }
 
       console.log('\n✨ Supabase Admin está operacional!');

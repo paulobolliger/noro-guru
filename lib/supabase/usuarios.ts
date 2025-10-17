@@ -1,17 +1,17 @@
   import { supabaseAdmin } from './admin';
   import type Database from '@/types/supabase';
 
-  type UsuarioInsert = Database['public']['Tables']['nomade_users']['Insert'];
+  type UsuarioInsert = Database['public']['Tables']['noro_users']['Insert'];
 
   export async function getAdminUsers() {
-    const { data, error } = await supabaseAdmin.from('nomade_users').select('*');
+    const { data, error } = await supabaseAdmin.from('noro_users').select('*');
     if (error) throw new Error(error.message);
     return data;
   }
 
   export async function addAdminUser(user: UsuarioInsert) {
     const { data, error } = await supabaseAdmin
-      .from('nomade_users')
+      .from('noro_users')
       .insert(user)
       .select();
     if (error) throw new Error(error.message);

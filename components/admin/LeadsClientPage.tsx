@@ -7,7 +7,7 @@ import KanbanBoard from './KanbanBoard'; // Importa o nosso novo componente Kanb
 import { format } from 'date-fns';
 import { LayoutGrid, List } from 'lucide-react';
 
-type Lead = Database['public']['Tables']['nomade_leads']['Row'];
+type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
 interface LeadsClientPageProps {
   leads: Lead[];

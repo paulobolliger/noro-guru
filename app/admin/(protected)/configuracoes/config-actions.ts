@@ -2,7 +2,6 @@
 'use server';
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 // Tipos para as configurações
@@ -11,6 +10,9 @@ export interface ConfiguracaoSistema {
   fuso_horario: string;
   idioma: 'pt' | 'en' | 'es';
   formato_data: 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
+  // NOVOS CAMPOS ADICIONADOS
+  logo_url_admin?: string;
+  topbar_color?: string;
 }
 
 export interface ConfiguracaoUsuario {
@@ -28,7 +30,7 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
     const supabaseAdmin = getSupabaseAdmin();
     
     const { data, error } = await supabaseAdmin
-      .from('nomade_configuracoes')
+      .from('noro_configuracoes')
       .select('*')
       .eq('tipo', 'sistema')
       .is('user_id', null);
@@ -40,7 +42,10 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
       moeda_padrao: 'EUR',
       fuso_horario: 'Europe/Lisbon',
       idioma: 'pt',
-      formato_data: 'DD/MM/YYYY'
+      formato_data: 'DD/MM/YYYY',
+      // VALORES PADRÃO PARA OS NOVOS CAMPOS
+      logo_url_admin: '', 
+      topbar_color: '#232452' // Cor secundária padrão
     };
 
     if (!data || data.length === 0) return defaultConfig;
@@ -54,7 +59,15 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
     return config as ConfiguracaoSistema;
   } catch (error: any) {
     console.error('Erro ao buscar configurações do sistema:', error);
-    throw error;
+    // Retorna o padrão em caso de erro para não quebrar a aplicação
+    return {
+      moeda_padrao: 'EUR',
+      fuso_horario: 'Europe/Lisbon',
+      idioma: 'pt',
+      formato_data: 'DD/MM/YYYY',
+      logo_url_admin: '',
+      topbar_color: '#232452'
+    };
   }
 }
 
@@ -66,14 +79,14 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
     const configs = Object.entries(config).map(([chave, valor]) => ({
       tipo: 'sistema',
       chave,
-      valor,
+      valor: valor || '', // Garante que não salvamos undefined
       user_id: null
     }));
 
     // Upsert (inserir ou atualizar)
     for (const item of configs) {
       const { error } = await supabaseAdmin
-        .from('nomade_configuracoes')
+        .from('noro_configuracoes')
         .upsert({
           tipo: item.tipo,
           chave: item.chave,
@@ -88,7 +101,7 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
       if (error) throw error;
     }
 
-    revalidatePath('/admin/configuracoes');
+    revalidatePath('/admin', 'layout'); // Revalida todo o layout do admin
     return { success: true, message: 'Configurações do sistema salvas com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao salvar configurações do sistema:', error);
@@ -96,21 +109,20 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
   }
 }
 
-// --- Funções de Usuário ---
+// --- Funções de Usuário (sem alterações) ---
 
 export async function getConfiguracaoUsuario(userId: string): Promise<ConfiguracaoUsuario> {
   try {
     const supabaseAdmin = getSupabaseAdmin();
     
     const { data, error } = await supabaseAdmin
-      .from('nomade_configuracoes')
+      .from('noro_configuracoes')
       .select('*')
       .eq('tipo', 'usuario')
       .eq('user_id', userId);
 
     if (error) throw error;
 
-    // Valores padrão
     const defaultConfig: ConfiguracaoUsuario = {
       tema: 'light',
       densidade_tabela: 'confortavel',
@@ -121,7 +133,6 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
 
     if (!data || data.length === 0) return defaultConfig;
 
-    // Agregar todas as configurações
     const config: any = { ...defaultConfig };
     data.forEach(item => {
       config[item.chave] = item.valor;
@@ -138,7 +149,6 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
   try {
     const supabaseAdmin = getSupabaseAdmin();
     
-    // Preparar os dados
     const configs = Object.entries(config).map(([chave, valor]) => ({
       tipo: 'usuario',
       chave,
@@ -146,10 +156,9 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
       user_id: userId
     }));
 
-    // Upsert
     for (const item of configs) {
       const { error } = await supabaseAdmin
-        .from('nomade_configuracoes')
+        .from('noro_configuracoes')
         .upsert({
           tipo: item.tipo,
           chave: item.chave,

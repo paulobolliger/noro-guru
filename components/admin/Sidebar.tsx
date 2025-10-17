@@ -2,13 +2,13 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { 
   Home, Package, FileText, Users, MessageSquare, Mail, DollarSign, 
-  BarChart3, Settings, Calendar, Instagram, Menu, X, LogOut, UserCheck
+  BarChart3, Settings, Calendar, Instagram, Menu, X, UserCheck
 } from 'lucide-react';
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import packageJson from '@/../package.json';
 
 interface SidebarProps {
   user?: {
@@ -20,22 +20,13 @@ interface SidebarProps {
 
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [loggingOut, setLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    await supabase.auth.signOut();
-    router.push('/admin/login');
-    router.refresh();
-  };
+  const version = packageJson.version;
 
   const menuItems = [
     { href: '/admin', icon: Home, label: 'Dashboard' },
     { href: '/admin/leads', icon: Users, label: 'Leads' },
-    { href: '/admin/clientes', icon: UserCheck, label: 'Clientes' }, // NOVO LINK ADICIONADO
+    { href: '/admin/clientes', icon: UserCheck, label: 'Clientes' },
     { href: '/admin/orcamentos', icon: FileText, label: 'Orçamentos' },
     { href: '/admin/pedidos', icon: Package, label: 'Pedidos' },
     { href: '/admin/financeiro', icon: DollarSign, label: 'Financeiro' },
@@ -52,9 +43,12 @@ export default function Sidebar({ user }: SidebarProps) {
       {/* Header */}
       <div className="p-6 border-b border-gray-200 flex items-center justify-between">
         {sidebarOpen && (
-          <Link href="/admin" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Nomade Guru
-          </Link>
+          <div>
+            <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              NORO
+            </div>
+            <p className="text-xs text-gray-400 -mt-1">v{version}</p>
+          </div>
         )}
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)} 
@@ -68,7 +62,7 @@ export default function Sidebar({ user }: SidebarProps) {
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {menuItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -87,32 +81,7 @@ export default function Sidebar({ user }: SidebarProps) {
         </div>
       </nav>
 
-      {/* User Info & Logout */}
-      <div className="p-4 border-t border-gray-200">
-        {user && sidebarOpen && (
-          <div className="mb-3">
-            <p className="text-sm font-semibold text-gray-900 truncate">
-              {user.nome || 'Admin'}
-            </p>
-            <p className="text-xs text-gray-500 truncate">{user.email}</p>
-            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">
-              {user.role}
-            </span>
-          </div>
-        )}
-        <button
-          onClick={handleLogout}
-          disabled={loggingOut}
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all w-full ${
-            loggingOut
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'text-red-600 hover:bg-red-50'
-          }`}
-        >
-          <LogOut size={20} />
-          {sidebarOpen && <span className="font-medium">{loggingOut ? 'Saindo...' : 'Sair'}</span>}
-        </button>
-      </div>
+      {/* A SEÇÃO DE LOGOUT FOI REMOVIDA DAQUI */}
     </div>
   );
 }

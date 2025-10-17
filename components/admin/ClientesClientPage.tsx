@@ -1,42 +1,59 @@
-// components/admin/ClientesClientPage.tsx
 'use client';
 
 import { useState } from 'react';
-import { UserCheck, Plus, Search, Filter, Download, Mail, Phone } from 'lucide-react';
-import type { Database } from '@/types/supabase';
+import { UserCheck, Plus, Search, Filter, Download, Mail, Phone, Eye, Edit } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-type Cliente = Database['public']['Tables']['nomade_leads']['Row'] & {
-  total_pedidos?: number;
-  valor_total_gasto?: number;
-  ultimo_pedido?: string;
-};
+interface Cliente {
+  id: string;
+  nome: string;
+  email?: string | null;
+  telefone?: string | null;
+  whatsapp?: string | null;
+  status: string;
+  tipo: string;
+  segmento?: string | null;
+  nivel: string;
+  total_viagens: number;
+  total_gasto: number;
+  ticket_medio: number;
+  data_ultimo_contato?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 interface ClientesClientPageProps {
   clientes: Cliente[];
 }
 
 export default function ClientesClientPage({ clientes }: ClientesClientPageProps) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('todos');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
+  const [tipoFilter, setTipoFilter] = useState<'todos' | 'pessoa_fisica' | 'pessoa_juridica'>('todos');
+  const [statusFilter, setStatusFilter] = useState<'todos' | 'ativo' | 'vip' | 'inativo'>('todos');
 
-  // Filtrar clientes (apenas leads que viraram clientes)
-  const clientesFiltrados = clientes
-    .filter(c => c.status === 'ganho') // Apenas leads convertidos
-    .filter(c => {
-      const matchSearch = searchTerm === '' || 
-        c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.email?.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchSearch;
-    });
+  // Filtrar clientes
+  const clientesFiltrados = clientes.filter(c => {
+    const matchSearch = searchTerm === '' || 
+      c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchTipo = tipoFilter === 'todos' || c.tipo === tipoFilter;
+    const matchStatus = statusFilter === 'todos' || c.status === statusFilter;
+    
+    return matchSearch && matchTipo && matchStatus;
+  });
 
+  // Estatísticas
   const estatisticas = {
-    total: clientesFiltrados.length,
-    ativos: clientesFiltrados.filter(c => c.status === 'ganho').length,
-    vip: clientesFiltrados.filter(c => (c.valor_estimado || 0) > 50000).length,
-    valorTotal: clientesFiltrados.reduce((acc, c) => acc + (c.valor_estimado || 0), 0)
+    total: clientes.length,
+    ativos: clientes.filter(c => c.status === 'ativo').length,
+    vip: clientes.filter(c => c.status === 'vip').length,
+    valorTotal: clientes.reduce((acc, c) => acc + c.total_gasto, 0)
+  };
+
+  const handleVerDetalhes = (clienteId: string) => {
+    router.push(`/admin/clientes/${clienteId}`);
   };
 
   return (
@@ -51,7 +68,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
           </div>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => router.push('/admin/clientes/novo')}
           className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow"
         >
           <Plus size={20} />
@@ -94,16 +111,34 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Filter size={20} />
-              Filtros
-            </button>
-            <button className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Download size={20} />
-              Exportar
-            </button>
-          </div>
+          
+          {/* Filtro Tipo */}
+          <select
+            value={tipoFilter}
+            onChange={(e) => setTipoFilter(e.target.value as any)}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="todos">Todos os Tipos</option>
+            <option value="pessoa_fisica">Pessoa Física</option>
+            <option value="pessoa_juridica">Pessoa Jurídica</option>
+          </select>
+          
+          {/* Filtro Status */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="todos">Todos os Status</option>
+            <option value="ativo">Ativo</option>
+            <option value="vip">VIP</option>
+            <option value="inativo">Inativo</option>
+          </select>
+          
+          <button className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <Download size={20} />
+            Exportar
+          </button>
         </div>
       </div>
 
@@ -136,19 +171,34 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
             <tbody className="bg-white divide-y divide-gray-200">
               {clientesFiltrados.length > 0 ? (
                 clientesFiltrados.map((cliente) => (
-                  <tr key={cliente.id} className="hover:bg-gray-50 cursor-pointer">
+                  <tr 
+                    key={cliente.id} 
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleVerDetalhes(cliente.id)}
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                          <div className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-bold ${
+                            cliente.status === 'vip' ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
+                            cliente.status === 'ativo' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' :
+                            'bg-gray-400'
+                          }`}>
                             {cliente.nome[0]?.toUpperCase()}
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{cliente.nome}</div>
-                          {cliente.destino_interesse && (
-                            <div className="text-sm text-gray-500">Interesse: {cliente.destino_interesse}</div>
-                          )}
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-medium text-gray-900">{cliente.nome}</div>
+                            {cliente.status === 'vip' && (
+                              <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                                VIP
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {cliente.tipo === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'} • {cliente.nivel.toUpperCase()}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -156,43 +206,63 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                       <div className="text-sm text-gray-900">
                         {cliente.email && (
                           <div className="flex items-center gap-2 mb-1">
-                            <Mail size={14} />
-                            {cliente.email}
+                            <Mail size={14} className="text-gray-400" />
+                            <span className="truncate max-w-[200px]">{cliente.email}</span>
                           </div>
                         )}
                         {cliente.whatsapp && (
                           <div className="flex items-center gap-2 text-gray-500">
-                            <Phone size={14} />
+                            <Phone size={14} className="text-gray-400" />
                             {cliente.whatsapp}
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                        {cliente.origem || 'Desconhecida'}
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        cliente.segmento === 'luxo' ? 'bg-purple-100 text-purple-800' :
+                        cliente.segmento === 'familia' ? 'bg-blue-100 text-blue-800' :
+                        cliente.segmento === 'aventura' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {cliente.segmento || 'Geral'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                      €{(cliente.valor_estimado || 0).toLocaleString('pt-PT')}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-semibold text-gray-900">
+                        €{cliente.total_gasto.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {cliente.total_viagens} viagens
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {cliente.periodo_viagem || 'N/D'}
+                      {cliente.data_ultimo_contato 
+                        ? new Date(cliente.data_ultimo_contato).toLocaleDateString('pt-PT')
+                        : 'N/D'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button className="text-blue-600 hover:text-blue-900 mr-3">
-                        Ver Detalhes
-                      </button>
-                      <button className="text-gray-600 hover:text-gray-900">
-                        Editar
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVerDetalhes(cliente.id);
+                        }}
+                        className="text-blue-600 hover:text-blue-900 mr-3 inline-flex items-center gap-1"
+                      >
+                        <Eye size={16} />
+                        Ver
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    Nenhum cliente encontrado
+                  <td colSpan={6} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500">
+                      <UserCheck size={48} className="mb-4 text-gray-300" />
+                      <p className="text-lg font-medium">Nenhum cliente encontrado</p>
+                      <p className="text-sm mt-2">Comece adicionando seu primeiro cliente</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -200,28 +270,6 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
           </table>
         </div>
       </div>
-
-      {/* Modal Adicionar Cliente - TODO */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4">Adicionar Novo Cliente</h2>
-            <p className="text-gray-600 mb-6">Preencha os dados do cliente</p>
-            {/* Formulário aqui */}
-            <div className="flex gap-4 mt-8">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Salvar Cliente
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -109,6 +109,9 @@ export default async function RoteiroDetalhesPage({ params }: { params: { slug: 
                       <div className="pb-8 flex-1">
                         <h3 className="text-2xl font-bold text-white mb-2">{dia.titulo}</h3>
                         <p className="text-slate-400 leading-relaxed">{dia.descricao}</p>
+                        <p className="text-slate-400 leading-relaxed">
+                          {typeof dia.descricao === 'string' ? dia.descricao : JSON.stringify(dia.descricao)}
+                        </p>
                       </div>
                     </div>
                   ))}

@@ -1,7 +1,7 @@
 // components/admin/AdminDashboard.tsx
 'use client';
 
-import { DollarSign, Users, CreditCard, TrendingUp } from 'lucide-react';
+import { DollarSign, Users, CreditCard, TrendingUp, Plus } from 'lucide-react'; // Importei o ícone Plus
 import StatCard from './StatCard';
 import LeadsRecentes from './LeadsRecentes';
 import TarefasList from './TarefasList';
@@ -9,13 +9,13 @@ import Link from 'next/link';
 import type { Database } from '@/types/supabase';
 
 // Tipos para as props
-type Lead = Database['public']['Tables']['nomade_leads']['Row'];
-type Tarefa = Database['public']['Tables']['nomade_tarefas']['Row'] & {
-    nomade_leads?: { nome: string } | null;
+type Lead = Database['public']['Tables']['noro_leads']['Row'];
+type Tarefa = Database['public']['Tables']['noro_tarefas']['Row'] & {
+    noro_leads?: { nome: string } | null;
 };
 
 interface AdminDashboardProps {
-  metrics: any; // Manter como 'any' por enquanto para depuração
+  metrics: any; 
   leadsRecentes: Lead[];
   tarefas: Tarefa[];
 }
@@ -38,11 +38,13 @@ export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: Admi
           <h1 className="text-3xl font-bold text-gray-900">Bem-vindo! 👋</h1>
           <p className="text-gray-600 mt-1">Aqui está um resumo do seu negócio</p>
         </div>
+        {/* BOTÃO ALTERADO */}
         <Link
-          href="/admin/roteiros/novo"
-          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow"
+          href="/admin/leads/novo"
+          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow"
         >
-          + Novo Roteiro
+          <Plus size={20} />
+          Novo Lead
         </Link>
       </div>
 

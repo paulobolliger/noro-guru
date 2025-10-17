@@ -2,9 +2,9 @@
 
   export async function getDashboardStats() {
     const [leads, orcamentos, pedidos] = await Promise.all([
-      supabaseAdmin.from('nomade_leads').select('*'),
-      supabaseAdmin.from('nomade_orcamentos').select('*'),
-      supabaseAdmin.from('nomade_pedidos').select('*'),
+      supabaseAdmin.from('noro_leads').select('*'),
+      supabaseAdmin.from('noro_orcamentos').select('*'),
+      supabaseAdmin.from('noro_pedidos').select('*'),
     ]);
 
     if (leads.error || orcamentos.error || pedidos.error)

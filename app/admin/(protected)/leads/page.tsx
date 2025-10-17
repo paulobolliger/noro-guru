@@ -4,14 +4,14 @@ import type { Database } from '@/types/supabase';
 import { format } from 'date-fns';
 import LeadsClientPage from '@/components/admin/LeadsClientPage'; // Vamos usar um componente de cliente
 
-type Lead = Database['public']['Tables']['nomade_leads']['Row'];
+type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
 async function fetchLeads(): Promise<Lead[]> {
     const supabaseAdmin = getSupabaseAdmin();
     try {
         console.log("--- A tentar buscar TODOS os leads na página de Leads ---");
         const { data, error } = await supabaseAdmin
-            .from('nomade_leads')
+            .from('noro_leads')
             .select('*')
             .order('created_at', { ascending: false });
 

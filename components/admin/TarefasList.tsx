@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Tarefa } from '@/types/admin';
 
 interface TarefasListProps {
-  tarefas: (Tarefa & { nomade_leads?: { nome: string } | null })[];
+  tarefas: (Tarefa & { noro_leads?: { nome: string } | null })[];
 }
 
 export default function TarefasList({ tarefas }: TarefasListProps) {
@@ -55,9 +55,9 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
               />
               <div className="flex-1">
                 <p className="font-medium text-gray-900">{tarefa.titulo}</p>
-                {tarefa.nomade_leads && (
+                {tarefa.noro_leads && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Lead: {tarefa.nomade_leads.nome}
+                    Lead: {tarefa.noro_leads.nome}
                   </p>
                 )}
                 <div className="flex items-center gap-2 mt-2">

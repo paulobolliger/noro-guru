@@ -4,7 +4,7 @@
 import type { Database } from '@/types/supabase';
 import { Users, DollarSign } from 'lucide-react';
 
-type Lead = Database['public']['Tables']['nomade_leads']['Row'];
+type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
 interface KanbanBoardProps {
   leads: Lead[];

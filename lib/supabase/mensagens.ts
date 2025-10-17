@@ -2,7 +2,7 @@
 
   export async function getMensagensContato() {
     const { data, error } = await supabaseAdmin
-      .from('nomade_mensagens')
+      .from('noro_mensagens')
       .select('*')
       .order('created_at', { ascending: false });
     if (error) throw new Error(error.message);

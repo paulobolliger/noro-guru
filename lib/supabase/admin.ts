@@ -48,7 +48,7 @@ export async function getLeads(options: { limit?: number } = {}) {
   const adminClient = getSupabaseAdmin();
   const { limit = 20 } = options;
   const { data, error } = await adminClient
-    .from('nomade_leads')
+    .from('noro_leads')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -62,8 +62,8 @@ export async function getTarefas(options: { status?: string; responsavel?: strin
   const { status, responsavel, limit = 20 } = options;
 
   let query = adminClient
-    .from('nomade_tarefas')
-    .select('*, nomade_leads(nome)')
+    .from('noro_tarefas')
+    .select('*, noro_leads(nome)')
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -75,11 +75,11 @@ export async function getTarefas(options: { status?: string; responsavel?: strin
   return data || [];
 }
 
-type LeadInsert = Database['public']['Tables']['nomade_leads']['Insert'];
+type LeadInsert = Database['public']['Tables']['noro_leads']['Insert'];
 export async function addLead(lead: LeadInsert) {
   const adminClient = getSupabaseAdmin();
   const { data, error } = await adminClient
-    .from('nomade_leads')
+    .from('noro_leads')
     .insert(lead)
     .select()
     .single();
@@ -91,7 +91,7 @@ export async function addLead(lead: LeadInsert) {
 export async function getNotificacoes(userId: string, limit: number) {
   const adminClient = getSupabaseAdmin();
   const { data, error } = await adminClient
-    .from('nomade_notificacoes')
+    .from('noro_notificacoes')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })

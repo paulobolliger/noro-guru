@@ -18,7 +18,7 @@ export const projectPhases: Record<string, ProjectPhase> = {
     priority: 'P1',
     description: 'Definir e construir campos de UI e Server Action para preferências do sistema',
     tasks: [
-      'Criar tabela nomade_configuracoes',
+      'Criar tabela noro_configuracoes',
       'Implementar UI da aba Preferências',
       'Criar Server Actions para salvar/carregar',
       'Adicionar preferências de sistema (moeda, fuso, idioma)',
