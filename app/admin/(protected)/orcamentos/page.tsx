@@ -1,16 +1,14 @@
 // app/admin/(protected)/orcamentos/page.tsx
-import { FileText } from 'lucide-react';
+import OrcamentosClientPage from '@/components/admin/OrcamentosClientPage';
+// Assume-se que o arquivo de actions foi criado no mesmo diretório
+import { getOrcamentos } from './orcamentos-actions'; 
 
-export default function OrcamentosPage() {
-    return (
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Orçamentos</h1>
-            
-            <div className="text-center py-20 bg-gray-50 rounded-lg">
-                <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-semibold text-gray-900">Página em Construção</h3>
-                <p className="mt-1 text-sm text-gray-500">A funcionalidade de gestão de orçamentos será implementada aqui.</p>
-            </div>
-        </div>
-    );
+export const dynamic = 'force-dynamic';
+
+export default async function OrcamentosPage() {
+    // 1. Buscar todos os orçamentos no servidor usando a Server Action
+    const orcamentos = await getOrcamentos();
+    
+    // 2. Passar a lista para o componente cliente para renderização e interatividade
+    return <OrcamentosClientPage orcamentos={orcamentos} />;
 }

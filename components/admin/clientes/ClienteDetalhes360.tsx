@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Cliente } from '@/types/clientes';
 import DadosPessoaisTab from './tabs/DadosPessoaisTab';
 import DocumentosTab from './tabs/DocumentosTab';
@@ -51,6 +51,20 @@ const tabs = [
 
 export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props) {
   const [activeTab, setActiveTab] = useState<TabId>('dados-pessoais');
+  // NOVO ESTADO: Para forçar o modo edição na aba de Dados Pessoais
+  const [isDadosPessoaisEditing, setIsDadosPessoaisEditing] = useState(false);
+  
+  // NOVA FUNÇÃO: Para lidar com a Ação Rápida de Editar
+  const handleQuickEdit = useCallback(() => {
+    setActiveTab('dados-pessoais');
+    setIsDadosPessoaisEditing(true);
+  }, []);
+  
+  // Nova função para a aba de Dados Pessoais para que ela possa comunicar que saiu do modo edição
+  const handleToggleEdit = useCallback((isEditing: boolean) => {
+    setIsDadosPessoaisEditing(isEditing);
+  }, []);
+
 
   return (
     <div className="h-full flex flex-col">
@@ -141,7 +155,11 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
               <Mail className="w-4 h-4" />
               Email
             </button>
-            <button className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark flex items-center gap-2">
+            {/* CORRIGIDO: Botão Editar que chama a função handleQuickEdit */}
+            <button 
+              onClick={handleQuickEdit} 
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark flex items-center gap-2"
+            >
               <Edit className="w-4 h-4" />
               Editar
             </button>
@@ -160,7 +178,13 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                      setActiveTab(tab.id);
+                      // Se trocar de aba, garante que o modo edição de Dados Pessoais está desativado
+                      if (tab.id !== 'dados-pessoais') {
+                          setIsDadosPessoaisEditing(false);
+                      }
+                  }}
                   className={`
                     py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2
                     ${isActive
@@ -182,7 +206,11 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
       <div className="flex-1 overflow-y-auto bg-gray-50">
         <div className="max-w-7xl mx-auto p-6">
           {activeTab === 'dados-pessoais' && (
-            <DadosPessoaisTab cliente={cliente} />
+            <DadosPessoaisTab 
+                cliente={cliente} 
+                initialEditMode={isDadosPessoaisEditing}
+                onToggleEdit={handleToggleEdit} // Passa a função de callback
+            />
         )}
           
           {activeTab === 'documentos' && (

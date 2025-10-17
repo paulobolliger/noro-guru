@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { MapPin, Plus, Edit2, Trash2, X, Save, Star } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { MapPin, Plus, Edit2, Trash2, X, Save, Star, Loader2 } from 'lucide-react';
 import { 
   getClienteEnderecos, 
   createEndereco, 
@@ -28,6 +28,45 @@ interface EnderecosTabProps {
   clienteId: string;
 }
 
+// --- FUNÇÃO DE BUSCA POR CEP REAL (ViaCEP) ---
+async function fetchCEP(cep: string): Promise<{
+    success: boolean;
+    data: { logradouro: string; bairro: string; localidade: string; uf: string; } | null;
+}> {
+    const cleanCep = cep.replace(/\D/g, '');
+    if (cleanCep.length !== 8) return { success: false, data: null };
+
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        
+        if (!response.ok) {
+             // Retorna um erro se a requisição falhar (ex: 400 Bad Request)
+            console.error(`Erro ViaCEP: ${response.status}`);
+            return { success: false, data: null };
+        }
+        
+        const data = await response.json();
+
+        // Tratamento para CEP válido mas inexistente ("erro": "true")
+        if (data.erro) {
+            return { success: false, data: null };
+        }
+
+        return {
+            success: true,
+            data: {
+                logradouro: data.logradouro,
+                bairro: data.bairro,
+                cidade: data.localidade, // ViaCEP usa 'localidade' para cidade
+                estado: data.uf,         // ViaCEP usa 'uf' para estado
+            },
+        };
+    } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        return { success: false, data: null };
+    }
+}
+
 export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
   const router = useRouter();
   const [enderecos, setEnderecos] = useState<Endereco[]>([]);
@@ -35,6 +74,8 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
   const [showModal, setShowModal] = useState(false);
   const [editingEndereco, setEditingEndereco] = useState<Endereco | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  // Adicionado estado de busca para mostrar loading
+  const [isSearchingCep, setIsSearchingCep] = useState(false);
 
   const [formData, setFormData] = useState({
     tipo: 'residencial',
@@ -73,7 +114,50 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
     }
   }
 
+  // LÓGICA DO VIACEP APLICADA AQUI
+  const handleCepChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    // Remove tudo que não for dígito e limita a 8 caracteres
+    const cleanCep = value.replace(/\D/g, '').substring(0, 8); 
+    setFormData(prev => ({ ...prev, cep: cleanCep }));
+    
+    if (cleanCep.length === 8) {
+        setIsSearchingCep(true);
+        const result = await fetchCEP(cleanCep);
+        setIsSearchingCep(false);
+        
+        if (result.success && result.data) {
+            setFormData(prev => ({
+                ...prev,
+                logradouro: result.data!.logradouro || '',
+                bairro: result.data!.bairro || '',
+                cidade: result.data!.cidade || '',
+                estado: result.data!.estado || '',
+                pais: prev.pais || 'Brasil', // Mantém o país
+            }));
+            // Foca no campo 'Número' para melhor UX
+            document.querySelector<HTMLInputElement>('input[name="numero"]')?.focus();
+        } else {
+             // Limpa campos se o CEP for inválido ou não encontrado
+             setFormData(prev => ({
+                ...prev,
+                logradouro: '',
+                bairro: '',
+                cidade: '',
+                estado: '',
+                // Mantém o CEP digitado
+            }));
+        }
+    }
+  }, []);
+
   async function handleSave() {
+    // Validação mínima antes de salvar
+    if (!formData.logradouro || !formData.cidade || !formData.pais) {
+        alert('Logradouro, Cidade e País são campos obrigatórios.');
+        return;
+    }
+
     setIsSaving(true);
 
     const formDataToSend = new FormData();
@@ -300,12 +384,15 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">CEP</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    CEP
+                    {isSearchingCep && <Loader2 className="animate-spin w-4 h-4 ml-2 inline-block text-blue-500" />}
+                </label>
                 <input 
                   type="text" 
                   name="cep" 
                   value={formData.cep} 
-                  onChange={handleChange}
+                  onChange={handleCepChange} // Utiliza a nova função
                   placeholder="00000-000"
                   className="w-full px-4 py-2 border rounded-lg" 
                 />
@@ -321,6 +408,7 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
                     onChange={handleChange}
                     placeholder="Rua, Avenida..."
                     className="w-full px-4 py-2 border rounded-lg" 
+                    required // Campo obrigatório
                   />
                 </div>
 
@@ -369,6 +457,7 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
                     value={formData.cidade} 
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg" 
+                    required // Campo obrigatório
                   />
                 </div>
 
@@ -393,6 +482,7 @@ export default function EnderecosTab({ clienteId }: EnderecosTabProps) {
                   value={formData.pais} 
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-lg" 
+                  required // Campo obrigatório
                 />
               </div>
             </div>

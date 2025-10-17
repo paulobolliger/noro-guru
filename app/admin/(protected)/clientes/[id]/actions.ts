@@ -48,6 +48,12 @@ export async function updateCliente(clienteId: string, formData: FormData) {
     data_nascimento: formData.get('data_nascimento') as string,
     nacionalidade: formData.get('nacionalidade') as string,
     profissao: formData.get('profissao') as string,
+    cnpj: formData.get('cnpj') as string, // Incluído PJ
+    razao_social: formData.get('razao_social') as string, // Incluído PJ
+    nome_fantasia: formData.get('nome_fantasia') as string, // Incluído PJ
+    inscricao_estadual: formData.get('inscricao_estadual') as string, // Incluído PJ
+    responsavel_nome: formData.get('responsavel_nome') as string, // Incluído PJ
+    responsavel_cargo: formData.get('responsavel_cargo') as string, // Incluído PJ
     status: formData.get('status') as string,
     tipo: formData.get('tipo') as string,
     segmento: formData.get('segmento') as string,
@@ -199,15 +205,16 @@ export async function upsertPreferencias(clienteId: string, formData: FormData) 
     cliente_id: clienteId,
     frequencia_viagem: formData.get('frequencia_viagem') as string,
     orcamento_medio: formData.get('orcamento_medio') as string,
-    estilo_viagem: formData.get('estilo_viagem') ? (formData.get('estilo_viagem') as string).split(',') : [],
-    destinos_favoritos: formData.get('destinos_favoritos') ? (formData.get('destinos_favoritos') as string).split(',') : [],
-    destinos_desejados: formData.get('destinos_desejados') ? (formData.get('destinos_desejados') as string).split(',') : [],
+    // JSONB array: transforma string 'a,b,c' em array ['a', 'b', 'c']
+    estilo_viagem: formData.get('estilo_viagem') ? (formData.get('estilo_viagem') as string).split(',').filter(Boolean) : [],
+    destinos_favoritos: formData.get('destinos_favoritos') ? (formData.get('destinos_favoritos') as string).split(',').filter(Boolean) : [],
+    destinos_desejados: formData.get('destinos_desejados') ? (formData.get('destinos_desejados') as string).split(',').filter(Boolean) : [],
     assento_preferido: formData.get('assento_preferido') as string,
     classe_preferida: formData.get('classe_preferida') as string,
-    tipo_hospedagem: formData.get('tipo_hospedagem') ? (formData.get('tipo_hospedagem') as string).split(',') : [],
+    tipo_hospedagem: formData.get('tipo_hospedagem') ? (formData.get('tipo_hospedagem') as string).split(',').filter(Boolean) : [],
     preferencias_quarto: formData.get('preferencias_quarto') as string,
     categoria_hotel: formData.get('categoria_hotel') as string,
-    restricoes_alimentares: formData.get('restricoes_alimentares') ? (formData.get('restricoes_alimentares') as string).split(',') : [],
+    restricoes_alimentares: formData.get('restricoes_alimentares') ? (formData.get('restricoes_alimentares') as string).split(',').filter(Boolean) : [],
     refeicao_preferida: formData.get('refeicao_preferida') as string,
     necessidades_especiais: formData.get('necessidades_especiais') as string,
     mobilidade_reduzida: formData.get('mobilidade_reduzida') === 'true',
@@ -438,13 +445,18 @@ export async function createMilhas(clienteId: string, formData: FormData) {
 
   const milhas = {
     cliente_id: clienteId,
-    companhia: formData.get('companhia') as string,
-    numero_programa: formData.get('numero_programa') as string,
+    companhia: formData.get('programa') as string, // CORRIGIDO: O formulário usa 'programa', mas o BD espera 'companhia'
+    numero_programa: formData.get('numero_cartao') as string, // CORRIGIDO: Nome do campo atualizado
     categoria: formData.get('categoria') as string,
-    saldo_estimado: formData.get('saldo_estimado') ? parseInt(formData.get('saldo_estimado') as string) : null,
+    saldo_estimado: formData.get('saldo') ? parseInt(formData.get('saldo') as string) : null,
     data_validade: formData.get('data_validade') as string,
     observacoes: formData.get('observacoes') as string,
   };
+
+  // Verifica se o campo 'companhia' (recebido como 'programa') é nulo/vazio. Se for, usa 'Outra'
+  if (!milhas.companhia) {
+      milhas.companhia = 'Outro';
+  }
 
   const { error } = await supabase
     .from('noro_clientes_milhas')
@@ -463,9 +475,10 @@ export async function updateMilhas(milhasId: string, formData: FormData, cliente
   const supabase = createServerSupabaseClient();
 
   const updates = {
-    numero_programa: formData.get('numero_programa') as string,
+    companhia: formData.get('programa') as string, // CORRIGIDO: O formulário usa 'programa', mas o BD espera 'companhia'
+    numero_programa: formData.get('numero_cartao') as string, // CORRIGIDO: Nome do campo atualizado
     categoria: formData.get('categoria') as string,
-    saldo_estimado: formData.get('saldo_estimado') ? parseInt(formData.get('saldo_estimado') as string) : null,
+    saldo_estimado: formData.get('saldo') ? parseInt(formData.get('saldo') as string) : null,
     data_validade: formData.get('data_validade') as string,
     observacoes: formData.get('observacoes') as string,
     updated_at: new Date().toISOString(),

@@ -12,11 +12,10 @@ import { useRouter } from 'next/navigation';
 
 interface Milhas {
   id: string;
-  programa: string;
-  companhia_aerea?: string;
-  numero_cartao: string;
+  companhia: string; // CORRIGIDO para 'companhia'
+  numero_programa: string; // CORRIGIDO para 'numero_programa'
   categoria?: string;
-  saldo?: number;
+  saldo_estimado?: number; // CORRIGIDO para 'saldo_estimado'
   data_validade?: string;
   observacoes?: string;
   created_at: string;
@@ -35,11 +34,10 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
   const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    programa: '',
-    companhia_aerea: '',
-    numero_cartao: '',
+    companhia: '', // CORRIGIDO
+    numero_programa: '', // CORRIGIDO
     categoria: '',
-    saldo: '',
+    saldo_estimado: '', // CORRIGIDO
     data_validade: '',
     observacoes: '',
   });
@@ -65,17 +63,22 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
   }
 
   async function handleSave() {
-    if (!formData.programa || !formData.numero_cartao) {
-      alert('Programa e número do cartão são obrigatórios');
+    if (!formData.companhia || !formData.numero_programa) { // CORRIGIDO: Checa os novos nomes
+      alert('Companhia e número do programa são obrigatórios');
       return;
     }
 
     setIsSaving(true);
 
     const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
-      formDataToSend.append(key, formData[key as keyof typeof formData]);
-    });
+    // Mapeia os campos do estado para os nomes esperados na Server Action
+    formDataToSend.append('programa', formData.companhia); // Mapeia 'companhia' do estado para 'programa' do FormData
+    formDataToSend.append('numero_cartao', formData.numero_programa); // Mapeia 'numero_programa' do estado para 'numero_cartao' do FormData
+    formDataToSend.append('categoria', formData.categoria);
+    formDataToSend.append('saldo', formData.saldo_estimado); // Mapeia 'saldo_estimado' do estado para 'saldo' do FormData
+    formDataToSend.append('data_validade', formData.data_validade);
+    formDataToSend.append('observacoes', formData.observacoes);
+
 
     let result;
     if (editingMilhas) {
@@ -100,11 +103,10 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
   function handleEdit(milha: Milhas) {
     setEditingMilhas(milha);
     setFormData({
-      programa: milha.programa,
-      companhia_aerea: milha.companhia_aerea || '',
-      numero_cartao: milha.numero_cartao,
+      companhia: milha.companhia || '', // CORRIGIDO
+      numero_programa: milha.numero_programa || '', // CORRIGIDO
       categoria: milha.categoria || '',
-      saldo: milha.saldo?.toString() || '',
+      saldo_estimado: milha.saldo_estimado?.toString() || '', // CORRIGIDO
       data_validade: milha.data_validade || '',
       observacoes: milha.observacoes || '',
     });
@@ -123,11 +125,10 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
 
   function resetForm() {
     setFormData({
-      programa: '',
-      companhia_aerea: '',
-      numero_cartao: '',
+      companhia: '', // CORRIGIDO
+      numero_programa: '', // CORRIGIDO
       categoria: '',
-      saldo: '',
+      saldo_estimado: '', // CORRIGIDO
       data_validade: '',
       observacoes: '',
     });
@@ -238,10 +239,10 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Plane className="w-5 h-5 text-blue-600" />
-                      <h3 className="font-semibold text-gray-900">{milha.programa}</h3>
+                      <h3 className="font-semibold text-gray-900">{milha.companhia}</h3>
                     </div>
-                    {milha.companhia_aerea && (
-                      <p className="text-sm text-gray-600">{milha.companhia_aerea}</p>
+                    {milha.companhia && (
+                      <p className="text-sm text-gray-600">{milha.companhia}</p>
                     )}
                   </div>
                   {milha.categoria && (
@@ -253,14 +254,14 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
 
                 <div className="space-y-2 mb-4">
                   <p className="text-sm text-gray-600">
-                    <span className="font-medium">Cartão:</span> {milha.numero_cartao}
+                    <span className="font-medium">Cartão:</span> {milha.numero_programa}
                   </p>
 
-                  {milha.saldo !== null && milha.saldo !== undefined && (
+                  {milha.saldo_estimado !== null && milha.saldo_estimado !== undefined && (
                     <p className="text-sm text-gray-600">
                       <span className="font-medium">Saldo:</span>{' '}
                       <span className="text-lg font-semibold text-blue-600">
-                        {formatarSaldo(milha.saldo)} milhas
+                        {formatarSaldo(milha.saldo_estimado)} milhas
                       </span>
                     </p>
                   )}
@@ -324,10 +325,10 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Programa *</label>
+                <label className="block text-sm font-medium mb-2">Companhia Aérea / Programa *</label>
                 <select 
-                  name="programa" 
-                  value={formData.programa} 
+                  name="companhia" // CORRIGIDO: Nome do campo
+                  value={formData.companhia} // CORRIGIDO: Nome do campo
                   onChange={handleChange} 
                   className="w-full px-4 py-2 border rounded-lg"
                 >
@@ -341,28 +342,19 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                   <option value="Flying Blue">Flying Blue (Air France/KLM)</option>
                   <option value="Avios">Avios (British Airways)</option>
                   <option value="Miles & More">Miles & More (Lufthansa)</option>
-                  <option value="outro">Outro</option>
+                  <option value="Outro">Outro</option>
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Companhia Aérea</label>
-                <input 
-                  type="text" 
-                  name="companhia_aerea" 
-                  value={formData.companhia_aerea} 
-                  onChange={handleChange}
-                  placeholder="LATAM, Gol, Azul..."
-                  className="w-full px-4 py-2 border rounded-lg" 
-                />
-              </div>
+              {/* O campo de Companhia Aérea separada foi removido para simplificar com o campo acima, 
+              evitando o erro de not-null na action. */}
 
               <div>
-                <label className="block text-sm font-medium mb-2">Número do Cartão *</label>
+                <label className="block text-sm font-medium mb-2">Número do Programa *</label>
                 <input 
                   type="text" 
-                  name="numero_cartao" 
-                  value={formData.numero_cartao} 
+                  name="numero_programa" // CORRIGIDO: Nome do campo
+                  value={formData.numero_programa} // CORRIGIDO: Nome do campo
                   onChange={handleChange}
                   placeholder="000000000"
                   className="w-full px-4 py-2 border rounded-lg" 
@@ -390,8 +382,8 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                 <label className="block text-sm font-medium mb-2">Saldo (milhas)</label>
                 <input 
                   type="number" 
-                  name="saldo" 
-                  value={formData.saldo} 
+                  name="saldo_estimado" // CORRIGIDO: Nome do campo
+                  value={formData.saldo_estimado} // CORRIGIDO: Nome do campo
                   onChange={handleChange}
                   placeholder="0"
                   className="w-full px-4 py-2 border rounded-lg" 

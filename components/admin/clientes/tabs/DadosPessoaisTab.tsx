@@ -1,17 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit2, Save, X, User, Building2, Calendar, Globe, Briefcase, CreditCard, MapPin } from 'lucide-react';
 import { updateCliente } from '@/app/admin/(protected)/clientes/[id]/actions';
 import { useRouter } from 'next/navigation';
 
 interface DadosPessoaisTabProps {
   cliente: any;
+  initialEditMode?: boolean; // NOVO: Propriedade para forçar o modo edição inicial
+  onToggleEdit?: (isEditing: boolean) => void; // NOVO: Callback para informar o estado de edição
 }
 
-export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
+export default function DadosPessoaisTab({ cliente, initialEditMode = false, onToggleEdit }: DadosPessoaisTabProps) {
   const router = useRouter();
-  const [isEditing, setIsEditing] = useState(false);
+  // ATUALIZADO: Usa initialEditMode para o estado inicial
+  const [isEditing, setIsEditing] = useState(initialEditMode);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     nome: cliente.nome || '',
@@ -44,6 +47,12 @@ export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
     observacoes: cliente.observacoes || '',
   });
 
+  // EFEITO: Sincroniza o estado de edição com a prop externa
+  useEffect(() => {
+      setIsEditing(initialEditMode);
+  }, [initialEditMode]);
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -63,6 +72,7 @@ export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
     
     if (result.success) {
       setIsEditing(false);
+      onToggleEdit?.(false); // Chama o callback
       router.refresh();
     } else {
       alert('Erro ao salvar: ' + result.error);
@@ -72,6 +82,7 @@ export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
   };
 
   const handleCancel = () => {
+    // Lógica para reverter o formulário ao estado original do cliente
     setFormData({
       nome: cliente.nome || '',
       email: cliente.email || '',
@@ -97,6 +108,12 @@ export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
       observacoes: cliente.observacoes || '',
     });
     setIsEditing(false);
+    onToggleEdit?.(false); // Chama o callback
+  };
+  
+  const handleEditClick = () => {
+      setIsEditing(true);
+      onToggleEdit?.(true); // Chama o callback
   };
 
   const isPessoaFisica = formData.tipo === 'pessoa_fisica';
@@ -121,7 +138,7 @@ export default function DadosPessoaisTab({ cliente }: DadosPessoaisTabProps) {
         
         {!isEditing ? (
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={handleEditClick} // ATUALIZADO
             className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
             <Edit2 className="w-4 h-4" />
