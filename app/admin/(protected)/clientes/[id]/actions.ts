@@ -1,13 +1,135 @@
+// app/admin/(protected)/clientes/[id]/actions.ts
 'use server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/supabase';
 import { revalidatePath } from 'next/cache';
+import { randomUUID } from 'crypto';
 
 type Cliente = Database['public']['Tables']['noro_clientes']['Row'];
 type ClienteUpdate = Database['public']['Tables']['noro_clientes']['Update'];
 type DocumentoInsert = Database['public']['Tables']['noro_clientes_documentos']['Insert'];
 type DocumentoUpdate = Database['public']['Tables']['noro_clientes_documentos']['Update'];
+
+// ============================================================================
+// NOVAS FUNÇÕES: FORMULÁRIO PÚBLICO
+// ============================================================================
+
+/**
+ * Cria um token de atualização único e seguro para um cliente.
+ */
+export async function createClientUpdateToken(clienteId: string) {
+  if (!clienteId) {
+    return { success: false, message: 'ID do cliente é obrigatório.' };
+  }
+  const supabase = createServerSupabaseClient();
+  const token = randomUUID();
+  const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 horas de validade
+
+  const { error } = await supabase.from('noro_update_tokens').insert({
+    token,
+    cliente_id: clienteId,
+    expires_at: expiresAt.toISOString(),
+  });
+
+  if (error) {
+    console.error('Erro ao criar token de atualização:', error);
+    return { success: false, message: 'Falha ao gerar o link seguro.' };
+  }
+
+  const updateUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/forms/cliente/${token}`;
+  
+  return { success: true, message: 'Link gerado com sucesso!', data: { url: updateUrl } };
+}
+
+/**
+ * Valida um token e busca os dados do cliente para a página pública.
+ */
+export async function getClientByUpdateToken(token: string) {
+  const supabase = createServerSupabaseClient();
+
+  const { data: tokenData, error: tokenError } = await supabase
+    .from('noro_update_tokens')
+    .select('*, cliente:noro_clientes(*)')
+    .eq('token', token)
+    .single();
+
+  if (tokenError || !tokenData) {
+    return { success: false, error: 'Token inválido ou não encontrado.' };
+  }
+
+  if (tokenData.used_at) {
+    return { success: false, error: 'Este link já foi utilizado.' };
+  }
+
+  if (new Date(tokenData.expires_at) < new Date()) {
+    return { success: false, error: 'Este link expirou.' };
+  }
+
+  return { success: true, data: tokenData.cliente };
+}
+
+/**
+ * Atualiza os dados de um cliente a partir do formulário público e invalida o token.
+ */
+export async function updateClientFromPublicForm(token: string, formData: FormData) {
+  const supabase = createServerSupabaseClient();
+
+  // 1. Revalidar o token antes de qualquer ação
+  const { data: tokenData, error: tokenError } = await supabase
+    .from('noro_update_tokens')
+    .select('cliente_id, expires_at, used_at')
+    .eq('token', token)
+    .single();
+
+  if (tokenError || !tokenData) {
+    return { success: false, message: 'Token de atualização inválido.' };
+  }
+  if (tokenData.used_at) {
+    return { success: false, message: 'Este link de atualização já foi utilizado.' };
+  }
+  if (new Date(tokenData.expires_at) < new Date()) {
+    return { success: false, message: 'Este link de atualização expirou.' };
+  }
+  
+  const { cliente_id } = tokenData;
+
+  // 2. Montar o payload de atualização
+  const updates: ClienteUpdate = {
+    nome: formData.get('nome') as string,
+    email: formData.get('email') as string,
+    telefone: formData.get('telefone') as string,
+    whatsapp: formData.get('whatsapp') as string,
+    cpf: formData.get('cpf') as string,
+    passaporte: formData.get('passaporte') as string,
+    data_nascimento: formData.get('data_nascimento') as string,
+    nacionalidade: formData.get('nacionalidade') as string,
+    profissao: formData.get('profissao') as string,
+    updated_at: new Date().toISOString(),
+  };
+
+  // 3. Atualizar os dados do cliente
+  const { error: updateError } = await supabase
+    .from('noro_clientes')
+    .update(updates)
+    .eq('id', cliente_id);
+
+  if (updateError) {
+    console.error('Erro ao atualizar cliente via formulário público:', updateError);
+    return { success: false, message: `Erro ao salvar os dados: ${updateError.message}` };
+  }
+
+  // 4. Invalidar o token marcando como usado
+  await supabase
+    .from('noro_update_tokens')
+    .update({ used_at: new Date().toISOString() })
+    .eq('token', token);
+  
+  revalidatePath(`/admin/clientes/${cliente_id}`);
+
+  return { success: true, message: 'Seus dados foram atualizados com sucesso!' };
+}
+
 
 // ============================================================================
 // CLIENTE - DADOS PRINCIPAIS

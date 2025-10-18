@@ -1,6 +1,9 @@
-import { createServerClient } from '@/utils/supabase/server';
+// app/api/webhooks/btg/route.ts
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+
+// ... (restante do código do ficheiro, sem alterações)
 
 // ================================================================
 // CONFIGURAÇÃO DE SEGURANÇA

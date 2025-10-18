@@ -1,4 +1,5 @@
-import { createServerClient } from '@/utils/supabase/server';
+// app/api/webhooks/stripe/route.ts
+import { createServerSupabaseClient } from '@/lib/supabase/server'; // CORRIGIDO
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import Stripe from 'stripe';

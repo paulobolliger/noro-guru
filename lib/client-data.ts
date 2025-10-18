@@ -1,4 +1,48 @@
 // lib/client-data.ts
+
+// ============================================================================
+// NOVOS DADOS PARA O MÓDULO DE ORÇAMENTOS
+// ============================================================================
+
+export const INTENCOES_VIAGEM = {
+  "Romance & Estilo de Vida": ["Viagem Romântica", "Lua de Mel", "Pedido de Casamento", "Renovação de Votos", "Núpcias + Luxo", "Bem-estar & Spa", "Viagem Fotográfica"],
+  "Natureza & Aventura": ["Praias Paradisíacas", "Ecoturismo", "Aventura", "Trilhas & Trekking", "Safari", "Observação de Animais", "Montanhismo", "Glamping"],
+  "Cultura & História": ["Roteiro Cultural", "História & Patrimônio", "Cidades Coloniais", "Castelos & Palácios", "Museus e Arte", "Arquitetura"],
+  "Gastronomia": ["Enogastronomia", "Vinícolas & Roteiro do Vinho", "Alta Gastronomia", "Comida de Rua Local", "Tours Gastronômicos"],
+  "Lifestyle & Experiências Exclusivas": ["Luxo & Sofisticação", "Vida Noturna", "Compras & Outlets", "Resorts All Inclusive", "Clubes de Praia"],
+  "Família & Kids": ["Viagem em Família", "Kids Friendly", "Resorts com Recreação", "Parques Temáticos"],
+  "Bem-estar & Slow Travel": ["Wellness & Detox", "Yoga & Retiro Espiritual", "Natureza & Relax", "Minimalista / Desaceleração", "Turismo Regenerativo"],
+  "Esportes & Atividades": ["Esportes de Inverno (Neve)", "Esportes Radicais", "Mergulho & Snorkel", "Surf Trip", "Ciclismo", "Golf Trip"],
+  "Cruzeiros & Roteiros Especiais": ["Cruzeiro Clássico", "Cruzeiro de Expedição", "Cruzeiro Fluvial", "Barco Privado (Charter)"],
+  "Viagens Temáticas": ["CineTour (locações de filmes)", "História Antiga", "Roteiro Religioso", "Fãs de Animes/Jogos (Japão)", "Experiências Musicais", "Festivais & Eventos"],
+  "Viagens de Negócios & Grupos": ["Corporativo (Business Travel)", "Incentivo de Vendas (MICE)", "Grupo de Amigos", "Grupo Religioso", "Grupo de Formatura"]
+};
+
+export const TERMOS_E_CONDICOES_PADRAO = {
+    1. Validade da Proposta
+Esta proposta tem validade até {{data_validade}}. Após esta data, valores, disponibilidade e condições podem sofrer alterações sem aviso prévio.
+
+2. Serviços Incluídos e Não Incluídos
+Os serviços inclusos estão detalhados na seção "Itens do Orçamento". Despesas pessoais, refeições não mencionadas, taxas locais, gorjetas, vistos e seguros não especificados não estão inclusos.
+
+3. Pagamento e Condições Financeiras
+- Sinal/Entrada: {{valor_sinal}} €
+- Saldo Restante: {{valor_saldo}} €, a ser pago até {{data_pagamento_saldo}}.
+Valores expressos em {{moeda}} e sujeitos a ajuste cambial até o pagamento final.
+
+4. Alterações e Cancelamentos
+Alterações estão sujeitas à disponibilidade e taxas. Em caso de cancelamento, aplicam-se as políticas dos fornecedores (hotéis, cias aéreas, etc.). A Noro atuará como intermediária.
+
+5. Documentação e Responsabilidades
+O cliente é responsável por portar documentação válida (passaporte, vistos, vacinas). A Noro não se responsabiliza por impedimentos de viagem decorrentes de documentação incorreta.
+
+6. Seguro Viagem
+Recomendamos fortemente a contratação de um seguro viagem. Caso opte por não incluir, o cliente declara estar ciente dos riscos.
+
+7. Aceite da Proposta
+Ao confirmar esta proposta e efetuar o pagamento do sinal, o cliente declara estar ciente e de acordo com todos os termos aqui descritos.
+}
+
 // Dados de Profissões, Países e Nacionalidades.
 
 export const PROFISSOES: string[] = [

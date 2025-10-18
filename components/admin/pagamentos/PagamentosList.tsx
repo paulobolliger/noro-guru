@@ -1,3 +1,4 @@
+// components/admin/pagamentos/PagamentosList.tsx
 'use client';
 
 import React from 'react';
@@ -6,7 +7,8 @@ import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
 import { PedidoParaPagamento } from '@/app/admin/(protected)/pagamentos/page';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Eye } from 'lucide-react'; // Ícones úteis
+import { Button } from '@/components/ui/button';
+import { CreditCard, Eye } from 'lucide-react';
 
 interface PagamentosListProps {
   pedidos: PedidoParaPagamento[];
@@ -55,7 +57,7 @@ export function PagamentosList({ pedidos }: PagamentosListProps) {
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {pedido.clientes?.nome_completo || `ID: ${pedido.cliente_id.slice(0, 8)}...`}
+                {pedido.clientes?.nome || `ID: ${pedido.cliente_id.slice(0, 8)}...`}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
                 {currencyFormat(pedido.valor_total || 0)}
@@ -69,7 +71,6 @@ export function PagamentosList({ pedidos }: PagamentosListProps) {
                 {format(new Date(pedido.created_at), 'dd/MM/yyyy')}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                {/* Futuramente: Botão "Gerar Fatura" ou "Registrar Pagamento" */}
                 <Link href={`/admin/pedidos/${pedido.id}`}>
                     <Button variant="outline" size="sm">
                         <Eye className="h-4 w-4 mr-1" />

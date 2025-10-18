@@ -1,3 +1,4 @@
+// app/admin/(protected)/orcamentos/orcamentos-actions.ts
 'use server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -58,7 +59,6 @@ export async function getOrcamentoById(orcamentoId: string) {
 export async function createOrcamento(formData: FormData) {
   const supabase = createServerSupabaseClient();
   
-  // NOVO: Lê o JSON stringificado dos itens
   const itensString = formData.get('itens') as string;
   let itensParsed: any = [];
   try {
@@ -71,15 +71,9 @@ export async function createOrcamento(formData: FormData) {
     titulo: formData.get('titulo') as string,
     lead_id: formData.get('lead_id') as string || null,
     roteiro_base_id: formData.get('roteiro_base_id') as string || null,
-    
-    // Convertendo campos numéricos e garantindo fallback
     valor_total: parseFloat(formData.get('valor_total') as string) || 0,
     valor_sinal: parseFloat(formData.get('valor_sinal') as string) || null,
-    
-    // Status deve ser tipado corretamente
     status: (formData.get('status') as Database['public']['Enums']['orcamento_status']) || 'rascunho',
-    
-    // Campos opcionais
     descricao: formData.get('descricao') as string || null,
     data_viagem_inicio: formData.get('data_viagem_inicio') as string || null,
     data_viagem_fim: formData.get('data_viagem_fim') as string || null,
@@ -88,8 +82,6 @@ export async function createOrcamento(formData: FormData) {
     validade_ate: formData.get('validade_ate') as string || null,
     observacoes: formData.get('observacoes') as string || null,
     termos_condicoes: formData.get('termos_condicoes') as string || null,
-    
-    // NOVO: Salva os itens como JSONB
     itens: itensParsed, 
   };
 
@@ -125,7 +117,7 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
     const supabase = createServerSupabaseClient();
     
     const itensString = formData.get('itens') as string;
-    let itensParsed: any = undefined; // Usar undefined para não atualizar se não vier
+    let itensParsed: any = undefined;
 
     if (itensString !== null) {
         try {
@@ -149,11 +141,9 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
         observacoes: formData.get('observacoes') as string || null,
         termos_condicoes: formData.get('termos_condicoes') as string || null,
         updated_at: new Date().toISOString(),
-        // Inclui itensParsed APENAS se foi lido corretamente
         ...(itensParsed !== undefined && { itens: itensParsed })
     };
 
-    // Primeiro, busca o lead_id para revalidação
     const { data: orcamento } = await supabase
       .from('noro_orcamentos')
       .select('lead_id')
@@ -187,7 +177,6 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
 export async function deleteOrcamento(orcamentoId: string) {
     const supabase = createServerSupabaseClient();
 
-    // Primeiro, busca o lead_id para revalidação
     const { data: orcamento } = await supabase
       .from('noro_orcamentos')
       .select('lead_id')

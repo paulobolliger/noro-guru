@@ -3,9 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { currencyFormat } from '@/utils/currency-format'; // Assumindo este utilitário
+import { currencyFormat } from '@/utils/currency-format';
 import { Pedido } from '@/app/admin/(protected)/pedidos/page';
-import { Badge } from '@/components/ui/badge'; // Assumindo um componente Badge
+import { Badge } from '@/components/ui/badge';
 
 interface PedidosListProps {
   pedidos: Pedido[];
@@ -14,6 +14,7 @@ interface PedidosListProps {
 // Mapeamento de status para cores de Badge (Tailwind CSS)
 const statusMap: Record<string, string> = {
   'EM_PROCESSAMENTO': 'bg-yellow-100 text-yellow-800',
+  'AGUARDANDO_PAGAMENTO': 'bg-red-100 text-red-800 font-bold',
   'CONCLUIDO': 'bg-green-100 text-green-800',
   'CANCELADO': 'bg-red-100 text-red-800',
 };
@@ -61,7 +62,7 @@ export function PedidosList({ pedidos }: PedidosListProps) {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <Badge className={statusMap[pedido.status] || 'bg-gray-100 text-gray-800'}>
-                  {pedido.status.replace('_', ' ')}
+                  {pedido.status.replace(/_/g, ' ')}
                 </Badge>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

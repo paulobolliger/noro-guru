@@ -1,3 +1,4 @@
+// app/api/gerar-roteiro/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 // Função para gerar um resumo (teaser) do roteiro completo
@@ -64,7 +65,6 @@ export async function POST(req: NextRequest) {
   try {
     const { nome, email, destino, duracao, interesses } = await req.json();
 
-    // Validação
     if (!nome || !email || !destino || !duracao) {
       return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 });
     }
@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
       throw new Error('OpenAI API Key não configurada');
     }
     
-    // Prompt para a IA
     const systemPrompt = `Você é o "Nomade Guru", um especialista em criar roteiros de viagem detalhados e envolventes para uma agência de viagens premium. Formate em HTML limpo (h2, h3, p, strong) e use emojis.`;
     const userPrompt = `Crie um roteiro COMPLETO de ${duracao} dias para ${destino}. Viajante: ${nome}, Interesses: ${interesses || 'experiências autênticas'}. Seja específico com lugares, restaurantes e atrações REAIS.`;
 
@@ -85,7 +84,7 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-5-mini", // ATUALIZADO
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
@@ -105,7 +104,6 @@ export async function POST(req: NextRequest) {
     const roteiroCompleto = responseData.choices[0].message.content;
     const roteiroResumo = gerarResumo(roteiroCompleto, nome, destino, duracao);
 
-    // Enviar email (sem await para não bloquear a resposta)
     fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -130,4 +128,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Ops! Algo deu errado. Tente novamente em instantes.' }, { status: 500 });
   }
 }
-

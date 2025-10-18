@@ -1,4 +1,5 @@
-import { createServerClient } from '@/utils/supabase/server';
+// app/admin/(protected)/pedidos/[id]/editar/page.tsx
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { Database } from '@/types/supabase';
 import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
@@ -21,7 +22,7 @@ interface PedidoEditarPageProps {
  * @returns Um Pedido completo ou null se não encontrado.
  */
 async function fetchPedidoDetalhesParaEdicao(id: string): Promise<PedidoComRelacionamentos | null> {
-  const supabase = createServerClient();
+  const supabase = createServerSupabaseClient();
 
   // Garante que todos os dados necessários para o formulário sejam buscados
   const { data: pedido, error } = await supabase
@@ -64,7 +65,7 @@ export default async function PedidoEditarPage({ params }: PedidoEditarPageProps
           Editar Pedido #{pedido.id.slice(0, 8)}...
         </h1>
         <p className="text-gray-600">
-            Cliente: {pedido.clientes?.nome_completo || 'Cliente Desconhecido'}
+            Cliente: {pedido.clientes?.nome || 'Cliente Desconhecido'}
         </p>
       </header>
       

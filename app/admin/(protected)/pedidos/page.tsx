@@ -1,8 +1,9 @@
-import { createServerClient } from '@/utils/supabase/server';
+// app/admin/(protected)/pedidos/page.tsx
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { PedidosList } from '@/components/admin/pedidos/PedidosList';
-import { Database } from '@/types/supabase'; // Assumindo que você tem o type gerado
+import { Database } from '@/types/supabase';
 import { Suspense } from 'react';
-import { Loader2 } from 'lucide-react'; // Assumindo um ícone de carregamento
+import { Loader2 } from 'lucide-react';
 
 // Alias para o tipo de Pedido
 export type Pedido = Database['public']['Tables']['pedidos']['Row'];
@@ -12,7 +13,7 @@ export type Pedido = Database['public']['Tables']['pedidos']['Row'];
  * @returns Array de pedidos ou um array vazio em caso de erro.
  */
 async function fetchPedidos(): Promise<Pedido[]> {
-  const supabase = createServerClient();
+  const supabase = createServerSupabaseClient();
 
   // Busca os pedidos de forma simples por enquanto, ordenando pelo mais recente
   const { data, error } = await supabase

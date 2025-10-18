@@ -1,7 +1,9 @@
+// components/admin/clientes/ClienteDetalhes360.tsx
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useTransition } from 'react';
 import { Cliente } from '@/types/clientes';
+import { createClientUpdateToken } from '@/app/admin/(protected)/clientes/[id]/actions';
 import DadosPessoaisTab from './tabs/DadosPessoaisTab';
 import DocumentosTab from './tabs/DocumentosTab';
 import PreferenciasTab from './tabs/PreferenciasTab';
@@ -22,6 +24,10 @@ import {
   Mail,
   MessageSquare,
   Edit,
+  Send,
+  Loader2,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 interface ClienteDetalhes360Props {
@@ -51,20 +57,41 @@ const tabs = [
 
 export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props) {
   const [activeTab, setActiveTab] = useState<TabId>('dados-pessoais');
-  // NOVO ESTADO: Para forçar o modo edição na aba de Dados Pessoais
   const [isDadosPessoaisEditing, setIsDadosPessoaisEditing] = useState(false);
   
-  // NOVA FUNÇÃO: Para lidar com a Ação Rápida de Editar
+  // Estados para o link de atualização
+  const [isGeneratingLink, startLinkGeneration] = useTransition();
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [hasCopied, setHasCopied] = useState(false);
+  
   const handleQuickEdit = useCallback(() => {
     setActiveTab('dados-pessoais');
     setIsDadosPessoaisEditing(true);
   }, []);
   
-  // Nova função para a aba de Dados Pessoais para que ela possa comunicar que saiu do modo edição
   const handleToggleEdit = useCallback((isEditing: boolean) => {
     setIsDadosPessoaisEditing(isEditing);
   }, []);
 
+  // Função para gerar e exibir o link de atualização
+  const handleGenerateUpdateLink = () => {
+    startLinkGeneration(async () => {
+      const result = await createClientUpdateToken(cliente.id);
+      if (result.success && result.data?.url) {
+        setGeneratedLink(result.data.url);
+      } else {
+        alert(result.message || 'Erro ao gerar o link.');
+      }
+    });
+  };
+
+  const copyToClipboard = () => {
+    if (generatedLink) {
+        navigator.clipboard.writeText(generatedLink);
+        setHasCopied(true);
+        setTimeout(() => setHasCopied(false), 2000);
+    }
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -142,20 +169,25 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                   </span>
                 </div>
               </div>
+
+              {/* Input para exibir o link gerado */}
+              {generatedLink && (
+                <div className="mt-4 flex items-center gap-2 max-w-md">
+                    <input type="text" readOnly value={generatedLink} className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700"/>
+                    <button onClick={copyToClipboard} className={`p-2 rounded-lg transition-colors ${hasCopied ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                       {hasCopied ? <Check size={16} /> : <Copy size={16} />}
+                    </button>
+                </div>
+              )}
             </div>
           </div>
           
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
-              WhatsApp
+            <button onClick={handleGenerateUpdateLink} disabled={isGeneratingLink} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50">
+              {isGeneratingLink ? <Loader2 className="w-4 h-4 animate-spin"/> : <Send className="w-4 h-4" />}
+              Enviar Formulário
             </button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-              <Mail className="w-4 h-4" />
-              Email
-            </button>
-            {/* CORRIGIDO: Botão Editar que chama a função handleQuickEdit */}
             <button 
               onClick={handleQuickEdit} 
               className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark flex items-center gap-2"
@@ -180,7 +212,6 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                   key={tab.id}
                   onClick={() => {
                       setActiveTab(tab.id);
-                      // Se trocar de aba, garante que o modo edição de Dados Pessoais está desativado
                       if (tab.id !== 'dados-pessoais') {
                           setIsDadosPessoaisEditing(false);
                       }
@@ -209,14 +240,12 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
             <DadosPessoaisTab 
                 cliente={cliente} 
                 initialEditMode={isDadosPessoaisEditing}
-                onToggleEdit={handleToggleEdit} // Passa a função de callback
+                onToggleEdit={handleToggleEdit}
             />
         )}
           
           {activeTab === 'documentos' && (
-            <div className="text-center py-12 text-gray-500">
              <DocumentosTab clienteId={cliente.id} />
-            </div>
           )}
           
           {activeTab === 'preferencias' && (
@@ -224,33 +253,23 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
         )}
           
           {activeTab === 'enderecos' && (
-            <div className="text-center py-12 text-gray-500">
               <EnderecosTab clienteId={cliente.id} />
-            </div>
           )}
           
           {activeTab === 'contatos-emergencia' && (
-            <div className="text-center py-12 text-gray-500">
               <ContatosTab clienteId={cliente.id} />
-            </div>
           )}
           
           {activeTab === 'milhas' && (
-            <div className="text-center py-12 text-gray-500">
               <MilhasTab clienteId={cliente.id} />
-            </div>
           )}
           
           {activeTab === 'historico' && (
-            <div className="text-center py-12 text-gray-500">
               <HistoricoTab clienteId={cliente.id} />
-            </div>
           )}
           
           {activeTab === 'timeline' && (
-            <div className="text-center py-12 text-gray-500">
               <TimelineTab clienteId={cliente.id} />
-            </div>
           )}
         </div>
       </div>

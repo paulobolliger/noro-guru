@@ -20,7 +20,10 @@ interface AdminLayoutClientProps {
 export default function AdminLayoutClient({ user, notificacoes, children, configSistema }: AdminLayoutClientProps) {
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar user={user} />
+      <Sidebar 
+        user={user} 
+        topbarColor={configSistema.topbar_color} // Passa a cor para a Sidebar
+      />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar 
           user={user} 

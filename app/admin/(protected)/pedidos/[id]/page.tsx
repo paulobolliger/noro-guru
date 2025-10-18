@@ -1,17 +1,11 @@
-import { createServerClient } from '@/utils/supabase/server';
-import { Database } from '@/types/supabase'; // Assumindo este import
+// app/admin/(protected)/pedidos/[id]/page.tsx
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import PedidoDetalhesCard from '@/components/admin/pedidos/PedidoDetalhesCard'; 
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button'; // Corrigindo a possível falta de import
-
-// Tipagem completa para o Pedido e seus relacionamentos, incluindo Cobranças
-export type PedidoComRelacionamentos = Database['public']['Tables']['pedidos']['Row'] & {
-  pedido_itens: Database['public']['Tables']['pedido_itens']['Row'][];
-  clientes: Database['public']['Tables']['clientes']['Row'] | null; 
-  cobrancas: Database['public']['Tables']['cobrancas']['Row'][]; // NOVO: Adicionado Cobranças
-};
+import { Button } from '@/components/ui/button';
+import { PedidoComRelacionamentos } from '@/types/admin'; // CORRIGIDO: Importa do ficheiro de tipos
 
 interface PedidoDetalhesPageProps {
   params: {
@@ -19,11 +13,8 @@ interface PedidoDetalhesPageProps {
   };
 }
 
-/**
- * Função para buscar um Pedido com seus itens, dados do cliente E COBRANÇAS.
- */
 async function fetchPedidoDetalhes(id: string): Promise<PedidoComRelacionamentos | null> {
-  const supabase = createServerClient();
+  const supabase = createServerSupabaseClient();
 
   const { data: pedido, error } = await supabase
     .from('pedidos')
@@ -32,7 +23,7 @@ async function fetchPedidoDetalhes(id: string): Promise<PedidoComRelacionamentos
         *,
         pedido_itens(*),
         clientes(*),
-        cobrancas(*) // NOVO: Buscando cobranças relacionadas
+        cobrancas(*)
       `
     )
     .eq('id', id)
@@ -43,7 +34,6 @@ async function fetchPedidoDetalhes(id: string): Promise<PedidoComRelacionamentos
     return null;
   }
 
-  // O Supabase retorna um array vazio se não houverem itens/cobranças, o que é seguro.
   return pedido as PedidoComRelacionamentos; 
 }
 
@@ -68,9 +58,7 @@ export default async function PedidoDetalhesPage({ params }: PedidoDetalhesPageP
         </h1>
       </header>
       
-      {/* Componente de apresentação de detalhes, agora com cobranças */}
       <PedidoDetalhesCard pedido={pedido} />
-
     </main>
   );
 }

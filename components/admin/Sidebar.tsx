@@ -2,26 +2,42 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   Home, Package, FileText, Users, MessageSquare, Mail, DollarSign, 
-  BarChart3, Settings, Calendar, Instagram, Menu, X, UserCheck
+  BarChart3, Settings, Calendar, Instagram, Menu, X, UserCheck,
+  LogOut, Loader2
 } from 'lucide-react';
 import { useState } from 'react';
 import packageJson from '@/../package.json';
+import { createClient } from '@/lib/supabase/client';
 
 interface SidebarProps {
-  user?: {
+  user: {
+    id: string;
     nome: string | null;
     email: string;
     role: string;
+    avatar_url?: string | null;
   };
+  topbarColor?: string;
 }
 
-export default function Sidebar({ user }: SidebarProps) {
+export default function Sidebar({ user, topbarColor }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
   const version = packageJson.version;
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await supabase.auth.signOut();
+    router.push('/admin/login');
+    router.refresh();
+  };
 
   const menuItems = [
     { href: '/admin', icon: Home, label: 'Dashboard' },
@@ -39,20 +55,23 @@ export default function Sidebar({ user }: SidebarProps) {
   ];
 
   return (
-    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-screen`}>
+    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-secondary text-slate-300 transition-all duration-300 flex flex-col h-screen`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+      <div 
+        className="h-16 px-4 border-b flex items-center justify-between"
+        style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+      >
         {sidebarOpen && (
           <div>
-            <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               NORO
             </div>
-            <p className="text-xs text-gray-400 -mt-1">v{version}</p>
+            <p className="text-xs text-slate-500 -mt-1">v{version}</p>
           </div>
         )}
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)} 
-          className="text-gray-600 hover:text-gray-900 transition-colors"
+          className="text-slate-400 hover:text-white transition-colors"
         >
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -67,21 +86,51 @@ export default function Sidebar({ user }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'hover:bg-white/5'
                 }`}
               >
-                <item.icon size={20} />
-                {sidebarOpen && <span className="font-medium">{item.label}</span>}
+                <item.icon 
+                  size={20} 
+                  strokeWidth={2.5}
+                  className={isActive ? 'text-white' : 'text-primary group-hover:text-primary-dark transition-colors'} 
+                />
+                {sidebarOpen && (
+                    <span className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                        {item.label}
+                    </span>
+                )}
               </Link>
             );
           })}
         </div>
       </nav>
 
-      {/* A SEÇÃO DE LOGOUT FOI REMOVIDA DAQUI */}
+      {/* Rodapé com Utilizador e Botão de Logout */}
+      <div className="border-t border-white/10 p-4">
+        <div className="flex items-center gap-3">
+          <img 
+            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`} 
+            alt="Avatar"
+            className="w-8 h-8 rounded-full"
+          />
+          {sidebarOpen && (
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-semibold text-slate-200 truncate">{user.nome || user.email?.split('@')[0]}</p>
+            </div>
+          )}
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+            title="Sair"
+          >
+            {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

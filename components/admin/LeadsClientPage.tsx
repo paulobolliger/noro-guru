@@ -3,9 +3,10 @@
 
 import { useState } from 'react';
 import type { Database } from '@/types/supabase';
-import KanbanBoard from './KanbanBoard'; // Importa o nosso novo componente Kanban
+import KanbanBoard from './KanbanBoard';
 import { format } from 'date-fns';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
@@ -20,22 +21,32 @@ export default function LeadsClientPage({ leads }: LeadsClientPageProps) {
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Todos os Leads</h1>
-        {/* Seletor de Visualização */}
-        <div className="flex items-center gap-2 p-1 bg-gray-200 rounded-lg">
-          <button
-            onClick={() => setView('table')}
-            className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'table' ? 'bg-white text-gray-800 shadow' : 'text-gray-500 hover:bg-gray-300'}`}
+        <div className="flex items-center gap-4">
+          {/* Seletor de Visualização */}
+          <div className="flex items-center gap-2 p-1 bg-gray-200 rounded-lg">
+            <button
+              onClick={() => setView('table')}
+              className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'table' ? 'bg-white text-gray-800 shadow' : 'text-gray-500 hover:bg-gray-300'}`}
+            >
+              <List size={16} />
+              Tabela
+            </button>
+            <button
+              onClick={() => setView('kanban')}
+              className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'kanban' ? 'bg-white text-gray-800 shadow' : 'text-gray-500 hover:bg-gray-300'}`}
+            >
+              <LayoutGrid size={16} />
+              Kanban
+            </button>
+          </div>
+          {/* Botão Novo Lead */}
+          <Link
+            href="/admin/leads/novo"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:shadow-lg transition-shadow"
           >
-            <List size={16} />
-            Tabela
-          </button>
-          <button
-            onClick={() => setView('kanban')}
-            className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'kanban' ? 'bg-white text-gray-800 shadow' : 'text-gray-500 hover:bg-gray-300'}`}
-          >
-            <LayoutGrid size={16} />
-            Kanban
-          </button>
+            <Plus size={20} />
+            Novo Lead
+          </Link>
         </div>
       </div>
       
