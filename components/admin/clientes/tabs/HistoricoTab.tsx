@@ -1,64 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileText, Package, DollarSign, Calendar, Eye, ExternalLink } from 'lucide-react';
+import { getClienteHistorico } from '@/app/admin/(protected)/clientes/[id]/historico-actions';
+import { useRouter } from 'next/navigation';
 
 interface HistoricoTabProps {
   clienteId: string;
 }
 
 export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
+  const router = useRouter();
   const [filtro, setFiltro] = useState<'todos' | 'orcamentos' | 'pedidos' | 'transacoes'>('todos');
+  const [loading, setLoading] = useState(true);
+  const [orcamentos, setOrcamentos] = useState<any[]>([]);
+  const [pedidos, setPedidos] = useState<any[]>([]);
+  const [transacoes, setTransacoes] = useState<any[]>([]);
 
-  // TODO: Implementar busca real no banco quando módulos de orçamentos/pedidos estiverem prontos
-  const orcamentos = [
-    {
-      id: '1',
-      numero: 'ORC-2025-001',
-      data: '2025-01-15',
-      destino: 'Paris, França',
-      valor: 15000,
-      status: 'aprovado',
-    },
-    {
-      id: '2',
-      numero: 'ORC-2025-002',
-      data: '2025-02-10',
-      destino: 'Roma, Itália',
-      valor: 12000,
-      status: 'enviado',
-    },
-  ];
-
-  const pedidos = [
-    {
-      id: '1',
-      numero: 'PED-2025-001',
-      data: '2025-01-20',
-      destino: 'Paris, França',
-      valor: 15000,
-      status: 'confirmado',
-    },
-  ];
-
-  const transacoes = [
-    {
-      id: '1',
-      data: '2025-01-22',
-      descricao: 'Pagamento entrada - Paris',
-      tipo: 'recebimento',
-      valor: 7500,
-      status: 'pago',
-    },
-    {
-      id: '2',
-      data: '2025-02-22',
-      descricao: 'Saldo final - Paris',
-      tipo: 'recebimento',
-      valor: 7500,
-      status: 'pendente',
-    },
-  ];
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setLoading(true);
+      const result = await getClienteHistorico(clienteId);
+      if (mounted && result.success) {
+        setOrcamentos(result.data?.orcamentos || []);
+        setPedidos(result.data?.pedidos || []);
+        setTransacoes(result.data?.transacoes || []);
+      }
+      setLoading(false);
+    })();
+    return () => { mounted = false; };
+  }, [clienteId]);
 
   function getStatusColor(status: string) {
     const cores: Record<string, string> = {
@@ -70,6 +42,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
       cancelado: 'bg-red-100 text-red-800',
       pago: 'bg-green-100 text-green-800',
       atrasado: 'bg-red-100 text-red-800',
+      aguardando_pagamento: 'bg-yellow-100 text-yellow-800'
     };
     return cores[status] || 'bg-gray-100 text-gray-800';
   }
@@ -95,9 +68,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Histórico Completo</h2>
-            <p className="text-sm text-gray-600">
-              Orçamentos, pedidos e transações do cliente
-            </p>
+            <p className="text-sm text-gray-600">Orçamentos, pedidos e cobranças do cliente</p>
           </div>
         </div>
 
@@ -141,14 +112,17 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Transações ({transacoes.length})
+            Cobranças ({transacoes.length})
           </button>
         </div>
       </div>
 
       <div className="p-6">
+        {loading ? (
+          <div className="text-gray-500">Carregando histórico...</div>
+        ) : (
         <div className="space-y-6">
-          
+
           {/* ORÇAMENTOS */}
           {mostrarOrcamentos && orcamentos.length > 0 && (
             <div>
@@ -165,39 +139,42 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-gray-900">{orc.numero}</span>
+                          <span className="font-semibold text-gray-900">{orc.titulo || orc.id}</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(orc.status)}`}>
-                            {orc.status.toUpperCase()}
+                            {String(orc.status).toUpperCase()}
                           </span>
                         </div>
 
                         <div className="space-y-1 text-sm text-gray-600">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
-                            <span>{formatarData(orc.data)}</span>
+                            <span>{formatarData(orc.created_at)}</span>
                           </div>
-                          <p className="font-medium text-gray-900">{orc.destino}</p>
-                          <p className="text-lg font-semibold text-blue-600">
-                            {formatarValor(orc.valor)}
-                          </p>
+                          {typeof orc.valor_total === 'number' && (
+                            <p className="text-lg font-semibold text-blue-600">
+                              {formatarValor(orc.valor_total)}
+                            </p>
+                          )}
                         </div>
                       </div>
 
                       <div className="flex gap-2">
                         <button
-                          onClick={() => alert('Visualizar orçamento (em breve)')}
+                          onClick={() => router.push(`/admin/orcamentos/${orc.id}`)}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Visualizar"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => alert('Abrir orçamento (em breve)')}
+                        <a
+                          href={`/admin/orcamentos/${orc.id}`}
                           className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                          title="Abrir"
+                          title="Abrir em nova aba"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           <ExternalLink className="w-4 h-4" />
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -211,7 +188,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold text-gray-900">Pedidos / Reservas</h3>
+                <h3 className="font-semibold text-gray-900">Pedidos</h3>
               </div>
               <div className="space-y-3">
                 {pedidos.map((ped) => (
@@ -222,39 +199,40 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-gray-900">{ped.numero}</span>
+                          <span className="font-semibold text-gray-900">{ped.id}</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(ped.status)}`}>
-                            {ped.status.toUpperCase()}
+                            {String(ped.status).toUpperCase()}
                           </span>
                         </div>
-
                         <div className="space-y-1 text-sm text-gray-600">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
-                            <span>{formatarData(ped.data)}</span>
+                            <span>{formatarData(ped.created_at)}</span>
                           </div>
-                          <p className="font-medium text-gray-900">{ped.destino}</p>
-                          <p className="text-lg font-semibold text-green-600">
-                            {formatarValor(ped.valor)}
-                          </p>
+                          {typeof ped.valor_total === 'number' && (
+                            <p className="text-lg font-semibold text-green-600">
+                              {formatarValor(ped.valor_total)}
+                            </p>
+                          )}
                         </div>
                       </div>
-
                       <div className="flex gap-2">
                         <button
-                          onClick={() => alert('Visualizar pedido (em breve)')}
+                          onClick={() => router.push(`/admin/pedidos/${ped.id}`)}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Visualizar"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => alert('Abrir pedido (em breve)')}
+                        <a
+                          href={`/admin/pedidos/${ped.id}`}
                           className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                          title="Abrir"
+                          title="Abrir em nova aba"
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           <ExternalLink className="w-4 h-4" />
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -263,48 +241,39 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             </div>
           )}
 
-          {/* TRANSAÇÕES */}
+          {/* COBRANÇAS */}
           {mostrarTransacoes && transacoes.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <DollarSign className="w-5 h-5 text-purple-600" />
-                <h3 className="font-semibold text-gray-900">Transações Financeiras</h3>
+                <DollarSign className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-semibold text-gray-900">Cobranças</h3>
               </div>
               <div className="space-y-3">
-                {transacoes.map((trans) => (
+                {transacoes.map((t) => (
                   <div
-                    key={trans.id}
+                    key={t.id}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                      <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(trans.status)}`}>
-                            {trans.status.toUpperCase()}
+                          <span className="font-semibold text-gray-900">{t.id}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(t.status)}`}>
+                            {String(t.status).toUpperCase()}
                           </span>
                         </div>
-
-                        <div className="space-y-1 text-sm">
-                          <p className="font-medium text-gray-900">{trans.descricao}</p>
-                          <div className="flex items-center gap-2 text-gray-600">
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
-                            <span>{formatarData(trans.data)}</span>
+                            <span>{formatarData(t.created_at)}</span>
                           </div>
-                          <p className={`text-lg font-semibold ${
-                            trans.tipo === 'recebimento' ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {trans.tipo === 'recebimento' ? '+' : '-'} {formatarValor(trans.valor)}
-                          </p>
+                          {typeof t.valor === 'number' && (
+                            <p className="text-lg font-semibold text-emerald-600">
+                              {formatarValor(t.valor)}
+                            </p>
+                          )}
                         </div>
                       </div>
-
-                      <button
-                        onClick={() => alert('Ver detalhes (em breve)')}
-                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                        title="Visualizar"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
                 ))}
@@ -312,30 +281,8 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             </div>
           )}
 
-          {/* Vazio */}
-          {((mostrarOrcamentos && orcamentos.length === 0) ||
-            (mostrarPedidos && pedidos.length === 0) ||
-            (mostrarTransacoes && transacoes.length === 0)) && (
-            <div className="text-center py-12">
-              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Nenhum registro encontrado</p>
-              <p className="text-sm text-gray-400 mt-1">
-                {filtro === 'orcamentos' && 'Crie um orçamento para aparecer aqui'}
-                {filtro === 'pedidos' && 'Converta um orçamento em pedido'}
-                {filtro === 'transacoes' && 'Registre transações financeiras'}
-                {filtro === 'todos' && 'Ainda não há histórico para este cliente'}
-              </p>
-            </div>
-          )}
         </div>
-      </div>
-
-      {/* Nota de desenvolvimento */}
-      <div className="mx-6 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-900">
-          <strong>📝 Nota:</strong> Esta aba está mostrando dados de exemplo. 
-          Será integrada com os módulos de Orçamentos e Pedidos quando estiverem prontos.
-        </p>
+        )}
       </div>
     </div>
   );

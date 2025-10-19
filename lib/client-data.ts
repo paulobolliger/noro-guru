@@ -18,8 +18,8 @@ export const INTENCOES_VIAGEM = {
   "Viagens de Negócios & Grupos": ["Corporativo (Business Travel)", "Incentivo de Vendas (MICE)", "Grupo de Amigos", "Grupo Religioso", "Grupo de Formatura"]
 };
 
-export const TERMOS_E_CONDICOES_PADRAO = {
-    1. Validade da Proposta
+export const TERMOS_E_CONDICOES_PADRAO = `
+1. Validade da Proposta
 Esta proposta tem validade até {{data_validade}}. Após esta data, valores, disponibilidade e condições podem sofrer alterações sem aviso prévio.
 
 2. Serviços Incluídos e Não Incluídos
@@ -41,7 +41,7 @@ Recomendamos fortemente a contratação de um seguro viagem. Caso opte por não 
 
 7. Aceite da Proposta
 Ao confirmar esta proposta e efetuar o pagamento do sinal, o cliente declara estar ciente e de acordo com todos os termos aqui descritos.
-}
+`;
 
 // Dados de Profissões, Países e Nacionalidades.
 

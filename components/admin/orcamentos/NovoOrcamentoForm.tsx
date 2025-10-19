@@ -72,7 +72,7 @@ function GerarRoteiroAIModal({ isOpen, onClose, onGenerate, clientes }: { isOpen
             <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                 <div className="p-6 border-b flex items-center justify-between"><h3 className="text-xl font-semibold flex items-center gap-2"><Wand2 className="text-purple-600"/> Gerar Proposta com IA</h3><button type="button" onClick={onClose}><X className="w-6 h-6" /></button></div>
                 <div className="p-6 space-y-6 overflow-y-auto">
-                    <div className="relative"><label className="block text-sm font-medium text-gray-700 mb-2">Nome do Cliente</label><input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, clienteId: '', novoClienteNome: e.target.value })); }} placeholder="Buscar cliente existente ou digitar novo nome..." className="w-full px-4 py-2 border rounded-lg"/>{clienteSearch.length > 0 && !formData.clienteId && (<div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}</div>)}</div>
+                    <div className="relative"><label className="block text-sm font-medium text-gray-700 mb-2">Nome do Cliente</label><input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, clienteId: '', novoClienteNome: e.target.value })); }} placeholder="Buscar cliente existente ou digitar novo nome..." className="w-full px-4 py-2 border rounded-lg"/>{clienteSearch.length > 0 && !formData.clienteId && (<div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-gray-500">Ou utilize o nome digitado como novo cliente.</p></div>)}</div>
                     <div className="grid grid-cols-3 gap-4"><div><label className="block text-sm font-medium text-gray-700 mb-2">Destino *</label><input type="text" value={formData.destino} onChange={(e) => setFormData(prev => ({...prev, destino: e.target.value}))} required className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-gray-700 mb-2">Nº de Dias *</label><input type="number" value={formData.num_dias} onChange={(e) => setFormData(prev => ({...prev, num_dias: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-gray-700 mb-2">Nº de Pessoas *</label><input type="number" value={formData.num_pessoas} onChange={(e) => setFormData(prev => ({...prev, num_pessoas: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Viagem *</label><select value={formData.tipo_viagem} onChange={(e) => setFormData(prev => ({...prev, tipo_viagem: e.target.value}))} className="w-full px-4 py-2 border rounded-lg bg-white">{Object.keys(INTENCOES_VIAGEM).map(category => (<optgroup label={category} key={category}>{INTENCOES_VIAGEM[category as keyof typeof INTENCOES_VIAGEM].map(intention => (<option key={intention} value={intention}>{intention}</option>))}</optgroup>))}</select></div>
                     <div><label className="block text-sm font-medium text-gray-700 mb-2">Preferências da Viagem (mínimo 3, máximo 5)</label><div className="p-3 bg-gray-50 border rounded-lg flex flex-wrap gap-2">{Object.values(INTENCOES_VIAGEM).flat().map(p => (<button key={p} type="button" onClick={() => handleMultiSelect(p)} className={`px-3 py-1 rounded-full text-xs ${formData.preferencias.includes(p) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>{p}</button>))}</div></div>
@@ -81,26 +81,6 @@ function GerarRoteiroAIModal({ isOpen, onClose, onGenerate, clientes }: { isOpen
                 <div className="p-6 border-t flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button><button onClick={handleGenerate} disabled={isPending || formData.preferencias.length < 3} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">{isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />}{isPending ? 'Gerando...' : 'Gerar Roteiro'}</button></div>
             </div>
         </div>
-    );
-}
-
-// --- Componente do Modal de Itens ---
-function ItemModal({ item, onClose, onSave }: { item: OrcamentoItem | null; onClose: () => void; onSave: (item: Omit<OrcamentoItem, 'id' | 'valor_final'>) => void; }) {
-    const isEditing = !!item;
-    const [itemData, setItemData] = useState<Omit<OrcamentoItem, 'id' | 'valor_final'>>({ tipo: item?.tipo || 'Hospedagem', descricao: item?.descricao || '', valor_net: item?.valor_net || 0, comissao_percentual: item?.comissao_percentual || 10 });
-    const valorFinal = useMemo(() => (itemData.valor_net || 0) * (1 + (itemData.comissao_percentual || 0) / 100), [itemData.valor_net, itemData.comissao_percentual]);
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
-        setItemData(prev => ({ ...prev, [name]: type === 'number' ? parseFloat(value) || 0 : value as OrcamentoItem['tipo'] }));
-    };
-    const handleInternalSave = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!itemData.descricao || itemData.valor_net <= 0) { alert("Descrição e Valor Custo devem ser preenchidos e o valor deve ser maior que zero."); return; }
-        onSave({ ...itemData, valor_net: itemData.valor_net }); 
-        onClose();
-    };
-    return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-xl w-full max-w-lg"><form onSubmit={handleInternalSave}><div className="p-6 border-b"><div className="flex items-center justify-between"><h3 className="text-xl font-semibold">{isEditing ? 'Editar Item' : 'Adicionar Item'}</h3><button type="button" onClick={onClose}><X className="w-6 h-6" /></button></div></div><div className="p-6 space-y-4"><div><label className="block text-sm font-medium mb-2">Tipo de Serviço *</label><select name="tipo" value={itemData.tipo} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" required>{TIPOS_DE_ITEM.map(tipo => (<option key={tipo} value={tipo}>{tipo}</option>))}</select></div><div><label className="block text-sm font-medium mb-2">Descrição Detalhada *</label><textarea name="descricao" value={itemData.descricao} onChange={handleChange} rows={3} placeholder="Ex: Hotel Grand Hyatt - 5 noites, quarto deluxe" className="w-full px-4 py-2 border rounded-lg" required/></div><div className="grid grid-cols-3 gap-4"><div><label className="block text-sm font-medium mb-2">Valor Custo (€)</label><input type="number" name="valor_net" value={itemData.valor_net || ''} onChange={handleChange} min="0.01" step="0.01" required className="w-full px-4 py-2 border rounded-lg" /></div><div><label className="block text-sm font-medium mb-2">Comissão (%)</label><input type="number" name="comissao_percentual" value={itemData.comissao_percentual || ''} onChange={handleChange} min="0" step="0.1" className="w-full px-4 py-2 border rounded-lg" /></div><div><label className="block text-sm font-medium mb-2">Valor Venda (€)</label><input type="text" value={valorFinal.toLocaleString('pt-PT', { minimumFractionDigits: 2 })} disabled className="w-full px-4 py-2 border rounded-lg bg-gray-100 font-bold"/></div></div></div><div className="p-6 border-t flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button><button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"><Save className="w-4 h-4" />{isEditing ? 'Salvar Edição' : 'Adicionar Item'}</button></div></form></div></div>
     );
 }
 
@@ -185,7 +165,13 @@ export default function NovoOrcamentoForm() {
         }
     };
     
-    const handleAddItem = (item: Omit<OrcamentoItem, 'id' | 'valor_final'>) => { const valor_final = item.valor_net * (1 + item.comissao_percentual / 100); const newItem: OrcamentoItem = { ...item, id: currentItem ? currentItem.id : crypto.randomUUID(), valor_final }; setItens(prev => currentItem ? prev.map(i => i.id === newItem.id ? newItem : i) : [...prev, newItem]); setCurrentItem(null); setIsModalItemOpen(false); };
+    const handleAddItem = (item: Omit<OrcamentoItem, 'id' | 'valor_final'>) => { 
+      const valor_final = item.valor_net * (1 + item.comissao_percentual / 100); 
+      const newItem: OrcamentoItem = { ...item, id: currentItem ? currentItem.id : crypto.randomUUID(), valor_final }; 
+      setItens(prev => currentItem ? prev.map(i => i.id === newItem.id ? newItem : i) : [...prev, newItem]); 
+      setCurrentItem(null); 
+      setIsModalItemOpen(false); 
+    };
     const handleDeleteItem = (id: string) => { if (confirm('Tem certeza?')) setItens(prev => prev.filter(i => i.id !== id)); };
     const handleEditItem = (item: OrcamentoItem) => { setCurrentItem(item); setIsModalItemOpen(true); };
     
@@ -242,7 +228,7 @@ export default function NovoOrcamentoForm() {
                                 <div className="relative">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Cliente *</label>
                                     <input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, lead_id: '', novo_cliente_nome: e.target.value })); }} placeholder="🔍 Buscar ou digitar nome de novo cliente..." required className="w-full px-4 py-3 border border-gray-300 rounded-lg"/>
-                                    {clienteSearch.length > 0 && !formData.lead_id && !isClientesLoading && ( <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c.id)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}</div> )}
+                                    {clienteSearch.length > 0 && !formData.lead_id && !isClientesLoading && ( <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c.id)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-gray-500">Ou utilize o nome digitado como novo cliente.</p></div>)}
                                     {formData.lead_id && (<span className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full"><User size={12} /> Cliente selecionado</span>)}
                                 </div>
                                 <div><label className="block text-sm font-medium text-gray-700 mb-2">Validade da Proposta</label><input type="date" name="validade_ate" value={formData.validade_ate} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg" /></div>
@@ -308,28 +294,172 @@ export default function NovoOrcamentoForm() {
                 </form>
             </div>
             
-            <GerarRoteiroAIModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} onGenerate={(roteiro, titulo, clienteData) => { setFormData(prev => ({ ...prev, descricao: roteiro, titulo: titulo, lead_id: clienteData.id, novo_cliente_nome: clienteData.id ? '' : clienteData.nome })); if (clienteData.id) { setClienteSearch(clienteData.nome); } else { setClienteSearch(clienteData.nome); } }} clientes={clientes} />
+            {/* CORREÇÃO APLICADA AQUI */}
+            <GerarRoteiroAIModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} onGenerate={(roteiro, titulo, clienteData) => { 
+                setFormData(prev => ({ 
+                    ...prev, 
+                    descricao: roteiro, 
+                    titulo: titulo, 
+                    lead_id: clienteData.id, 
+                    novo_cliente_nome: clienteData.id ? '' : clienteData.nome,
+                    // Garante que o num_dias seja atualizado se tiver sido gerado pela IA (vem do modal, mas é bom garantir)
+                    num_dias: prev.num_dias // Mantém o valor original do form, que é pego do modal de IA.
+                })); 
+                // Atualiza o campo de busca (o texto visível)
+                setClienteSearch(clienteData.nome); 
+            }} clientes={clientes} />
+            
             {isModalItemOpen && <ItemModal item={currentItem} onClose={() => { setIsModalItemOpen(false); setCurrentItem(null); }} onSave={handleAddItem} />}
         </>
     );
 }
 
-// --- Componente do Modal de Itens ---
-function ItemModal({ item, onClose, onSave }: { item: OrcamentoItem | null; onClose: () => void; onSave: (item: Omit<OrcamentoItem, 'id' | 'valor_final'>) => void; }) {
+// =======================================================================
+// MODAL PARA ADIÇÃO/EDIÇÃO DE ITEM (Componente Auxiliar)
+// =======================================================================
+interface ItemModalProps {
+    item: OrcamentoItem | null;
+    onClose: () => void;
+    onSave: (item: Omit<OrcamentoItem, 'id' | 'valor_final'>) => void;
+}
+
+function ItemModal({ item, onClose, onSave }: ItemModalProps) {
     const isEditing = !!item;
-    const [itemData, setItemData] = useState<Omit<OrcamentoItem, 'id' | 'valor_final'>>({ tipo: item?.tipo || 'Hospedagem', descricao: item?.descricao || '', valor_net: item?.valor_net || 0, comissao_percentual: item?.comissao_percentual || 10 });
-    const valorFinal = useMemo(() => (itemData.valor_net || 0) * (1 + (itemData.comissao_percentual || 0) / 100), [itemData.valor_net, itemData.comissao_percentual]);
+    const [itemData, setItemData] = useState<Omit<OrcamentoItem, 'id' | 'valor_final'>>({
+        tipo: item?.tipo || 'Hospedagem',
+        descricao: item?.descricao || '',
+        valor_net: item?.valor_net || 0,
+        comissao_percentual: item?.comissao_percentual || 10, // Default 10%
+    });
+
+    const valorFinal = useMemo(() => {
+        const net = itemData.valor_net || 0;
+        const comissao = itemData.comissao_percentual || 0;
+        return net * (1 + comissao / 100);
+    }, [itemData.valor_net, itemData.comissao_percentual]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
-        setItemData(prev => ({ ...prev, [name]: type === 'number' ? parseFloat(value) || 0 : value as OrcamentoItem['tipo'] }));
+        
+        if (type === 'number') {
+             setItemData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+        } else {
+            setItemData(prev => ({ ...prev, [name]: value as OrcamentoItem['tipo'] }));
+        }
     };
+
     const handleInternalSave = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!itemData.descricao || itemData.valor_net <= 0) { alert("Descrição e Valor Custo devem ser preenchidos e o valor deve ser maior que zero."); return; }
+        if (!itemData.descricao || itemData.valor_net <= 0) {
+            alert("Descrição e Valor Custo devem ser preenchidos e o valor deve ser maior que zero.");
+            return;
+        }
+        // Chamada ao onSave do componente principal
         onSave({ ...itemData, valor_net: itemData.valor_net }); 
         onClose();
     };
+
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-xl w-full max-w-lg"><form onSubmit={handleInternalSave}><div className="p-6 border-b"><div className="flex items-center justify-between"><h3 className="text-xl font-semibold">{isEditing ? 'Editar Item' : 'Adicionar Item'}</h3><button type="button" onClick={onClose}><X className="w-6 h-6" /></button></div></div><div className="p-6 space-y-4"><div><label className="block text-sm font-medium mb-2">Tipo de Serviço *</label><select name="tipo" value={itemData.tipo} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" required>{TIPOS_DE_ITEM.map(tipo => (<option key={tipo} value={tipo}>{tipo}</option>))}</select></div><div><label className="block text-sm font-medium mb-2">Descrição Detalhada *</label><textarea name="descricao" value={itemData.descricao} onChange={handleChange} rows={3} placeholder="Ex: Hotel Grand Hyatt - 5 noites, quarto deluxe" className="w-full px-4 py-2 border rounded-lg" required/></div><div className="grid grid-cols-3 gap-4"><div><label className="block text-sm font-medium mb-2">Valor Custo (€)</label><input type="number" name="valor_net" value={itemData.valor_net || ''} onChange={handleChange} min="0.01" step="0.01" required className="w-full px-4 py-2 border rounded-lg" /></div><div><label className="block text-sm font-medium mb-2">Comissão (%)</label><input type="number" name="comissao_percentual" value={itemData.comissao_percentual || ''} onChange={handleChange} min="0" step="0.1" className="w-full px-4 py-2 border rounded-lg" /></div><div><label className="block text-sm font-medium mb-2">Valor Venda (€)</label><input type="text" value={valorFinal.toLocaleString('pt-PT', { minimumFractionDigits: 2 })} disabled className="w-full px-4 py-2 border rounded-lg bg-gray-100 font-bold"/></div></div></div><div className="p-6 border-t flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button><button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"><Save className="w-4 h-4" />{isEditing ? 'Salvar Edição' : 'Adicionar Item'}</button></div></form></div></div>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-lg">
+                <form onSubmit={handleInternalSave}>
+                    <div className="p-6 border-b">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-semibold">{isEditing ? 'Editar Item' : 'Adicionar Item'}</h3>
+                            <button type="button" onClick={onClose}>
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="p-6 space-y-4">
+                        {/* Tipo de Item */}
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Tipo de Serviço *</label>
+                            <select 
+                                name="tipo" 
+                                value={itemData.tipo} 
+                                onChange={handleChange} 
+                                className="w-full px-4 py-2 border rounded-lg"
+                                required
+                            >
+                                {TIPOS_DE_ITEM.map(tipo => (
+                                    <option key={tipo} value={tipo}>{tipo}</option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        {/* Descrição */}
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Descrição Detalhada *</label>
+                            <textarea 
+                                name="descricao" 
+                                value={itemData.descricao} 
+                                onChange={handleChange}
+                                rows={3}
+                                placeholder="Ex: Hotel Grand Hyatt - 5 noites, quarto deluxe"
+                                className="w-full px-4 py-2 border rounded-lg" 
+                                required
+                            />
+                        </div>
+
+                        {/* Valores */}
+                        <div className="grid grid-cols-3 gap-4">
+                            {/* Valor Net */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Valor Custo (€)</label>
+                                <input 
+                                    type="number" 
+                                    name="valor_net" 
+                                    value={itemData.valor_net || ''} 
+                                    onChange={handleChange}
+                                    min="0.01"
+                                    step="0.01"
+                                    required
+                                    className="w-full px-4 py-2 border rounded-lg" 
+                                />
+                            </div>
+                            {/* Comissão */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Comissão (%)</label>
+                                <input 
+                                    type="number" 
+                                    name="comissao_percentual" 
+                                    value={itemData.comissao_percentual || ''} 
+                                    onChange={handleChange}
+                                    min="0"
+                                    step="0.1"
+                                    className="w-full px-4 py-2 border rounded-lg" 
+                                />
+                            </div>
+                            {/* Valor Final Calculado */}
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Valor Venda (€)</label>
+                                <input 
+                                    type="text" 
+                                    value={valorFinal.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}
+                                    disabled
+                                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 font-bold"
+                                />
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div className="p-6 border-t flex justify-end gap-3">
+                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <button 
+                            type="submit" 
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"
+                        >
+                            <Save className="w-4 h-4" />
+                            {isEditing ? 'Salvar Edição' : 'Adicionar Item'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }

@@ -1,4 +1,3 @@
-// components/ui/DatePickerWithRange.tsx
 'use client';
 
 import * as React from 'react';
@@ -62,6 +61,18 @@ export function DatePickerWithRange({
             onSelect={setDate}
             numberOfMonths={2}
             locale={ptBR}
+            formatters={{
+              formatWeekdayName: (date) => ['D','S','T','Q','Q','S','S'][date.getDay()],
+              formatCaption: (date) => format(date, 'LLLL yyyy', { locale: ptBR }),
+            }}
+            classNames={{
+              caption_label: "text-base font-semibold text-gray-900 capitalize",
+              day_selected: "bg-blue-600 text-white hover:bg-blue-700 focus:bg-blue-700",
+              day_range_middle: "bg-blue-100 text-gray-900 hover:bg-blue-200",
+              day_today: "bg-gray-100 text-gray-900",
+              day_outside: "text-gray-400 opacity-50",
+              day_disabled: "text-gray-400 opacity-50",
+            }}
           />
         </PopoverContent>
       </Popover>

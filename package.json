@@ -25,6 +25,7 @@
     "react-email": "^4.3.0",
     "recharts": "^3.2.1",
     "resend": "^6.1.2",
+    "stripe": "^16.5.0",
     "tailwind": "^4.0.0",
     "tailwind-merge": "^3.3.1",
     "twilio": "^5.10.3",

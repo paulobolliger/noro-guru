@@ -1,29 +1,31 @@
-// components/admin/clientes/tabs/DocumentosTab.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { FileText, Plus, Edit2, Trash2, X, Save, UploadCloud, Loader2, AlertCircle, Eye } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { FileText, Plus, Edit2, Trash2, X, UploadCloud, Loader2, AlertCircle, Eye, AlertTriangle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { 
   getClienteDocumentos, 
   createDocumento, 
   updateDocumento,
   deleteDocumento 
 } from '@/app/admin/(protected)/clientes/[id]/actions';
-import { useRouter } from 'next/navigation';
 import type { DocumentoStatus, DocumentoTipo } from '@/types/clientes';
 import { PAISES_E_NACIONALIDADES } from '@/lib/client-data';
 
-// Interface completa do documento, alinhada com a DB
 interface Documento {
   id: string;
   tipo: DocumentoTipo;
   numero?: string | null;
   pais_emissor?: string | null;
+  orgao_emissor?: string | null;
   data_emissao?: string | null;
   data_validade?: string | null;
   status: DocumentoStatus;
   arquivo_url?: string | null;
+  arquivo_public_id?: string | null;
   arquivo_nome?: string | null;
+  arquivo_tamanho?: number | null;
+  observacoes?: string | null;
   created_at: string;
 }
 
@@ -31,16 +33,15 @@ interface DocumentosTabProps {
   clienteId: string;
 }
 
-// Estado inicial do formulário
 const initialFormState = {
   tipo: 'passaporte' as DocumentoTipo,
   numero: '',
   pais_emissor: 'Brasil',
+  orgao_emissor: '',
   data_emissao: '',
   data_validade: '',
   status: 'valido' as DocumentoStatus,
   observacoes: '',
-  // Campos de arquivo
   arquivo_url: '',
   arquivo_public_id: '',
   arquivo_nome: '',
@@ -54,21 +55,17 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
   const [showModal, setShowModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingDoc, setEditingDoc] = useState<Documento | null>(null);
-  
   const [formData, setFormData] = useState(initialFormState);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [listFilter, setListFilter] = useState<'todos' | 'vencendo' | 'vencidos'>('todos');
 
-  useEffect(() => {
-    loadDocumentos();
-  }, [clienteId]);
+  useEffect(() => { loadDocumentos(); }, [clienteId]);
 
   async function loadDocumentos() {
     setIsLoading(true);
     const result = await getClienteDocumentos(clienteId);
-    if (result.success && result.data) {
-      setDocumentos(result.data as Documento[]);
-    }
+    if (result.success && result.data) setDocumentos(result.data as Documento[]);
     setIsLoading(false);
   }
 
@@ -77,29 +74,31 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFileToUpload(file);
-      setUploadError(null);
-    }
+    const file = e.target.files?.[0] || null;
+    setFileToUpload(file);
+    setUploadError(null);
   }
 
   async function handleUpload() {
     if (!fileToUpload) return null;
-
-    const uploadFormData = new FormData();
-    uploadFormData.append('file', fileToUpload);
-    uploadFormData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
-
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`, {
-        method: 'POST',
-        body: uploadFormData,
+      const folder = `clientes/${clienteId}/documentos`;
+      const signRes = await fetch('/api/cloudinary/sign', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ folder })
       });
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error.message);
-      }
+      const sign = await signRes.json();
+      if (!signRes.ok) throw new Error(sign.error || 'Falha na assinatura do upload');
+
+      const form = new FormData();
+      form.append('file', fileToUpload);
+      form.append('api_key', sign.apiKey);
+      form.append('timestamp', String(sign.timestamp));
+      if (sign.folder) form.append('folder', sign.folder);
+      form.append('signature', sign.signature);
+
+      const resp = await fetch(`https://api.cloudinary.com/v1_1/${sign.cloudName}/auto/upload`, { method: 'POST', body: form });
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error.message || 'Falha no upload');
       return data;
     } catch (error: any) {
       setUploadError(error.message);
@@ -107,53 +106,12 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
     }
   }
 
-  async function handleSave() {
-    setIsSaving(true);
+  function closeModal() {
+    setShowModal(false);
+    setEditingDoc(null);
+    setFormData(initialFormState);
+    setFileToUpload(null);
     setUploadError(null);
-
-    let uploadedFileData = null;
-    if (fileToUpload) {
-      uploadedFileData = await handleUpload();
-      if (!uploadedFileData) {
-        setIsSaving(false);
-        return;
-      }
-    }
-
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key as keyof typeof formData] as string);
-    });
-
-    if (uploadedFileData) {
-      formDataToSend.set('arquivo_url', uploadedFileData.secure_url);
-      formDataToSend.set('arquivo_public_id', uploadedFileData.public_id);
-      formDataToSend.set('arquivo_nome', uploadedFileData.original_filename);
-      formDataToSend.set('arquivo_tamanho', uploadedFileData.bytes);
-    }
-
-    const result = editingDoc
-      ? await updateDocumento(editingDoc.id, formDataToSend)
-      : await createDocumento(clienteId, formDataToSend);
-
-    if (result.success) {
-      closeModal();
-      await loadDocumentos();
-      router.refresh();
-    } else {
-      alert('Erro ao salvar: ' + result.error);
-    }
-
-    setIsSaving(false);
-  }
-
-  async function handleDelete(docId: string) {
-    if (!confirm('Tem certeza que deseja deletar este documento?')) return;
-    const result = await deleteDocumento(docId, clienteId);
-    if (result.success) {
-      await loadDocumentos();
-      router.refresh();
-    }
   }
 
   function handleEdit(doc: Documento) {
@@ -162,36 +120,74 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       tipo: doc.tipo,
       numero: doc.numero || '',
       pais_emissor: doc.pais_emissor || 'Brasil',
-      data_emissao: doc.data_emissao ? new Date(doc.data_emissao).toISOString().split('T')[0] : '',
-      data_validade: doc.data_validade ? new Date(doc.data_validade).toISOString().split('T')[0] : '',
+      orgao_emissor: doc.orgao_emissor || '',
+      data_emissao: doc.data_emissao || '',
+      data_validade: doc.data_validade || '',
       status: doc.status,
-      observacoes: '', // Limpo para edição, já que não temos esse campo na UI de lista
-      // Campos de arquivo não são editáveis diretamente
+      observacoes: doc.observacoes || '',
       arquivo_url: doc.arquivo_url || '',
-      arquivo_public_id: '',
+      arquivo_public_id: doc.arquivo_public_id || '',
       arquivo_nome: doc.arquivo_nome || '',
-      arquivo_tamanho: 0,
+      arquivo_tamanho: doc.arquivo_tamanho || 0,
     });
     setShowModal(true);
   }
 
-  function closeModal() {
-    setShowModal(false);
-    setEditingDoc(null);
-    setFileToUpload(null);
-    setUploadError(null);
-    setFormData(initialFormState);
+  async function handleDelete(id: string) {
+    const ok = confirm('Excluir este documento?');
+    if (!ok) return;
+    const result = await deleteDocumento(id, clienteId);
+    if (result.success) { await loadDocumentos(); router.refresh(); }
+    else alert('Erro ao deletar: ' + result.error);
   }
-  
-  const getStatusConfig = (status: string) => {
+
+  async function handleSave() {
+    setIsSaving(true);
+    setUploadError(null);
+
+    let uploaded: any = null;
+    if (fileToUpload) {
+      uploaded = await handleUpload();
+      if (!uploaded) { setIsSaving(false); return; }
+    }
+
+    const fd = new FormData();
+    Object.keys(formData).forEach((key) => {
+      // @ts-ignore
+      const v = formData[key];
+      if (v !== undefined && v !== null) fd.append(key, String(v));
+    });
+    if (uploaded) {
+      fd.set('arquivo_url', uploaded.secure_url);
+      fd.set('arquivo_public_id', uploaded.public_id);
+      fd.set('arquivo_nome', uploaded.original_filename || uploaded.public_id);
+      fd.set('arquivo_tamanho', String(uploaded.bytes || 0));
+    }
+
+    const result = editingDoc
+      ? await updateDocumento(editingDoc.id, fd)
+      : await createDocumento(clienteId, fd);
+
+    if (result.success) {
+      closeModal();
+      await loadDocumentos();
+      router.refresh();
+    } else {
+      alert('Erro ao salvar: ' + (result.error || result.message));
+    }
+
+    setIsSaving(false);
+  }
+
+  function getStatusConfig(status: string) {
     const configs: Record<string, { bg: string; text: string }> = {
-        valido: { bg: 'bg-green-100', text: 'text-green-800' },
-        vencido: { bg: 'bg-red-100', text: 'text-red-800' },
-        pendente: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-        renovando: { bg: 'bg-blue-100', text: 'text-blue-800' },
+      valido: { bg: 'bg-green-100', text: 'text-green-800' },
+      vencido: { bg: 'bg-red-100', text: 'text-red-800' },
+      pendente: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+      renovando: { bg: 'bg-blue-100', text: 'text-blue-800' },
     };
     return configs[status] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-  };
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -201,13 +197,27 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
           <FileText className="w-6 h-6 text-blue-600" />
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Documentos</h2>
-            <p className="text-sm text-gray-600">{documentos.length} documento(s) cadastrados</p>
+            <p className="text-sm text-gray-600">
+              {documentos.length} documento(s) cadastrados{listFilter !== 'todos' ? ` • Filtro: ${listFilter}` : ''}
+            </p>
           </div>
         </div>
-        
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg">
-          <Plus className="w-4 h-4" /> Adicionar Documento
-        </button>
+
+        <div className="flex items-center gap-2">
+          <select
+            value={listFilter}
+            onChange={(e) => setListFilter(e.target.value as any)}
+            className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 bg-white text-gray-700"
+            title="Filtrar documentos"
+          >
+            <option value="todos">Todos</option>
+            <option value="vencendo">Vencendo (≤ 90 dias)</option>
+            <option value="vencidos">Vencidos</option>
+          </select>
+          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg">
+            <Plus className="w-4 h-4" /> Adicionar Documento
+          </button>
+        </div>
       </div>
 
       {/* Grid de Documentos */}
@@ -224,41 +234,79 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {documentos.map((doc) => {
-              const statusConfig = getStatusConfig(doc.status);
-              return (
-                <div key={doc.id} className="border border-gray-200 rounded-lg p-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-blue-600" />
-                        <span className="font-semibold text-gray-900 capitalize">{doc.tipo.replace('_', ' ')}</span>
+            {documentos
+              .filter(doc => {
+                if (listFilter === 'todos') return true;
+                if (!doc.data_validade) return false;
+                const validade = new Date(doc.data_validade);
+                const now = new Date();
+                const diasRestantes = Math.ceil((validade.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                if (listFilter === 'vencendo') return diasRestantes >= 0 && diasRestantes <= 90;
+                if (listFilter === 'vencidos') return diasRestantes < 0;
+                return true;
+              })
+              .map((doc) => {
+                const statusConfig = getStatusConfig(doc.status);
+                const validade = doc.data_validade ? new Date(doc.data_validade) : null;
+                const now = new Date();
+                const diasRestantes = validade ? Math.ceil((validade.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
+                const isVencido = diasRestantes !== null && diasRestantes < 0;
+                const isAExpirar = diasRestantes !== null && diasRestantes >= 0 && diasRestantes <= 90;
+                return (
+                  <div key={doc.id} className="border border-gray-200 rounded-lg p-4 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-5 h-5 text-blue-600" />
+                          <span className="font-semibold text-gray-900 capitalize">{doc.tipo.replace('_', ' ')}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}>
+                            {doc.status}
+                          </span>
+                          {isVencido && (
+                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3"/> Vencido
+                            </span>
+                          )}
+                          {!isVencido && isAExpirar && (
+                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                              Vence em {diasRestantes} dia(s)
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}>
-                        {doc.status}
-                      </span>
+                      <div className="space-y-2 mb-4">
+                        {doc.numero && <p className="text-sm text-gray-600"><span className="font-medium">Número:</span> {doc.numero}</p>}
+                        {doc.data_validade && <p className="text-sm text-gray-600"><span className="font-medium">Validade:</span> {new Date(doc.data_validade).toLocaleDateString('pt-BR')}</p>}
+                        {diasRestantes !== null && (
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Dias restantes:</span> {diasRestantes >= 0 ? diasRestantes : `-${Math.abs(diasRestantes)}`} {diasRestantes >= 0 ? '' : '(vencido)'}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-2 mb-4">
-                      {doc.numero && <p className="text-sm text-gray-600"><span className="font-medium">Número:</span> {doc.numero}</p>}
-                      {doc.data_validade && <p className="text-sm text-gray-600"><span className="font-medium">Validade:</span> {new Date(doc.data_validade).toLocaleDateString('pt-BR')}</p>}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-3 border-t">
-                    {doc.arquivo_url && (
-                        <a href={doc.arquivo_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg">
+                    <div className="flex gap-2 pt-3 border-t">
+                      {doc.arquivo_url && (
+                        <>
+                          <a href={doc.arquivo_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg">
                             <Eye className="w-4 h-4" /> Visualizar
-                        </a>
-                    )}
-                    <button onClick={() => handleEdit(doc)} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
-                      <Edit2 className="w-4 h-4" /> Editar
-                    </button>
-                    <button onClick={() => handleDelete(doc.id)} className="flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                          </a>
+                          <a href={doc.arquivo_url} download className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+                            Baixar
+                          </a>
+                        </>
+                      )}
+                      <button onClick={() => handleEdit(doc)} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+                        <Edit2 className="w-4 h-4" /> Editar
+                      </button>
+                      <button onClick={() => handleDelete(doc.id)} className="flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         )}
       </div>
@@ -316,21 +364,21 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
                 </select>
               </div>
               <div>
-                  <label className="block text-sm font-medium mb-2">Anexar Arquivo</label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                      <div className="space-y-1 text-center">
-                          <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                          <div className="flex text-sm text-gray-600">
-                              <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                                  <span>Selecione um arquivo</span>
-                                  <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
-                              </label>
-                          </div>
-                          {fileToUpload && <p className="text-xs text-gray-500">{fileToUpload.name}</p>}
-                          {!fileToUpload && formData.arquivo_nome && <p className="text-xs text-gray-500">Arquivo atual: {formData.arquivo_nome}</p>}
-                          {uploadError && <p className="text-xs text-red-500 flex items-center justify-center gap-1"><AlertCircle size={14}/> {uploadError}</p>}
-                      </div>
-                  </div>
+                <label className="block text-sm font-medium mb-2">Anexar Arquivo</label>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div className="space-y-1 text-center">
+                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="flex text-sm text-gray-600 justify-center">
+                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                <span>Selecione um arquivo</span>
+                                <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
+                            </label>
+                        </div>
+                        {fileToUpload && <p className="text-xs text-gray-500">{fileToUpload.name}</p>}
+                        {!fileToUpload && formData.arquivo_nome && <p className="text-xs text-gray-500">Arquivo atual: {formData.arquivo_nome}</p>}
+                        {uploadError && <p className="text-xs text-red-500 flex items-center justify-center gap-1"><AlertCircle size={14}/> {uploadError}</p>}
+                    </div>
+                </div>
               </div>
             </div>
             <div className="p-6 border-t flex gap-3 justify-end">
@@ -346,3 +394,4 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
     </div>
   );
 }
+

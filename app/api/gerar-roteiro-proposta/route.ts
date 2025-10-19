@@ -15,6 +15,12 @@ export async function POST(req: NextRequest) {
       throw new Error('Chave da API OpenAI não configurada no servidor.');
     }
     
+    // Cálculo dinâmico de max_completion_tokens (500 tokens/dia)
+    const diasViagem = parseInt(body.dias_viagem as string, 10);
+    
+    // Define o valor dinâmico com um limite de 5000 tokens (10 dias) para controle de custos.
+    const maxTokens = Math.min(diasViagem * 500, 5000); 
+    
     // Monta o prompt final com base no seu novo template
     const systemPrompt = `Você é um especialista em turismo e roteiros personalizados da plataforma Noro.`;
     
@@ -56,8 +62,8 @@ export async function POST(req: NextRequest) {
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        temperature: 0.7,
-        max_tokens: 2000,
+        // CORREÇÃO: Removido o parâmetro 'temperature'
+        max_completion_tokens: maxTokens, 
       }),
     });
 

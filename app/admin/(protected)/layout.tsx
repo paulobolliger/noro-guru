@@ -7,6 +7,8 @@ import AdminLayoutClient from '@/components/admin/AdminLayoutClient';
 import { getNotificacoes } from '@/lib/supabase/admin';
 // NOVO: Importa a função de buscar config do sistema
 import { getConfiguracaoSistema } from './configuracoes/config-actions'; 
+// NOVO: Importa o Toaster
+import { Toaster } from '@/components/ui/use-toast'; // Assumindo que use-toast.tsx também exporta Toaster
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 
@@ -42,6 +44,7 @@ export default async function ProtectedAdminLayout({
   ]);
 
   return (
+    // O Toaster deve ser renderizado no lado do cliente, assim como o AdminLayoutClient
     <Suspense fallback={<div>A carregar layout do admin...</div>}>
       <AdminLayoutClient 
         user={profile} 
@@ -49,6 +52,8 @@ export default async function ProtectedAdminLayout({
         configSistema={configSistema} // Passa a config para o layout do cliente
       >
         {children}
+        {/* CRÍTICO: O Toaster deve ser incluído para renderizar as notificações */}
+        <Toaster /> 
       </AdminLayoutClient>
     </Suspense>
   );

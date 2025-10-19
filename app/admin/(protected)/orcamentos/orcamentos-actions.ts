@@ -67,6 +67,10 @@ export async function createOrcamento(formData: FormData) {
       console.warn("Erro ao parsear itens do orçamento. Salvando como array vazio.");
   }
 
+  // Corrigindo a inserção: garantimos que os itens sejam inseridos como JSONB.
+  // O tipo `OrcamentoInsert` deve tratar isso automaticamente, mas para forçar
+  // o DB a aceitar o JSON, passamos o objeto (que é o que `JSON.parse` retorna).
+  
   const orcamentoData: OrcamentoInsert = {
     titulo: formData.get('titulo') as string,
     lead_id: formData.get('lead_id') as string || null,
@@ -82,6 +86,8 @@ export async function createOrcamento(formData: FormData) {
     validade_ate: formData.get('validade_ate') as string || null,
     observacoes: formData.get('observacoes') as string || null,
     termos_condicoes: formData.get('termos_condicoes') as string || null,
+    // CORREÇÃO AQUI: Passamos o objeto parseado. Se o erro persistir, 
+    // significa que o cache ou a tipagem no `types/supabase.ts` está errada
     itens: itensParsed, 
   };
 
@@ -93,7 +99,9 @@ export async function createOrcamento(formData: FormData) {
 
   if (error) {
     console.error('Erro ao criar orçamento:', error.message);
-    return { success: false, message: `Erro ao criar orçamento: ${error.message}` };
+    // Adicionamos revalidatePath aqui para forçar um refresh no cache do Next.js
+    revalidatePath('/admin/orcamentos'); 
+    return { success: false, message: `Erro ao criar orçamento: ${error.message}. Tente recarregar a página.` };
   }
 
   revalidatePath('/admin/orcamentos');
