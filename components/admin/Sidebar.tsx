@@ -35,7 +35,7 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
   const handleLogout = async () => {
     setLoggingOut(true);
     await supabase.auth.signOut();
-    router.push('/admin/login');
+    router.push('/core/login');
     router.refresh();
   };
 
@@ -54,24 +54,26 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
     { href: '/admin/configuracoes', icon: Settings, label: 'Configurações' },
   ];
 
+  // Normalize paths to /core (legacy code might still point to /admin)
+  const items = menuItems.map((i) => ({ ...i, href: i.href.replace('/admin', '/core') }))
+
   return (
-    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-secondary text-slate-300 transition-all duration-300 flex flex-col h-screen`}>
+    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 flex flex-col h-screen text-white`} style={{ backgroundColor: '#232452' }}>
       {/* Header */}
       <div 
-        className="h-16 px-4 border-b flex items-center justify-between"
-        style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+        className="h-16 px-4 border-b border-white/10 flex items-center justify-between"
       >
         {sidebarOpen && (
           <div>
             <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               NORO
             </div>
-            <p className="text-xs text-slate-500 -mt-1">v{version}</p>
+            <p className="text-xs text-white/50 -mt-1">v{version}</p>
           </div>
         )}
         <button 
           onClick={() => setSidebarOpen(!sidebarOpen)} 
-          className="text-slate-400 hover:text-white transition-colors"
+          className="text-white/70 hover:text-white transition-colors"
         >
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -80,25 +82,25 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
       {/* Menu Items */}
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+          {items.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/core' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                    : 'hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-guru to-noro hover:from-blue-600 hover:to-purple-600 text-white shadow-lg'
+                    : 'hover:bg-white/10'
                 }`}
               >
                 <item.icon 
                   size={20} 
                   strokeWidth={2.5}
-                  className={isActive ? 'text-white' : 'text-primary group-hover:text-primary-dark transition-colors'} 
+                  className={isActive ? 'text-white' : 'text-white/80 group-hover:text-white transition-colors'} 
                 />
                 {sidebarOpen && (
-                    <span className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                    <span className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-white/90 group-hover:text-white'}`}>
                         {item.label}
                     </span>
                 )}
@@ -118,13 +120,13 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
           />
           {sidebarOpen && (
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-slate-200 truncate">{user.nome || user.email?.split('@')[0]}</p>
+              <p className="text-sm font-semibold text-white truncate">{user.nome || user.email?.split('@')[0]}</p>
             </div>
           )}
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+            className="p-2 text-white/70 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
             title="Sair"
           >
             {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}

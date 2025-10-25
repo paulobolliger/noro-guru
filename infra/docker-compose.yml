@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  provisioner:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ..:/app
+    env_file:
+      - .env
+    command: sh -lc "npx --yes tsx infra/provision/provision-tenant.ts"
+

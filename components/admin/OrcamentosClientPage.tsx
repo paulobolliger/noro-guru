@@ -45,7 +45,7 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
     }, [orcamentos, searchTerm, statusFilter]);
 
     const handleVerDetalhes = (orcamentoId: string) => {
-        router.push(`/admin/orcamentos/${orcamentoId}`);
+        router.push(`/core/orcamentos/${orcamentoId}`);
     };
 
     return (
@@ -59,7 +59,7 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
                     </div>
                 </div>
                 <button
-                    onClick={() => router.push('/admin/orcamentos/novo')}
+                    onClick={() => router.push('/core/orcamentos/novo')}
                     className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                 >
                     <Plus size={20} />

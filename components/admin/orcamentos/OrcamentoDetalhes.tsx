@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRightIcon } from 'lucide-react';
-import { convertToPedido } from '@/app/admin/(protected)/pedidos/pedidos-actions';
+import { convertToPedido } from '@/app/core/(protected)/pedidos/pedidos-actions';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import type { Database } from '@/types/supabase';
@@ -38,7 +38,7 @@ export function OrcamentoDetalhes({ orcamento }: OrcamentoDetalhesProps) {
       if (result.success) {
         toast({ title: 'Sucesso!', description: result.message });
         if (result.data?.pedidoId) {
-            router.push(`/admin/pedidos/${result.data.pedidoId}`);
+            router.push(`/core/pedidos/${result.data.pedidoId}`);
         } else {
             router.refresh(); 
         }

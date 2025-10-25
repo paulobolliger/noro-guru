@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, Loader2, AlertCircle } from 'lucide-react';
-import { deleteUserAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { deleteUserAction } from '@/app/core/(protected)/configuracoes/actions';
 
 interface DeleteUserModalProps {
   isOpen: boolean;

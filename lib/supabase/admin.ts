@@ -13,13 +13,14 @@ function getSupabaseAdmin() {
     return supabaseAdmin;
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
+  // Accept both private and public env names for URL to avoid misconfiguration
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceKey) {
     console.error("ERRO CRÍTICO: Variáveis de ambiente do Supabase para o servidor não foram carregadas.");
-    console.error("Verifique se SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY estão no seu arquivo .env.local e reinicie o servidor.");
-    throw new Error('As chaves do Supabase Admin para o servidor não estão definidas.');
+    console.error("Esperado: SUPABASE_SERVICE_ROLE_KEY e SUPABASE_URL (ou NEXT_PUBLIC_SUPABASE_URL) em .env.local");
+    throw new Error('As chaves/URL do Supabase Admin não estão definidas.');
   }
 
   supabaseAdmin = createClient<Database>(supabaseUrl, serviceKey, {
@@ -101,6 +102,6 @@ export async function getNotificacoes(userId: string, limit: number) {
   return data || [];
 }
 
-// Exporta a função para que outros módulos possam usá-la
-export { getSupabaseAdmin };
+// Exporta a função e o cliente singleton (para módulos que importam diretamente)
+export { getSupabaseAdmin, supabaseAdmin };
 

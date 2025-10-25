@@ -1,60 +1,65 @@
-/* Diretivas base do Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos base para a aplicação */
-@layer base {
-  html {
-    @apply scroll-smooth;
-  }
-
-  body {
-    /* Aplicando o fundo gradiente e a cor de texto padrão */
-    @apply bg-gradient-to-tr from-[#0f172a] to-[#1e293b] text-white overflow-x-hidden;
-  }
-
-  /* Estilização da Barra de Rolagem Personalizada */
-  ::-webkit-scrollbar {
-    width: 18px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-neutral-dark;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary rounded-full border-4 border-solid border-neutral-dark;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary-dark;
-  }
-
-  /* === NOVOS ESTILOS PARA FORMULÁRIOS === */
-  /* Garante que todos os inputs e selects tenham uma aparência consistente */
-  input[type='text'],
-  input[type='email'],
-  input[type='password'],
-  input[type='number'],
-  select,
-  textarea {
-    @apply bg-gray-100 text-gray-900 placeholder-gray-500;
-  }
-
-  /* Estilos específicos para o dark mode ou áreas escuras, como o admin */
-  .dark input[type='text'],
-  .dark input[type='email'],
-  .dark input[type='password'],
-  .dark input[type='number'],
-  .dark select,
-  .dark textarea,
-  body:not(.light) input[type='text'],
-  body:not(.light) input[type='email'],
-  body:not(.light) input[type='password'],
-  body:not(.light) input[type='number'],
-  body:not(.light) select,
-  body:not(.light) textarea {
-    @apply bg-slate-700 text-white placeholder-slate-400 border-slate-600;
-  }
+/* Brand base styles */
+:root {
+  --bg: #ffffff;
+  --text: #0b0b12;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-gray-900 antialiased;
+}
+
+::selection {
+  background: rgba(80, 83, 196, 0.2);
+}
+
+.container-max {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.card {
+  @apply bg-white border border-gray-100/60 rounded-lg shadow-soft hover:shadow-lg transition-shadow;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-medium transition-all;
+}
+
+.btn-primary {
+  @apply bg-guru text-white hover:bg-noro hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply bg-core text-gray-900 hover:brightness-110;
+}
+
+.section {
+  @apply py-6 md:py-8;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full bg-light text-gray-700 px-3 py-1 text-xs font-medium;
+}
+
+.glass {
+  @apply bg-white/60 backdrop-blur-md border border-white/50;
+}
+
+/* Unified section title band */
+.section-band {
+  @apply rounded-lg bg-gradient-to-r from-guru to-noro px-4 py-4 md:py-5 text-center;
+}
+.section-band h2 {
+  @apply font-display font-semibold text-white text-[28px] md:text-[34px] m-0;
+}
+.section-band p {
+  @apply text-white/85 mt-1.5;
+}
+.section-band .badge { @apply hidden; }

@@ -33,7 +33,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-gray-900">Tarefas Pendentes</h2>
-        <Link href="/admin/tarefas" className="text-blue-600 text-sm font-semibold hover:text-blue-700">
+        <Link href="/core/tarefas" className="text-blue-600 text-sm font-semibold hover:text-blue-700">
           + Nova tarefa
         </Link>
       </div>

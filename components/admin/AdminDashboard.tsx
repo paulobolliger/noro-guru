@@ -40,7 +40,7 @@ export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: Admi
         </div>
         {/* BOTÃO ALTERADO */}
         <Link
-          href="/admin/leads/novo"
+          href="/core/leads/novo"
           className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow"
         >
           <Plus size={20} />

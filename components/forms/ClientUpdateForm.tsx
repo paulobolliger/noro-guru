@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { updateClientFromPublicForm } from '@/app/admin/(protected)/clientes/[id]/actions';
+import { updateClientFromPublicForm } from '@/app/core/(protected)/clientes/[id]/actions';
 import type { Database } from '@/types/supabase';
 import { User, Mail, Phone, Calendar, Globe, Briefcase, CreditCard, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { PROFISSOES, PAISES_E_NACIONALIDADES } from '@/lib/client-data';

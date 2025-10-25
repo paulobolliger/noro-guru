@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
-import { Pedido } from '@/app/admin/(protected)/pedidos/page';
+import { Pedido } from '@/app/core/(protected)/pedidos/page';
 import { Badge } from '@/components/ui/badge';
 
 interface PedidosListProps {
@@ -49,13 +49,13 @@ export function PedidosList({ pedidos }: PedidosListProps) {
           {pedidos.map((pedido) => (
             <tr key={pedido.id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
-                <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
+                <Link href={`/core/pedidos/${pedido.id}`} className="hover:underline">
                   {pedido.id.slice(0, 8)}...
                 </Link>
               </td>
               {/* O nome do cliente viria de um JOIN, mas por enquanto, usamos o ID */}
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                Cliente ID: {pedido.cliente_id.slice(0, 8)}
+                Lead ID: {(pedido as any).lead_id ? (pedido as any).lead_id.slice(0,8) : '—'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {currencyFormat(pedido.valor_total || 0)}
@@ -69,7 +69,7 @@ export function PedidosList({ pedidos }: PedidosListProps) {
                 {format(new Date(pedido.created_at), 'dd/MM/yyyy')}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <Link href={`/admin/pedidos/${pedido.id}`} className="text-indigo-600 hover:text-indigo-900">
+                <Link href={`/core/pedidos/${pedido.id}`} className="text-indigo-600 hover:text-indigo-900">
                   Ver Detalhes
                 </Link>
               </td>

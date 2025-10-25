@@ -1,0 +1,29 @@
+import { NextResponse } from "next/server";
+import { supabaseServerAdmin } from "@/lib/supabase/cp";
+
+export async function POST(req: Request) {
+  try {
+    const { name, slug, plan, billing_email } = await req.json();
+    if (!name || !slug) {
+      return NextResponse.json({ error: "Campos obrigatórios ausentes." }, { status: 400 });
+    }
+
+    const supabase = supabaseServerAdmin();
+    const { data, error } = await supabase.rpcCp("provision_tenant", {
+      p_name: name,
+      p_slug: slug,
+      p_plan: plan || "starter",
+      p_billing_email: billing_email || null,
+    });
+
+    if (error) {
+      console.error("? provision_tenant error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, tenant_id: data });
+  } catch (e: any) {
+    console.error("? Exception:", e?.message);
+    return NextResponse.json({ error: e?.message || "internal error" }, { status: 500 });
+  }
+}

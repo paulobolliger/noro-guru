@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { Globe, Clock, Calendar, DollarSign, Moon, Sun, Laptop, Grid, List, Bell, BellOff, Mail, Smartphone, CheckCircle2, AlertTriangle, Loader2, Image as ImageIcon, Palette } from 'lucide-react';
-import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from '@/app/admin/(protected)/configuracoes/config-actions';
+import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from '@/app/core/(protected)/configuracoes/config-actions';
 
 interface PreferenciasTabProps {
   configSistema: ConfiguracaoSistema;

@@ -3,7 +3,7 @@
 
 import { useState, useTransition, useRef, useEffect } from 'react';
 import { X, Mail, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { inviteUserAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { inviteUserAction } from '@/app/core/(protected)/configuracoes/actions';
 
 interface InviteUserModalProps {
   isOpen: boolean;

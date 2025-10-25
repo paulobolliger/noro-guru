@@ -4,8 +4,8 @@
 import { useState, useTransition, useEffect, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FileText, User, Plane, DollarSign, Loader2, AlertCircle, CheckCircle2, Plus, Edit2, Trash2, X, Save, Wand2, FileSignature, Info, Settings, FileArchive, Send } from 'lucide-react';
-import { createOrcamento } from '@/app/admin/(protected)/orcamentos/orcamentos-actions';
-import { getClientes } from '@/app/admin/(protected)/clientes/actions';
+import { createOrcamento } from '@/app/core/(protected)/orcamentos/orcamentos-actions';
+import { getClientes } from '@/app/core/(protected)/clientes/actions';
 import { format, differenceInDays, addDays } from 'date-fns';
 import { TERMOS_E_CONDICOES_PADRAO, INTENCOES_VIAGEM } from '@/lib/client-data';
 import { DateRange } from 'react-day-picker';

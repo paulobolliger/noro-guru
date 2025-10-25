@@ -22,6 +22,13 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      // Path-based tenant routing
+      { source: '/t/:slug', destination: '/core' },
+      { source: '/t/:slug/:path*', destination: '/core/:path*' },
+    ];
+  },
 };
 
 export default nextConfig;

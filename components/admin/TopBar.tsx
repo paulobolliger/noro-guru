@@ -1,4 +1,4 @@
-// components/admin/TopBar.tsx
+﻿// components/core/TopBar.tsx
 'use client';
 
 import { Search, Bell, ChevronRight } from 'lucide-react';
@@ -20,22 +20,22 @@ interface TopBarProps {
 }
 
 const generateBreadcrumbs = (pathname: string, clienteNome: string | null) => {
-  if (pathname === '/admin') {
-    return [{ label: 'Dashboard', href: '/admin' }];
+  if (pathname === '/core') {
+    return [{ label: 'Dashboard', href: '/core' }];
   }
 
-  const parts = pathname.replace('/admin', '').split('/').filter(Boolean);
-  const breadcrumbs = [{ label: 'Dashboard', href: '/admin' }];
+  const parts = pathname.replace('/core', '').split('/').filter(Boolean);
+  const breadcrumbs = [{ label: 'Dashboard', href: '/core' }];
 
-  let currentPath = '/admin';
+  let currentPath = '/core';
   parts.forEach((part, index) => {
     const isLastPart = index === parts.length - 1;
     let label = part.charAt(0).toUpperCase() + part.slice(1);
 
-    if (isLastPart && pathname.includes('/admin/clientes/') && clienteNome) {
+    if (isLastPart && pathname.includes('/core/clientes/') && clienteNome) {
       label = clienteNome;
     } 
-    else if (isLastPart && pathname.includes('/admin/clientes/')) {
+    else if (isLastPart && pathname.includes('/core/clientes/')) {
         label = 'Carregando cliente...'
     }
 
@@ -87,7 +87,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
     }
   }, [pathname, supabase]);
   
-  // Foca no input quando a busca é aberta
+  // Foca no input quando a busca Ã© aberta
   useEffect(() => {
     if (isSearchOpen) {
       searchInputRef.current?.focus();
@@ -107,7 +107,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
       <div className="flex items-center justify-between w-full">
         {/* Lado Esquerdo: Logo e Breadcrumbs */}
         <div className="flex items-center gap-4">
-          <Link href="/admin">
+          <Link href="/core">
             <div className="relative h-14 w-40">
               <Image
                 src={finalLogoUrl}
@@ -136,7 +136,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
           </div>
         </div>
 
-        {/* Lado Direito: Ações */}
+        {/* Lado Direito: AÃ§Ãµes */}
         <div className="flex items-center gap-4">
           {/* Search Bar Interativa */}
           <div className="relative flex items-center justify-end">
@@ -166,7 +166,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-              title="Notificações"
+              title="NotificaÃ§Ãµes"
             >
               <Bell size={20} />
               {naoLidas > 0 && (
@@ -176,14 +176,14 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
             {showNotifications && (
                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 text-gray-900">
                 <div className="p-4 border-b border-gray-200">
-                  <h3 className="font-semibold">Notificações</h3>
+                  <h3 className="font-semibold">NotificaÃ§Ãµes</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
                   {notificacoes.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">Nenhuma notificação</div>
+                    <div className="p-4 text-center text-gray-500">Nenhuma notificaÃ§Ã£o</div>
                   ) : (
                     notificacoes.map((notif) => (
-                      <Link key={notif.id} href={notif.link || '/admin'} onClick={() => setShowNotifications(false)} className={`block p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 ${!notif.lida ? 'bg-blue-50' : ''}`}>
+                      <Link key={notif.id} href={notif.link || '/core'} onClick={() => setShowNotifications(false)} className={`block p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 ${!notif.lida ? 'bg-blue-50' : ''}`}>
                         <p className="font-medium text-sm">{notif.titulo}</p>
                         {notif.mensagem && (<p className="text-sm text-gray-600 mt-1">{notif.mensagem}</p>)}
                         <p className="text-xs text-gray-400 mt-2">{new Date(notif.created_at).toLocaleString('pt-BR')}</p>
@@ -192,7 +192,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
                   )}
                 </div>
                 <div className="p-4 border-t border-gray-200 text-center">
-                  <Link href="/admin/notificacoes" className="text-sm text-blue-600 hover:text-blue-700 font-medium" onClick={() => setShowNotifications(false)}>Ver todas</Link>
+                  <Link href="/core/notificacoes" className="text-sm text-blue-600 hover:text-blue-700 font-medium" onClick={() => setShowNotifications(false)}>Ver todas</Link>
                 </div>
               </div>
             )}

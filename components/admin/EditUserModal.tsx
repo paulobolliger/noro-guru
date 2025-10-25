@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { updateUserRoleAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { updateUserRoleAction } from '@/app/core/(protected)/configuracoes/actions';
 
 interface EditUserModalProps {
   isOpen: boolean;

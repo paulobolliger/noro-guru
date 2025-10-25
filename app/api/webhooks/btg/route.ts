@@ -115,8 +115,8 @@ export async function POST(req: Request) {
             console.log(`✅ Pagamento BTG conciliado. Pedido ${pedidoId} e Cobrança ${cobranca.id} atualizados para CONCLUIDO.`);
 
             // D. Revalidar as páginas afetadas
-            revalidatePath(`/admin/pedidos/${pedidoId}`);
-            revalidatePath('/admin/pagamentos'); // Remove da lista de pendentes
+            revalidatePath(`/core/pedidos/${pedidoId}`);
+            revalidatePath('/core/pagamentos'); // Remove da lista de pendentes
 
         } catch (dbError) {
             console.error('Erro de DB ao processar webhook BTG:', dbError);

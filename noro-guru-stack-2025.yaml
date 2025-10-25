@@ -1,0 +1,256 @@
+                          🌐 Cloudflare (DNS + Tunnel + Zero Trust)
+                                           │
+                                           ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                    Control Plane →  https://control.noro.guru          │
+│  (Next.js + Supabase + RPC + Realtime)                                 │
+│                                                                        │
+│  • cp schema: tenants, users, billing, logs, events, email_logs        │
+│  • Orquestra via n8n → provisiona tenants, ERP, CRM, Mautic            │
+│  • Painéis globais (/control/dashboard, /billing, /logs...)            │
+└────────────────────────────────────────────────────────────────────────┘
+               │                            │
+               │ REST/RPC (Supabase)        │ Workflows (n8n)
+               ▼                            ▼
+┌───────────────────────────┐       ┌───────────────────────────┐
+│     Supabase (Free Tier)  │       │  Oracle Cloud VM #2       │
+│───────────────────────────│       │  n8n + Traefik + Caddy    │
+│ cp.*  (global)            │◄──────┤ Orquestrador / Provision  │
+│ tenant_* (por cliente)    │       │ Workflows: create_tenant, │
+│ Auth / Storage / RPCs     │       │ send_email, billing_sync  │
+└───────────────────────────┘       └───────────────────────────┘
+               ▲                            │
+               │                            │ Docker API (local)
+               │                            ▼
+                        ┌──────────────────────────────────────────────┐
+                        │             Oracle Cloud VM #1               │
+                        │──────────────────────────────────────────────│
+                        │  Containers por Tenant:                      │
+                        │   - ERP (Dolibarr PHP + MariaDB)             │
+                        │   - CRM (EspoCRM PHP + MariaDB)              │
+                        │   - Mautic (PHP + MariaDB)                   │
+                        │  Todos rodando headless, acessados via APIs  │
+                        │  Internos: erp.t-<slug>.svc.local            │
+                        └──────────────────────────────────────────────┘
+                                                   │
+                                                   ▼
+                                        ☁️  AWS SES (Email Hub)
+                                        ───────────────────────
+                                        • Um serviço central
+                                        • Domínios verificados: nomade.guru, vistos.guru, etc.
+                                        • Configuration Set = slug do tenant
+                                        • n8n envia via API SES
+                                        • Logs → cp.email_logs (Supabase)
+
+---
+
+## 🧩 2. Fluxos principais
+
+### 🔹 1) Criação de Tenant
+1. Admin cria tenant no `/control/tenants`.
+2. Supabase insere registro em `cp.tenants`.
+3. Trigger chama webhook n8n: **create_tenant**.
+4. n8n:
+   - Cria schema `tenant_<slug>` no Supabase.
+   - Sobe containers (ERP/CRM/Mautic) + DBs no Oracle VM #1.
+   - Registra os serviços e endpoints.
+   - Atualiza `cp.system_events` → status = UP.
+
+---
+
+### 🔹 2) Envio de E-mails (Centralizado no SES)
+1. Algum módulo (Core ou Control) publica evento `send_email`.
+2. n8n consome → identifica `tenant_id`.
+3. Busca domínio verificado em `cp.ses_identities`.
+4. Chama **AWS SES API** com `ConfigurationSet = tenant_slug`.
+5. SES entrega e-mail; callback via EventBridge → n8n → Supabase (`cp.email_logs`).
+
+---
+
+### 🔹 3) Core App (Tenant Runtime)
+Cada tenant acessa:
+https://noro.guru/t/<slug>
+
+- Autentica no Supabase (schema do tenant).
+- Consome APIs headless do ERP/CRM/Mautic via **n8n Gateway interno**.
+- Dados de cliente, pedidos, leads, campanhas → armazenados em `tenant_<slug>.*`.
+
+---
+
+### 🔹 4) Billing / Relatórios
+- Supabase executa `cp_dashboard_overview()` para consolidar KPIs.
+- n8n agrega volume de e-mails (SES) + uso de containers.
+- `/control/billing` mostra plano, limites e eventos de cobrança.
+- Pagamentos processados via Cielo/Stripe (plug-in).
+
+---
+
+## ⚙️ 3. Componentes Técnicos
+
+| Camada | Tecnologia | Free Tier Status | Função na Arquitetura |
+|--------|-------------|-----------------|-----------------------|
+| **Infra Core** | Oracle Cloud VM (Ampere A1 1 vCPU / 1 GB) | ✅ Always Free | Containers headless (ERP/CRM/Mautic) + MariaDB |
+| **Orquestração** | Oracle Cloud VM #2 (n8n + Traefik + Caddy) | ✅ | Controla playbooks e roteamento |
+| **Banco central** | Supabase (Postgres) | ✅ | Schemas cp e tenant_* + auth + storage + RPC |
+| **Frontend** | Next.js 14 (Vercel ou VM) | ✅ (se Vercel Free) | Control Plane + Core Apps |
+| **E-mail** | AWS SES | 💰 Baixíssimo (≈ US$ 0.10/1 000 emails) | Hub multi-tenant de envio |
+| **DNS/Túnel** | Cloudflare | ✅ | DNS, SSL, Access, Tunnel, WAF |
+| **Logs/Metrics** | cp.system_events / cp.admin_logs | ✅ | Auditoria global e monitoramento |
+
+---
+
+## 🏗️ 4. Estrutura de dados chave no Supabase
+
+**Schemas**
+- `cp.*` → Controle global.
+- `tenant_<slug>.*` → Dados isolados de cada cliente.
+
+**Tabelas principais (cp)**
+- `cp.tenants` – registro e status dos tenants  
+- `cp.ses_identities` – domínios verificados no SES  
+- `cp.system_events` – eventos de infra (provision, status)  
+- `cp.email_logs` – envios e métricas de e-mail  
+- `cp.billing_events` – consumo e faturamento  
+
+---
+
+## 🧠 5. Rede & Segurança
+
+- 🔒 **Todos os containers** (ERP/CRM/Mautic) vivem em rede privada (`*.svc.local`).
+- 🌩️ **Cloudflare Tunnel** liga o Control Plane ao n8n/Traefik.
+- 🧑‍💻 **Cloudflare Access (Zero Trust)** protege interfaces admin.
+- 🔑 Secrets (AWS Keys, DB creds) guardados no Supabase Vault ou .env criptografado.
+- 🔄 n8n gera tokens de serviço curtos para cada tenant em runtime.
+
+---
+
+## 💰 6. Custo estimado (mês)
+
+| Serviço | Custo | Observações |
+|----------|--------|-------------|
+| Oracle 2 VMs | **US$ 0,00** | Always Free |
+| Supabase | **US$ 0,00** | 500 MB storage |
+| AWS SES | **≈ US$ 10,00** | 100 mil e-mails/mês |
+| Vercel Frontend | **US$ 0,00** | Free Hobby |
+| Cloudflare | **US$ 0,00** | Free Plan |
+| **Total** | **≈ US$ 10,00/mês** | operação multi-tenant completa |
+
+---
+
+## 🔮 7. Futuro imediato
+
+- 🔁 Automatizar **scale-to-zero** dos containers inativos (via n8n).  
+- 📈 Adicionar **Grafana/Metabase** (render.com free) para dashboards.  
+- 📬 Conectar **AWS EventBridge → n8n** para telemetria de entrega de e-mails.  
+- 🪄 Provisionamento “one-click” de tenant dentro do Control Plane.  
+- 💳 Integração de billing real com Stripe/Cielo via Supabase Functions.
+
+---
+
+## 🧩 8. Diagrama resumido
+
+        +----------------------+
+        |    control.noro.guru |
+        |   (Next.js + Supa)   |
+        +----------+-----------+
+                   |
+                   | RPC / Events
+                   ▼
+    +-----------------------------+
+    |        Supabase DB          |
+    |  cp.* & tenant_* schemas    |
+    +-------------+---------------+
+                  |
+                  | Webhooks / API
+                  ▼
+     +-----------------------------+
+     |  Oracle VM #2 – n8n/Traefik |
+     +-------------+---------------+
+                   |
+                   | Docker API
+                   ▼
+     +-----------------------------+
+     | Oracle VM #1 – Containers   |
+     | ERP / CRM / Mautic          |
+     +-------------+---------------+
+                   |
+                   | SMTP / API
+                   ▼
+           +----------------+
+           |  AWS SES       |
+           +----------------+
+                   |
+                   ▼
+           🌐 Cloudflare DNS/Tunnel
+
+
+---
+
+👉 **Resumo executivo**
+
+- **Infra gratuita**: Oracle (2 VMs) + Supabase + Cloudflare + Vercel.  
+- **Custo controlado**: apenas SES (~US$ 10/mês).  
+- **Headless total**: tudo via API, sem UI exposta.  
+- **Control Plane**: gestão global (provision, billing, logs).  
+- **Core/Tenants**: isolados por schema e containers.  
+- **Escalabilidade futura**: plug-and-play para AWS, Fly.io ou Kubernetes.
+
+---
+
+Quer que eu monte **o blueprint de provisionamento completo** (playbook do n8n + estrutura de pastas e nomes de containers + variáveis .env necessárias) para você rodar isso de ponta a ponta?
+
+noro-guru/
+├── infra/
+│   ├── docker/
+│   │   ├── docker-compose.yml     ← containers ERP/CRM/Mautic
+│   │   ├── traefik.yml            ← proxy reverso + SSL interno
+│   │   └── .env                   ← variáveis da VM
+│   ├── n8n/
+│   │   ├── workflows/             ← fluxos provisionar, enviar email, billing
+│   │   └── .env
+│   ├── provision/
+│   │   ├── provision-tenant.ts    ← script Supabase + API + n8n
+│   │   ├── create-tenant-schema.sql
+│   │   └── update-tenant-status.sql
+│   ├── sql/
+│   │   ├── cp_tenants.sql
+│   │   ├── cp_dashboard_overview.sql
+│   │   ├── cp_email_logs.sql
+│   │   └── cp_system_events.sql
+│   └── docs/
+│       ├── INSTALL_ORACLE_VM.md
+│       ├── INSTALL_AWS_SES.md
+│       └── INSTALL_SUPABASE.md
+└── app/
+    └── control/ ... (já existe)
+
+
+#ENV GLOBAL
+
+# 🔹 Supabase
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=xxxxxxxxx
+SUPABASE_SERVICE_KEY=xxxxxxxxx
+
+# 🔹 AWS SES
+AWS_ACCESS_KEY_ID=AKIAxxxxxxx
+AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxx
+AWS_REGION=us-east-1
+SES_DEFAULT_SENDER=no-reply@noro.guru
+
+# 🔹 Oracle VM
+ORACLE_VM1_IP=10.0.0.5
+ORACLE_VM2_IP=10.0.0.6
+ORACLE_USER=ubuntu
+
+# 🔹 n8n
+N8N_URL=https://n8n.noro.guru
+N8N_API_KEY=xxxxxxxxx
+
+# 🔹 Control Plane
+CONTROL_URL=https://control.noro.guru
+
+# 🔹 Cloudflare
+CLOUDFLARE_API_TOKEN=xxxxxxxxx
+CLOUDFLARE_ACCOUNT_ID=xxxxxxxxx
+CLOUDFLARE_ZONE_ID=xxxxxxxxx

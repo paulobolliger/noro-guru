@@ -1,0 +1,11 @@
+-- 004_tenant_schema_grants.sql
+-- NOTA: Grants variam conforme estratégia.
+-- Se optar por acesso via PostgREST no schema do tenant com anon key, crie roles/grants e políticas RLS nas tabelas do schema do tenant.
+-- Exemplo de grants (ajuste conforme seu modelo):
+--
+-- DO $$ BEGIN
+--   EXECUTE format('revoke all on schema %I from public', 'tenant_acme');
+--   EXECUTE format('grant usage on schema %I to authenticated', 'tenant_acme');
+--   -- Em seguida, crie políticas RLS tabela a tabela em %I.
+-- END $$;
+

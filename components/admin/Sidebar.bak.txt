@@ -1,0 +1,136 @@
+﻿// components/admin/Sidebar.tsx
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { 
+  Home, Package, FileText, Users, MessageSquare, Mail, DollarSign, 
+  BarChart3, Settings, Calendar, Instagram, Menu, X, UserCheck,
+  LogOut, Loader2
+} from 'lucide-react';
+import { useState } from 'react';
+import packageJson from '@/../package.json';
+import { createClient } from '@/lib/supabase/client';
+
+interface SidebarProps {
+  user: {
+    id: string;
+    nome: string | null;
+    email: string;
+    role: string;
+    avatar_url?: string | null;
+  };
+  topbarColor?: string;
+}
+
+export default function Sidebar({ user, topbarColor }: SidebarProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const version = packageJson.version;
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await supabase.auth.signOut();
+    router.push('/admin/login');
+    router.refresh();
+  };
+
+  const menuItems = [
+    { href: '/admin', icon: Home, label: 'Dashboard' },
+    { href: '/admin/leads', icon: Users, label: 'Leads' },
+    { href: '/admin/clientes', icon: UserCheck, label: 'Clientes' },
+    { href: '/admin/orcamentos', icon: FileText, label: 'OrÃ§amentos' },
+    { href: '/admin/pedidos', icon: Package, label: 'Pedidos' },
+    { href: '/admin/financeiro', icon: DollarSign, label: 'Financeiro' },
+    { href: '/admin/tarefas', icon: Calendar, label: 'Tarefas' },
+    { href: '/admin/relatorios', icon: BarChart3, label: 'RelatÃ³rios' },
+    { href: '/admin/marketing', icon: Instagram, label: 'Marketing' },
+    { href: '/admin/email', icon: Mail, label: 'E-mails' },
+    { href: '/admin/comunicacao', icon: MessageSquare, label: 'ComunicaÃ§Ã£o' },
+    { href: '/admin/configuracoes', icon: Settings, label: 'ConfiguraÃ§Ãµes' },
+  ];
+
+  return (
+    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} transition-all duration-300 flex flex-col h-screen text-white`} style={{ backgroundColor: '#232452' }}>
+      {/* Header */}
+      <div 
+        className="h-16 px-4 border-b border-white/10 flex items-center justify-between"
+      >
+        {sidebarOpen && (
+          <div>
+            <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              NORO
+            </div>
+            <p className="text-xs text-white/50 -mt-1">v{version}</p>
+          </div>
+        )}
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)} 
+          className="text-white/70 hover:text-white transition-colors"
+        >
+          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Menu Items */}
+      <nav className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-1">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-gradient-to-r from-guru to-noro hover:from-blue-600 hover:to-purple-600 text-white shadow-lg'
+                    : 'hover:bg-white/10'
+                }`}
+              >
+                <item.icon 
+                  size={20} 
+                  strokeWidth={2.5}
+                  className={isActive ? 'text-white' : 'text-white/80 group-hover:text-white transition-colors'} 
+                />
+                {sidebarOpen && (
+                    <span className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-white/90 group-hover:text-white'}`}>
+                        {item.label}
+                    </span>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* RodapÃ© com Utilizador e BotÃ£o de Logout */}
+      <div className="border-t border-white/10 p-4">
+        <div className="flex items-center gap-3">
+          <img 
+            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`} 
+            alt="Avatar"
+            className="w-8 h-8 rounded-full"
+          />
+          {sidebarOpen && (
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-semibold text-white truncate">{user.nome || user.email?.split('@')[0]}</p>
+            </div>
+          )}
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="p-2 text-white/70 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+            title="Sair"
+          >
+            {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+

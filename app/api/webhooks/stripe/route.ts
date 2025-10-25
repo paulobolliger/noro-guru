@@ -88,8 +88,8 @@ export async function POST(req: Request) {
             console.log(`✅ Pagamento Stripe concluído. Pedido ${pedidoId} e Cobrança ${cobrancaId} atualizados.`);
 
             // 5. Revalidar as páginas afetadas
-            revalidatePath(`/admin/pedidos/${pedidoId}`);
-            revalidatePath('/admin/pagamentos');
+            revalidatePath(`/core/pedidos/${pedidoId}`);
+            revalidatePath('/core/pagamentos');
 
         } catch (dbError) {
             console.error('Erro de Banco de Dados ao processar webhook:', dbError);
