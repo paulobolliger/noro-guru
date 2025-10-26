@@ -2,7 +2,7 @@
 import { getSupabaseAdmin } from "@lib/supabase/admin";
 import type { Database } from "@types/supabase";
 import { format } from 'date-fns';
-import LeadsClientPage from "@/components/admin/LeadsClientPage"; // Vamos usar um componente de cliente
+import LeadsClientPage from "@/components/LeadsClientPage"; // Vamos usar um componente de cliente
 
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
 

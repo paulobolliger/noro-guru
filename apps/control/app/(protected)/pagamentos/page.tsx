@@ -2,8 +2,8 @@ import { createServerClient } from '@/utils/supabase/server';
 import { Database } from "@types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react'; 
-import { PagamentosList } from "@/components/admin/pagamentos/PagamentosList"; // Novo componente de lista
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
+import { PagamentosList } from "@/components/pagamentos/PagamentosList"; // Novo componente de lista
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page"; // Reutilizando a tipagem
 
 // Tipo de Pedido simplificado para esta listagem, mas usando o tipo completo para a busca
 export type PedidoParaPagamento = Pick<PedidoComRelacionamentos, 

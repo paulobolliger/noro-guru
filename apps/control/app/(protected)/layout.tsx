@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
 import type Database from "@types/supabase";
 import { createServerSupabaseClient } from "@lib/supabase/server";
-import AdminLayoutClient from "@/components/admin/AdminLayoutClient";
+import AdminLayoutClient from "@/components/AdminLayoutClient";
 import { getNotificacoes } from "@lib/supabase/admin";
 // NOVO: Importa a função de buscar config do sistema
 import { getConfiguracaoSistema } from './configuracoes/config-actions'; 

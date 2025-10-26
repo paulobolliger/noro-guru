@@ -4,7 +4,7 @@
 import { useState, useTransition, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, User, Plane, Calendar, DollarSign, Loader2, AlertCircle, CheckCircle2, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
-import { updateOrcamento } from '@/app/admin/(protected)/orcamentos/orcamentos-actions';
+import { updateOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";
 import { format } from 'date-fns';
 import type { Database } from "@types/supabase";
 

@@ -2,8 +2,8 @@
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import { notFound } from 'next/navigation';
 import { Database } from "@types/supabase";
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
-import EditPedidoForm from "@/components/admin/pedidos/EditPedidoForm";
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page"; // Reutilizando a tipagem
+import EditPedidoForm from "@/components/pedidos/EditPedidoForm";
 import { Button } from "@ui/button";
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';

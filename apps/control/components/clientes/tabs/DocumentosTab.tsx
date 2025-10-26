@@ -8,7 +8,7 @@ import {
   createDocumento, 
   updateDocumento,
   deleteDocumento 
-} from '@/app/admin/(protected)/clientes/[id]/actions';
+} from "@/app/(protected)/clientes/[id]/actions";
 import type { DocumentoStatus, DocumentoTipo } from "@types/clientes";
 import { PAISES_E_NACIONALIDADES } from "@lib/client-data";
 

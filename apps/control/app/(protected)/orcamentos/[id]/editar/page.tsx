@@ -2,8 +2,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getOrcamentoById } from '../../orcamentos-actions'; 
-import { getClientes } from '@/app/admin/(protected)/clientes/actions';
-import EditOrcamentoForm from "@/components/admin/orcamentos/EditOrcamentoForm";
+import { getClientes } from "@/app/(protected)/clientes/actions";
+import EditOrcamentoForm from "@/components/orcamentos/EditOrcamentoForm";
 
 interface PageProps {
   params: { id: string };

@@ -5,13 +5,13 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page';
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Button } from "@ui/button";
 import PedidoItemManager from './PedidoItemManager';
-import EmitirCobrancaForm from "@/components/admin/pagamentos/EmitirCobrancaForm";
-import PedidoCobrancasList from "@/components/admin/pedidos/PedidoCobrancasList";
+import EmitirCobrancaForm from "@/components/pagamentos/EmitirCobrancaForm";
+import PedidoCobrancasList from "@/components/pedidos/PedidoCobrancasList";
 import { AlertTriangle } from 'lucide-react';
 
 interface PedidoDetalhesCardProps {

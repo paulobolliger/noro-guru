@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useTransition, useRef } from 'react';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page';
-import { addPedidoItem, deletePedidoItem, updatePedidoItem } from '@/app/admin/(protected)/pedidos/pedidos-actions';
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
+import { addPedidoItem, deletePedidoItem, updatePedidoItem } from "@/app/(protected)/pedidos/pedidos-actions";
 import { currencyFormat } from '@/utils/currency-format';
 import { useToast } from "@ui/use-toast";
 import { Input } from "@ui/input";

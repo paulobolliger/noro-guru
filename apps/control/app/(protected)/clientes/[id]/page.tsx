@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getClienteDetalhes } from './actions';
-import ClienteDetalhes360 from "@/components/admin/clientes/ClienteDetalhes360";
+import ClienteDetalhes360 from "@/components/clientes/ClienteDetalhes360";
 
 // Interface CORRIGIDA: params é um objeto, não uma Promise.
 interface PageProps {

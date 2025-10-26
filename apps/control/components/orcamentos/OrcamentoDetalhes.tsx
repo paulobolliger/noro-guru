@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRightIcon } from 'lucide-react';
-import { convertToPedido } from '@/app/admin/(protected)/pedidos/pedidos-actions';
+import { convertToPedido } from "@/app/(protected)/pedidos/pedidos-actions";
 import { Button } from "@ui/button";
 import { useToast } from "@ui/use-toast";
 import type { Database } from "@types/supabase";

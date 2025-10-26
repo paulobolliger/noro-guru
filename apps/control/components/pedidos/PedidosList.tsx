@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
-import { Pedido } from '@/app/admin/(protected)/pedidos/page';
+import { Pedido } from "@/app/(protected)/pedidos/page";
 import { Badge } from "@ui/badge";
 
 interface PedidosListProps {

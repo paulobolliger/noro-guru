@@ -5,7 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
-import { PedidoParaPagamento } from '@/app/admin/(protected)/pagamentos/page';
+import { PedidoParaPagamento } from "@/app/(protected)/pagamentos/page";
 import { Badge } from "@ui/badge";
 import { Button } from "@ui/button";
 import { CreditCard, Eye } from 'lucide-react';

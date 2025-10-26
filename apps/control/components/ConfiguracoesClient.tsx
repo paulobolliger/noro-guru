@@ -8,8 +8,8 @@ import EditUserModal from './EditUserModal';
 import DeleteUserModal from './DeleteUserModal';
 import PreferenciasTab from './PreferenciasTab';
 import EmpresaTab from './EmpresaTab'; // NOVO: Importa o novo componente
-import type { ConfiguracaoSistema, ConfiguracaoUsuario } from '@/app/admin/(protected)/configuracoes/config-actions';
-import type { EmpresaDados } from '@/app/admin/(protected)/configuracoes/empresa-actions'; // NOVO: Importa o tipo
+import type { ConfiguracaoSistema, ConfiguracaoUsuario } from "@/app/(protected)/configuracoes/config-actions";
+import type { EmpresaDados } from "@/app/(protected)/configuracoes/empresa-actions"; // NOVO: Importa o tipo
 
 type User = { id: string; nome: string | null; email: string; role: string; avatar_url?: string | null; };
 type Tab = 'utilizadores' | 'preferencias' | 'empresa' | 'integracoes'; // NOVO: Adiciona 'empresa'

@@ -1,6 +1,6 @@
 import 'server-only';
 import { ServerActionReturn } from '../pedidos-actions';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page';
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
 import axios, { AxiosRequestConfig } from 'axios'; // Usaremos Axios para requisições HTTP
 
 // ================================================================

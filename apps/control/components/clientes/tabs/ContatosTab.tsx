@@ -6,7 +6,7 @@ import {
   getClienteContatosEmergencia, 
   createContatoEmergencia, 
   deleteContatoEmergencia 
-} from '@/app/admin/(protected)/clientes/[id]/actions';
+} from "@/app/(protected)/clientes/[id]/actions";
 import { useRouter } from 'next/navigation';
 
 interface Contato {

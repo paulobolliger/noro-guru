@@ -1,7 +1,7 @@
 // app/admin/(protected)/pedidos/[id]/page.tsx
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import { notFound } from 'next/navigation';
-import PedidoDetalhesCard from "@/components/admin/pedidos/PedidoDetalhesCard";
+import PedidoDetalhesCard from "@/components/pedidos/PedidoDetalhesCard";
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@ui/button";

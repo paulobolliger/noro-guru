@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { FileText, Package, DollarSign, Calendar, Eye, ExternalLink } from 'lucide-react';
-import { getClienteHistorico } from '@/app/admin/(protected)/clientes/[id]/historico-actions';
+import { getClienteHistorico } from "@/app/(protected)/clientes/[id]/historico-actions";
 import { useRouter } from 'next/navigation';
 
 interface HistoricoTabProps {

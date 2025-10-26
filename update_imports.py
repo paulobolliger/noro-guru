@@ -15,7 +15,11 @@ def update_imports(directory):
                 new_content = re.sub(r'from ["\']@/lib/(.*)["\'];', r'from "@lib/\1";', content)
                 new_content = re.sub(r'from ["\']@/components/ui/(.*)["\'];', r'from "@ui/\1";', new_content)
                 new_content = re.sub(r'from ["\']@/types/(.*)["\'];', r'from "@types/\1";', new_content)
-                new_content = re.sub(r'from ["\']@/components/(.*)["\'];', r'from "@/components/\1";', new_content)
+
+                # Handle internal app imports
+                if 'apps/control' in root:
+                    new_content = re.sub(r'from ["\']@/app/admin/\(protected\)/(.*)["\'];', r'from "@/app/(protected)/\1";', new_content)
+                    new_content = re.sub(r'from ["\']@/components/admin/(.*)["\'];', r'from "@/components/\1";', new_content)
 
                 if new_content != content:
                     with open(filepath, 'w') as f:

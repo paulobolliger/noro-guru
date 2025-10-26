@@ -3,7 +3,7 @@
 
 import { useState, useCallback, useTransition } from 'react';
 import { Cliente } from "@types/clientes";
-import { createClientUpdateToken } from '@/app/admin/(protected)/clientes/[id]/actions';
+import { createClientUpdateToken } from "@/app/(protected)/clientes/[id]/actions";
 import DadosPessoaisTab from './tabs/DadosPessoaisTab';
 import DocumentosTab from './tabs/DocumentosTab';
 import PreferenciasTab from './tabs/PreferenciasTab';

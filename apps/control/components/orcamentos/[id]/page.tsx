@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FileText, Plane, Calendar, DollarSign, Edit, Send, Download, CheckCircle, XCircle, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import type { Database } from "@types/supabase";
 import { format } from 'date-fns';
-import { updateOrcamento, deleteOrcamento } from '@/app/admin/(protected)/orcamentos/orcamentos-actions';
+import { updateOrcamento, deleteOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";
 
 // Tipos baseados nas estruturas do projeto
 type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'] & {

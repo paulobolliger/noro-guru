@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { Building, UserCircle, Link as LinkIcon, AtSign, Phone, MapPin, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
-import { updateEmpresaDados, type EmpresaDados } from '@/app/admin/(protected)/configuracoes/empresa-actions';
+import { updateEmpresaDados, type EmpresaDados } from "@/app/(protected)/configuracoes/empresa-actions";
 
 interface EmpresaTabProps {
   empresaDados: EmpresaDados;

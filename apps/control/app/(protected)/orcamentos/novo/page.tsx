@@ -1,6 +1,6 @@
 // app/admin/(protected)/orcamentos/novo/page.tsx
 import { Metadata } from 'next';
-import NovoOrcamentoForm from "@/components/admin/orcamentos/NovoOrcamentoForm";
+import NovoOrcamentoForm from "@/components/orcamentos/NovoOrcamentoForm";
 
 export const metadata: Metadata = {
   title: 'Nova Proposta | Noro',

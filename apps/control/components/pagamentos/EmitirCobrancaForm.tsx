@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { emitirCobranca, PaymentProvider } from '@/app/admin/(protected)/pedidos/pedidos-actions';
+import { emitirCobranca, PaymentProvider } from "@/app/(protected)/pedidos/pedidos-actions";
 import { currencyFormat } from '@/utils/currency-format';
 import { useToast } from "@ui/use-toast";
 import { Button } from "@ui/button";

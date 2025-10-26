@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { registerPayment } from '@/app/admin/(protected)/pedidos/pedidos-actions'; // Server Action
+import { registerPayment } from "@/app/(protected)/pedidos/pedidos-actions"; // Server Action
 import { currencyFormat } from '@/utils/currency-format';
 import { useToast } from "@ui/use-toast";
 import { Button } from "@ui/button";

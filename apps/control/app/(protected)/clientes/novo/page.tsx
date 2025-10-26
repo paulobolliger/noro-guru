@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import NovoClienteForm from "@/components/admin/clientes/NovoClienteForm";
+import NovoClienteForm from "@/components/clientes/NovoClienteForm";
 
 export const metadata: Metadata = {
   title: 'Novo Cliente | Nômade Guru',

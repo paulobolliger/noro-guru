@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Clock, MessageSquare, Mail, Phone, FileText, Package, DollarSign, Plus, Save, X } from 'lucide-react';
-import { getClienteTimeline } from '@/app/admin/(protected)/clientes/[id]/historico-actions';
+import { getClienteTimeline } from "@/app/(protected)/clientes/[id]/historico-actions";
 import { useRouter } from 'next/navigation';
 
 interface TimelineEvent {

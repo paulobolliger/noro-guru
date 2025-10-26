@@ -26,5 +26,5 @@
       "@types/*": ["packages/types/*"]
     }
   },
-  "exclude": ["node_modules", ".turbo", "apps/web/.next", "apps/control/.next"]
+  "exclude": ["node_modules", ".turbo", "apps/web/.next", "apps/control/.next", "apps/core/.next"]
 }

@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, User, Mail, Phone, MapPin, Users, DollarSign, FileText, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { createClienteAction, updateClienteAction } from '@/app/admin/(protected)/clientes/actions';
+import { createClienteAction, updateClienteAction } from "@/app/(protected)/clientes/actions";
 
 interface Cliente {
   id?: string;

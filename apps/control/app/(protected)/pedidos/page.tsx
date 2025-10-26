@@ -1,6 +1,6 @@
 // app/admin/(protected)/pedidos/page.tsx
 import { createServerSupabaseClient } from "@lib/supabase/server";
-import { PedidosList } from "@/components/admin/pedidos/PedidosList";
+import { PedidosList } from "@/components/pedidos/PedidosList";
 import { Database } from "@types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';

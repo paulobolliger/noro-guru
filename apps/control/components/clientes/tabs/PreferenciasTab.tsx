@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Heart, Save, X } from 'lucide-react';
-import { getClientePreferencias, upsertPreferencias } from '@/app/admin/(protected)/clientes/[id]/actions';
+import { getClientePreferencias, upsertPreferencias } from "@/app/(protected)/clientes/[id]/actions";
 import { useRouter } from 'next/navigation';
 
 interface PreferenciasTabProps {

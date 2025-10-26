@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import AdminFooter from './AdminFooter';
 import type { Database } from "@types/supabase";
-import type { ConfiguracaoSistema } from '@/app/admin/(protected)/configuracoes/config-actions'; // Importa o tipo
+import type { ConfiguracaoSistema } from "@/app/(protected)/configuracoes/config-actions"; // Importa o tipo
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 type Notificacao = Database['public']['Tables']['noro_notificacoes']['Row'];

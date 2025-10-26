@@ -1,6 +1,6 @@
 // app/admin/(protected)/configuracoes/page.tsx
 import ConfiguracoesClient from "@/components/ConfiguracoesClient";
-import { createServerSupabaseClient } from '@lib/supabase/server';
+import { createServerSupabaseClient } from "@lib/supabase/server";
 import { redirect } from 'next/navigation';
 import { getConfiguracaoSistema, getConfiguracaoUsuario } from './config-actions';
 import { getEmpresaDados } from './empresa-actions'; // NOVO: Importa a nova action

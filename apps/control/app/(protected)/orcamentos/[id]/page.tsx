@@ -1,7 +1,7 @@
 // app/admin/(protected)/orcamentos/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import OrcamentoDetalhes from "@/components/admin/orcamentos/OrcamentoDetalhes";
+import OrcamentoDetalhes from "@/components/orcamentos/OrcamentoDetalhes";
 import { getOrcamentoById } from '../orcamentos-actions'; 
 import { createServerSupabaseClient } from "@lib/supabase/server";
 

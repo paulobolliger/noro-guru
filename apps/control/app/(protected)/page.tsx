@@ -1,6 +1,6 @@
     // app/admin/(protected)/page.tsx
     import { getDashboardMetrics, getLeads, getTarefas, getSupabaseAdmin } from "@lib/supabase/admin";
-    import AdminDashboard from "@/components/admin/AdminDashboard";
+    import AdminDashboard from "@/components/AdminDashboard";
     import { createServerSupabaseClient } from "@lib/supabase/server";
     import { redirect } from 'next/navigation';
 

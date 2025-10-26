@@ -1,7 +1,7 @@
 import 'server-only';
 import { ServerActionReturn } from '../pedidos-actions';
 import axios, { AxiosRequestConfig } from 'axios';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page';
+import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
 
 // ================================================================
 // CONFIGURAÇÕES E CREDENCIAIS

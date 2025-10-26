@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Edit2, Save, X, User, Building2, Calendar, Globe, Briefcase, CreditCard, MapPin } from 'lucide-react';
-import { updateCliente } from '@/app/admin/(protected)/clientes/[id]/actions';
+import { updateCliente } from "@/app/(protected)/clientes/[id]/actions";
 import { useRouter } from 'next/navigation';
 
 interface DadosPessoaisTabProps {
