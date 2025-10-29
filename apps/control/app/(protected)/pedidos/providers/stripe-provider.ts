@@ -1,7 +1,7 @@
 import 'server-only';
 import Stripe from 'stripe';
 import { ServerActionReturn } from '../pedidos-actions';
-import { Database } from "@types/supabase"; // Para tipagem dos itens
+import { Database } from "@noro-types/supabase"; // Para tipagem dos itens
 
 // A chave secreta deve vir do .env
 if (!process.env.STRIPE_SECRET_KEY) {

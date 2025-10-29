@@ -8,11 +8,11 @@ export const metadata: Metadata = {
 
 export default function NovoClientePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white/5">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Novo Cliente</h1>
-          <p className="text-gray-600 mt-2">Cadastre um novo cliente no sistema</p>
+          <h1 className="text-3xl font-bold text-primary">Novo Cliente</h1>
+          <p className="text-muted mt-2">Cadastre um novo cliente no sistema</p>
         </div>
 
         <NovoClienteForm />

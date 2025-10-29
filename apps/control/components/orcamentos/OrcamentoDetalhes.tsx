@@ -7,7 +7,7 @@ import { ArrowRightIcon } from 'lucide-react';
 import { convertToPedido } from "@/app/(protected)/pedidos/pedidos-actions";
 import { Button } from "@ui/button";
 import { useToast } from "@ui/use-toast";
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 
 // Tipo local para evitar importações cruzadas
 type OrcamentoComItens = Database['public']['Tables']['noro_orcamentos']['Row'] & {
@@ -53,8 +53,8 @@ export function OrcamentoDetalhes({ orcamento }: OrcamentoDetalhesProps) {
   };
 
   return (
-    <div className="space-y-6 p-6 bg-white rounded-lg shadow-md">
-      <div className="flex justify-end gap-3 border-b pb-4">
+    <div className="space-y-6 p-6 surface-card rounded-lg shadow-md">
+      <div className="flex justify-end gap-3 border-b border-default pb-4">
         {isConverted ? (
           <Button disabled variant="outline">
             Orçamento já convertido em Venda

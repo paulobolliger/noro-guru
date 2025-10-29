@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useCallback, useTransition } from 'react';
-import { Cliente } from "@types/clientes";
+import { Cliente } from "@noro-types/clientes";
 import { createClientUpdateToken } from "@/app/(protected)/clientes/[id]/actions";
 import DadosPessoaisTab from './tabs/DadosPessoaisTab';
 import DocumentosTab from './tabs/DocumentosTab';
@@ -29,6 +29,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
+import { NButton, NInput } from "@/components/ui";
 
 interface ClienteDetalhes360Props {
   cliente: Cliente;
@@ -96,7 +97,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="surface-header border-b border-default border-default border-default px-6 py-4">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             {/* Avatar */}
@@ -107,7 +108,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
             {/* Info */}
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-semibold text-gray-900">
+                <h1 className="text-2xl font-semibold text-primary">
                   {cliente.nome}
                 </h1>
                 
@@ -115,7 +116,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   cliente.status === 'ativo' ? 'bg-green-100 text-green-800' :
                   cliente.status === 'vip' ? 'bg-purple-100 text-purple-800' :
-                  cliente.status === 'inativo' ? 'bg-gray-100 text-gray-800' :
+                  cliente.status === 'inativo' ? 'bg-white/10 text-muted' :
                   'bg-red-100 text-red-800'
                 }`}>
                   {cliente.status.toUpperCase()}
@@ -124,7 +125,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                 {/* Badge de Nível */}
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   cliente.nivel === 'bronze' ? 'bg-orange-100 text-orange-800' :
-                  cliente.nivel === 'prata' ? 'bg-gray-100 text-gray-800' :
+                  cliente.nivel === 'prata' ? 'bg-white/10 text-muted' :
                   cliente.nivel === 'ouro' ? 'bg-yellow-100 text-yellow-800' :
                   cliente.nivel === 'platina' ? 'bg-blue-100 text-blue-800' :
                   'bg-indigo-100 text-indigo-800'
@@ -133,7 +134,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                 </span>
               </div>
               
-              <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
+              <div className="mt-1 flex items-center gap-4 text-sm text-muted">
                 {cliente.email && (
                   <span className="flex items-center gap-1">
                     <Mail className="w-4 h-4" />
@@ -151,20 +152,20 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
               {/* Métricas Rápidas */}
               <div className="mt-3 flex items-center gap-6 text-sm">
                 <div>
-                  <span className="text-gray-500">Viagens:</span>
-                  <span className="ml-1 font-semibold text-gray-900">
+                  <span className="text-muted">Viagens:</span>
+                  <span className="ml-1 font-semibold text-primary">
                     {cliente.total_viagens}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Ticket Médio:</span>
-                  <span className="ml-1 font-semibold text-gray-900">
+                  <span className="text-muted">Ticket Médio:</span>
+                  <span className="ml-1 font-semibold text-primary">
                     {cliente.moeda_preferida} {cliente.ticket_medio.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Total Gasto:</span>
-                  <span className="ml-1 font-semibold text-gray-900">
+                  <span className="text-muted">Total Gasto:</span>
+                  <span className="ml-1 font-semibold text-primary">
                     {cliente.moeda_preferida} {cliente.total_gasto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -173,10 +174,10 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
               {/* Input para exibir o link gerado */}
               {generatedLink && (
                 <div className="mt-4 flex items-center gap-2 max-w-md">
-                    <input type="text" readOnly value={generatedLink} className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700"/>
-                    <button onClick={copyToClipboard} className={`p-2 rounded-lg transition-colors ${hasCopied ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                       {hasCopied ? <Check size={16} /> : <Copy size={16} />}
-                    </button>
+                  <NInput readOnly value={generatedLink || ''} className="text-sm" />
+                  <NButton onClick={copyToClipboard} size="sm" variant={hasCopied ? 'primary' : 'secondary'} leftIcon={hasCopied ? <Check size={16}/> : <Copy size={16}/>}>
+                    {hasCopied ? 'Copiado' : 'Copiar'}
+                  </NButton>
                 </div>
               )}
             </div>
@@ -184,23 +185,14 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
           
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
-            <button onClick={handleGenerateUpdateLink} disabled={isGeneratingLink} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50">
-              {isGeneratingLink ? <Loader2 className="w-4 h-4 animate-spin"/> : <Send className="w-4 h-4" />}
-              Enviar Formulário
-            </button>
-            <button 
-              onClick={handleQuickEdit} 
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Editar
-            </button>
+            <NButton onClick={handleGenerateUpdateLink} disabled={isGeneratingLink} size="md" variant="secondary" leftIcon={isGeneratingLink ? <Loader2 className="w-4 h-4 animate-spin"/> : <Send className="w-4 h-4" />}>Enviar Formulário</NButton>
+            <NButton onClick={handleQuickEdit} variant="primary" size="md" leftIcon={<Edit className="w-4 h-4" />}>Editar</NButton>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="surface-header border-b border-default border-default border-default">
         <div className="px-6">
           <nav className="flex gap-8" aria-label="Tabs">
             {tabs.map((tab) => {
@@ -220,7 +212,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
                     py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2
                     ${isActive
                       ? 'border-primary text-primary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-muted hover:text-primary hover:border-default'
                     }
                   `}
                 >
@@ -234,7 +226,7 @@ export default function ClienteDetalhes360({ cliente }: ClienteDetalhes360Props)
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="flex-1 overflow-y-auto surface-app">
         <div className="max-w-7xl mx-auto p-6">
           {activeTab === 'dados-pessoais' && (
             <DadosPessoaisTab 

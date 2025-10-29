@@ -1,6 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_CORE_URL",
+    "NEXT_PUBLIC_CONTROL_URL",
+    "ALLOWED_ORIGINS",
+    "OPENAI_API_KEY",
+    "RESEND_API_KEY",
+    "RAPIDAPI_KEY"
+  ],
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]

@@ -3,11 +3,11 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format'; // Assumindo este utilitário
-import { Database } from "@types/supabase";
-import { Badge } from "@ui/badge";
+import { Database } from "@noro-types/supabase";
+import { NBadge, NButton } from "@/components/ui";
+import { cobrancaStatusText } from "@ui/status";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Copy, LinkIcon, AlertTriangle, CheckCircle } from 'lucide-react';
-import { Button } from "@ui/button";
 import { useToast } from "@ui/use-toast";
 
 // Tipo da tabela 'cobrancas'
@@ -17,22 +17,17 @@ interface PedidoCobrancasListProps {
   cobrancas: Cobranca[];
 }
 
-// Mapeamento de status para cores
-const statusMap: Record<string, string> = {
-  'PENDENTE': 'bg-gray-100 text-gray-700',
-  'EMITIDA': 'bg-blue-100 text-blue-700',
-  'AGUARDANDO_PAGAMENTO': 'bg-red-100 text-red-700 font-bold',
-  'PROCESSANDO_API': 'bg-yellow-100 text-yellow-700',
-  'PAGO': 'bg-green-100 text-green-700 font-bold',
-  'ERRO_API': 'bg-pink-100 text-pink-700',
-};
+// Mapeamento de status centralizado
+const statusMap: Record<string, string> = new Proxy({}, {
+  get: (_t, key: string) => (cobrancaStatusText as any)[key] || 'text-slate-300'
+}) as any;
 
 export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListProps) {
     const { toast } = useToast();
 
     if (cobrancas.length === 0) {
         return (
-            <div className="p-4 border border-dashed border-gray-300 rounded-lg text-center text-gray-500">
+            <div className="p-4 border border-dashed border-white/10 rounded-lg text-center text-muted">
                 <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-yellow-500" />
                 <p>Nenhuma cobrança emitida para este pedido. Utilize o formulário acima para gerar a primeira fatura.</p>
             </div>
@@ -71,63 +66,64 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
             </CardHeader>
             <CardContent>
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-white/5">
+                        <thead className="bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Interno</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provedor</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimento</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalhe de Pagamento</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">ID Interno</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Provedor</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">Valor</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Vencimento</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Detalhe de Pagamento</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-[#0B1220] divide-y divide-white/5">
                             {cobrancas.map((cobranca) => {
                                 const { link, detail, isCopiable } = getPaymentDetail(cobranca);
                                 const isPaid = cobranca.status === 'PAGO';
 
                                 return (
-                                    <tr key={cobranca.id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <tr key={cobranca.id} className="hover:bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20 transition duration-150 ease-in-out">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
                                             {cobranca.id.slice(0, 8)}...
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
                                             {cobranca.provider}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-800">
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-primary">
                                             {currencyFormat(cobranca.valor || 0)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <Badge className={statusMap[cobranca.status] || 'bg-gray-100 text-gray-800'}>
+                                            <NBadge variant={
+                                              cobranca.status === 'PAGO' ? 'success' :
+                                              cobranca.status === 'AGUARDANDO_PAGAMENTO' ? 'warning' :
+                                              cobranca.status === 'ERRO_API' ? 'error' : 'info'
+                                            }>
                                                 {isPaid && <CheckCircle className="h-3 w-3 mr-1" />}
                                                 {cobranca.status.replace(/_/g, ' ')}
-                                            </Badge>
+                                            </NBadge>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
                                             {format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <div className="flex items-center space-x-2">
-                                                <span className="font-mono text-xs text-gray-700">{detail}</span>
+                                                <span className="font-mono text-xs text-slate-300">{detail}</span>
                                                 
                                                 {link && (
                                                     <a href={link} target="_blank" rel="noopener noreferrer">
-                                                        <Button variant="ghost" size="sm" className="p-1 h-auto text-indigo-600 hover:bg-indigo-50">
-                                                            <LinkIcon className="h-4 w-4" />
-                                                        </Button>
+                                                        <NButton variant="tertiary" size="sm" className="p-1 h-auto" leftIcon={<LinkIcon className="h-4 w-4" />} />
                                                     </a>
                                                 )}
 
                                                 {isCopiable && detail && (
-                                                     <Button 
-                                                        variant="ghost" 
+                                                     <NButton 
+                                                        variant="tertiary" 
                                                         size="sm" 
-                                                        className="p-1 h-auto text-gray-600 hover:bg-gray-100"
+                                                        className="p-1 h-auto"
                                                         onClick={() => handleCopy(link || detail, cobranca.provider)}
-                                                     >
-                                                        <Copy className="h-4 w-4" />
-                                                    </Button>
+                                                        leftIcon={<Copy className="h-4 w-4" />}
+                                                     />
                                                 )}
                                             </div>
                                         </td>

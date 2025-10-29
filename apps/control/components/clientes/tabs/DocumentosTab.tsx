@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { FileText, Plus, Edit2, Trash2, X, UploadCloud, Loader2, AlertCircle, Eye, AlertTriangle } from 'lucide-react';
+import { NButton, NSelect, NTextarea, NAlert, NInput } from '@/components/ui';
 import { useRouter } from 'next/navigation';
 import { 
   getClienteDocumentos, 
@@ -58,6 +59,7 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
   const [formData, setFormData] = useState(initialFormState);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [statusMsg, setStatusMsg] = useState<{ ok: boolean; msg: string } | null>(null);
   const [listFilter, setListFilter] = useState<'todos' | 'vencendo' | 'vencidos'>('todos');
 
   useEffect(() => { loadDocumentos(); }, [clienteId]);
@@ -137,8 +139,8 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
     const ok = confirm('Excluir este documento?');
     if (!ok) return;
     const result = await deleteDocumento(id, clienteId);
-    if (result.success) { await loadDocumentos(); router.refresh(); }
-    else alert('Erro ao deletar: ' + result.error);
+    if (result.success) { await loadDocumentos(); router.refresh(); setStatusMsg({ ok: true, msg: 'Documento removido com sucesso.'}); }
+    else setStatusMsg({ ok: false, msg: 'Erro ao deletar: ' + result.error });
   }
 
   async function handleSave() {
@@ -172,8 +174,9 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       closeModal();
       await loadDocumentos();
       router.refresh();
+      setStatusMsg({ ok: true, msg: 'Documento salvo com sucesso.'});
     } else {
-      alert('Erro ao salvar: ' + (result.error || result.message));
+      setStatusMsg({ ok: false, msg: 'Erro ao salvar: ' + (result.error || result.message) });
     }
 
     setIsSaving(false);
@@ -186,48 +189,54 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       pendente: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
       renovando: { bg: 'bg-blue-100', text: 'text-blue-800' },
     };
-    return configs[status] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+    return configs[status] || { bg: 'bg-white/10', text: 'text-gray-800' };
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-default border-default">
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-blue-600" />
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Documentos</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-xl font-semibold text-primary">Documentos</h2>
+            <p className="text-sm text-muted">
               {documentos.length} documento(s) cadastrados{listFilter !== 'todos' ? ` • Filtro: ${listFilter}` : ''}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <select
+          <NSelect
             value={listFilter}
             onChange={(e) => setListFilter(e.target.value as any)}
-            className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 bg-white text-gray-700"
+            className="px-3 py-2 rounded-lg text-sm font-medium"
             title="Filtrar documentos"
           >
             <option value="todos">Todos</option>
             <option value="vencendo">Vencendo (≤ 90 dias)</option>
             <option value="vencidos">Vencidos</option>
-          </select>
-          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg">
-            <Plus className="w-4 h-4" /> Adicionar Documento
-          </button>
+          </NSelect>
+          <NButton onClick={() => setShowModal(true)} variant="primary" leftIcon={<Plus className="w-4 h-4" />}>Adicionar Documento</NButton>
         </div>
       </div>
+
+      {statusMsg && (
+        <div className="px-6 pt-4">
+          <NAlert variant={statusMsg.ok ? 'success' : 'error'} icon={statusMsg.ok ? <AlertCircle className="w-4 h-4"/> : <AlertTriangle className="w-4 h-4"/>}>
+            {statusMsg.msg}
+          </NAlert>
+        </div>
+      )}
 
       {/* Grid de Documentos */}
       <div className="p-6">
         {isLoading ? (
-          <div className="text-center py-12 text-gray-500">Carregando...</div>
+          <div className="text-center py-12 text-muted">Carregando...</div>
         ) : documentos.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">Nenhum documento cadastrado.</p>
+            <p className="text-muted mb-2">Nenhum documento cadastrado.</p>
             <button onClick={() => setShowModal(true)} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               Adicionar primeiro documento
             </button>
@@ -253,12 +262,12 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
                 const isVencido = diasRestantes !== null && diasRestantes < 0;
                 const isAExpirar = diasRestantes !== null && diasRestantes >= 0 && diasRestantes <= 90;
                 return (
-                  <div key={doc.id} className="border border-gray-200 rounded-lg p-4 flex flex-col justify-between">
+                  <div key={doc.id} className="border border-default rounded-lg p-4 flex flex-col justify-between">
                     <div>
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <FileText className="w-5 h-5 text-blue-600" />
-                          <span className="font-semibold text-gray-900 capitalize">{doc.tipo.replace('_', ' ')}</span>
+                          <span className="font-semibold text-primary capitalize">{doc.tipo.replace('_', ' ')}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bg} ${statusConfig.text}`}>
@@ -277,10 +286,10 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
                         </div>
                       </div>
                       <div className="space-y-2 mb-4">
-                        {doc.numero && <p className="text-sm text-gray-600"><span className="font-medium">Número:</span> {doc.numero}</p>}
-                        {doc.data_validade && <p className="text-sm text-gray-600"><span className="font-medium">Validade:</span> {new Date(doc.data_validade).toLocaleDateString('pt-BR')}</p>}
+                        {doc.numero && <p className="text-sm text-muted"><span className="font-medium">Número:</span> {doc.numero}</p>}
+                        {doc.data_validade && <p className="text-sm text-muted"><span className="font-medium">Validade:</span> {new Date(doc.data_validade).toLocaleDateString('pt-BR')}</p>}
                         {diasRestantes !== null && (
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-muted">
                             <span className="font-medium">Dias restantes:</span> {diasRestantes >= 0 ? diasRestantes : `-${Math.abs(diasRestantes)}`} {diasRestantes >= 0 ? '' : '(vencido)'}
                           </p>
                         )}
@@ -292,12 +301,12 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
                           <a href={doc.arquivo_url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg">
                             <Eye className="w-4 h-4" /> Visualizar
                           </a>
-                          <a href={doc.arquivo_url} download className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+                          <a href={doc.arquivo_url} download className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-primary hover:bg-white/5 rounded-lg">
                             Baixar
                           </a>
                         </>
                       )}
-                      <button onClick={() => handleEdit(doc)} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
+                      <button onClick={() => handleEdit(doc)} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-primary hover:bg-white/5 rounded-lg">
                         <Edit2 className="w-4 h-4" /> Editar
                       </button>
                       <button onClick={() => handleDelete(doc.id)} className="flex items-center justify-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">
@@ -314,8 +323,8 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b flex items-center justify-between">
+          <div className="surface-card rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-default flex items-center justify-between">
               <h3 className="text-xl font-semibold">{editingDoc ? 'Editar' : 'Adicionar'} Documento</h3>
               <button onClick={closeModal}><X className="w-6 h-6" /></button>
             </div>
@@ -365,24 +374,24 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Anexar Arquivo</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-default border-dashed rounded-md">
                     <div className="space-y-1 text-center">
                         <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                        <div className="flex text-sm text-gray-600 justify-center">
-                            <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                        <div className="flex text-sm text-muted justify-center">
+                            <label htmlFor="file-upload" className="relative cursor-pointer surface-card rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                 <span>Selecione um arquivo</span>
                                 <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
                             </label>
                         </div>
-                        {fileToUpload && <p className="text-xs text-gray-500">{fileToUpload.name}</p>}
-                        {!fileToUpload && formData.arquivo_nome && <p className="text-xs text-gray-500">Arquivo atual: {formData.arquivo_nome}</p>}
+                        {fileToUpload && <p className="text-xs text-muted">{fileToUpload.name}</p>}
+                        {!fileToUpload && formData.arquivo_nome && <p className="text-xs text-muted">Arquivo atual: {formData.arquivo_nome}</p>}
                         {uploadError && <p className="text-xs text-red-500 flex items-center justify-center gap-1"><AlertCircle size={14}/> {uploadError}</p>}
                     </div>
                 </div>
               </div>
             </div>
             <div className="p-6 border-t flex gap-3 justify-end">
-              <button onClick={closeModal} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button>
+              <button onClick={closeModal} className="px-4 py-2 border rounded-lg hover:bg-white/5">Cancelar</button>
               <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
                 {isSaving && <Loader2 className="animate-spin w-4 h-4" />}
                 {isSaving ? 'Salvando...' : 'Salvar'}
@@ -394,4 +403,3 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
     </div>
   );
 }
-

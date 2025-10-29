@@ -1,4 +1,4 @@
-  import { supabaseAdmin } from './admin'; // Corrigido
+﻿  import { supabaseAdmin } from './admin'; // Corrigido
 
   export async function uploadArquivo(bucket: string, path: string, file: File) {
     const { data, error } = await supabaseAdmin.storage
@@ -13,3 +13,5 @@
     return data.publicUrl;
   }
   
+
+

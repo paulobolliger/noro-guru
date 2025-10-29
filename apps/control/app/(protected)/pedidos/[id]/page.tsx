@@ -46,14 +46,14 @@ export default async function PedidoDetalhesPage({ params }: PedidoDetalhesPageP
 
   return (
     <main className="flex-1 space-y-8 p-6 md:p-10">
-      <header className="border-b pb-4 mb-6">
+      <header className="border-b border-default border-default border-default pb-4 mb-6">
         <Link href="/admin/pedidos">
             <Button variant="ghost" className="mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Voltar à Lista
             </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-primary">
           Detalhes do Pedido #{pedido.id.slice(0, 8)}...
         </h1>
       </header>

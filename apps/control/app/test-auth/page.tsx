@@ -82,10 +82,10 @@ export default function TestAuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen bg-white/10 p-8">
+      <div className="max-w-2xl mx-auto surface-card rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">🧪 Teste de Autenticação e Cliente</h1>
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-muted mb-6">
           Esta página executa testes de autenticação seguros no lado do cliente.
           As operações de administrador que requerem a `service_role_key` foram removidas por segurança.
         </p>
@@ -128,15 +128,15 @@ export default function TestAuthPage() {
         </div>
 
         {result && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-            <h2 className="font-bold mb-2 text-gray-700">Resultado:</h2>
-            <pre className="text-xs text-gray-800 overflow-auto bg-gray-100 p-2 rounded">
+          <div className="mt-6 bg-white/5 p-4 rounded-lg border border-default">
+            <h2 className="font-bold mb-2 text-primary">Resultado:</h2>
+            <pre className="text-xs text-gray-800 overflow-auto bg-white/10 p-2 rounded">
               {JSON.stringify(result, null, 2)}
             </pre>
           </div>
         )}
 
-        <div className="mt-6 text-xs text-gray-500 text-center">
+        <div className="mt-6 text-xs text-muted text-center">
           <p>Abra o console do navegador (F12) para ver logs mais detalhados.</p>
         </div>
       </div>

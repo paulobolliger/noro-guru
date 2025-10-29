@@ -1,6 +1,6 @@
 // app/admin/(protected)/leads/page.tsx
 import { getSupabaseAdmin } from "@lib/supabase/admin";
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 import { format } from 'date-fns';
 import LeadsClientPage from "@/components/LeadsClientPage"; // Vamos usar um componente de cliente
 

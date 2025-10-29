@@ -8,7 +8,7 @@ import { currencyFormat } from '@/utils/currency-format';
 import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
-import { Button } from "@ui/button";
+import { NButton } from '@/components/ui';
 import PedidoItemManager from './PedidoItemManager';
 import EmitirCobrancaForm from "@/components/pagamentos/EmitirCobrancaForm";
 import PedidoCobrancasList from "@/components/pedidos/PedidoCobrancasList";
@@ -22,7 +22,7 @@ const statusMap: Record<string, string> = {
   'EM_PROCESSAMENTO': 'bg-yellow-100 text-yellow-800',
   'AGUARDANDO_PAGAMENTO': 'bg-red-100 text-red-800 font-bold',
   'CONCLUIDO': 'bg-green-100 text-green-800',
-  'CANCELADO': 'bg-gray-100 text-gray-800',
+  'CANCELADO': 'bg-white/10 text-gray-800',
   'CONVERTIDO': 'bg-indigo-100 text-indigo-800',
 };
 
@@ -45,29 +45,29 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-sm font-medium text-gray-500">ID:</div>
+              <div className="text-sm font-medium text-muted">ID:</div>
               <div className="text-sm font-semibold">{pedido.id}</div>
 
-              <div className="text-sm font-medium text-gray-500">Valor Total:</div>
+              <div className="text-sm font-medium text-muted">Valor Total:</div>
               <div className="text-xl font-bold text-green-600">
                 {currencyFormat(pedido.valor_total || 0)}
               </div>
               
-              <div className="text-sm font-medium text-gray-500">Status:</div>
-              <Badge className={statusMap[pedido.status] || 'bg-gray-100 text-gray-800'}>
+              <div className="text-sm font-medium text-muted">Status:</div>
+              <Badge className={statusMap[pedido.status] || 'bg-white/10 text-gray-800'}>
                   {pedido.status.replace(/_/g, ' ')}
               </Badge>
               
-              <div className="text-sm font-medium text-gray-500">Ações:</div>
+              <div className="text-sm font-medium text-muted">Ações:</div>
               <Link href={`/admin/pedidos/${pedido.id}/editar`}>
-                  <Button variant="outline" size="sm" disabled={isFinalizado}>
+                  <NButton variant="secondary" size="sm" disabled={isFinalizado}>
                       Editar Dados Principais
-                  </Button>
+                  </NButton>
               </Link>
               
               {pedido.orcamento_id && (
                   <>
-                      <div className="text-sm font-medium text-gray-500">Vindo do Orçamento:</div>
+                      <div className="text-sm font-medium text-muted">Vindo do Orçamento:</div>
                       <Link href={`/admin/orcamentos/${pedido.orcamento_id}`} className="text-sm text-indigo-600 hover:underline">
                           #{pedido.orcamento_id.slice(0, 8)}...
                       </Link>
@@ -86,8 +86,8 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
             {cliente ? (
               <>
                 <p className="font-semibold">{cliente.nome || 'Cliente sem nome'}</p>
-                <p className="text-sm text-gray-600">{cliente.email}</p>
-                <p className="text-sm text-gray-600">{cliente.telefone}</p>
+                <p className="text-sm text-muted">{cliente.email}</p>
+                <p className="text-sm text-muted">{cliente.telefone}</p>
               </>
             ) : (
               <p className="text-sm text-red-500">Cliente não encontrado ou ID inválido.</p>
@@ -110,7 +110,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
             cobrancasExistentes={pedido.cobrancas || []}
           />
       ) : (
-        <div className="p-4 bg-gray-100 text-center text-gray-600 rounded-lg">
+        <div className="p-4 bg-white/10 text-center text-muted rounded-lg">
           O faturamento está desabilitado para pedidos com status {pedido.status.replace(/_/g, ' ')}.
         </div>
       )}
@@ -128,7 +128,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
             pedidoId={pedido.id} 
           />
           {isFinalizado && (
-            <div className="p-4 bg-gray-100 text-center text-gray-600 rounded-lg mt-4">
+            <div className="p-4 bg-white/10 text-center text-muted rounded-lg mt-4">
                 A edição de itens está desabilitada para pedidos finalizados ou cancelados.
             </div>
           )}

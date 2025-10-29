@@ -4,9 +4,10 @@
 import { useState, useTransition, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, User, Plane, Calendar, DollarSign, Loader2, AlertCircle, CheckCircle2, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import { NButton, NAlert } from '@/components/ui';
 import { updateOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";
 import { format } from 'date-fns';
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 
 // Tipos baseados nas estruturas do projeto
 type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];
@@ -175,20 +176,25 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
 
     return (
         <>
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+            <div className="surface-card rounded-xl shadow-lg border border-default">
                 <form onSubmit={handleSubmit}>
                     <div className="p-8 space-y-8">
+                        {status && (
+                          <NAlert variant={status.success ? 'success' : 'error'} title={status.success ? 'Sucesso' : 'Erro'}>
+                            {status.message}
+                          </NAlert>
+                        )}
                         
                         {/* SEÇÃO 1: Cliente e Título */}
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                                 <FileText size={20} /> Detalhes da Proposta
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 
                                 {/* Título do Orçamento */}
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Título do Orçamento *</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Título do Orçamento *</label>
                                     <input
                                         type="text"
                                         name="titulo"
@@ -196,13 +202,13 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                                         onChange={handleChange}
                                         placeholder="Ex: Lua de Mel em Santorini - 7 dias"
                                         required
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
 
                                 {/* Seleção do Cliente (Autocomplete Simulado) */}
                                 <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Cliente *</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Cliente *</label>
                                     <input
                                         type="text"
                                         value={clienteSearch}
@@ -212,11 +218,11 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                                         }}
                                         placeholder={'Buscar cliente por nome...'}
                                         required
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                     {/* Dropdown de sugestões (simples) */}
                                     {clienteSearch.length > 0 && !formData.lead_id && (
-                                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                        <div className="absolute z-10 w-full mt-1 surface-card border border-default rounded-lg shadow-lg max-h-40 overflow-y-auto">
                                             {clientes
                                                 .filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase()))
                                                 .slice(0, 5)
@@ -225,13 +231,13 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                                                         key={c.id}
                                                         type="button"
                                                         onClick={() => handleSelectCliente(c.id)}
-                                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                                                        className="w-full text-left px-4 py-2 hover:bg-white/10 text-sm"
                                                     >
                                                         {c.nome} ({c.email})
                                                     </button>
                                                 ))}
                                             {clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).length === 0 && (
-                                                <div className="px-4 py-2 text-sm text-gray-500">Nenhum cliente encontrado.</div>
+                                                <div className="px-4 py-2 text-sm text-muted">Nenhum cliente encontrado.</div>
                                             )}
                                         </div>
                                     )}
@@ -245,124 +251,124 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
 
                                 {/* Validade */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Validade até</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Validade até</label>
                                     <input
                                         type="date"
                                         name="validade_ate"
                                         value={formData.validade_ate}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
                                 
                                 {/* Descrição */}
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Resumo da Proposta</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Resumo da Proposta</label>
                                     <textarea
                                         name="descricao"
                                         value={formData.descricao}
                                         onChange={handleChange}
                                         rows={3}
                                         placeholder="Breve descrição sobre o que o orçamento inclui."
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary resize-none"
                                     />
                                 </div>
                             </div>
                         </section>
                         
                         {/* SEÇÃO 2: Detalhes da Viagem */}
-                        <section className="border-t border-gray-200 pt-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <section className="border-t border-default pt-6">
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                                 <Plane size={20} /> Detalhes da Viagem
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 
                                 {/* Data Início */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Data Início</label>
                                     <input
                                         type="date"
                                         name="data_viagem_inicio"
                                         value={formData.data_viagem_inicio}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
 
                                 {/* Data Fim */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Data Fim</label>
                                     <input
                                         type="date"
                                         name="data_viagem_fim"
                                         value={formData.data_viagem_fim}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
 
                                 {/* Nº Pessoas */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Nº Pessoas</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Nº Pessoas</label>
                                     <input
                                         type="number"
                                         name="num_pessoas"
                                         value={formData.num_pessoas}
                                         onChange={handleChange}
                                         min="1"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
                                 
                                 {/* Nº Dias */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Nº Dias</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Nº Dias</label>
                                     <input
                                         type="number"
                                         name="num_dias"
                                         value={formData.num_dias}
                                         onChange={handleChange}
                                         min="1"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/5 text-primary"
                                     />
                                 </div>
                             </div>
                         </section>
                         
                         {/* SEÇÃO 3: Itens do Orçamento */}
-                        <section className="border-t border-gray-200 pt-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
+                        <section className="border-t border-default pt-6">
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center justify-between">
                                 <div><DollarSign size={20} className="inline-block mr-2" /> Itens do Orçamento</div>
                                 <span className="text-xl font-bold text-blue-600">Total: {totalOrcamento.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}</span>
                             </h3>
                             
                             {/* Tabela de Itens */}
-                            <div className="border border-gray-200 rounded-lg overflow-hidden">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                            <div className="border border-default rounded-lg overflow-hidden">
+                                <table className="min-w-full divide-y divide-white/5">
+                                    <thead className="bg-white/5">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Valor Venda</th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Tipo</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Descrição</th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Valor Venda</th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Ações</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="surface-card divide-y divide-white/5">
                                         {itens.length === 0 ? (
                                             <tr>
-                                                <td colSpan={4} className="text-center py-4 text-sm text-gray-500">
+                                                <td colSpan={4} className="text-center py-4 text-sm text-muted">
                                                     Nenhum item adicionado.
                                                 </td>
                                             </tr>
                                         ) : (
                                             itens.map((item) => (
-                                                <tr key={item.id} className="hover:bg-gray-50">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                <tr key={item.id} className="hover:bg-white/10">
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
                                                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                                             {item.tipo}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-700">{item.descricao}</td>
+                                                    <td className="px-6 py-4 text-sm text-muted">{item.descricao}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
                                                         {item.valor_final.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}
                                                     </td>
@@ -406,35 +412,35 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                             </div>
                             
                             <div className="md:col-span-2 md:col-start-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">Observações (Internas)</label>
+                                <label className="block text-sm font-medium text-primary mb-2 mt-4">Observações (Internas)</label>
                                 <textarea
                                     name="observacoes"
                                     value={formData.observacoes}
                                     onChange={handleChange}
                                     rows={3}
                                     placeholder="Notas internas sobre precificação, concorrência ou riscos."
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                                    className="w-full px-4 py-3 border border-default rounded-lg resize-none"
                                 />
                             </div>
                             
                         </section>
 
                         {/* SEÇÃO 4: Fechamento */}
-                        <section className="border-t border-gray-200 pt-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <section className="border-t border-default pt-6">
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                                 <DollarSign size={20} /> Fechamento
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 
                                 {/* Valor Total (controlado por JS) */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Valor Final (€)</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Valor Final (€)</label>
                                     <input
                                         type="text"
                                         name="valor_total_display"
                                         value={totalOrcamento.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}
                                         disabled
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 font-bold"
+                                        className="w-full px-4 py-3 border border-default rounded-lg bg-white/10 text-primary font-bold"
                                     />
                                     {/* Campo escondido com o valor real para o Server Action */}
                                     <input type="hidden" name="valor_total" value={formData.valor_total} />
@@ -442,7 +448,7 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                                 
                                 {/* Valor Sinal */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Valor Sinal / Entrada (€)</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Valor Sinal / Entrada (€)</label>
                                     <input
                                         type="number"
                                         name="valor_sinal"
@@ -450,18 +456,18 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                                         onChange={handleChange}
                                         min="0"
                                         step="0.01"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg"
                                     />
                                 </div>
 
                                 {/* Status */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Status do Orçamento</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Status do Orçamento</label>
                                     <select
                                         name="status"
                                         value={formData.status}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                        className="w-full px-4 py-3 border border-default rounded-lg"
                                     >
                                         {STATUS_OPTIONS.map(status => (
                                             <option key={status} value={status}>
@@ -474,15 +480,15 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                         </section>
                         
                         {/* Termos e Condições (Simplificado) */}
-                        <section className="border-t border-gray-200 pt-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Termos e Condições</label>
+                        <section className="border-t border-default pt-6">
+                            <label className="block text-sm font-medium text-primary mb-2">Termos e Condições</label>
                             <textarea
                                 name="termos_condicoes"
                                 value={formData.termos_condicoes}
                                 onChange={handleChange}
                                 rows={3}
                                 placeholder="Insira aqui os termos específicos deste orçamento."
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                                className="w-full px-4 py-3 border border-default rounded-lg resize-none"
                             />
                         </section>
 
@@ -497,7 +503,7 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                             </div>
                         )}
 
-                        <div className="pt-6 border-t border-gray-200">
+                        <div className="pt-6 border-t border-default">
                             <button
                                 type="submit"
                                 disabled={isPending || !formData.titulo || !formData.lead_id || itens.length === 0}
@@ -576,7 +582,7 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
 
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-lg">
+            <div className="surface-card border border-default rounded-xl w-full max-w-lg">
                 <form onSubmit={handleInternalSave}>
                     <div className="p-6 border-b">
                         <div className="flex items-center justify-between">
@@ -606,14 +612,14 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                         
                         {/* Descrição */}
                         <div>
-                            <label className="block text-sm font-medium mb-2">Descrição Detalhada *</label>
+                            <label className="block text-sm font-medium mb-2 text-primary">Descrição Detalhada *</label>
                             <textarea 
                                 name="descricao" 
                                 value={itemData.descricao} 
                                 onChange={handleChange}
                                 rows={3}
                                 placeholder="Ex: Hotel Grand Hyatt - 5 noites, quarto deluxe"
-                                className="w-full px-4 py-2 border rounded-lg" 
+                                className="w-full px-4 py-2 border border-default rounded-lg bg-white/5 text-primary" 
                                 required
                             />
                         </div>
@@ -622,7 +628,7 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                         <div className="grid grid-cols-3 gap-4">
                             {/* Valor Net */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Valor Custo (€)</label>
+                                <label className="block text-sm font-medium mb-2 text-primary">Valor Custo (€)</label>
                                 <input 
                                     type="number" 
                                     name="valor_net" 
@@ -631,12 +637,12 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                                     min="0.01"
                                     step="0.01"
                                     required
-                                    className="w-full px-4 py-2 border rounded-lg" 
+                                    className="w-full px-4 py-2 border border-default rounded-lg bg-white/5 text-primary" 
                                 />
                             </div>
                             {/* Comissão */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Comissão (%)</label>
+                                <label className="block text-sm font-medium mb-2 text-primary">Comissão (%)</label>
                                 <input 
                                     type="number" 
                                     name="comissao_percentual" 
@@ -644,34 +650,26 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                                     onChange={handleChange}
                                     min="0"
                                     step="0.1"
-                                    className="w-full px-4 py-2 border rounded-lg" 
+                                    className="w-full px-4 py-2 border border-default rounded-lg bg-white/5 text-primary" 
                                 />
                             </div>
                             {/* Valor Final Calculado */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Valor Venda (€)</label>
+                                <label className="block text-sm font-medium mb-2 text-primary">Valor Venda (€)</label>
                                 <input 
                                     type="text" 
                                     value={valorFinal.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}
                                     disabled
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 font-bold"
+                                    className="w-full px-4 py-2 border border-default rounded-lg bg-white/10 font-bold"
                                 />
                             </div>
                         </div>
                         
                     </div>
 
-                    <div className="p-6 border-t flex justify-end gap-3">
-                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">
-                            Cancelar
-                        </button>
-                        <button 
-                            type="submit" 
-                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"
-                        >
-                            <Save className="w-4 h-4" />
-                            {isEditing ? 'Salvar Edição' : 'Adicionar Item'}
-                        </button>
+                    <div className="p-6 border-t border-default flex justify-end gap-3">
+                        <NButton type="button" variant="secondary" onClick={onClose}>Cancelar</NButton>
+                        <NButton type="submit" variant="primary" leftIcon={<Save className="w-4 h-4" />}>{isEditing ? 'Salvar Edição' : 'Adicionar Item'}</NButton>
                     </div>
                 </form>
             </div>

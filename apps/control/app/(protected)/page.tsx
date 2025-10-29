@@ -11,7 +11,7 @@
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session || !session.user) {
-        return redirect('/admin/login?redirect=/admin'); 
+        return redirect('/login?redirect=/control'); 
       }
       
       const authUser = session.user; 
@@ -32,9 +32,9 @@
         if (insertError) {
           console.error('❌ Erro ao criar perfil:', insertError);
           await supabase.auth.signOut();
-          return redirect(`/admin/login?error=${encodeURIComponent('Erro ao criar perfil')}`);
+          return redirect(`/login?error=${encodeURIComponent('Erro ao criar perfil')}`);
         }
-        return redirect('/admin'); 
+        return redirect('/control'); 
       }
 
       // --- ÁREA DE TESTE ---
@@ -72,14 +72,8 @@
         );
       }
       
-      return (
-        <AdminDashboard 
-          user={userProfile} 
-          metrics={metrics} 
-          leadsRecentes={leadsRecentes} 
-          tarefas={tarefas} 
-        />
-      );
+      // Até migrarmos a UI do Control, envia para o Dashboard do Control
+      return redirect('/control');
     }
     
 

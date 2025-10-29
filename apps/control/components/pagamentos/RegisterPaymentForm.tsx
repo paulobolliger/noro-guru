@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { registerPayment } from "@/app/(protected)/pedidos/pedidos-actions"; // Server Action
 import { currencyFormat } from '@/utils/currency-format';
 import { useToast } from "@ui/use-toast";
-import { Button } from "@ui/button";
-import { Input } from "@ui/input";
+import { NButton, NInput } from '@/components/ui';
 import { Label } from "@ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -101,7 +100,7 @@ export default function RegisterPaymentForm({ pedidoId, valorTotal }: RegisterPa
                 {/* Campo Valor Pago */}
                 <div className="space-y-2">
                     <Label htmlFor="valor_pago">Valor Pago</Label>
-                    <Input
+                    <NInput
                         id="valor_pago"
                         type="number"
                         step="0.01"
@@ -134,7 +133,7 @@ export default function RegisterPaymentForm({ pedidoId, valorTotal }: RegisterPa
             {/* Campo Data do Pagamento */}
             <div className="space-y-2">
                 <Label htmlFor="data_pagamento">Data do Pagamento</Label>
-                <Input
+                <NInput
                     id="data_pagamento"
                     type="date"
                     value={formData.data_pagamento}
@@ -144,9 +143,9 @@ export default function RegisterPaymentForm({ pedidoId, valorTotal }: RegisterPa
             </div>
 
             <div className="flex justify-end pt-2">
-                <Button type="submit" disabled={isPending} className="bg-green-600 hover:bg-green-700">
-                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Confirmar Recebimento'}
-                </Button>
+                <NButton variant="primary" type="submit" disabled={isPending} leftIcon={isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <DollarSign className="w-4 h-4" />}>
+                    {isPending ? 'Processando...' : 'Confirmar Recebimento'}
+                </NButton>
             </div>
         </form>
       </CardContent>

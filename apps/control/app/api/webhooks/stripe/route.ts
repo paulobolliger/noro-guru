@@ -1,107 +1,87 @@
-// app/api/webhooks/stripe/route.ts
-import { createServerSupabaseClient } from "@lib/supabase/server"; // CORRIGIDO
-import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
-import Stripe from 'stripe';
+﻿import { createServerSupabaseClient } from "@lib/supabase/server";
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
-// ================================================================
-// CONFIGURAÇÃO DE SEGURANÇA
-// As variáveis de ambiente devem ser configuradas para o ambiente LIVE
-// ================================================================
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('STRIPE_SECRET_KEY is not defined in environment variables.');
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY as string;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
+if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
+  throw new Error("Stripe env vars missing");
 }
-if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    // Usaremos a variável que você configurará com um dos valores 'whsec_...'
-    throw new Error('STRIPE_WEBHOOK_SECRET is not defined in environment variables.');
-}
+const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
 
-// Inicializa o cliente Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-06-20',
-});
-
-/**
- * Route Handler para receber eventos de Webhook do Stripe.
- * Gerencia o evento de pagamento concluído para atualizar o status do Pedido.
- */
 export async function POST(req: Request) {
-    const supabase = createServerClient();
-    let event: Stripe.Event;
+  const supabase = createServerSupabaseClient();
+  let event: Stripe.Event;
+  try {
+    const rawBody = await req.text();
+    const sig = req.headers.get("stripe-signature");
+    if (!sig) return NextResponse.json({ error: "signature required" }, { status: 400 });
+    event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 
-    // 1. Verificar a Assinatura do Webhook (Segurança Crítica)
-    try {
-        const rawBody = await req.text();
-        const signature = req.headers.get('stripe-signature');
-        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-        
-        if (!signature) {
-            console.error('Webhook: Stripe-Signature header ausente.');
-            return NextResponse.json({ received: false, error: 'Signature required' }, { status: 400 });
-        }
+  try {
+    switch (event.type) {
+      case "invoice.created":
+      case "invoice.finalized": {
+        const inv = event.data.object as Stripe.Invoice;
+        const amount = inv.amount_due ?? inv.amount_paid ?? 0;
+        const currency = (inv.currency || "brl").toUpperCase();
+        const stripe_invoice_id = inv.id;
+        const tenant_id = (inv.metadata?.tenant_id as string) || null;
+        await supabase
+          .schema("cp")
+          .from("invoices")
+          .insert({
+            tenant_id,
+            subscription_id: null,
+            amount_cents: amount,
+            currency,
+            status: inv.status ?? "open",
+            issued_at: inv.created ? new Date(inv.created * 1000).toISOString() : null,
+            due_at: inv.due_date ? new Date(inv.due_date * 1000).toISOString() : null,
+            stripe_invoice_id,
+          }, { upsert: false });
+        break;
+      }
+      case "invoice.paid": {
+        const inv = event.data.object as Stripe.Invoice;
+        const stripe_invoice_id = inv.id;
+        const { data: updated } = await supabase
+          .schema("cp")
+          .from("invoices")
+          .update({ status: "paid", paid_at: new Date().toISOString() })
+          .eq("stripe_invoice_id", stripe_invoice_id)
+          .select("tenant_id, amount_cents").maybeSingle();
 
-        event = stripe.webhooks.constructEvent(
-            rawBody,
-            signature,
-            webhookSecret
-        );
-        
-    } catch (err: any) {
-        // Se a assinatura falhar, retorna 400
-        console.log(`⚠️ Webhook signature verification failed: ${err.message}`);
-        return NextResponse.json({ received: false, error: err.message }, { status: 400 });
+        // Insert minimal ledger entries (MVP): revenue and cash
+        const tenant_id = (inv.metadata?.tenant_id as string) || updated?.tenant_id || null;
+        const amount = updated?.amount_cents ?? (inv.amount_paid ?? 0);
+
+        // Ensure default accounts exist
+        const ensureAccount = async (code: string, name: string, type: string) => {
+          const { data: acc } = await supabase.schema("cp").from("ledger_accounts").select("id").eq("code", code).maybeSingle();
+          if (acc?.id) return acc.id as string;
+          const { data: created } = await supabase.schema("cp").from("ledger_accounts").insert({ code, name, type }).select("id").maybeSingle();
+          return created?.id as string;
+        };
+        const revenueId = await ensureAccount("4000", "Receita Plataforma", "revenue");
+        const cashId = await ensureAccount("1000", "Caixa", "asset");
+
+        await supabase.schema("cp").from("ledger_entries").insert([
+          { account_id: revenueId, tenant_id, amount_cents: amount, memo: `Stripe invoice ${stripe_invoice_id}` },
+          { account_id: cashId, tenant_id, amount_cents: amount, memo: `Stripe invoice ${stripe_invoice_id}` },
+        ]);
+        break;
+      }
+      default:
+        break;
     }
-    
-    // 2. Tratar o Evento de Pagamento Bem-sucedido
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.Checkout.Session;
-        
-        const pedidoId = session.client_reference_id;
-        const cobrancaId = session.metadata?.cobranca_id;
-        const paymentIntentId = session.payment_intent as string; // ID da transação no Stripe
-
-        if (!pedidoId || !cobrancaId || !paymentIntentId) {
-            console.error(`Webhook: IDs customizados ou Payment Intent ausentes na sessão ${session.id}.`);
-            // Retorna 200 para não re-tentar, mas loga o erro
-            return NextResponse.json({ received: true, message: 'IDs customizados ausentes.' }, { status: 200 }); 
-        }
-        
-        try {
-            // 3. Atualizar o status da Cobrança para PAGO
-            await supabase
-                .from('cobrancas')
-                .update({ 
-                    status: 'PAGO', 
-                    data_pagamento: new Date().toISOString(),
-                    transaction_id: paymentIntentId,
-                    // Salvar URL do recibo se disponível, ou outros dados
-                    provider_data: { sessionId: session.id, receiptUrl: session.url } 
-                })
-                .eq('id', cobrancaId);
-
-            // 4. Atualizar o status do Pedido para CONCLUIDO
-            await supabase
-                .from('pedidos')
-                .update({ status: 'CONCLUIDO' })
-                .eq('id', pedidoId);
-                
-            console.log(`✅ Pagamento Stripe concluído. Pedido ${pedidoId} e Cobrança ${cobrancaId} atualizados.`);
-
-            // 5. Revalidar as páginas afetadas
-            revalidatePath(`/admin/pedidos/${pedidoId}`);
-            revalidatePath('/admin/pagamentos');
-
-        } catch (dbError) {
-            console.error('Erro de Banco de Dados ao processar webhook:', dbError);
-            // Retorna 500 para que o Stripe re-tente o webhook mais tarde
-            return NextResponse.json({ received: true, error: 'Erro de DB interno.' }, { status: 500 });
-        }
-    } else {
-        // Loga outros eventos que podem ser úteis, mas não afetam o status
-        console.log(`Evento Stripe recebido (Tipo: ${event.type})`);
-    }
-    
-    // Retornar 200 OK para o Stripe (mesmo se o evento não for o 'completed'), 
-    // indicando que o evento foi recebido com sucesso.
-    return NextResponse.json({ received: true }, { status: 200 });
+  } catch (dbErr: any) {
+    console.error("stripe webhook db error", dbErr);
+    return NextResponse.json({ ok: false }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
 }
+

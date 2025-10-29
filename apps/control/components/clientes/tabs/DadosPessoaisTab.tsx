@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Edit2, Save, X, User, Building2, Calendar, Globe, Briefcase, CreditCard, MapPin } from 'lucide-react';
+import { NInput, NButton, NSelect, NTextarea } from '@/components/ui';
 import { updateCliente } from "@/app/(protected)/clientes/[id]/actions";
 import { useRouter } from 'next/navigation';
 
@@ -119,9 +120,9 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
   const isPessoaFisica = formData.tipo === 'pessoa_fisica';
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-default border-default">
         <div className="flex items-center gap-3">
           {isPessoaFisica ? (
             <User className="w-6 h-6 text-blue-600" />
@@ -129,39 +130,39 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
             <Building2 className="w-6 h-6 text-purple-600" />
           )}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Dados Pessoais</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-xl font-semibold text-primary">Dados Pessoais</h2>
+            <p className="text-sm text-muted">
               {isPessoaFisica ? 'Pessoa Física' : 'Pessoa Jurídica'}
             </p>
           </div>
         </div>
         
         {!isEditing ? (
-          <button
+          <NButton
             onClick={handleEditClick} // ATUALIZADO
-            className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            variant="tertiary"
+            leftIcon={<Edit2 className="w-4 h-4" />}
           >
-            <Edit2 className="w-4 h-4" />
             Editar
-          </button>
+          </NButton>
         ) : (
           <div className="flex gap-2">
-            <button
+            <NButton
               onClick={handleCancel}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              variant="secondary"
             >
               <X className="w-4 h-4" />
               Cancelar
-            </button>
-            <button
+            </NButton>
+            <NButton
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
+              variant="primary"
             >
               <Save className="w-4 h-4" />
               {isSaving ? 'Salvando...' : 'Salvar'}
-            </button>
+            </NButton>
           </div>
         )}
       </div>
@@ -172,160 +173,160 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
           
           {/* DADOS BÁSICOS */}
           <div className="md:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações Básicas</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Informações Básicas</h3>
           </div>
 
           {/* Nome / Razão Social */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               {isPessoaFisica ? 'Nome Completo' : 'Razão Social'}
             </label>
             {isEditing ? (
-              <input
+              <NInput
                 type="text"
                 name={isPessoaFisica ? 'nome' : 'razao_social'}
                 value={isPessoaFisica ? formData.nome : formData.razao_social}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="focus:ring-2 focus:ring-indigo-400/40"
               />
             ) : (
-              <p className="text-gray-900">{isPessoaFisica ? cliente.nome : cliente.razao_social || '-'}</p>
+              <p className="text-primary">{isPessoaFisica ? cliente.nome : cliente.razao_social || '-'}</p>
             )}
           </div>
 
           {/* Nome Fantasia (apenas PJ) */}
           {!isPessoaFisica && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-primary mb-2">
                 Nome Fantasia
               </label>
               {isEditing ? (
-                <input
+                <NInput
                   type="text"
                   name="nome_fantasia"
                   value={formData.nome_fantasia}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="focus:ring-2 focus:ring-indigo-400/40"
                 />
               ) : (
-                <p className="text-gray-900">{cliente.nome_fantasia || '-'}</p>
+                <p className="text-primary">{cliente.nome_fantasia || '-'}</p>
               )}
             </div>
           )}
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Email
             </label>
             {isEditing ? (
-              <input
+              <NInput
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="focus:ring-2 focus:ring-indigo-400/40"
               />
             ) : (
-              <p className="text-gray-900">{cliente.email || '-'}</p>
+              <p className="text-primary">{cliente.email || '-'}</p>
             )}
           </div>
 
           {/* Telefone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Telefone
             </label>
             {isEditing ? (
-              <input
+              <NInput
                 type="tel"
                 name="telefone"
                 value={formData.telefone}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="focus:ring-2 focus:ring-indigo-400/40"
               />
             ) : (
-              <p className="text-gray-900">{cliente.telefone || '-'}</p>
+              <p className="text-primary">{cliente.telefone || '-'}</p>
             )}
           </div>
 
           {/* WhatsApp */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               WhatsApp
             </label>
             {isEditing ? (
-              <input
+              <NInput
                 type="tel"
                 name="whatsapp"
                 value={formData.whatsapp}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="focus:ring-2 focus:ring-indigo-400/40"
               />
             ) : (
-              <p className="text-gray-900">{cliente.whatsapp || '-'}</p>
+              <p className="text-primary">{cliente.whatsapp || '-'}</p>
             )}
           </div>
 
           {/* DOCUMENTOS */}
           <div className="md:col-span-2 mt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Documentos</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Documentos</h3>
           </div>
 
           {isPessoaFisica ? (
             <>
               {/* CPF */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   CPF
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="cpf"
                     value={formData.cpf}
                     onChange={handleChange}
                     placeholder="000.000.000-00"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.cpf || '-'}</p>
+                  <p className="text-primary">{cliente.cpf || '-'}</p>
                 )}
               </div>
 
               {/* Passaporte */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Passaporte
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="passaporte"
                     value={formData.passaporte}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.passaporte || '-'}</p>
+                  <p className="text-primary">{cliente.passaporte || '-'}</p>
                 )}
               </div>
 
               {/* Data de Nascimento */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Data de Nascimento
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="date"
                     name="data_nascimento"
                     value={formData.data_nascimento}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">
+                  <p className="text-primary">
                     {cliente.data_nascimento 
                       ? new Date(cliente.data_nascimento).toLocaleDateString('pt-BR')
                       : '-'}
@@ -335,37 +336,37 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
 
               {/* Nacionalidade */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Nacionalidade
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="nacionalidade"
                     value={formData.nacionalidade}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.nacionalidade || '-'}</p>
+                  <p className="text-primary">{cliente.nacionalidade || '-'}</p>
                 )}
               </div>
 
               {/* Profissão */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Profissão
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="profissao"
                     value={formData.profissao}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.profissao || '-'}</p>
+                  <p className="text-primary">{cliente.profissao || '-'}</p>
                 )}
               </div>
             </>
@@ -373,74 +374,74 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
             <>
               {/* CNPJ */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   CNPJ
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="cnpj"
                     value={formData.cnpj}
                     onChange={handleChange}
                     placeholder="00.000.000/0000-00"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.cnpj || '-'}</p>
+                  <p className="text-primary">{cliente.cnpj || '-'}</p>
                 )}
               </div>
 
               {/* Inscrição Estadual */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Inscrição Estadual
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="inscricao_estadual"
                     value={formData.inscricao_estadual}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.inscricao_estadual || '-'}</p>
+                  <p className="text-primary">{cliente.inscricao_estadual || '-'}</p>
                 )}
               </div>
 
               {/* Responsável */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Responsável
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="responsavel_nome"
                     value={formData.responsavel_nome}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.responsavel_nome || '-'}</p>
+                  <p className="text-primary">{cliente.responsavel_nome || '-'}</p>
                 )}
               </div>
 
               {/* Cargo do Responsável */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Cargo
                 </label>
                 {isEditing ? (
-                  <input
+                  <NInput
                     type="text"
                     name="responsavel_cargo"
                     value={formData.responsavel_cargo}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="focus:ring-2 focus:ring-indigo-400/40"
                   />
                 ) : (
-                  <p className="text-gray-900">{cliente.responsavel_cargo || '-'}</p>
+                  <p className="text-primary">{cliente.responsavel_cargo || '-'}</p>
                 )}
               </div>
             </>
@@ -448,12 +449,12 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
 
           {/* CLASSIFICAÇÃO */}
           <div className="md:col-span-2 mt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Classificação</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Classificação</h3>
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Status
             </label>
             {isEditing ? (
@@ -461,7 +462,7 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="ativo">Ativo</option>
                 <option value="vip">VIP</option>
@@ -472,7 +473,7 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
               <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
                 cliente.status === 'ativo' ? 'bg-green-100 text-green-800' :
                 cliente.status === 'vip' ? 'bg-purple-100 text-purple-800' :
-                cliente.status === 'inativo' ? 'bg-gray-100 text-gray-800' :
+                cliente.status === 'inativo' ? 'bg-white/10 text-gray-800' :
                 'bg-red-100 text-red-800'
               }`}>
                 {cliente.status.toUpperCase()}
@@ -482,26 +483,26 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
 
           {/* Nível */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Nível
             </label>
             {isEditing ? (
-              <select
+              <NSelect
                 name="nivel"
                 value={formData.nivel}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full"
               >
                 <option value="bronze">Bronze</option>
                 <option value="prata">Prata</option>
                 <option value="ouro">Ouro</option>
                 <option value="platina">Platina</option>
                 <option value="diamante">Diamante</option>
-              </select>
+              </NSelect>
             ) : (
               <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
                 cliente.nivel === 'bronze' ? 'bg-orange-100 text-orange-800' :
-                cliente.nivel === 'prata' ? 'bg-gray-100 text-gray-800' :
+                cliente.nivel === 'prata' ? 'bg-white/10 text-gray-800' :
                 cliente.nivel === 'ouro' ? 'bg-yellow-100 text-yellow-800' :
                 cliente.nivel === 'platina' ? 'bg-blue-100 text-blue-800' :
                 'bg-indigo-100 text-indigo-800'
@@ -513,15 +514,15 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
 
           {/* Segmento */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Segmento
             </label>
             {isEditing ? (
-              <select
+              <NSelect
                 name="segmento"
                 value={formData.segmento}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full"
               >
                 <option value="">Selecione...</option>
                 <option value="luxo">Luxo</option>
@@ -530,28 +531,28 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
                 <option value="corporativo">Corporativo</option>
                 <option value="mochileiro">Mochileiro</option>
                 <option value="romantico">Romântico</option>
-              </select>
+              </NSelect>
             ) : (
-              <p className="text-gray-900">{cliente.segmento || '-'}</p>
+              <p className="text-primary">{cliente.segmento || '-'}</p>
             )}
           </div>
 
           {/* PREFERÊNCIAS */}
           <div className="md:col-span-2 mt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Preferências Gerais</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Preferências Gerais</h3>
           </div>
 
           {/* Idioma Preferido */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Idioma Preferido
             </label>
             {isEditing ? (
-              <select
+              <NSelect
                 name="idioma_preferido"
                 value={formData.idioma_preferido}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full"
               >
                 <option value="pt">Português</option>
                 <option value="en">Inglês</option>
@@ -559,9 +560,9 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
                 <option value="fr">Francês</option>
                 <option value="de">Alemão</option>
                 <option value="it">Italiano</option>
-              </select>
+              </NSelect>
             ) : (
-              <p className="text-gray-900">
+              <p className="text-primary">
                 {cliente.idioma_preferido === 'pt' ? 'Português' :
                  cliente.idioma_preferido === 'en' ? 'Inglês' :
                  cliente.idioma_preferido === 'es' ? 'Espanhol' :
@@ -574,41 +575,41 @@ export default function DadosPessoaisTab({ cliente, initialEditMode = false, onT
 
           {/* Moeda Preferida */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Moeda Preferida
             </label>
             {isEditing ? (
-              <select
+              <NSelect
                 name="moeda_preferida"
                 value={formData.moeda_preferida}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full"
               >
                 <option value="EUR">Euro (€)</option>
                 <option value="BRL">Real (R$)</option>
                 <option value="USD">Dólar ($)</option>
                 <option value="GBP">Libra (£)</option>
-              </select>
+              </NSelect>
             ) : (
-              <p className="text-gray-900">{cliente.moeda_preferida}</p>
+              <p className="text-primary">{cliente.moeda_preferida}</p>
             )}
           </div>
 
           {/* Observações */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Observações
             </label>
             {isEditing ? (
-              <textarea
+              <NTextarea
                 name="observacoes"
                 value={formData.observacoes}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className=""
               />
             ) : (
-              <p className="text-gray-900 whitespace-pre-wrap">{cliente.observacoes || '-'}</p>
+              <p className="text-primary whitespace-pre-wrap">{cliente.observacoes || '-'}</p>
             )}
           </div>
         </div>

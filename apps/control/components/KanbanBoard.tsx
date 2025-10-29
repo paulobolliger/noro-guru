@@ -1,7 +1,7 @@
 // components/admin/KanbanBoard.tsx
 'use client';
 
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 import { Users, DollarSign } from 'lucide-react';
 
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
@@ -43,7 +43,7 @@ export default function KanbanBoard({ leads }: KanbanBoardProps) {
   return (
     <div className="flex gap-4 overflow-x-auto pb-4">
       {leadsPorColuna.map(coluna => (
-        <div key={coluna.id} className="flex-shrink-0 w-80 bg-gray-100 rounded-lg">
+        <div key={coluna.id} className="flex-shrink-0 w-80 bg-white/10 rounded-lg">
           {/* Cabeçalho da Coluna */}
           <div className={`p-4 rounded-t-lg flex justify-between items-center ${statusColors[coluna.id] || 'bg-gray-400'}`}>
             <h2 className="font-bold text-white">{coluna.title}</h2>
@@ -55,10 +55,10 @@ export default function KanbanBoard({ leads }: KanbanBoardProps) {
           {/* Lista de Cards */}
           <div className="p-2 space-y-2 overflow-y-auto h-[calc(100vh-20rem)]">
             {coluna.leads.map(lead => (
-              <div key={lead.id} className="bg-white p-4 rounded-md shadow border border-gray-200 cursor-grab">
+              <div key={lead.id} className="surface-card p-4 rounded-md shadow border border-default cursor-grab">
                 <p className="font-semibold text-gray-800">{lead.nome}</p>
-                <p className="text-sm text-gray-500">{lead.destino_interesse || 'Sem destino'}</p>
-                <div className="mt-2 flex justify-between items-center text-xs text-gray-500">
+                <p className="text-sm text-muted">{lead.destino_interesse || 'Sem destino'}</p>
+                <div className="mt-2 flex justify-between items-center text-xs text-muted">
                   <div className="flex items-center gap-1">
                     <Users size={14} />
                     <span>{lead.num_pessoas || 1}</span>

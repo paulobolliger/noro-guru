@@ -1,6 +1,6 @@
 // app/admin/(protected)/sobre-noro/page.tsx
 import { Info } from 'lucide-react';
-import packageJson from '@/../package.json';
+import packageJson from '@/package.json';
 
 export default function SobreNoroPage() {
   const version = packageJson.version;
@@ -10,13 +10,13 @@ export default function SobreNoroPage() {
       <div className="flex items-center gap-4 mb-8">
         <Info size={32} className="text-blue-600" />
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sobre o NORO</h1>
-          <p className="text-gray-600 mt-1">O cérebro digital do agente de viagens moderno.</p>
+          <h1 className="text-3xl font-bold text-primary">Sobre o NORO</h1>
+          <p className="text-muted mt-1">O cérebro digital do agente de viagens moderno.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 max-w-4xl mx-auto">
-        <div className="prose prose-lg max-w-none prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-800 prose-h3:text-xl prose-h3:font-semibold prose-h3:text-gray-700 prose-p:text-gray-600 prose-blockquote:border-l-blue-600 prose-blockquote:text-gray-800 prose-blockquote:font-semibold">
+      <div className="surface-card rounded-xl p-8 shadow-sm border border-default max-w-4xl mx-auto">
+        <div className="prose prose-lg max-w-none prose-h2:text-2xl prose-h2:font-bold prose-h2:text-gray-800 prose-h3:text-xl prose-h3:font-semibold prose-h3:text-primary prose-p:text-muted prose-blockquote:border-l-blue-600 prose-blockquote:text-gray-800 prose-blockquote:font-semibold">
           
           <h2>Noro — O app inteligente do agente moderno</h2>
           <p>

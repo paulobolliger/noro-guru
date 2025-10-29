@@ -9,7 +9,7 @@ import { Input } from "@ui/input";
 import { Button } from "@ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Trash2, Plus, Pencil, Loader2 } from 'lucide-react';
-import { Database } from "@types/supabase"; // Importe o tipo Database
+import { Database } from "@noro-types/supabase"; // Importe o tipo Database
 
 // Tipo do item do pedido para o estado local, baseado no Supabase
 type PedidoItem = Database['public']['Tables']['pedido_itens']['Row'];
@@ -163,27 +163,27 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
       <CardContent className="space-y-6">
         {/* Tabela de Itens Existentes */}
         <div className="overflow-x-auto border rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-white/5">
+            <thead className="bg-white/5">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serviço</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Qtd.</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Vl. Unit.</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Vl. Total</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Serviço</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider w-24">Qtd.</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider w-32">Vl. Unit.</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider w-32">Vl. Total</th>
                 <th className="px-6 py-3 w-16"></th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="surface-card divide-y divide-white/5">
               {items.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500">
+                  <td colSpan={5} className="py-8 text-center text-muted">
                     Nenhum serviço adicionado a este pedido.
                   </td>
                 </tr>
               ) : (
                 items.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
-                    <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={item.id} className="hover:bg-white/5 transition duration-150 ease-in-out">
+                    <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-primary">
                       <Input
                           type="text"
                           value={item.servico_nome}
@@ -191,7 +191,7 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
                           className="p-1 h-8 border-none focus-visible:ring-1 focus-visible:ring-indigo-500"
                       />
                     </td>
-                    <td className="px-6 py-3 whitespace-nowrap text-right text-sm text-gray-900">
+                    <td className="px-6 py-3 whitespace-nowrap text-right text-sm text-primary">
                         <Input
                             type="number"
                             value={item.quantidade}
@@ -199,7 +199,7 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
                             className="p-1 h-8 border-none text-right focus-visible:ring-1 focus-visible:ring-indigo-500"
                         />
                     </td>
-                    <td className="px-6 py-3 whitespace-nowrap text-right text-sm text-gray-900">
+                    <td className="px-6 py-3 whitespace-nowrap text-right text-sm text-primary">
                         <Input
                             type="number"
                             step="0.01"

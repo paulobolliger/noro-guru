@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Portal from "@/components/ui/portal";
 import { Plane, Plus, Edit2, Trash2, X, Save, AlertCircle } from 'lucide-react';
 import { 
   getClienteMilhas, 
@@ -136,13 +137,13 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
 
   function getCategoriaColor(categoria?: string) {
     const cores: Record<string, string> = {
-      basico: 'bg-gray-100 text-gray-800',
+      basico: 'bg-white/10 text-gray-800',
       prata: 'bg-slate-100 text-slate-800',
       ouro: 'bg-yellow-100 text-yellow-800',
       platina: 'bg-purple-100 text-purple-800',
       diamante: 'bg-blue-100 text-blue-800',
     };
-    return categoria ? cores[categoria] || 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800';
+    return categoria ? cores[categoria] || 'bg-white/10 text-gray-800' : 'bg-white/10 text-gray-800';
   }
 
   function isVencendo(dataValidade?: string) {
@@ -166,13 +167,13 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
+      <div className="flex items-center justify-between p-6 border-b border-default border-default">
         <div className="flex items-center gap-3">
           <Plane className="w-6 h-6 text-blue-600" />
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Programas de Milhas</h2>
-            <p className="text-sm text-gray-600">{milhas.length} programa(s)</p>
+            <h2 className="text-xl font-semibold text-primary">Programas de Milhas</h2>
+            <p className="text-sm text-muted">{milhas.length} programa(s)</p>
           </div>
         </div>
         
@@ -216,11 +217,11 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
 
       <div className="p-6">
         {isLoading ? (
-          <div className="text-center py-12 text-gray-500">Carregando...</div>
+          <div className="text-center py-12 text-muted">Carregando...</div>
         ) : milhas.length === 0 ? (
           <div className="text-center py-12">
             <Plane className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">Nenhum programa cadastrado</p>
+            <p className="text-muted mb-2">Nenhum programa cadastrado</p>
             <button
               onClick={() => setShowModal(true)}
               className="text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -233,16 +234,16 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
             {milhas.map((milha) => (
               <div
                 key={milha.id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="border border-default rounded-lg p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Plane className="w-5 h-5 text-blue-600" />
-                      <h3 className="font-semibold text-gray-900">{milha.companhia}</h3>
+                      <h3 className="font-semibold text-primary">{milha.companhia}</h3>
                     </div>
                     {milha.companhia && (
-                      <p className="text-sm text-gray-600">{milha.companhia}</p>
+                      <p className="text-sm text-muted">{milha.companhia}</p>
                     )}
                   </div>
                   {milha.categoria && (
@@ -253,12 +254,12 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                 </div>
 
                 <div className="space-y-2 mb-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted">
                     <span className="font-medium">Cartão:</span> {milha.numero_programa}
                   </p>
 
                   {milha.saldo_estimado !== null && milha.saldo_estimado !== undefined && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted">
                       <span className="font-medium">Saldo:</span>{' '}
                       <span className="text-lg font-semibold text-blue-600">
                         {formatarSaldo(milha.saldo_estimado)} milhas
@@ -267,7 +268,7 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                   )}
 
                   {milha.data_validade && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-muted">
                       <span className="font-medium">Validade:</span>{' '}
                       <span className={
                         isVencido(milha.data_validade) ? 'text-red-600 font-medium' :
@@ -280,14 +281,14 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                   )}
 
                   {milha.observacoes && (
-                    <p className="text-sm text-gray-500 mt-2">{milha.observacoes}</p>
+                    <p className="text-sm text-muted mt-2">{milha.observacoes}</p>
                   )}
                 </div>
 
                 <div className="flex gap-2 pt-3 border-t">
                   <button
                     onClick={() => handleEdit(milha)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-primary hover:bg-white/5 rounded-lg"
                   >
                     <Edit2 className="w-4 h-4" />
                     Editar
@@ -306,8 +307,9 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
       </div>
 
       {showModal && (
+        <Portal>
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="surface-card rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-semibold">
@@ -421,7 +423,7 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
                   setEditingMilhas(null);
                   resetForm();
                 }} 
-                className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border rounded-lg hover:bg-white/5"
               >
                 Cancelar
               </button>
@@ -435,6 +437,7 @@ export default function MilhasTab({ clienteId }: MilhasTabProps) {
             </div>
           </div>
         </div>
+        </Portal>
       )}
     </div>
   );

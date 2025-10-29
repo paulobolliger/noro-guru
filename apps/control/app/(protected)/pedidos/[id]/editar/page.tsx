@@ -1,7 +1,7 @@
 // app/admin/(protected)/pedidos/[id]/editar/page.tsx
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import { notFound } from 'next/navigation';
-import { Database } from "@types/supabase";
+import { Database } from "@noro-types/supabase";
 import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page"; // Reutilizando a tipagem
 import EditPedidoForm from "@/components/pedidos/EditPedidoForm";
 import { Button } from "@ui/button";
@@ -54,17 +54,17 @@ export default async function PedidoEditarPage({ params }: PedidoEditarPageProps
 
   return (
     <main className="flex-1 space-y-8 p-6 md:p-10">
-      <header className="border-b pb-4 mb-6">
+      <header className="border-b border-default border-default pb-4 mb-6">
         <Link href={`/admin/pedidos/${pedido.id}`}>
           <Button variant="ghost" className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar ao Pedido
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-primary">
           Editar Pedido #{pedido.id.slice(0, 8)}...
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted">
             Cliente: {pedido.clientes?.nome || 'Cliente Desconhecido'}
         </p>
       </header>

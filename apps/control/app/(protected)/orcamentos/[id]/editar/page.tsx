@@ -39,8 +39,8 @@ export default async function EditOrcamentoPage({ params }: PageProps) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Editar Orçamento</h1>
-        <p className="text-gray-600 mt-2">Modifique a proposta e os itens do orçamento {orcamento.numero_orcamento || orcamento.titulo}.</p>
+        <h1 className="text-3xl font-bold text-primary">Editar Orçamento</h1>
+        <p className="text-muted mt-2">Modifique a proposta e os itens do orçamento {orcamento.numero_orcamento || orcamento.titulo}.</p>
       </div>
 
       <EditOrcamentoForm 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Portal from "@/components/ui/portal";
 import { Phone, Plus, Trash2, X, Save } from 'lucide-react';
 import { 
   getClienteContatosEmergencia, 
@@ -118,13 +119,13 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
+      <div className="flex items-center justify-between p-6 border-b border-default border-default">
         <div className="flex items-center gap-3">
           <Phone className="w-6 h-6 text-green-600" />
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Contatos de Emergência</h2>
-            <p className="text-sm text-gray-600">{contatos.length} contato(s)</p>
+            <h2 className="text-xl font-semibold text-primary">Contatos de Emergência</h2>
+            <p className="text-sm text-muted">{contatos.length} contato(s)</p>
           </div>
         </div>
         
@@ -139,11 +140,11 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
 
       <div className="p-6">
         {isLoading ? (
-          <div className="text-center py-12 text-gray-500">Carregando...</div>
+          <div className="text-center py-12 text-muted">Carregando...</div>
         ) : contatos.length === 0 ? (
           <div className="text-center py-12">
             <Phone className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">Nenhum contato cadastrado</p>
+            <p className="text-muted mb-2">Nenhum contato cadastrado</p>
             <button
               onClick={() => setShowModal(true)}
               className="text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -156,12 +157,12 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
             {contatos.map((contato) => (
               <div
                 key={contato.id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className="border border-default rounded-lg p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-gray-900">{contato.nome}</h3>
+                      <h3 className="font-semibold text-primary">{contato.nome}</h3>
                       {contato.parentesco && (
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                           {getParentescoLabel(contato.parentesco)}
@@ -169,7 +170,7 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
                       )}
                     </div>
 
-                    <div className="space-y-1 text-sm text-gray-600">
+                    <div className="space-y-1 text-sm text-muted">
                       <div className="flex items-center gap-2">
                         <Phone className="w-4 h-4" />
                         <a 
@@ -193,7 +194,7 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
                       )}
 
                       {contato.observacoes && (
-                        <p className="text-gray-500 mt-2">{contato.observacoes}</p>
+                        <p className="text-muted mt-2">{contato.observacoes}</p>
                       )}
                     </div>
                   </div>
@@ -212,8 +213,9 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
       </div>
 
       {showModal && (
+        <Portal>
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-lg">
+          <div className="surface-card rounded-xl w-full max-w-lg">
             <div className="p-6 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-semibold">Adicionar Contato</h3>
@@ -301,7 +303,7 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
                   setShowModal(false);
                   resetForm();
                 }} 
-                className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border rounded-lg hover:bg-white/5"
               >
                 Cancelar
               </button>
@@ -315,6 +317,7 @@ export default function ContatosTab({ clienteId }: ContatosTabProps) {
             </div>
           </div>
         </div>
+        </Portal>
       )}
     </div>
   );

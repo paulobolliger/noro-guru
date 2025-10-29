@@ -1,7 +1,5 @@
-  import { supabaseAdmin } from './admin';
-  import type Database from '@/types/supabase';
-
-  type TarefaInsert = Database['public']['Tables']['noro_tarefas']['Insert'];
+﻿  import { supabaseAdmin } from './admin';
+    type TarefaInsert = Database['public']['Tables']['noro_tarefas']['Insert'];
 
   export async function getAllTarefas() {
     const { data, error } = await supabaseAdmin
@@ -21,3 +19,5 @@
     return data?.[0];
   }
   
+
+

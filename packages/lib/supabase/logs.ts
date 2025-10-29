@@ -1,7 +1,5 @@
-// lib/supabase/logs.ts
+﻿// lib/supabase/logs.ts
 import { supabaseAdmin } from './admin';
-import type Database from '@/types/supabase';
-
 // CORRIGIDO: O tipo agora aponta para a nova tabela 'noro_logs'
 type LogsInsert = Database['public']['Tables']['noro_logs']['Insert'];
 
@@ -20,3 +18,4 @@ export async function registrarLog(log: LogsInsert) {
     .insert(log);
   if (error) console.error('Erro ao registrar log:', error.message);
 }
+

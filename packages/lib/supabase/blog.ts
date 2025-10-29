@@ -1,5 +1,5 @@
-import { supabaseAdmin } from './admin';
-import type Database from '@/types/supabase'; // CORRIGIDO: Importação default
+﻿import { supabaseAdmin } from './admin';
+import type Database from '@types/supabase'; // CORRIGIDO: ImportaÃ§Ã£o default
 
 type PostInsert = Database['public']['Tables']['nomade_blog_posts']['Insert'];
 
@@ -28,3 +28,5 @@ export async function getAllCategorias() {
   if (error) throw new Error(error.message);
   return data;
 }
+
+

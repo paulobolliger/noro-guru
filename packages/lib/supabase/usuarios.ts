@@ -1,7 +1,5 @@
-  import { supabaseAdmin } from './admin';
-  import type Database from '@/types/supabase';
-
-  type UsuarioInsert = Database['public']['Tables']['noro_users']['Insert'];
+﻿  import { supabaseAdmin } from './admin';
+    type UsuarioInsert = Database['public']['Tables']['noro_users']['Insert'];
 
   export async function getAdminUsers() {
     const { data, error } = await supabaseAdmin.from('noro_users').select('*');
@@ -18,3 +16,5 @@
     return data?.[0];
   }
   
+
+

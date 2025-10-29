@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": "../..",
+    "paths": {
+      "@/*": ["apps/control/*"],
+      "@noro-types/*": ["packages/types/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

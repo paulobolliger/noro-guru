@@ -1,6 +1,6 @@
 // components/admin/LeadsRecentes.tsx
 import Link from 'next/link';
-import { Lead } from "@types/admin";
+import { Lead } from "@noro-types/admin";
 
 interface LeadsRecentesProps {
   leads: Lead[];
@@ -17,7 +17,7 @@ export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
       ganho: 'bg-green-500 text-white',
       perdido: 'bg-red-100 text-red-700',
     };
-    return colors[status] || 'bg-gray-100 text-gray-700';
+    return colors[status] || 'bg-white/10 text-primary';
   };
 
   const getStatusLabel = (status: string) => {
@@ -34,35 +34,35 @@ export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+    <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Leads Recentes</h2>
-        <Link href="/admin/leads" className="text-blue-600 text-sm font-semibold hover:text-blue-700">
+        <h2 className="text-lg font-bold text-primary">Leads Recentes</h2>
+        <Link href="/admin/leads" className="text-blue-400 text-sm font-semibold hover:text-blue-300">
           Ver todos →
         </Link>
       </div>
       <div className="space-y-3">
         {leads.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">Nenhum lead ainda</p>
+          <p className="text-muted text-center py-8">Nenhum lead ainda</p>
         ) : (
           leads.map((lead) => (
             <Link
               key={lead.id}
               href={`/admin/leads/${lead.id}`}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                   {lead.nome[0]?.toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">{lead.nome}</p>
-                  <p className="text-sm text-gray-500">{lead.origem || 'Origem desconhecida'}</p>
+                  <p className="font-semibold text-primary">{lead.nome}</p>
+                  <p className="text-sm text-muted">{lead.origem || 'Origem desconhecida'}</p>
                 </div>
               </div>
               <div className="text-right">
                 {lead.valor_estimado && (
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-primary">
                     R$ {lead.valor_estimado.toLocaleString('pt-BR')}
                   </p>
                 )}

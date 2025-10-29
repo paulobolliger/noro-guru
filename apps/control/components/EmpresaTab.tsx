@@ -25,52 +25,52 @@ export default function EmpresaTab({ empresaDados }: EmpresaTabProps) {
   };
 
   return (
-    <form action={handleSubmit} className="bg-white rounded-xl p-6 border border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Dados da Empresa</h2>
-      <p className="text-gray-600 mb-8">Informações centrais que serão usadas em documentos e comunicações.</p>
+    <form action={handleSubmit} className="surface-card rounded-xl p-6 border border-default">
+      <h2 className="text-2xl font-bold text-primary mb-2">Dados da Empresa</h2>
+      <p className="text-muted mb-8">Informações centrais que serão usadas em documentos e comunicações.</p>
 
       {/* Seção de Informações Básicas */}
-      <section className="border-b border-gray-200 pb-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><Building size={20} /> Informações Básicas</h3>
+      <section className="border-b border-default border-default border-default pb-6 mb-6">
+        <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><Building size={20} /> Informações Básicas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="nome_empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da Empresa</label>
-            <input type="text" name="nome_empresa" id="nome_empresa" defaultValue={empresaDados.nome_empresa || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+            <label htmlFor="nome_empresa" className="block text-sm font-medium text-primary mb-1">Nome da Empresa</label>
+            <input type="text" name="nome_empresa" id="nome_empresa" defaultValue={empresaDados.nome_empresa || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
           </div>
           <div>
-            <label htmlFor="documento" className="block text-sm font-medium text-gray-700 mb-1">CNPJ / Documento</label>
-            <input type="text" name="documento" id="documento" defaultValue={empresaDados.documento || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+            <label htmlFor="documento" className="block text-sm font-medium text-primary mb-1">CNPJ / Documento</label>
+            <input type="text" name="documento" id="documento" defaultValue={empresaDados.documento || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
           </div>
           <div>
-            <label htmlFor="email_principal" className="block text-sm font-medium text-gray-700 mb-1">E-mail Principal</label>
-            <input type="email" name="email_principal" id="email_principal" defaultValue={empresaDados.email_principal || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+            <label htmlFor="email_principal" className="block text-sm font-medium text-primary mb-1">E-mail Principal</label>
+            <input type="email" name="email_principal" id="email_principal" defaultValue={empresaDados.email_principal || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
           </div>
           <div>
-            <label htmlFor="telefone_comercial" className="block text-sm font-medium text-gray-700 mb-1">Telefone Comercial</label>
-            <input type="tel" name="telefone_comercial" id="telefone_comercial" defaultValue={empresaDados.telefone_comercial || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+            <label htmlFor="telefone_comercial" className="block text-sm font-medium text-primary mb-1">Telefone Comercial</label>
+            <input type="tel" name="telefone_comercial" id="telefone_comercial" defaultValue={empresaDados.telefone_comercial || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
           </div>
         </div>
       </section>
 
       {/* Seção de Redes Sociais */}
-      <section className="border-b border-gray-200 pb-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><LinkIcon size={20} /> Redes Sociais</h3>
+      <section className="border-b border-default border-default border-default pb-6 mb-6">
+          <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><LinkIcon size={20} /> Redes Sociais</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                  <label htmlFor="social.instagram" className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
-                  <input type="text" name="social.instagram" id="social.instagram" placeholder="https://instagram.com/seu_usuario" defaultValue={empresaDados.redes_sociais?.instagram || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+                  <label htmlFor="social.instagram" className="block text-sm font-medium text-primary mb-1">Instagram</label>
+                  <input type="text" name="social.instagram" id="social.instagram" placeholder="https://instagram.com/seu_usuario" defaultValue={empresaDados.redes_sociais?.instagram || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
               </div>
               <div>
-                  <label htmlFor="social.facebook" className="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
-                  <input type="text" name="social.facebook" id="social.facebook" placeholder="https://facebook.com/sua_pagina" defaultValue={empresaDados.redes_sociais?.facebook || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+                  <label htmlFor="social.facebook" className="block text-sm font-medium text-primary mb-1">Facebook</label>
+                  <input type="text" name="social.facebook" id="social.facebook" placeholder="https://facebook.com/sua_pagina" defaultValue={empresaDados.redes_sociais?.facebook || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
               </div>
               <div>
-                  <label htmlFor="social.linkedin" className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                  <input type="text" name="social.linkedin" id="social.linkedin" placeholder="https://linkedin.com/company/sua_empresa" defaultValue={empresaDados.redes_sociais?.linkedin || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+                  <label htmlFor="social.linkedin" className="block text-sm font-medium text-primary mb-1">LinkedIn</label>
+                  <input type="text" name="social.linkedin" id="social.linkedin" placeholder="https://linkedin.com/company/sua_empresa" defaultValue={empresaDados.redes_sociais?.linkedin || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
               </div>
               <div>
-                  <label htmlFor="social.whatsapp" className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Business</label>
-                  <input type="text" name="social.whatsapp" id="social.whatsapp" placeholder="Link ou número" defaultValue={empresaDados.redes_sociais?.whatsapp || ''} className="w-full p-3 border border-gray-300 rounded-lg"/>
+                  <label htmlFor="social.whatsapp" className="block text-sm font-medium text-primary mb-1">WhatsApp Business</label>
+                  <input type="text" name="social.whatsapp" id="social.whatsapp" placeholder="Link ou número" defaultValue={empresaDados.redes_sociais?.whatsapp || ''} className="w-full p-3 border border-default rounded-lg bg-white/5 text-primary"/>
               </div>
           </div>
       </section>

@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Loader2, DollarSign, Copy, LinkIcon, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Database } from "@types/supabase";
+import { Database } from "@noro-types/supabase";
 import { format } from 'date-fns';
 
 // Tipo da tabela 'cobrancas'
@@ -32,7 +32,7 @@ const PAYMENT_PROVIDERS: { value: PaymentProvider, label: string }[] = [
 
 // Mapeamento de status para cores (para uso na seção de Ações Ativas)
 const statusMap: Record<string, string> = {
-  'PENDENTE': 'bg-gray-100 text-gray-700',
+  'PENDENTE': 'bg-white/10 text-primary',
   'EMITIDA': 'bg-blue-100 text-blue-700',
   'AGUARDANDO_PAGAMENTO': 'bg-red-100 text-red-700 font-bold',
   'PROCESSANDO_API': 'bg-yellow-100 text-yellow-700',
@@ -153,7 +153,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
         
         {/* Formulário de Emissão (Visível se não houver cobrança ativa) */}
         {!hasActiveCobranca && (
-            <form onSubmit={handleSubmit} className="space-y-4 border-b pb-4 mb-4">
+            <form onSubmit={handleSubmit} className="space-y-4 border-b border-default pb-4 mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="provider">Provedor de Pagamento</Label>
@@ -185,7 +185,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
                 </div>
                 
                 <div className="flex justify-between pt-2">
-                    <p className="text-sm text-gray-500">Valor: <span className="font-semibold text-gray-800">{currencyFormat(valorTotal)}</span></p>
+                    <p className="text-sm text-muted">Valor: <span className="font-semibold text-gray-800">{currencyFormat(valorTotal)}</span></p>
                     <Button type="submit" disabled={isPending}>
                         {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Emitir Cobrança'}
                     </Button>
@@ -196,7 +196,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
         {/* Histórico/Ações de Cobrança (Visível sempre que houver cobranças ativas) */}
         {cobrancasExistentes.length > 0 && (
             <div className="space-y-4">
-                <h4 className="font-semibold text-md border-b pb-2">Ações de Cobranças Ativas</h4>
+                <h4 className="font-semibold text-md border-b border-default pb-2">Ações de Cobranças Ativas</h4>
                 {cobrancasExistentes
                     // Filtra para mostrar apenas cobranças que o usuário pode interagir (reenviar/copiar)
                     .filter(c => c.status !== 'PAGO' && c.status !== 'CANCELADO' && c.status !== 'ERRO_API')
@@ -209,14 +209,14 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
                                 <div>
                                     <p className="text-sm font-medium">
                                         <Badge className={statusMap[cobranca.status]}>{cobranca.status.replace(/_/g, ' ')}</Badge>
-                                        <span className="ml-2 text-xs text-gray-700">via {cobranca.provider} ({format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')})</span>
+                                        <span className="ml-2 text-xs text-primary">via {cobranca.provider} ({format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')})</span>
                                     </p>
                                 </div>
                                 <div className="flex space-x-2">
                                     {/* Botão de Link/Abertura */}
                                     {link && (
                                         <a href={link} target="_blank" rel="noopener noreferrer">
-                                            <Button variant="outline" size="sm" className="bg-white hover:bg-gray-100">
+                                            <Button variant="outline" size="sm" className="surface-card hover:bg-white/10">
                                                 <LinkIcon className="h-4 w-4 mr-2" /> Acessar Checkout
                                             </Button>
                                         </a>
@@ -241,7 +241,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
                 
                 {/* Mensagem se todas as cobranças ativas foram removidas */}
                 {cobrancasExistentes.length > 0 && cobrancasExistentes.filter(c => c.status !== 'PAGO' && c.status !== 'CANCELADO' && c.status !== 'ERRO_API').length === 0 && (
-                    <div className="text-center text-sm text-gray-500 pt-4">
+                    <div className="text-center text-sm text-muted pt-4">
                         Todas as cobranças ativas foram removidas ou finalizadas. Você pode emitir uma nova.
                     </div>
                 )}

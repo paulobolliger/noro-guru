@@ -1,6 +1,6 @@
 // components/admin/TarefasList.tsx
 import Link from 'next/link';
-import { Tarefa } from "@types/admin";
+import { Tarefa } from "@noro-types/admin";
 
 interface TarefasListProps {
   tarefas: (Tarefa & { noro_leads?: { nome: string } | null })[];
@@ -14,7 +14,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
       alta: 'bg-red-100 text-red-700',
       urgente: 'bg-red-500 text-white',
     };
-    return colors[prioridade] || 'bg-gray-100 text-gray-700';
+    return colors[prioridade] || 'bg-white/10 text-primary';
   };
 
   const getDataVencimento = (data: string | null) => {
@@ -30,21 +30,21 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+    <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Tarefas Pendentes</h2>
-        <Link href="/admin/tarefas" className="text-blue-600 text-sm font-semibold hover:text-blue-700">
+        <h2 className="text-lg font-bold text-primary">Tarefas Pendentes</h2>
+        <Link href="/admin/tarefas" className="text-blue-400 text-sm font-semibold hover:text-blue-300">
           + Nova tarefa
         </Link>
       </div>
       <div className="space-y-3">
         {tarefas.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">Nenhuma tarefa pendente</p>
+          <p className="text-muted text-center py-8">Nenhuma tarefa pendente</p>
         ) : (
           tarefas.map((tarefa) => (
             <div
               key={tarefa.id}
-              className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              className="flex items-start gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -54,9 +54,9 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
                 }}
               />
               <div className="flex-1">
-                <p className="font-medium text-gray-900">{tarefa.titulo}</p>
+                <p className="font-medium text-primary">{tarefa.titulo}</p>
                 {tarefa.noro_leads && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-muted mt-1">
                     Lead: {tarefa.noro_leads.nome}
                   </p>
                 )}
@@ -64,7 +64,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
                   <span className={`text-xs px-2 py-0.5 rounded-full ${getPrioridadeColor(tarefa.prioridade)}`}>
                     {tarefa.prioridade.charAt(0).toUpperCase() + tarefa.prioridade.slice(1)}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted">
                     {getDataVencimento(tarefa.data_vencimento)}
                   </span>
                 </div>

@@ -118,18 +118,18 @@ export default function NovoClienteForm() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+    <div className="surface-card rounded-xl shadow-lg border border-default">
       <form onSubmit={handleSubmit}>
         <div className="p-8 space-y-8">
           
           {/* Seletor de Tipo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Tipo de Cliente *
             </label>
             <div className="flex space-x-4">
               <label className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
-                isPessoaFisica ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'
+                isPessoaFisica ? 'border-blue-500 bg-blue-50' : 'border-default hover:bg-white/5'
               }`}>
                 <input
                   type="radio"
@@ -142,7 +142,7 @@ export default function NovoClienteForm() {
                 <User size={18} /> Pessoa Física
               </label>
               <label className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
-                !isPessoaFisica ? 'border-purple-500 bg-purple-50' : 'border-gray-300 hover:bg-gray-50'
+                !isPessoaFisica ? 'border-purple-500 bg-purple-50' : 'border-default hover:bg-white/5'
               }`}>
                 <input
                   type="radio"
@@ -158,15 +158,15 @@ export default function NovoClienteForm() {
           </div>
 
           {/* DADOS BÁSICOS */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <section className="border-t border-default pt-6">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                 <User size={20} /> Informações de Contato
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   {isPessoaFisica ? 'Nome Completo' : 'Nome Fantasia'} *
                 </label>
                 <input
@@ -176,13 +176,13 @@ export default function NovoClienteForm() {
                   onChange={handleChange}
                   placeholder={isPessoaFisica ? 'Ex: João da Silva' : 'Ex: Agência XYZ'}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-3 border border-default rounded-lg"
                 />
               </div>
               
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <label className="block text-sm font-medium text-primary mb-2">Email *</label>
                 <input
                   type="email"
                   name="email"
@@ -190,41 +190,41 @@ export default function NovoClienteForm() {
                   onChange={handleChange}
                   placeholder="exemplo@email.com"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-3 border border-default rounded-lg"
                 />
               </div>
 
               {/* Telefone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                <label className="block text-sm font-medium text-primary mb-2">Telefone</label>
                 <input
                   type="tel"
                   name="telefone"
                   value={formData.telefone}
                   onChange={handleChange}
                   placeholder="+55 (11) 99999-9999"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-3 border border-default rounded-lg"
                 />
               </div>
               
               {/* WhatsApp */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+                <label className="block text-sm font-medium text-primary mb-2">WhatsApp</label>
                 <input
                   type="tel"
                   name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleChange}
                   placeholder="+55 (11) 99999-9999"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-3 border border-default rounded-lg"
                 />
               </div>
             </div>
           </section>
 
           {/* DADOS ESPECÍFICOS (PF/PJ) */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <section className="border-t border-default pt-6">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                 <FileText size={20} /> Dados de Documentação
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -233,24 +233,24 @@ export default function NovoClienteForm() {
                 <>
                   {/* PF: CPF */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CPF</label>
-                    <input type="text" name="cpf" value={formData.cpf} onChange={handleChange} placeholder="000.000.000-00" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">CPF</label>
+                    <input type="text" name="cpf" value={formData.cpf} onChange={handleChange} placeholder="000.000.000-00" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   {/* PF: Passaporte */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Passaporte</label>
-                    <input type="text" name="passaporte" value={formData.passaporte} onChange={handleChange} placeholder="AB123456" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">Passaporte</label>
+                    <input type="text" name="passaporte" value={formData.passaporte} onChange={handleChange} placeholder="AB123456" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   {/* PF: Data de Nascimento */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Calendar size={14} /> Data de Nascimento</label>
-                    <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2 flex items-center gap-1"><Calendar size={14} /> Data de Nascimento</label>
+                    <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   
                   {/* PF: Nacionalidade (NOVO SELECT) */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Globe size={14} /> Nacionalidade</label>
-                    <select name="nacionalidade" value={formData.nacionalidade} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <label className="block text-sm font-medium text-primary mb-2 flex items-center gap-1"><Globe size={14} /> Nacionalidade</label>
+                    <select name="nacionalidade" value={formData.nacionalidade} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                         <option value="">Selecione a Nacionalidade...</option>
                         {PAISES_E_NACIONALIDADES.map(p => (
                             <option key={p.sigla} value={p.gentilico}>
@@ -262,8 +262,8 @@ export default function NovoClienteForm() {
                   
                   {/* PF: Profissão (NOVO SELECT) */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Briefcase size={14} /> Profissão</label>
-                    <select name="profissao" value={formData.profissao} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <label className="block text-sm font-medium text-primary mb-2 flex items-center gap-1"><Briefcase size={14} /> Profissão</label>
+                    <select name="profissao" value={formData.profissao} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                         <option value="">Selecione a Profissão...</option>
                         {PROFISSOES.map(p => (
                             <option key={p} value={p}>{p}</option>
@@ -275,23 +275,23 @@ export default function NovoClienteForm() {
                 <>
                   {/* PJ: Razão Social */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Razão Social</label>
-                    <input type="text" name="razao_social" value={formData.razao_social} onChange={handleChange} placeholder="Ex: Nomade Guru Viagens e Turismo Ltda" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">Razão Social</label>
+                    <input type="text" name="razao_social" value={formData.razao_social} onChange={handleChange} placeholder="Ex: Nomade Guru Viagens e Turismo Ltda" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   {/* PJ: CNPJ */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CNPJ</label>
-                    <input type="text" name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">CNPJ</label>
+                    <input type="text" name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   {/* PJ: Responsável */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nome do Responsável</label>
-                    <input type="text" name="responsavel_nome" value={formData.responsavel_nome} onChange={handleChange} placeholder="Ex: Maria Santos" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">Nome do Responsável</label>
+                    <input type="text" name="responsavel_nome" value={formData.responsavel_nome} onChange={handleChange} placeholder="Ex: Maria Santos" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                   {/* PJ: Cargo do Responsável */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Cargo do Responsável</label>
-                    <input type="text" name="responsavel_cargo" value={formData.responsavel_cargo} onChange={handleChange} placeholder="Ex: CEO" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <label className="block text-sm font-medium text-primary mb-2">Cargo do Responsável</label>
+                    <input type="text" name="responsavel_cargo" value={formData.responsavel_cargo} onChange={handleChange} placeholder="Ex: CEO" className="w-full px-4 py-3 border border-default rounded-lg" />
                   </div>
                 </>
               )}
@@ -299,16 +299,16 @@ export default function NovoClienteForm() {
           </section>
 
           {/* CLASSIFICAÇÃO E PREFERÊNCIAS GERAIS */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <section className="border-t border-default pt-6">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                 <CreditCard size={20} /> Classificação e Preferências
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-primary mb-2">Status</label>
+                <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                   {STATUS_OPTIONS.map(opt => (
                     <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
                   ))}
@@ -317,8 +317,8 @@ export default function NovoClienteForm() {
 
               {/* Nível */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nível</label>
-                <select name="nivel" value={formData.nivel} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-primary mb-2">Nível</label>
+                <select name="nivel" value={formData.nivel} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                   {NIVEL_OPTIONS.map(opt => (
                     <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
                   ))}
@@ -327,8 +327,8 @@ export default function NovoClienteForm() {
               
               {/* Segmento */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Segmento</label>
-                <select name="segmento" value={formData.segmento} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-primary mb-2">Segmento</label>
+                <select name="segmento" value={formData.segmento} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                     <option value="">(Não definido)</option>
                     {SEGMENTO_OPTIONS.map(opt => (
                         <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
@@ -338,8 +338,8 @@ export default function NovoClienteForm() {
               
               {/* Idioma Preferido */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
-                <select name="idioma_preferido" value={formData.idioma_preferido} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-primary mb-2">Idioma</label>
+                <select name="idioma_preferido" value={formData.idioma_preferido} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                   <option value="pt">Português</option>
                   <option value="en">Inglês</option>
                   <option value="es">Espanhol</option>
@@ -348,8 +348,8 @@ export default function NovoClienteForm() {
 
               {/* Moeda Preferida */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Moeda</label>
-                <select name="moeda_preferida" value={formData.moeda_preferida} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                <label className="block text-sm font-medium text-primary mb-2">Moeda</label>
+                <select name="moeda_preferida" value={formData.moeda_preferida} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg">
                   <option value="EUR">Euro (€)</option>
                   <option value="BRL">Real (R$)</option>
                   <option value="USD">Dólar ($)</option>
@@ -359,8 +359,8 @@ export default function NovoClienteForm() {
           </section>
 
           {/* Observações */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <section className="border-t border-default pt-6">
+            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
                 <FileText size={20} /> Observações
             </h3>
             <textarea
@@ -369,7 +369,7 @@ export default function NovoClienteForm() {
               onChange={handleChange}
               rows={4}
               placeholder="Notas internas sobre o cliente, histórico de leads, etc."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+              className="w-full px-4 py-3 border border-default rounded-lg resize-none"
             />
           </section>
 
@@ -383,7 +383,7 @@ export default function NovoClienteForm() {
             </div>
           )}
 
-          <div className="pt-6 border-t border-gray-200">
+          <div className="pt-6 border-t border-default">
             <button
               type="submit"
               disabled={isPending || !formData.nome || !formData.email}

@@ -44,7 +44,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
       atrasado: 'bg-red-100 text-red-800',
       aguardando_pagamento: 'bg-yellow-100 text-yellow-800'
     };
-    return cores[status] || 'bg-gray-100 text-gray-800';
+    return cores[status] || 'bg-white/10 text-gray-800';
   }
 
   function formatarValor(valor: number) {
@@ -63,12 +63,12 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
   const mostrarTransacoes = filtro === 'todos' || filtro === 'transacoes';
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
+      <div className="p-6 border-b border-default border-default">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Histórico Completo</h2>
-            <p className="text-sm text-gray-600">Orçamentos, pedidos e cobranças do cliente</p>
+            <h2 className="text-xl font-semibold text-primary">Histórico Completo</h2>
+            <p className="text-sm text-muted">Orçamentos, pedidos e cobranças do cliente</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filtro === 'todos'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-white/10 text-primary hover:bg-white/15'
             }`}
           >
             Todos
@@ -89,7 +89,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filtro === 'orcamentos'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-white/10 text-primary hover:bg-white/15'
             }`}
           >
             Orçamentos ({orcamentos.length})
@@ -99,7 +99,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filtro === 'pedidos'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-white/10 text-primary hover:bg-white/15'
             }`}
           >
             Pedidos ({pedidos.length})
@@ -109,7 +109,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filtro === 'transacoes'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-white/10 text-primary hover:bg-white/15'
             }`}
           >
             Cobranças ({transacoes.length})
@@ -119,7 +119,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
 
       <div className="p-6">
         {loading ? (
-          <div className="text-gray-500">Carregando histórico...</div>
+          <div className="text-muted">Carregando histórico...</div>
         ) : (
         <div className="space-y-6">
 
@@ -128,24 +128,24 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="w-5 h-5 text-blue-600" />
-                <h3 className="font-semibold text-gray-900">Orçamentos</h3>
+                <h3 className="font-semibold text-primary">Orçamentos</h3>
               </div>
               <div className="space-y-3">
                 {orcamentos.map((orc) => (
                   <div
                     key={orc.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="border border-default rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-gray-900">{orc.titulo || orc.id}</span>
+                          <span className="font-semibold text-primary">{orc.titulo || orc.id}</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(orc.status)}`}>
                             {String(orc.status).toUpperCase()}
                           </span>
                         </div>
 
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <div className="space-y-1 text-sm text-muted">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
                             <span>{formatarData(orc.created_at)}</span>
@@ -168,7 +168,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
                         </button>
                         <a
                           href={`/admin/orcamentos/${orc.id}`}
-                          className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                          className="p-2 text-muted hover:bg-white/5 rounded-lg transition-colors"
                           title="Abrir em nova aba"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -188,23 +188,23 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-5 h-5 text-green-600" />
-                <h3 className="font-semibold text-gray-900">Pedidos</h3>
+                <h3 className="font-semibold text-primary">Pedidos</h3>
               </div>
               <div className="space-y-3">
                 {pedidos.map((ped) => (
                   <div
                     key={ped.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="border border-default rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-gray-900">{ped.id}</span>
+                          <span className="font-semibold text-primary">{ped.id}</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(ped.status)}`}>
                             {String(ped.status).toUpperCase()}
                           </span>
                         </div>
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <div className="space-y-1 text-sm text-muted">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
                             <span>{formatarData(ped.created_at)}</span>
@@ -226,7 +226,7 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
                         </button>
                         <a
                           href={`/admin/pedidos/${ped.id}`}
-                          className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                          className="p-2 text-muted hover:bg-white/5 rounded-lg transition-colors"
                           title="Abrir em nova aba"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -246,23 +246,23 @@ export default function HistoricoTab({ clienteId }: HistoricoTabProps) {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <DollarSign className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-semibold text-gray-900">Cobranças</h3>
+                <h3 className="font-semibold text-primary">Cobranças</h3>
               </div>
               <div className="space-y-3">
                 {transacoes.map((t) => (
                   <div
                     key={t.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="border border-default rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="font-semibold text-gray-900">{t.id}</span>
+                          <span className="font-semibold text-primary">{t.id}</span>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(t.status)}`}>
                             {String(t.status).toUpperCase()}
                           </span>
                         </div>
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <div className="space-y-1 text-sm text-muted">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
                             <span>{formatarData(t.created_at)}</span>

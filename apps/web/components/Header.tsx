@@ -1,131 +1,69 @@
-// components/Header.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import NoroLogo from './icons/NoroLogo';
+import { useModal } from './providers/modal-provider';
 import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { ChevronDownIcon } from './icons/ChevronDownIcon';
 
-export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [pageTitle, setPageTitle] = useState('');
-  const pathname = usePathname();
+const ecosystemLinks = [
+  { href: '/ecosystem/vistos-guru', name: 'Inteligência de Dados para Vistos' },
+  { href: '/ecosystem/intelligent-websites', name: 'Criação de Sites Inteligentes' },
+  { href: '/ecosystem/intelligent-crm-erp', name: 'CRM/ERP Inteligente' },
+  { href: '/ecosystem/ittd', name: 'Travel & Tourism Database' },
+];
 
-  // Efeito para controlar o estado de rolagem
+const Header: React.FC = () => {
+  const { openModal } = useModal();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Efeito para definir o título da página com base na URL
-  useEffect(() => {
-    switch (true) {
-      case pathname === '/blog':
-        setPageTitle('Blog');
-        break;
-      case pathname.startsWith('/blog/'):
-        setPageTitle('Blog');
-        break;
-      case pathname === '/destinos':
-        setPageTitle('Destinos');
-        break;
-      case pathname.startsWith('/destinos/'):
-        setPageTitle('Destinos');
-        break;
-      case pathname === '/sobre':
-        setPageTitle('Sobre Nós');
-        break;
-      case pathname === '/depoimentos':
-        setPageTitle('Depoimentos');
-        break;
-      case pathname === '/contato':
-        setPageTitle('Contato');
-        break;
-      case pathname === '/faq':
-        setPageTitle('FAQ');
-        break;
-      default:
-        setPageTitle(''); // Não mostra título na página inicial
-        break;
-    }
-
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-    }
-  }, [pathname]);
-
-  const hasDarkBg = scrolled;
-
-  const headerClasses = `fixed top-0 w-full z-50 transition-all duration-300 ${
-    hasDarkBg ? 'bg-secondary shadow-lg py-2' : 'bg-white py-4'
-  }`;
-  
-  const elementColorClass = hasDarkBg ? 'text-white' : 'text-secondary';
-  
-  const linkClasses = `relative font-medium after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full ${elementColorClass} hover:text-primary`;
-
-  const logoSrc = hasDarkBg
-      ? 'https://res.cloudinary.com/dhqvjxgue/image/upload/c_crop,ar_4:3/v1744736404/logo_branco_sem_fundo_rucnug.png'
-      : 'https://res.cloudinary.com/dhqvjxgue/image/upload/v1744736403/logo_nomade_guru_iskhl8.png';
-
   return (
-    <header className={headerClasses}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <div className="flex items-center gap-6">
-          <Link href="/">
-            <div className="relative h-14 w-40">
-              <Image
-                src={logoSrc}
-                alt="Logo Nomade Guru"
-                fill
-                className="object-contain"
-                sizes="160px"
-                priority
-              />
-            </div>
-          </Link>
-
-          {/* Título da Página (só aparece com scroll) */}
-          <div className={`transition-opacity duration-300 ${scrolled && pageTitle ? 'opacity-100' : 'opacity-0'}`}>
-            <span className="hidden sm:block border-l border-white/20 pl-6 text-sm font-semibold text-white">
-              {pageTitle}
-            </span>
-          </div>
-        </div>
-
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/destinos" className={linkClasses}>Destinos</Link>
-          <Link href="/blog" className={linkClasses}>Blog</Link>
-          <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-2 px-6 rounded-full hover:scale-105 transition-transform">
-            Crie Seu Roteiro
-          </Link>
-        </nav>
-
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={elementColorClass}>
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
-          </button>
-        </div>
-      </div>
-
-      <div className={`fixed top-0 right-0 h-full w-64 bg-slate-900 shadow-lg transform transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="p-4 flex justify-end">
-            <button onClick={() => setIsMenuOpen(false)} className="text-white">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+    <header className="sticky top-0 z-50 py-4 px-6 md:px-12 bg-noro-dark/80 backdrop-blur-lg border-b border-noro-dark-2/50">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" className="flex items-center gap-3">
+          <NoroLogo className="h-8 w-8" />
+          <span className="font-display text-2xl font-bold text-noro-accent tracking-wider">NORO</span>
+        </Link>
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <Link href="/about" className="text-noro-accent/80 hover:text-noro-turquoise transition-colors">Sobre</Link>
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+              className="flex items-center gap-1 text-noro-accent/80 hover:text-noro-turquoise transition-colors"
+            >
+              Ecossistema
+              <ChevronDownIcon className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
-        </div>
-        <nav className="flex flex-col items-center justify-center h-full gap-8 -mt-16">
-            <Link href="/destinos" className="text-white text-xl font-semibold">Destinos</Link>
-            <Link href="/blog" className="text-white text-xl font-semibold">Blog</Link>
-            <Link href="/?popup=true" className="bg-gradient-to-r from-primary to-primary-dark text-white font-bold py-3 px-8 rounded-full text-lg">
-                Crie Seu Roteiro
-            </Link>
+            {isDropdownOpen && (
+              <div className="absolute top-full mt-3 w-64 bg-noro-dark-2 border border-noro-gray-future rounded-lg shadow-lg animate-fade-in py-2">
+                {ecosystemLinks.map(link => (
+                  <Link key={link.href} href={link.href} onClick={() => setIsDropdownOpen(false)} className="block px-4 py-2 text-noro-accent/80 hover:bg-noro-dark hover:text-noro-turquoise transition-colors">
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+          <Link href="/#features" className="text-noro-accent/80 hover:text-noro-turquoise transition-colors">Features</Link>
+          <button onClick={openModal} className="text-noro-accent/80 hover:text-noro-turquoise transition-colors">Contato</button>
         </nav>
+        <button className="hidden md:block bg-gradient-to-r from-noro-blue to-noro-purple text-white font-bold py-2 px-6 rounded-lg hover:opacity-90 transition-opacity">
+          Acessar Plataforma
+        </button>
       </div>
     </header>
   );
-}
+};
+
+export default Header;

@@ -1,7 +1,7 @@
 // app/admin/(protected)/pedidos/page.tsx
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import { PedidosList } from "@/components/pedidos/PedidosList";
-import { Database } from "@types/supabase";
+import { Database } from "@noro-types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -36,14 +36,14 @@ export default async function PedidosPage() {
   return (
     <main className="flex-1 space-y-8 p-6 md:p-10">
       <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
+        <h1 className="text-3xl font-bold text-primary">Gerenciamento de Pedidos</h1>
         <div className="flex space-x-2">
           {/* Adicionar botão 'Novo Pedido' no futuro, se for possível criar um diretamente. */}
           {/* <Button>Novo Pedido</Button> */}
         </div>
       </header>
       
-      <section className="bg-white p-6 rounded-xl shadow-lg">
+      <section className="surface-card p-6 rounded-xl border border-default shadow-lg">
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>}>
           <PedidosList pedidos={pedidos} />
         </Suspense>

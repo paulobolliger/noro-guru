@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Admin theme scoped enhancements (inputs + scrollbar) */
+@layer base {
+  .admin-theme ::-webkit-scrollbar { width: 14px; }
+  .admin-theme ::-webkit-scrollbar-track { @apply bg-white; }
+  .admin-theme ::-webkit-scrollbar-thumb { @apply bg-primary rounded-full border-4 border-solid border-white; }
+  .admin-theme ::-webkit-scrollbar-thumb:hover { @apply bg-primary-dark; }
+
+  .admin-theme input[type='text'],
+  .admin-theme input[type='email'],
+  .admin-theme input[type='password'],
+  .admin-theme input[type='number'],
+  .admin-theme select,
+  .admin-theme textarea {
+    @apply bg-gray-100 text-gray-900 placeholder-gray-500;
+  }
+}
+
+/* Light theme override for main content (keeps sidebar/topbar dark) */
+:root[data-theme='light'] .admin-theme main {
+  background-color: rgba(15, 23, 42, 0.05);
+}
+
+/* Microinteractions: shimmer + helper classes */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Utility helpers (opt-in via className) */
+.card-interactive {
+  @apply relative rounded-xl transition-all duration-200 will-change-transform;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+}
+.card-interactive:hover {
+  @apply -translate-y-0.5 ring-1 ring-indigo-400/20;
+  box-shadow: 0 8px 24px rgba(124,58,237,0.12);
+}
+.card-interactive::before {
+  content: "";
+  @apply absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 transition-opacity;
+}
+.card-interactive:hover::before { opacity: 1; }
+
+.skeleton { @apply relative overflow-hidden bg-white/5 animate-pulse; }
+.shimmer::after {
+  content: "";
+  @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  animation: shimmer 1.2s infinite;
+}
+
+/* Theme tokens (dark default) */
+:root {
+  --surface: #0B1220;
+  --surface-muted: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.05);
+  --text-primary: #e5e7eb; /* slate-200 */
+  --text-muted: #94a3b8;   /* slate-400 */
+}
+
+:root[data-theme='light'] {
+  --surface: #ffffff;
+  --surface-muted: rgba(0,0,0,0.02);
+  --border: rgba(0,0,0,0.08);
+  --text-primary: #0f172a; /* slate-900 */
+  --text-muted: #475569;   /* slate-600 */
+}
+
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+}
+.text-primary { color: var(--text-primary); }
+.text-muted { color: var(--text-muted); }
+
+/* Page enter animation (fade + slight slide) */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: fadeSlideIn 0.2s ease-out both; }
+
+/* Smooth theme transition */
+.theme-transition *, .theme-transition {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}

@@ -3,7 +3,8 @@
 
 import { useState, useTransition } from 'react';
 import { X, Loader2, AlertCircle } from 'lucide-react';
-import { deleteUserAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { deleteUserAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import Portal from "@/components/ui/portal";
 
 interface DeleteUserModalProps {
   isOpen: boolean;
@@ -32,11 +33,12 @@ export default function DeleteUserModal({ isOpen, onClose, user }: DeleteUserMod
   if (!isOpen || !user) return null;
 
   return (
+    <Portal>
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl relative text-center" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Remover Utilizador</h2>
-        <p className="text-gray-600 mb-6">
-          Tem a certeza de que quer remover <strong className="text-gray-900">{user.email}</strong>? Esta ação é irreversível.
+      <div className="surface-card rounded-xl w-full max-w-md p-8 shadow-2xl relative text-center" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-2xl font-bold text-primary mb-2">Remover Utilizador</h2>
+        <p className="text-muted mb-6">
+          Tem a certeza de que quer remover <strong className="text-primary">{user.email}</strong>? Esta ação é irreversível.
         </p>
         
         {error && <div className="flex items-center gap-2 rounded-lg bg-red-100 p-3 text-red-700 mb-4 text-left"><AlertCircle size={20} /><p className="text-sm">{error}</p></div>}
@@ -52,6 +54,6 @@ export default function DeleteUserModal({ isOpen, onClose, user }: DeleteUserMod
         </div>
       </div>
     </div>
+    </Portal>
   );
 }
-

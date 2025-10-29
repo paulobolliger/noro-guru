@@ -15,8 +15,8 @@ export default function DashboardCharts({ receitaMensal, leadsPorOrigem, convers
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
       {/* Gráfico de Receita Mensal */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Receita Mensal (€)</h3>
+      <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
+        <h3 className="text-lg font-bold text-primary mb-4">Receita Mensal (€)</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={receitaMensal}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -40,8 +40,8 @@ export default function DashboardCharts({ receitaMensal, leadsPorOrigem, convers
       </div>
 
       {/* Gráfico de Leads por Origem */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Leads por Origem</h3>
+      <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
+        <h3 className="text-lg font-bold text-primary mb-4">Leads por Origem</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -64,8 +64,8 @@ export default function DashboardCharts({ receitaMensal, leadsPorOrigem, convers
       </div>
 
       {/* Gráfico de Taxa de Conversão */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Taxa de Conversão Mensal (%)</h3>
+      <div className="surface-card rounded-xl p-6 shadow-sm border border-default lg:col-span-2">
+        <h3 className="text-lg font-bold text-primary mb-4">Taxa de Conversão Mensal (%)</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={conversaoPorMes}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />

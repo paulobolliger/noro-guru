@@ -69,16 +69,16 @@ function GerarRoteiroAIModal({ isOpen, onClose, onGenerate, clientes }: { isOpen
 
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-                <div className="p-6 border-b flex items-center justify-between"><h3 className="text-xl font-semibold flex items-center gap-2"><Wand2 className="text-purple-600"/> Gerar Proposta com IA</h3><button type="button" onClick={onClose}><X className="w-6 h-6" /></button></div>
+            <div className="surface-card rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                <div className="p-6 border-b border-default flex items-center justify-between"><h3 className="text-xl font-semibold flex items-center gap-2"><Wand2 className="text-purple-600"/> Gerar Proposta com IA</h3><button type="button" onClick={onClose}><X className="w-6 h-6" /></button></div>
                 <div className="p-6 space-y-6 overflow-y-auto">
-                    <div className="relative"><label className="block text-sm font-medium text-gray-700 mb-2">Nome do Cliente</label><input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, clienteId: '', novoClienteNome: e.target.value })); }} placeholder="Buscar cliente existente ou digitar novo nome..." className="w-full px-4 py-2 border rounded-lg"/>{clienteSearch.length > 0 && !formData.clienteId && (<div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-gray-500">Ou utilize o nome digitado como novo cliente.</p></div>)}</div>
-                    <div className="grid grid-cols-3 gap-4"><div><label className="block text-sm font-medium text-gray-700 mb-2">Destino *</label><input type="text" value={formData.destino} onChange={(e) => setFormData(prev => ({...prev, destino: e.target.value}))} required className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-gray-700 mb-2">Nº de Dias *</label><input type="number" value={formData.num_dias} onChange={(e) => setFormData(prev => ({...prev, num_dias: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-gray-700 mb-2">Nº de Pessoas *</label><input type="number" value={formData.num_pessoas} onChange={(e) => setFormData(prev => ({...prev, num_pessoas: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div></div>
-                    <div><label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Viagem *</label><select value={formData.tipo_viagem} onChange={(e) => setFormData(prev => ({...prev, tipo_viagem: e.target.value}))} className="w-full px-4 py-2 border rounded-lg bg-white">{Object.keys(INTENCOES_VIAGEM).map(category => (<optgroup label={category} key={category}>{INTENCOES_VIAGEM[category as keyof typeof INTENCOES_VIAGEM].map(intention => (<option key={intention} value={intention}>{intention}</option>))}</optgroup>))}</select></div>
-                    <div><label className="block text-sm font-medium text-gray-700 mb-2">Preferências da Viagem (mínimo 3, máximo 5)</label><div className="p-3 bg-gray-50 border rounded-lg flex flex-wrap gap-2">{Object.values(INTENCOES_VIAGEM).flat().map(p => (<button key={p} type="button" onClick={() => handleMultiSelect(p)} className={`px-3 py-1 rounded-full text-xs ${formData.preferencias.includes(p) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>{p}</button>))}</div></div>
+                    <div className="relative"><label className="block text-sm font-medium text-primary mb-2">Nome do Cliente</label><input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, clienteId: '', novoClienteNome: e.target.value })); }} placeholder="Buscar cliente existente ou digitar novo nome..." className="w-full px-4 py-2 border rounded-lg"/>{clienteSearch.length > 0 && !formData.clienteId && (<div className="absolute z-10 w-full mt-1 surface-card border rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c)} className="w-full text-left px-4 py-2 hover:bg-white/10">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-muted">Ou utilize o nome digitado como novo cliente.</p></div>)}</div>
+                    <div className="grid grid-cols-3 gap-4"><div><label className="block text-sm font-medium text-primary mb-2">Destino *</label><input type="text" value={formData.destino} onChange={(e) => setFormData(prev => ({...prev, destino: e.target.value}))} required className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-primary mb-2">Nº de Dias *</label><input type="number" value={formData.num_dias} onChange={(e) => setFormData(prev => ({...prev, num_dias: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div><div><label className="block text-sm font-medium text-primary mb-2">Nº de Pessoas *</label><input type="number" value={formData.num_pessoas} onChange={(e) => setFormData(prev => ({...prev, num_pessoas: e.target.value}))} required min="1" className="w-full px-4 py-2 border rounded-lg"/></div></div>
+                    <div><label className="block text-sm font-medium text-primary mb-2">Tipo de Viagem *</label><select value={formData.tipo_viagem} onChange={(e) => setFormData(prev => ({...prev, tipo_viagem: e.target.value}))} className="w-full px-4 py-2 border rounded-lg surface-card">{Object.keys(INTENCOES_VIAGEM).map(category => (<optgroup label={category} key={category}>{INTENCOES_VIAGEM[category as keyof typeof INTENCOES_VIAGEM].map(intention => (<option key={intention} value={intention}>{intention}</option>))}</optgroup>))}</select></div>
+                    <div><label className="block text-sm font-medium text-primary mb-2">Preferências da Viagem (mínimo 3, máximo 5)</label><div className="p-3 bg-white/5 border rounded-lg flex flex-wrap gap-2">{Object.values(INTENCOES_VIAGEM).flat().map(p => (<button key={p} type="button" onClick={() => handleMultiSelect(p)} className={`px-3 py-1 rounded-full text-xs ${formData.preferencias.includes(p) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-primary'}`}>{p}</button>))}</div></div>
                     {error && <div className="flex items-center gap-2 rounded-lg bg-red-100 p-3 text-red-700"><AlertCircle size={20} /> <p className="text-sm">{error}</p></div>}
                 </div>
-                <div className="p-6 border-t flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">Cancelar</button><button onClick={handleGenerate} disabled={isPending || formData.preferencias.length < 3} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">{isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />}{isPending ? 'Gerando...' : 'Gerar Roteiro'}</button></div>
+                <div className="p-6 border-t flex justify-end gap-3"><button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-white/5">Cancelar</button><button onClick={handleGenerate} disabled={isPending || formData.preferencias.length < 3} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">{isPending ? <Loader2 className="animate-spin w-4 h-4" /> : <Wand2 className="w-4 h-4" />}{isPending ? 'Gerando...' : 'Gerar Roteiro'}</button></div>
             </div>
         </div>
     );
@@ -205,8 +205,8 @@ export default function NovoOrcamentoForm() {
         <>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Nova Proposta</h1>
-                    <p className="text-gray-600 mt-1">Crie uma proposta detalhada para o seu cliente.</p>
+                    <h1 className="text-3xl font-bold text-primary">Nova Proposta</h1>
+                    <p className="text-muted mt-1">Crie uma proposta detalhada para o seu cliente.</p>
                 </div>
                 <button
                     type="button"
@@ -218,72 +218,72 @@ export default function NovoOrcamentoForm() {
                 </button>
             </div>
             
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+            <div className="surface-card rounded-xl shadow-lg border border-default">
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmit(false); }}>
                     <div className="p-8 space-y-10">
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><FileSignature size={20} className="text-blue-600" /> 1. Proposta</h3>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><FileSignature size={20} className="text-blue-600" /> 1. Proposta</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700 mb-2">Título do Orçamento *</label><input type="text" name="titulo" value={formData.titulo} onChange={handleChange} placeholder="Ex: Lua de Mel em Santorini – 7 dias" required className="w-full px-4 py-3 border border-gray-300 rounded-lg"/></div>
+                                <div className="md:col-span-2"><label className="block text-sm font-medium text-primary mb-2">Título do Orçamento *</label><input type="text" name="titulo" value={formData.titulo} onChange={handleChange} placeholder="Ex: Lua de Mel em Santorini – 7 dias" required className="w-full px-4 py-3 border border-default rounded-lg"/></div>
                                 <div className="relative">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Cliente *</label>
-                                    <input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, lead_id: '', novo_cliente_nome: e.target.value })); }} placeholder="🔍 Buscar ou digitar nome de novo cliente..." required className="w-full px-4 py-3 border border-gray-300 rounded-lg"/>
-                                    {clienteSearch.length > 0 && !formData.lead_id && !isClientesLoading && ( <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c.id)} className="w-full text-left px-4 py-2 hover:bg-gray-100">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-gray-500">Ou utilize o nome digitado como novo cliente.</p></div>)}
+                                    <label className="block text-sm font-medium text-primary mb-2">Cliente *</label>
+                                    <input type="text" value={clienteSearch} onChange={(e) => { setClienteSearch(e.target.value); setFormData(prev => ({ ...prev, lead_id: '', novo_cliente_nome: e.target.value })); }} placeholder="🔍 Buscar ou digitar nome de novo cliente..." required className="w-full px-4 py-3 border border-default rounded-lg"/>
+                                    {clienteSearch.length > 0 && !formData.lead_id && !isClientesLoading && ( <div className="absolute z-10 w-full mt-1 surface-card border border-default rounded-lg shadow-lg max-h-40 overflow-y-auto">{clientes.filter(c => c.nome.toLowerCase().includes(clienteSearch.toLowerCase())).map(c => (<button key={c.id} type="button" onClick={() => handleSelectCliente(c.id)} className="w-full text-left px-4 py-2 hover:bg-white/10">{c.nome}</button>))}<p className="px-4 py-2 text-sm text-muted">Ou utilize o nome digitado como novo cliente.</p></div>)}
                                     {formData.lead_id && (<span className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full"><User size={12} /> Cliente selecionado</span>)}
                                 </div>
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Validade da Proposta</label><input type="date" name="validade_ate" value={formData.validade_ate} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg" /></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Validade da Proposta</label><input type="date" name="validade_ate" value={formData.validade_ate} onChange={handleChange} className="w-full px-4 py-3 border border-default rounded-lg" /></div>
                             </div>
                         </section>
 
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><Plane size={20} className="text-blue-600" /> 2. Detalhes da Viagem</h3>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><Plane size={20} className="text-blue-600" /> 2. Detalhes da Viagem</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Período da Viagem</label>
+                                    <label className="block text-sm font-medium text-primary mb-2">Período da Viagem</label>
                                     <DatePickerWithRange date={dateRange} setDate={setDateRange} />
                                 </div>
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Nº Pessoas</label><input type="number" name="num_pessoas" value={formData.num_pessoas} onChange={handleChange} min="1" className="w-full px-4 py-3 border rounded-lg"/></div>
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Nº Dias</label><input type="number" name="num_dias" value={formData.num_dias} readOnly className="w-full px-4 py-3 border rounded-lg bg-gray-50"/></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Nº Pessoas</label><input type="number" name="num_pessoas" value={formData.num_pessoas} onChange={handleChange} min="1" className="w-full px-4 py-3 border rounded-lg"/></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Nº Dias</label><input type="number" name="num_dias" value={formData.num_dias} readOnly className="w-full px-4 py-3 border rounded-lg bg-white/5"/></div>
                             </div>
                         </section>
                         
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><FileText size={20} className="text-blue-600" /> 3. Roteiro / Resumo da Proposta</h3>
-                            <textarea name="descricao" value={formData.descricao} onChange={handleChange} rows={12} placeholder="Descreva o roteiro dia a dia aqui, ou clique em 'Gerar com IA' para que o sistema crie um rascunho." className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-y"/>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><FileText size={20} className="text-blue-600" /> 3. Roteiro / Resumo da Proposta</h3>
+                            <textarea name="descricao" value={formData.descricao} onChange={handleChange} rows={12} placeholder="Descreva o roteiro dia a dia aqui, ou clique em 'Gerar com IA' para que o sistema crie um rascunho." className="w-full px-4 py-3 border border-default rounded-lg resize-y"/>
                         </section>
 
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between"><div><DollarSign size={20} className="text-blue-600" /> 4. Itens do Orçamento</div><span className="text-xl font-bold text-blue-600">Total: {totalOrcamento.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}</span></h3>
-                            <div className="border border-gray-200 rounded-lg overflow-hidden"><table className="min-w-full divide-y divide-gray-200"><thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descrição</th><th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Valor Venda</th><th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th></tr></thead><tbody className="bg-white divide-y divide-gray-200">{itens.length === 0 ? (<tr><td colSpan={4} className="text-center py-4 text-sm text-gray-500">Nenhum item adicionado.</td></tr>) : (itens.map((item) => (<tr key={item.id} className="hover:bg-gray-50"><td className="px-6 py-4"><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{item.tipo}</span></td><td className="px-6 py-4 text-sm text-gray-700">{item.descricao}</td><td className="px-6 py-4 text-right text-sm font-bold text-green-600">{item.valor_final.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}</td><td className="px-6 py-4 text-right text-sm"><button type="button" onClick={() => handleEditItem(item)} className="text-blue-600 hover:text-blue-900 mr-2"><Edit2 size={16}/></button><button type="button" onClick={() => handleDeleteItem(item.id)} className="text-red-600 hover:text-red-900"><Trash2 size={16}/></button></td></tr>)))}</tbody></table></div>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center justify-between"><div><DollarSign size={20} className="text-blue-600" /> 4. Itens do Orçamento</div><span className="text-xl font-bold text-blue-600">Total: {totalOrcamento.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}</span></h3>
+                            <div className="border border-default rounded-lg overflow-hidden"><table className="min-w-full divide-y divide-white/5"><thead className="bg-white/5"><tr><th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Tipo</th><th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Descrição</th><th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Valor Venda</th><th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Ações</th></tr></thead><tbody className="surface-card divide-y divide-white/5">{itens.length === 0 ? (<tr><td colSpan={4} className="text-center py-4 text-sm text-muted">Nenhum item adicionado.</td></tr>) : (itens.map((item) => (<tr key={item.id} className="hover:bg-white/5"><td className="px-6 py-4"><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{item.tipo}</span></td><td className="px-6 py-4 text-sm text-primary">{item.descricao}</td><td className="px-6 py-4 text-right text-sm font-bold text-green-600">{item.valor_final.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' })}</td><td className="px-6 py-4 text-right text-sm"><button type="button" onClick={() => handleEditItem(item)} className="text-blue-600 hover:text-blue-900 mr-2"><Edit2 size={16}/></button><button type="button" onClick={() => handleDeleteItem(item.id)} className="text-red-600 hover:text-red-900"><Trash2 size={16}/></button></td></tr>)))}</tbody></table></div>
                             <div className="mt-4"><button type="button" onClick={() => { setCurrentItem(null); setIsModalItemOpen(true); }} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white hover:bg-purple-700 rounded-lg font-semibold"><Plus size={16} /> Adicionar Item/Serviço</button></div>
                         </section>
 
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><Info size={20} className="text-blue-600" /> 5. Observações Internas</h3>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><Info size={20} className="text-blue-600" /> 5. Observações Internas</h3>
                             <textarea name="observacoes" value={formData.observacoes} onChange={handleChange} rows={3} placeholder="Notas internas sobre precificação, fornecedores, etc." className="w-full px-4 py-3 border rounded-lg"/>
                         </section>
                         
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><Settings size={20} className="text-blue-600" /> 6. Fechamento</h3>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><Settings size={20} className="text-blue-600" /> 6. Fechamento</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Valor Final (€)</label><input type="text" value={totalOrcamento.toLocaleString('pt-PT', { minimumFractionDigits: 2 })} disabled className="w-full px-4 py-3 border bg-gray-50 rounded-lg font-bold"/></div>
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Sinal / Entrada (€)</label><input type="number" name="valor_sinal" value={formData.valor_sinal} onChange={handleChange} min="0" step="0.01" className="w-full px-4 py-3 border rounded-lg"/></div>
-                                <div><label className="block text-sm font-medium text-gray-700 mb-2">Status Inicial</label><select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-3 border rounded-lg"><option value="rascunho">Rascunho</option><option value="enviado">Enviado</option></select></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Valor Final (€)</label><input type="text" value={totalOrcamento.toLocaleString('pt-PT', { minimumFractionDigits: 2 })} disabled className="w-full px-4 py-3 border bg-white/5 rounded-lg font-bold"/></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Sinal / Entrada (€)</label><input type="number" name="valor_sinal" value={formData.valor_sinal} onChange={handleChange} min="0" step="0.01" className="w-full px-4 py-3 border rounded-lg"/></div>
+                                <div><label className="block text-sm font-medium text-primary mb-2">Status Inicial</label><select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-3 border rounded-lg"><option value="rascunho">Rascunho</option><option value="enviado">Enviado</option></select></div>
                             </div>
                         </section>
                         
                         <section>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"><FileArchive size={20} className="text-blue-600" /> 7. Termos e Condições</h3>
+                            <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><FileArchive size={20} className="text-blue-600" /> 7. Termos e Condições</h3>
                             <div className="flex items-start space-x-3">
-                                <input type="checkbox" id="incluir_termos" name="incluir_termos" checked={formData.incluir_termos} onChange={handleChange} className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded"/>
+                                <input type="checkbox" id="incluir_termos" name="incluir_termos" checked={formData.incluir_termos} onChange={handleChange} className="mt-1 h-4 w-4 text-blue-600 border-default rounded"/>
                                 <div className="flex-1">
-                                    <label htmlFor="incluir_termos" className="font-medium text-gray-700">Incluir Termos e Condições Padrão</label>
-                                    {formData.incluir_termos && <div className="mt-2 p-4 border rounded-lg bg-gray-50 text-xs text-gray-600 whitespace-pre-wrap">{termosFormatados}</div>}
+                                    <label htmlFor="incluir_termos" className="font-medium text-primary">Incluir Termos e Condições Padrão</label>
+                                    {formData.incluir_termos && <div className="mt-2 p-4 border rounded-lg bg-white/5 text-xs text-muted whitespace-pre-wrap">{termosFormatados}</div>}
                                 </div>
                             </div>
                         </section>
 
-                        <section className="pt-6 border-t border-gray-200">
+                        <section className="pt-6 border-t border-default">
                             {status && (<div className={`mb-6 p-4 rounded-lg ${status.success ? 'bg-green-100' : 'bg-red-100'}`}><p className={`text-sm font-medium ${status.success ? 'text-green-800' : 'text-red-800'}`}>{status.message}</p></div>)}
                             <div className="flex justify-end gap-4">
                                 <button type="button" onClick={() => handleSubmit(false)} disabled={isPending} className="flex items-center gap-2 bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 disabled:opacity-50"><Save size={18} /> Salvar Rascunho</button>
@@ -361,7 +361,7 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
 
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-lg">
+            <div className="surface-card rounded-xl w-full max-w-lg">
                 <form onSubmit={handleInternalSave}>
                     <div className="p-6 border-b">
                         <div className="flex items-center justify-between">
@@ -439,7 +439,7 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                                     type="text" 
                                     value={valorFinal.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}
                                     disabled
-                                    className="w-full px-4 py-2 border rounded-lg bg-gray-100 font-bold"
+                                    className="w-full px-4 py-2 border rounded-lg bg-white/10 font-bold"
                                 />
                             </div>
                         </div>
@@ -447,7 +447,7 @@ function ItemModal({ item, onClose, onSave }: ItemModalProps) {
                     </div>
 
                     <div className="p-6 border-t flex justify-end gap-3">
-                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg hover:bg-white/5">
                             Cancelar
                         </button>
                         <button 

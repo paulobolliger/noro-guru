@@ -1,5 +1,5 @@
-import { supabaseAdmin } from './admin';
-import type Database from '@/types/supabase'; // CORRIGIDO: Importação default
+﻿import { supabaseAdmin } from './admin';
+import type Database from '@types/supabase'; // CORRIGIDO: ImportaÃ§Ã£o default
 
 type OrcamentoInsert = Database['public']['Tables']['noro_orcamentos']['Insert'];
 
@@ -20,3 +20,5 @@ export async function addOrcamento(orcamento: OrcamentoInsert) {
   if (error) throw new Error(error.message);
   return data?.[0];
 }
+
+

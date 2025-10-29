@@ -1,4 +1,4 @@
-  import { supabaseAdmin } from './admin'; // Corrigido
+﻿  import { supabaseAdmin } from './admin'; // Corrigido
 
   export async function getMensagensContato() {
     const { data, error } = await supabaseAdmin
@@ -9,3 +9,5 @@
     return data;
   }
   
+
+

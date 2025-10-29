@@ -3,7 +3,8 @@
 
 import { useState, useTransition } from 'react';
 import { X, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { updateUserRoleAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { updateUserRoleAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import Portal from "@/components/ui/portal";
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -36,17 +37,18 @@ export default function EditUserModal({ isOpen, onClose, user }: EditUserModalPr
   if (!isOpen || !user) return null;
 
   return (
+    <Portal>
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><X size={24} /></button>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Editar Utilizador</h2>
-        <p className="text-gray-600 mb-6">{user.email}</p>
+      <div className="surface-card rounded-xl w-full max-w-md p-8 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-muted"><X size={24} /></button>
+        <h2 className="text-2xl font-bold text-primary mb-2">Editar Utilizador</h2>
+        <p className="text-muted mb-6">{user.email}</p>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">Função (Role)</label>
+            <label htmlFor="role" className="block text-sm font-medium text-primary mb-2">Função (Role)</label>
             <div className="relative">
               <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <select id="role" name="role" defaultValue={user.role} required className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              <select id="role" name="role" defaultValue={user.role} required className="w-full pl-10 pr-4 py-3 border border-default rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 surface-card">
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
               </select>
@@ -60,6 +62,6 @@ export default function EditUserModal({ isOpen, onClose, user }: EditUserModalPr
         </form>
       </div>
     </div>
+    </Portal>
   );
 }
-

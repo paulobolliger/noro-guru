@@ -1,9 +1,11 @@
 // components/admin/PreferenciasTab.tsx
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Globe, Clock, Calendar, DollarSign, Moon, Sun, Laptop, Grid, List, Bell, BellOff, Mail, Smartphone, CheckCircle2, AlertTriangle, Loader2, Image as ImageIcon, Palette } from 'lucide-react';
+import { useEffect, useState, useTransition } from 'react';
+import { Globe, Clock, Calendar, DollarSign, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
+import { NSelect } from '@/components/ui';
 import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from "@/app/(protected)/configuracoes/config-actions";
+import { NAlert, NButton } from "@/components/ui";
 
 interface PreferenciasTabProps {
   configSistema: ConfiguracaoSistema;
@@ -17,20 +19,29 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
   const [isSavingSistema, startSavingSistema] = useTransition();
   const [isSavingUsuario, startSavingUsuario] = useTransition();
-  const [statusSistema, setStatusSistema] = useState<{success: boolean, message: string} | null>(null);
-  const [statusUsuario, setStatusUsuario] = useState<{success: boolean, message: string} | null>(null);
+  const [statusSistema, setStatusSistema] = useState<{ success: boolean; message: string } | null>(null);
+  const [statusUsuario, setStatusUsuario] = useState<{ success: boolean; message: string } | null>(null);
+  const [theme, setTheme] = useState<'system'|'dark'|'light'>(() => {
+    if (typeof window === 'undefined') return 'system';
+    return (localStorage.getItem('noro.theme') as any) || 'system';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'system') {
+      root.dataset.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } else {
+      root.dataset.theme = theme;
+    }
+    localStorage.setItem('noro.theme', theme);
+  }, [theme]);
 
   const handleSaveSistema = () => {
     setStatusSistema(null);
     startSavingSistema(async () => {
       const result = await saveConfiguracaoSistema(sistema);
       setStatusSistema(result);
-      if (result.success) {
-        // Recarrega a página para ver as mudanças de tema/logo
-        setTimeout(() => window.location.reload(), 1000);
-      } else {
-        setTimeout(() => setStatusSistema(null), 3000);
-      }
+      setTimeout(() => setStatusSistema(null), 3000);
     });
   };
 
@@ -45,82 +56,42 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
   return (
     <div className="space-y-8">
-      {/* Configurações do Sistema */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Configurações do Sistema</h2>
-        <p className="text-gray-600 mb-6">Defina as configurações globais da aplicação</p>
+      {/* Sistema (sem aparencia) */}
+      <div className="surface-card rounded-xl p-6 border border-default">
+        <h2 className="text-2xl font-bold text-primary mb-2">Configuracoes do Sistema</h2>
+        <p className="text-muted mb-6">Defina as configuracoes globais (sem aparencia).</p>
 
-        {/* SEÇÃO DE APARÊNCIA ADICIONADA */}
-        <div className="border-b border-gray-200 pb-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Aparência do Painel</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <ImageIcon size={18} />
-                URL do Logo (Barra Superior)
-              </label>
-              <input
-                type="text"
-                placeholder="https://exemplo.com/logo-branco.png"
-                value={sistema.logo_url_admin || ''}
-                onChange={(e) => setSistema({ ...sistema, logo_url_admin: e.target.value })}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Palette size={18} />
-                Cor da Barra Superior
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={sistema.topbar_color || '#232452'}
-                  onChange={(e) => setSistema({ ...sistema, topbar_color: e.target.value })}
-                  className="h-12 w-12 p-1 border border-gray-300 rounded-lg cursor-pointer"
-                />
-                <input
-                  type="text"
-                  value={sistema.topbar_color || '#232452'}
-                  onChange={(e) => setSistema({ ...sistema, topbar_color: e.target.value })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Moeda Padrão */}
+          {/* Moeda Padrao */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
               <DollarSign size={18} />
-              Moeda Padrão
+              Moeda Padrao
             </label>
-            <select
+            <NSelect
               value={sistema.moeda_padrao}
               onChange={(e) => setSistema({ ...sistema, moeda_padrao: e.target.value as any })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full"
             >
               <option value="EUR">EUR (€) - Euro</option>
-              <option value="USD">USD ($) - Dólar Americano</option>
+              <option value="USD">USD ($) - Dolar Americano</option>
               <option value="BRL">BRL (R$) - Real Brasileiro</option>
             </select>
           </div>
-          {/* Outros campos (Fuso, Idioma, Data) permanecem aqui... */}
-          {/* Fuso Horário */}
+
+          {/* Fuso Horario */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
               <Clock size={18} />
-              Fuso Horário
+              Fuso Horario
             </label>
-            <select
+            <NSelect
               value={sistema.fuso_horario}
               onChange={(e) => setSistema({ ...sistema, fuso_horario: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full"
             >
               <option value="Europe/Lisbon">Lisboa (GMT+0)</option>
-              <option value="America/Sao_Paulo">São Paulo (GMT-3)</option>
+              <option value="America/Sao_Paulo">Sao Paulo (GMT-3)</option>
               <option value="America/New_York">Nova York (GMT-5)</option>
               <option value="Europe/London">Londres (GMT+0)</option>
               <option value="America/Los_Angeles">Los Angeles (GMT-8)</option>
@@ -129,31 +100,31 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
           {/* Idioma */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
               <Globe size={18} />
               Idioma da Interface
             </label>
-            <select
+            <NSelect
               value={sistema.idioma}
               onChange={(e) => setSistema({ ...sistema, idioma: e.target.value as any })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full"
             >
-              <option value="pt">Português</option>
+              <option value="pt">Portugues</option>
               <option value="en">English</option>
-              <option value="es">Español</option>
+              <option value="es">Espanol</option>
             </select>
           </div>
 
           {/* Formato de Data */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-primary mb-2">
               <Calendar size={18} />
               Formato de Data
             </label>
-            <select
+            <NSelect
               value={sistema.formato_data}
               onChange={(e) => setSistema({ ...sistema, formato_data: e.target.value as any })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full"
             >
               <option value="DD/MM/YYYY">DD/MM/YYYY (16/10/2025)</option>
               <option value="MM/DD/YYYY">MM/DD/YYYY (10/16/2025)</option>
@@ -162,46 +133,50 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
           </div>
         </div>
 
-        {/* Feedback e Botão Salvar Sistema */}
-        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
+        <div className="flex items-center justify-between mt-6 pt-6 border-t border-default">
           {statusSistema && (
-            <div className={`flex items-center gap-2 text-sm ${statusSistema.success ? 'text-green-600' : 'text-red-600'}`}>
-              {statusSistema.success ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+            <NAlert className="mr-auto" variant={statusSistema.success ? 'success' : 'error'} icon={statusSistema.success ? <CheckCircle2 size={16}/> : <AlertTriangle size={16}/>}>
               {statusSistema.message}
-            </div>
+            </NAlert>
           )}
-          <button
-            onClick={handleSaveSistema}
-            disabled={isSavingSistema}
-            className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-blue-400"
-          >
-            {isSavingSistema && <Loader2 className="animate-spin" size={18} />}
-            {isSavingSistema ? 'Salvando...' : 'Salvar Configurações do Sistema'}
-          </button>
+          <NButton onClick={handleSaveSistema} disabled={isSavingSistema} variant="primary" leftIcon={isSavingSistema ? <Loader2 className="animate-spin" size={18} /> : undefined}>
+            {isSavingSistema ? 'Salvando...' : 'Salvar configuracoes do sistema'}
+          </NButton>
         </div>
       </div>
 
-      {/* Preferências do Usuário (sem alterações) */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Minhas Preferências</h2>
-        <p className="text-gray-600 mb-6">Personalize sua experiência de uso</p>
-        {/* ... conteúdo das preferências do usuário permanece o mesmo ... */}
-        {/* Feedback e Botão Salvar Usuário */}
-        <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
-          {statusUsuario && (
-            <div className={`flex items-center gap-2 text-sm ${statusUsuario.success ? 'text-green-600' : 'text-red-600'}`}>
-              {statusUsuario.success ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
-              {statusUsuario.message}
+      {/* Preferencias do Usuario */}
+      <div className="surface-card rounded-xl border border-default p-6">
+        <h2 className="text-2xl font-semibold text-primary mb-2">Minhas preferências</h2>
+        <p className="text-muted mb-6">Personalize sua experiência de uso.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-primary mb-2">Tema</label>
+            <div className="flex items-center gap-2">
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value as any)}
+                className="w-60 p-2.5 rounded-lg bg-white/5 border border-white/10 text-primary focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+              >
+                <option value="system">System</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+              <div className="text-xs text-muted">Topbar/Sidebar permanecem em tema escuro.</div>
             </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mt-6 pt-6 border-t border-default">
+          {statusUsuario && (
+            <NAlert className="mr-auto" variant={statusUsuario.success ? 'success' : 'error'} icon={statusUsuario.success ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}>
+              {statusUsuario.message}
+            </NAlert>
           )}
-          <button
-            onClick={handleSaveUsuario}
-            disabled={isSavingUsuario}
-            className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-blue-400"
-          >
-            {isSavingUsuario && <Loader2 className="animate-spin" size={18} />}
-            {isSavingUsuario ? 'Salvando...' : 'Salvar Minhas Preferências'}
-          </button>
+          <NButton onClick={handleSaveUsuario} disabled={isSavingUsuario} variant="primary" leftIcon={isSavingUsuario ? <Loader2 className="animate-spin" size={18} /> : undefined}>
+            {isSavingUsuario ? 'Salvando...' : 'Salvar minhas preferências'}
+          </NButton>
         </div>
       </div>
     </div>

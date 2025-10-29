@@ -6,7 +6,7 @@ import StatCard from './StatCard';
 import LeadsRecentes from './LeadsRecentes';
 import TarefasList from './TarefasList';
 import Link from 'next/link';
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 
 // Tipos para as props
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
@@ -35,8 +35,8 @@ export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: Admi
       {/* Header do Conteúdo */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Bem-vindo! 👋</h1>
-          <p className="text-gray-600 mt-1">Aqui está um resumo do seu negócio</p>
+          <h1 className="text-3xl font-bold text-primary">Bem-vindo! 👋</h1>
+          <p className="text-muted mt-1">Aqui está um resumo do seu negócio</p>
         </div>
         {/* BOTÃO ALTERADO */}
         <Link

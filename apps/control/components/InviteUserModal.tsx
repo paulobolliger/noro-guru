@@ -3,7 +3,8 @@
 
 import { useState, useTransition, useRef, useEffect } from 'react';
 import { X, Mail, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { inviteUserAction } from '../../app/admin/(protected)/configuracoes/actions';
+import { inviteUserAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import Portal from "@/components/ui/portal";
 
 interface InviteUserModalProps {
   isOpen: boolean;
@@ -44,23 +45,24 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
   if (!isOpen) return null;
 
   return (
+    <Portal>
     <div 
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl relative"
+        className="surface-card rounded-xl w-full max-w-md p-8 shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-muted">
           <X size={24} />
         </button>
         
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Convidar Novo Utilizador</h2>
+        <h2 className="text-2xl font-bold text-primary mb-6">Convidar Novo Utilizador</h2>
 
         <form ref={formRef} action={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-primary mb-2">
               E-mail do Utilizador
             </label>
             <div className="relative">
@@ -71,13 +73,13 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
                 type="email"
                 required
                 placeholder="exemplo@nomade.guru"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 border border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
           
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="role" className="block text-sm font-medium text-primary mb-2">
               Função (Role)
             </label>
             <div className="relative">
@@ -87,7 +89,7 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
                 name="role"
                 defaultValue="admin"
                 required
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full pl-10 pr-4 py-3 border border-default rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 surface-card"
               >
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
@@ -119,6 +121,6 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
         </form>
       </div>
     </div>
+    </Portal>
   );
 }
-

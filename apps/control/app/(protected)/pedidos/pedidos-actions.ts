@@ -3,7 +3,7 @@
 
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import { revalidatePath } from 'next/cache';
-import { Database } from "@types/supabase";
+import { Database } from "@noro-types/supabase";
 import { createStripeCharge } from './providers/stripe-provider';
 import { createCieloCharge } from './providers/cielo-provider'; 
 import { createBTGCharge } from './providers/btg-provider'; 

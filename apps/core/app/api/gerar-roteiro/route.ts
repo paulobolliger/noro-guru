@@ -1,10 +1,40 @@
 // app/api/gerar-roteiro/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
+function buildCorsHeaders(origin: string | null) {
+  const allowed = (process.env.ALLOWED_ORIGINS || '*')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  const allowOrigin = allowed.includes('*') ? '*' : (origin && allowed.includes(origin) ? origin : '');
+  const headers: Record<string, string> = {
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+  };
+  if (allowOrigin) headers['Access-Control-Allow-Origin'] = allowOrigin;
+  return headers;
+}
+
+export async function OPTIONS(req: NextRequest) {
+  const cors = buildCorsHeaders(req.headers.get('origin'));
+  return new NextResponse(null, { status: 204, headers: cors });
+}
+
+function sanitizeHtml(html: string): string {
+  // Remove script/style tags and their content
+  let out = html.replace(/<\/(?:script|style)>/gi, "").replace(/<(?:script|style)[^>]*>[\s\S]*?<\/(?:script|style)>/gi, "");
+  // Remove on* handlers
+  out = out.replace(/ on[a-z]+\s*=\s*"[^"]*"/gi, "").replace(/ on[a-z]+\s*=\s*'[^']*'/gi, "").replace(/ on[a-z]+\s*=\s*[^\s>]+/gi, "");
+  // Neutralize javascript: URLs
+  out = out.replace(/href\s*=\s*"javascript:[^"]*"/gi, 'href="#"').replace(/href\s*=\s*'javascript:[^']*'/gi, "href='#'");
+  return out;
+}
+
 // Função para gerar um resumo (teaser) do roteiro completo
 function gerarResumo(roteiroCompleto: string, nome: string, destino: string, duracao: string): string {
   const linhas = roteiroCompleto.split('\n');
-  const primeiros3Dias = linhas.slice(0, 25).join('\n'); // Um pouco mais de linhas para garantir conteúdo
+  const primeiros3Dias = linhas.slice(0, 25).join('\n');
   
   return `
     <h2>✨ Olá ${nome.split(' ')[0]}! Aqui está um preview do seu roteiro para ${destino}</h2>
@@ -12,7 +42,7 @@ function gerarResumo(roteiroCompleto: string, nome: string, destino: string, dur
     <div style="background: #12152c; padding: 20px; border-radius: 12px; margin: 20px 0;">
       ${primeiros3Dias}
       <p style="text-align: center; margin-top: 30px; font-size: 1.2em;">
-        <strong>📧 O roteiro COMPLETO foi enviado para o seu email!</strong>
+        <strong>📩 O roteiro COMPLETO foi enviado para o seu email!</strong>
       </p>
     </div>
   `;
@@ -53,7 +83,7 @@ function gerarEmailHTML(nome: string, destino: string, duracao: string, roteiro:
           <p><strong>Nomade Guru</strong><br/>
           Rua Comendador Torlogo Dauntre, 74 – Sala 1207<br/>
           Cambuí – Campinas – SP<br/>
-          📧 contato@nomadeguru.com.br | 📱 (19) 99999-9999</p>
+          ✉️ contato@nomadeguru.com.br | ☎️ (19) 99999-9999</p>
         </div>
       </div>
     </body>
@@ -64,9 +94,10 @@ function gerarEmailHTML(nome: string, destino: string, duracao: string, roteiro:
 export async function POST(req: NextRequest) {
   try {
     const { nome, email, destino, duracao, interesses } = await req.json();
+    const cors = buildCorsHeaders(req.headers.get('origin'));
 
     if (!nome || !email || !destino || !duracao) {
-      return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 });
+      return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400, headers: cors });
     }
 
     const API_KEY = process.env.OPENAI_API_KEY;
@@ -84,7 +115,7 @@ export async function POST(req: NextRequest) {
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-5-mini", // ATUALIZADO
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
@@ -96,13 +127,16 @@ export async function POST(req: NextRequest) {
 
     if (!apiResponse.ok) {
       const errorData = await apiResponse.json();
-      console.error("❌ Erro OpenAI:", errorData);
+      console.error("Erro OpenAI:", errorData);
       throw new Error('Erro ao gerar roteiro');
     }
 
     const responseData = await apiResponse.json();
-    const roteiroCompleto = responseData.choices[0].message.content;
+    const roteiroCompleto = responseData.choices[0].message.content as string;
     const roteiroResumo = gerarResumo(roteiroCompleto, nome, destino, duracao);
+
+    const roteiroResumoSafe = sanitizeHtml(roteiroResumo);
+    const roteiroEmailSafe = sanitizeHtml(roteiroCompleto);
 
     fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -114,17 +148,19 @@ export async function POST(req: NextRequest) {
             from: 'Nomade Guru <contato@nomade.guru>',
             to: email,
             subject: `✨ Seu Roteiro Mágico para ${destino} está pronto!`,
-            html: gerarEmailHTML(nome, destino, duracao, roteiroCompleto)
+            html: gerarEmailHTML(nome, destino, duracao, roteiroEmailSafe)
         })
-    }).catch(emailError => console.error('❌ Erro ao enviar email:', emailError));
+    }).catch(emailError => console.error('Erro ao enviar email:', emailError));
 
     return NextResponse.json({ 
-      roteiro: roteiroResumo,
+      roteiro: roteiroResumoSafe,
       mensagem: `🎉 Perfeito, ${nome.split(' ')[0]}! Enviamos seu roteiro completo para ${email}. Confira sua caixa de entrada!`
-    });
+    }, { headers: cors });
 
   } catch (error) {
-    console.error("❌ ERRO:", error instanceof Error ? error.message : 'Erro desconhecido');
-    return NextResponse.json({ error: 'Ops! Algo deu errado. Tente novamente em instantes.' }, { status: 500 });
+    console.error("ERRO:", error instanceof Error ? error.message : 'Erro desconhecido');
+    const cors = buildCorsHeaders(req.headers.get('origin'));
+    return NextResponse.json({ error: 'Ops! Algo deu errado. Tente novamente em instantes.' }, { status: 500, headers: cors });
   }
 }
+

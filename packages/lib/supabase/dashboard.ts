@@ -1,4 +1,4 @@
-  import { supabaseAdmin } from './admin'; // Corrigido
+﻿  import { supabaseAdmin } from './admin'; // Corrigido
 
   export async function getDashboardStats() {
     const [leads, orcamentos, pedidos] = await Promise.all([
@@ -8,7 +8,7 @@
     ]);
 
     if (leads.error || orcamentos.error || pedidos.error)
-      throw new Error('Erro ao gerar estatísticas do dashboard');
+      throw new Error('Erro ao gerar estatÃ­sticas do dashboard');
 
     return {
       totalLeads: leads.data?.length || 0,
@@ -17,3 +17,5 @@
     };
   }
   
+
+

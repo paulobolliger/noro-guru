@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Clock, MessageSquare, Mail, Phone, FileText, Package, DollarSign, Plus, Save, X } from 'lucide-react';
 import { getClienteTimeline } from "@/app/(protected)/clientes/[id]/historico-actions";
 import { useRouter } from 'next/navigation';
+import Portal from "@/components/ui/portal";
 
 interface TimelineEvent {
   id: string;
@@ -45,7 +46,7 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
       email: { icon: Mail, color: 'text-blue-600', bgColor: 'bg-blue-100' },
       whatsapp: { icon: MessageSquare, color: 'text-green-600', bgColor: 'bg-green-100' },
       ligacao: { icon: Phone, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-      nota: { icon: FileText, color: 'text-gray-600', bgColor: 'bg-gray-100' },
+      nota: { icon: FileText, color: 'text-muted', bgColor: 'bg-white/10' },
       orcamento: { icon: FileText, color: 'text-orange-600', bgColor: 'bg-orange-100' },
       pedido: { icon: Package, color: 'text-green-600', bgColor: 'bg-green-100' },
       pagamento: { icon: DollarSign, color: 'text-emerald-600', bgColor: 'bg-emerald-100' },
@@ -87,14 +88,14 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
     : eventos.filter(e => e.tipo === filtro);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
+      <div className="p-6 border-b border-default border-default">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-purple-600" />
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Timeline</h2>
-              <p className="text-sm text-gray-600">Todas as interações e eventos do cliente</p>
+              <h2 className="text-xl font-semibold text-primary">Timeline</h2>
+              <p className="text-sm text-muted">Todas as interações e eventos do cliente</p>
             </div>
           </div>
 
@@ -114,24 +115,24 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               filtro === 'todos'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-white/10 text-primary hover:bg-white/15'
             }`}
           >
             Todos
           </button>
-          <button onClick={() => setFiltro('email')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='email'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Email</button>
-          <button onClick={() => setFiltro('whatsapp')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='whatsapp'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>WhatsApp</button>
-          <button onClick={() => setFiltro('ligacao')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='ligacao'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Ligações</button>
-          <button onClick={() => setFiltro('nota')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='nota'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Notas</button>
-          <button onClick={() => setFiltro('orcamento')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='orcamento'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Orçamentos</button>
-          <button onClick={() => setFiltro('pedido')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='pedido'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Pedidos</button>
-          <button onClick={() => setFiltro('pagamento')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='pagamento'?'bg-blue-600 text-white':'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>Pagamentos</button>
+          <button onClick={() => setFiltro('email')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='email'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Email</button>
+          <button onClick={() => setFiltro('whatsapp')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='whatsapp'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>WhatsApp</button>
+          <button onClick={() => setFiltro('ligacao')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='ligacao'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Ligações</button>
+          <button onClick={() => setFiltro('nota')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='nota'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Notas</button>
+          <button onClick={() => setFiltro('orcamento')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='orcamento'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Orçamentos</button>
+          <button onClick={() => setFiltro('pedido')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='pedido'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Pedidos</button>
+          <button onClick={() => setFiltro('pagamento')} className={`px-3 py-1.5 rounded-lg text-sm font-medium ${filtro==='pagamento'?'bg-blue-600 text-white':'bg-white/10 text-primary hover:bg-white/15'}`}>Pagamentos</button>
         </div>
       </div>
 
       <div className="p-6">
         {loading ? (
-          <div className="text-gray-500">Carregando timeline...</div>
+          <div className="text-muted">Carregando timeline...</div>
         ) : (
         <div className="space-y-6">
           {eventosFiltrados.map((ev) => {
@@ -150,17 +151,17 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-gray-900">{ev.titulo}</h4>
-                    <span className="text-xs text-gray-500">{formatarDataAmigavel(ev.data)}</span>
+                    <h4 className="font-semibold text-primary">{ev.titulo}</h4>
+                    <span className="text-xs text-muted">{formatarDataAmigavel(ev.data)}</span>
                   </div>
                   {ev.descricao && (
-                    <p className="text-gray-700 text-sm mt-1">{ev.descricao}</p>
+                    <p className="text-primary text-sm mt-1">{ev.descricao}</p>
                   )}
                   {link && (
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         onClick={() => router.push(link)}
-                        className="px-3 py-1.5 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        className="px-3 py-1.5 text-sm rounded-lg bg-white/10 hover:bg-white/15 text-primary"
                         title="Abrir detalhes"
                       >
                         Abrir
@@ -169,7 +170,7 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
                         href={link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-1.5 text-sm rounded-lg bg-white border hover:bg-gray-50 text-gray-700"
+                        className="px-3 py-1.5 text-sm rounded-lg surface-card border hover:bg-white/5 text-primary"
                         title="Abrir em nova aba"
                       >
                         Nova aba
@@ -186,9 +187,10 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
 
       {/* Modal de Nova Nota (mock) */}
       {showAddNota && (
+        <Portal>
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl w-full max-w-md">
-            <div className="p-4 border-b flex items-center justify-between">
+          <div className="surface-card rounded-xl w-full max-w-md">
+            <div className="p-4 border-b border-default flex items-center justify-between">
               <h3 className="font-semibold">Adicionar Nota</h3>
               <button onClick={() => setShowAddNota(false)}><X className="w-5 h-5"/></button>
             </div>
@@ -201,6 +203,7 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
             </div>
           </div>
         </div>
+        </Portal>
       )}
     </div>
   );

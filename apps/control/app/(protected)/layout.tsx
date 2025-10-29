@@ -1,12 +1,13 @@
 // app/admin/(protected)/layout.tsx
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
-import type Database from "@types/supabase";
+import type Database from "@noro-types/supabase";
 import { createServerSupabaseClient } from "@lib/supabase/server";
 import AdminLayoutClient from "@/components/AdminLayoutClient";
 import { getNotificacoes } from "@lib/supabase/admin";
 // NOVO: Importa a função de buscar config do sistema
 import { getConfiguracaoSistema } from './configuracoes/config-actions'; 
+import { getUserTenants, getActiveTenantId, setActiveTenant } from './tenants/actions';
 // NOVO: Importa o Toaster
 import { Toaster } from "@ui/use-toast"; // Assumindo que use-toast.tsx também exporta Toaster
 
@@ -21,7 +22,7 @@ export default async function ProtectedAdminLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/admin/login?redirect=/admin');
+    return redirect('/login?redirect=/');
   }
 
   const { data: userProfile } = await supabase
@@ -34,7 +35,7 @@ export default async function ProtectedAdminLayout({
 
   if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
     await supabase.auth.signOut();
-    return redirect('/?error=unauthorized');
+    return redirect('/login?error=unauthorized');
   }
 
   // Busca as notificações E as configurações do sistema
@@ -42,6 +43,9 @@ export default async function ProtectedAdminLayout({
     getNotificacoes(user.id, 5),
     getConfiguracaoSistema()
   ]);
+
+  const tenants = await getUserTenants();
+  const activeTenantId = await getActiveTenantId();
 
   return (
     // O Toaster deve ser renderizado no lado do cliente, assim como o AdminLayoutClient
@@ -51,6 +55,17 @@ export default async function ProtectedAdminLayout({
         notificacoes={notificacoes}
         configSistema={configSistema} // Passa a config para o layout do cliente
       >
+        {tenants.length > 0 && (
+          <form action={setActiveTenant} className="p-3 border-b border-default border-default bg-white/5 flex items-center gap-2">
+            <label className="text-sm text-muted">Tenant ativo</label>
+            <select name="tenant_id" defaultValue={activeTenantId ?? undefined} className="border rounded px-2 py-1">
+              {tenants.map((t) => (
+                <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>
+              ))}
+            </select>
+          <button className="text-sm btn-primary px-3 py-1 rounded shadow-card">Trocar</button>
+          </form>
+        )}
         {children}
         {/* CRÍTICO: O Toaster deve ser incluído para renderizar as notificações */}
         <Toaster /> 

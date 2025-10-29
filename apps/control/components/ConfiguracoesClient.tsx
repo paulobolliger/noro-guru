@@ -41,23 +41,23 @@ export default function ConfiguracoesClient({ serverUsers, configSistema, config
       <div>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Configurações</h1>
-            <p className="text-gray-600 mt-1">Gira as integrações, utilizadores e preferências do sistema.</p>
+            <h1 className="text-3xl font-bold text-primary">Configurações</h1>
+            <p className="text-muted mt-1">Gira as integrações, utilizadores e preferências do sistema.</p>
           </div>
         </div>
 
-        <div className="flex border-b border-gray-200 mb-8">
+        <div className="flex border-b border-default border-default border-default mb-8">
           {/* NOVO: Botão para a aba Dados da Empresa */}
-          <button onClick={() => setActiveTab('empresa')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'empresa' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
+          <button onClick={() => setActiveTab('empresa')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'empresa' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-muted hover:text-primary'}`}>
             <Building size={18} /> Dados da Empresa
           </button>
-          <button onClick={() => setActiveTab('utilizadores')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'utilizadores' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
+          <button onClick={() => setActiveTab('utilizadores')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'utilizadores' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-muted hover:text-primary'}`}>
             <Users size={18} /> Utilizadores
           </button>
-          <button onClick={() => setActiveTab('preferencias')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'preferencias' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
+          <button onClick={() => setActiveTab('preferencias')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'preferencias' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-muted hover:text-primary'}`}>
             <SlidersHorizontal size={18} /> Preferências
           </button>
-          <button onClick={() => setActiveTab('integracoes')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'integracoes' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>
+          <button onClick={() => setActiveTab('integracoes')} className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors ${activeTab === 'integracoes' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-muted hover:text-primary'}`}>
             <Plug size={18} /> Integrações
           </button>
         </div>
@@ -69,7 +69,7 @@ export default function ConfiguracoesClient({ serverUsers, configSistema, config
           )}
 
           {activeTab === 'utilizadores' && (
-             <div className="bg-white p-6 rounded-xl border border-gray-200">
+             <div className="surface-card p-6 rounded-xl border border-default">
                 {/* ... conteúdo da aba utilizadores ... */}
             </div>
           )}

@@ -1,5 +1,5 @@
-import { createServerClient } from '@/utils/supabase/server';
-import { Database } from "@types/supabase";
+import { createServerSupabaseClient } from '@lib/supabase/server';
+import { Database } from "@noro-types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react'; 
 import { PagamentosList } from "@/components/pagamentos/PagamentosList"; // Novo componente de lista
@@ -15,7 +15,7 @@ export type PedidoParaPagamento = Pick<PedidoComRelacionamentos,
  * @returns Array de pedidos com status AGUARDANDO_PAGAMENTO.
  */
 async function fetchPedidosParaPagamento(): Promise<PedidoParaPagamento[]> {
-  const supabase = createServerClient();
+  const supabase = createServerSupabaseClient();
   
   // Status que indicam que o pedido está pronto para ser cobrado/faturado
   const statusesAguardandoCobranca = ['AGUARDANDO_PAGAMENTO', 'EM_PROCESSAMENTO'];
@@ -49,13 +49,13 @@ export default async function PagamentosPage() {
 
   return (
     <main className="flex-1 space-y-8 p-6 md:p-10">
-      <header className="flex items-center justify-between border-b pb-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Processamento de Pagamentos</h1>
+      <header className="flex items-center justify-between border-b border-default border-default border-default pb-4 mb-6">
+        <h1 className="text-3xl font-bold text-primary">Processamento de Pagamentos</h1>
         {/* Botão para Ações futuras: Nova Cobrança Manual, Gerar Relatório, etc. */}
       </header>
       
-      <section className="bg-white p-6 rounded-xl shadow-lg">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">Pedidos Aguardando Ação Financeira</h2>
+      <section className="surface-card p-6 rounded-xl border border-default shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-primary">Pedidos Aguardando Ação Financeira</h2>
         
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>}>
           <PagamentosList pedidos={pedidos} />

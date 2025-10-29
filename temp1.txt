@@ -1,0 +1,100 @@
+    "created_at" timestamp without time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."noro_audit_log" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."noro_campanhas" (
+    "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
+    "nome" character varying(255) NOT NULL,
+    "assunto" character varying(255) NOT NULL,
+    "conteudo_html" "text" NOT NULL,
+    "status" character varying(50) DEFAULT 'rascunho'::character varying,
+    "segmento" "jsonb",
+    "total_destinatarios" integer,
+    "total_enviados" integer DEFAULT 0,
+    "total_abertos" integer DEFAULT 0,
+    "total_cliques" integer DEFAULT 0,
+    "agendado_para" timestamp without time zone,
+    "enviado_em" timestamp without time zone,
+    "created_by" "uuid",
+    "created_at" timestamp without time zone DEFAULT "now"(),
+    CONSTRAINT "nomade_campanhas_status_check" CHECK ((("status")::"text" = ANY (ARRAY[('rascunho'::character varying)::"text", ('agendado'::character varying)::"text", ('enviando'::character varying)::"text", ('enviado'::character varying)::"text", ('cancelado'::character varying)::"text"])))
+);
+
+
+ALTER TABLE "public"."noro_campanhas" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."noro_clientes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "nome" character varying(255) NOT NULL,
+    "email" character varying(255),
+    "telefone" character varying(50),
+    "whatsapp" character varying(50),
+    "cpf" character varying(20),
+    "passaporte" character varying(50),
+    "data_nascimento" "date",
+    "nacionalidade" character varying(100),
+    "profissao" character varying(100),
+    "status" character varying(50) DEFAULT 'ativo'::character varying,
+    "tipo" character varying(50) DEFAULT 'pessoa_fisica'::character varying,
+    "segmento" character varying(100),
+    "nivel" character varying(50) DEFAULT 'bronze'::character varying,
+    "origem_lead_id" "uuid",
+    "agente_responsavel_id" "uuid",
+    "total_viagens" integer DEFAULT 0,
+    "total_gasto" numeric(12,2) DEFAULT 0,
+    "ticket_medio" numeric(12,2) DEFAULT 0,
+    "nps_score" integer,
+    "data_primeiro_contato" timestamp with time zone,
+    "data_ultima_viagem" timestamp with time zone,
+    "data_proxima_viagem" timestamp with time zone,
+    "data_ultimo_contato" timestamp with time zone,
+    "idioma_preferido" character varying(10) DEFAULT 'pt'::character varying,
+    "moeda_preferida" character varying(10) DEFAULT 'EUR'::character varying,
+    "tags" "text"[],
+    "metadata" "jsonb" DEFAULT '{}'::"jsonb",
+    "observacoes" "text",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"(),
+    "deleted_at" timestamp with time zone,
+    "razao_social" character varying(255),
+    "nome_fantasia" character varying(255),
+    "cnpj" character varying(20),
+    "inscricao_estadual" character varying(50),
+    "inscricao_municipal" character varying(50),
+    "responsavel_nome" character varying(255),
+    "responsavel_cargo" character varying(100),
+    "responsavel_email" character varying(255),
+    "responsavel_telefone" character varying(50)
+);
+
+
+ALTER TABLE "public"."noro_clientes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."noro_clientes" IS 'Tabela master de clientes - visão 360°';
+
+
+
+COMMENT ON COLUMN "public"."noro_clientes"."total_viagens" IS 'Calculado automaticamente via trigger';
+
+
+
+COMMENT ON COLUMN "public"."noro_clientes"."total_gasto" IS 'Calculado automaticamente via trigger';
+
+
+
+COMMENT ON COLUMN "public"."noro_clientes"."ticket_medio" IS 'Calculado automaticamente: total_gasto / total_viagens';
+
+
+
+COMMENT ON COLUMN "public"."noro_clientes"."razao_social" IS 'Razão social da empresa (apenas PJ)';
+
+
+
+COMMENT ON COLUMN "public"."noro_clientes"."nome_fantasia" IS 'Nome fantasia da empresa (apenas PJ)';
+
+

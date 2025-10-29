@@ -1,37 +1,21 @@
 import Link from 'next/link';
-import { Metadata } from 'next';
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React from 'react';
+import NoroLogo from '@/components/icons/NoroLogo';
 
-export const metadata: Metadata = {
-  title: 'Página Não Encontrada (404) - Nomade Guru',
-  description: 'A página que procurava não foi encontrada.',
+const NotFoundPage = () => {
+  return (
+    <div className="container mx-auto px-6 py-24 md:py-32 flex flex-col items-center justify-center text-center">
+        <NoroLogo className="w-32 h-32 text-noro-turquoise/50 mb-8" />
+        <h1 className="font-display text-5xl md:text-7xl font-bold text-white">404</h1>
+        <p className="mt-4 text-xl md:text-2xl text-noro-accent/80">Página Não Encontrada</p>
+        <p className="mt-2 max-w-md text-noro-accent/70">
+            A página que você está procurando não existe ou foi movida.
+        </p>
+        <Link href="/" className="mt-8 bg-gradient-to-r from-noro-turquoise to-noro-purple text-white font-bold py-3 px-8 rounded-lg text-lg hover:scale-105 transition-transform">
+            Voltar para o Início
+        </Link>
+    </div>
+  );
 };
 
-export default function NotFound() {
-  return (
-    <>
-      <Header />
-      <main className="pt-24 md:pt-32 bg-neutral-dark text-white">
-        <div className="flex items-center justify-center py-20 min-h-[60vh]">
-          <div className="container mx-auto px-5 text-center">
-            <h1 className="text-6xl md:text-8xl font-bold text-primary">404</h1>
-            <h2 className="mt-4 text-3xl md:text-4xl font-bold text-white">Página Não Encontrada</h2>
-            <p className="mt-4 text-lg text-white/70 max-w-xl mx-auto">
-              Ups! A página que está a tentar aceder não existe, foi movida ou está temporariamente indisponível.
-            </p>
-            <div className="mt-10">
-              <Link
-                href="/"
-                className="inline-block rounded-full bg-primary px-8 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105"
-              >
-                Voltar à Página Inicial
-              </Link>
-            </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </>
-  );
-}
+export default NotFoundPage;

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NORO - Intelligent Core</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'noro-purple': '#5053C4',
+              'noro-blue': '#342CA4',
+              'noro-turquoise': '#1DD3C0',
+              'noro-dark': '#12152C',
+              'noro-dark-2': '#2B2E48',
+              'noro-gray-light': '#F3F5FA',
+              'noro-accent': '#E2E8F0',
+              'noro-gray-future': '#2E2E3A',
+            },
+            fontFamily: {
+              display: ['Poppins', 'sans-serif'],
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'spin-slow': 'spin 20s linear infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+            },
+            keyframes: {
+              float: {
+                '0%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' },
+                '100%': { transform: 'translateY(0px)' },
+              },
+              fadeIn: {
+                '0%': { opacity: 0, transform: 'scale(0.95)' },
+                '100%': { opacity: 1, transform: 'scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* For custom scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #12152C;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #2B2E48;
+        border-radius: 10px;
+        border: 2px solid #12152C;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "next/": "https://aistudiocdn.com/next@^16.0.0/",
+    "next": "https://aistudiocdn.com/next@^16.0.0",
+    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.16"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 // components/admin/AdminFooter.tsx
-import packageJson from '@/../package.json';
+import packageJson from '@/package.json';
 import Link from 'next/link';
 
 export default function AdminFooter() {
@@ -8,14 +8,14 @@ export default function AdminFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 px-8 py-2 text-center text-xs text-gray-500">
+    <footer className="surface-card border-t border-default px-8 py-2 text-center text-xs text-muted">
       <div className="flex justify-center items-center gap-x-2">
         <span>&copy; {currentYear} Nomade Guru. Todos os direitos reservados.</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-muted">|</span>
         <Link href="/admin/sobre-noro" className="hover:text-blue-600 hover:underline">
           Sobre o NORO
         </Link>
-        <span className="text-gray-300">|</span>
+        <span className="text-muted">|</span>
         <span>Versão {version}</span>
       </div>
     </footer>

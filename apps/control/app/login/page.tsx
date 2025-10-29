@@ -108,9 +108,9 @@ export default function AdminLoginPage() {
     // Esta div garante que o componente ocupe a tela inteira e centralize seu conteúdo
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
       
-      <div className="w-full max-w-md bg-white rounded-xl p-8 shadow-2xl">
+      <div className="w-full max-w-md surface-card rounded-xl p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-primary">
             {isSignUp ? 'Criar Conta Admin' : 'Acesso ao Painel Admin'}
           </h1>
           {error && (
@@ -131,7 +131,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-3 border border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
           </div>
@@ -145,13 +145,13 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-12 py-3 border border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-muted"
               disabled={loading}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -182,7 +182,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Toggle para SignUp/SignIn */}
-        <p className="mt-8 text-center text-sm text-gray-600">
+        <p className="mt-8 text-center text-sm text-muted">
           {isSignUp ? 'Já tem uma conta?' : 'Não tem conta?'}
           <button
             type="button"
@@ -195,8 +195,8 @@ export default function AdminLoginPage() {
         </p>
 
         {/* Link para o site */}
-        <p className="mt-4 text-center text-xs text-gray-500">
-          <Link href="/" className="hover:text-gray-700">← Voltar ao Site Principal</Link>
+        <p className="mt-4 text-center text-xs text-muted">
+          <Link href="/" className="hover:text-primary">← Voltar ao Site Principal</Link>
         </p>
       </div>
     </div>

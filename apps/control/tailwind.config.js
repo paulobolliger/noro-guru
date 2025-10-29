@@ -8,22 +8,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#5053c4', // Cor primária principal
-          dark: '#342ca4',    // Tom mais escuro da primária (antigo 'denary')
-        },
-        secondary: {
-          light: '#333176', // Tom mais claro para elementos de UI (antigo 'secondary1')
-          DEFAULT: '#232452', // Cor secundária principal (antigo 'secondary2')
-        },
-        neutral: {
-          dark: '#12152c',   // Fundo mais escuro (antigo 'neutral-dark1')
-        },
+        primary: { DEFAULT: '#5053c4', dark: '#342ca4' },
+        secondary: { light: '#333176', DEFAULT: '#232452' },
+        neutral: { dark: '#12152c' },
         white: '#ffffff',
       },
     },
   },
   plugins: [
-    require('@tailwindcss/typography'), // <-- ADICIONE ESTA LINHA
+    require('@tailwindcss/typography'),
   ],
 }

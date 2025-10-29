@@ -136,20 +136,20 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="text-center py-12 text-gray-500">Carregando...</div>
+      <div className="surface-card rounded-xl shadow-sm border border-default p-6">
+        <div className="text-center py-12 text-muted">Carregando...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+    <div className="surface-card rounded-xl shadow-sm border border-default">
+      <div className="flex items-center justify-between p-6 border-b border-default border-default">
         <div className="flex items-center gap-3">
           <Heart className="w-6 h-6 text-pink-600" />
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Preferências de Viagem</h2>
-            <p className="text-sm text-gray-600">Personalize a experiência do cliente</p>
+            <h2 className="text-xl font-semibold text-primary">Preferências de Viagem</h2>
+            <p className="text-sm text-muted">Personalize a experiência do cliente</p>
           </div>
         </div>
         
@@ -167,7 +167,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                 setIsEditing(false);
                 loadPreferencias();
               }}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+              className="px-4 py-2 text-muted hover:bg-white/5 rounded-lg"
             >
               <X className="w-4 h-4" />
             </button>
@@ -188,11 +188,11 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
           
           {/* VIAGEM */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Viagem</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Viagem</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Frequência
                 </label>
                 {isEditing ? (
@@ -210,12 +210,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="eventual">Eventual</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.frequencia_viagem || '-'}</p>
+                  <p className="text-primary">{formData.frequencia_viagem || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Orçamento Médio
                 </label>
                 {isEditing ? (
@@ -233,12 +233,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="ultra_luxo">Ultra Luxo</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.orcamento_medio || '-'}</p>
+                  <p className="text-primary">{formData.orcamento_medio || '-'}</p>
                 )}
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Estilo de Viagem
                 </label>
                 {isEditing ? (
@@ -251,7 +251,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                         className={`px-3 py-1 rounded-full text-sm ${
                           formData.estilo_viagem.includes(estilo)
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-white/10 text-primary hover:bg-white/15'
                         }`}
                       >
                         {estilo}
@@ -259,12 +259,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-900">{formData.estilo_viagem.join(', ') || '-'}</p>
+                  <p className="text-primary">{formData.estilo_viagem.join(', ') || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Destinos Favoritos
                 </label>
                 {isEditing ? (
@@ -277,12 +277,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     className="w-full px-4 py-2 border rounded-lg"
                   />
                 ) : (
-                  <p className="text-gray-900">{formData.destinos_favoritos || '-'}</p>
+                  <p className="text-primary">{formData.destinos_favoritos || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Destinos Desejados
                 </label>
                 {isEditing ? (
@@ -295,7 +295,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     className="w-full px-4 py-2 border rounded-lg"
                   />
                 ) : (
-                  <p className="text-gray-900">{formData.destinos_desejados || '-'}</p>
+                  <p className="text-primary">{formData.destinos_desejados || '-'}</p>
                 )}
               </div>
             </div>
@@ -303,11 +303,11 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* VÔO */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Preferências de Vôo</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Preferências de Vôo</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Assento Preferido
                 </label>
                 {isEditing ? (
@@ -323,12 +323,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="qualquer">Qualquer</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.assento_preferido || '-'}</p>
+                  <p className="text-primary">{formData.assento_preferido || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Classe Preferida
                 </label>
                 {isEditing ? (
@@ -345,7 +345,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="primeira_classe">Primeira Classe</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.classe_preferida || '-'}</p>
+                  <p className="text-primary">{formData.classe_preferida || '-'}</p>
                 )}
               </div>
             </div>
@@ -353,11 +353,11 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* HOSPEDAGEM */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Hospedagem</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Hospedagem</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Tipo de Hospedagem
                 </label>
                 {isEditing ? (
@@ -370,7 +370,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                         className={`px-3 py-1 rounded-full text-sm ${
                           formData.tipo_hospedagem.includes(tipo)
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-white/10 text-primary hover:bg-white/15'
                         }`}
                       >
                         {tipo}
@@ -378,12 +378,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-900">{formData.tipo_hospedagem.join(', ') || '-'}</p>
+                  <p className="text-primary">{formData.tipo_hospedagem.join(', ') || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Categoria
                 </label>
                 {isEditing ? (
@@ -401,12 +401,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="luxo">Luxo</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.categoria_hotel || '-'}</p>
+                  <p className="text-primary">{formData.categoria_hotel || '-'}</p>
                 )}
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Preferências de Quarto
                 </label>
                 {isEditing ? (
@@ -419,7 +419,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     className="w-full px-4 py-2 border rounded-lg"
                   />
                 ) : (
-                  <p className="text-gray-900">{formData.preferencias_quarto || '-'}</p>
+                  <p className="text-primary">{formData.preferencias_quarto || '-'}</p>
                 )}
               </div>
             </div>
@@ -427,11 +427,11 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* ALIMENTAÇÃO */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Alimentação</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Alimentação</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Restrições
                 </label>
                 {isEditing ? (
@@ -444,7 +444,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                         className={`px-3 py-1 rounded-full text-sm ${
                           formData.restricoes_alimentares.includes(restricao)
                             ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : 'bg-white/10 text-primary hover:bg-white/15'
                         }`}
                       >
                         {restricao.replace('_', ' ')}
@@ -452,12 +452,12 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-900">{formData.restricoes_alimentares.join(', ') || '-'}</p>
+                  <p className="text-primary">{formData.restricoes_alimentares.join(', ') || '-'}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-primary mb-2">
                   Refeição Preferida
                 </label>
                 {isEditing ? (
@@ -474,7 +474,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                     <option value="all_inclusive">All Inclusive</option>
                   </select>
                 ) : (
-                  <p className="text-gray-900">{formData.refeicao_preferida || '-'}</p>
+                  <p className="text-primary">{formData.refeicao_preferida || '-'}</p>
                 )}
               </div>
             </div>
@@ -482,7 +482,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* NECESSIDADES ESPECIAIS */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Necessidades Especiais</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Necessidades Especiais</h3>
             <div className="space-y-3">
               
               {isEditing ? (
@@ -495,7 +495,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Mobilidade Reduzida</span>
+                    <span className="text-sm text-primary">Mobilidade Reduzida</span>
                   </label>
 
                   <label className="flex items-center gap-2">
@@ -506,7 +506,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Viaja com Crianças</span>
+                    <span className="text-sm text-primary">Viaja com Crianças</span>
                   </label>
 
                   <label className="flex items-center gap-2">
@@ -517,18 +517,18 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Viaja com Pets</span>
+                    <span className="text-sm text-primary">Viaja com Pets</span>
                   </label>
                 </>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Mobilidade Reduzida:</span> {formData.mobilidade_reduzida ? 'Sim' : 'Não'}
                   </p>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Viaja com Crianças:</span> {formData.viaja_com_criancas ? 'Sim' : 'Não'}
                   </p>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Viaja com Pets:</span> {formData.viaja_com_pets ? 'Sim' : 'Não'}
                   </p>
                 </div>
@@ -538,7 +538,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* EXTRAS */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Serviços Extras</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">Serviços Extras</h3>
             <div className="space-y-3">
               
               {isEditing ? (
@@ -551,7 +551,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Aluguel de Carro</span>
+                    <span className="text-sm text-primary">Aluguel de Carro</span>
                   </label>
 
                   <label className="flex items-center gap-2">
@@ -562,7 +562,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Tours Guiados</span>
+                    <span className="text-sm text-primary">Tours Guiados</span>
                   </label>
 
                   <label className="flex items-center gap-2">
@@ -573,18 +573,18 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">Transfers</span>
+                    <span className="text-sm text-primary">Transfers</span>
                   </label>
                 </>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Aluguel de Carro:</span> {formData.aluguel_carro ? 'Sim' : 'Não'}
                   </p>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Tours Guiados:</span> {formData.tours_guiados ? 'Sim' : 'Não'}
                   </p>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-primary">
                     <span className="font-medium">Transfers:</span> {formData.transfers ? 'Sim' : 'Não'}
                   </p>
                 </div>
@@ -594,7 +594,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
 
           {/* OBSERVAÇÕES */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-primary mb-2">
               Observações Gerais
             </label>
             {isEditing ? (
@@ -607,7 +607,7 @@ export default function PreferenciasTab({ clienteId }: PreferenciasTabProps) {
                 placeholder="Observações adicionais sobre preferências..."
               />
             ) : (
-              <p className="text-gray-900 whitespace-pre-wrap">{formData.observacoes || '-'}</p>
+              <p className="text-primary whitespace-pre-wrap">{formData.observacoes || '-'}</p>
             )}
           </div>
         </div>

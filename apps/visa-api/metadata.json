@@ -1,0 +1,5 @@
+{
+  "name": "Vistos.guru Hybrid Data Manager",
+  "description": "An application to manage and synchronize visa information for vistos.guru, combining data from a Supabase database with live external APIs and enhancing it with AI-powered insights from Gemini.",
+  "requestFramePermissions": []
+}

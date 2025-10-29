@@ -2,7 +2,7 @@
 'use server';
 
 import { createServerSupabaseClient } from "@lib/supabase/server";
-import type { Database } from "@types/supabase";
+import type { Database } from "@noro-types/supabase";
 import { revalidatePath } from 'next/cache';
 
 // Tipos baseados na estrutura do Supabase para garantir segurança
