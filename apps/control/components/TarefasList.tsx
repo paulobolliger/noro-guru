@@ -33,7 +33,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
     <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-primary">Tarefas Pendentes</h2>
-        <Link href="/admin/tarefas" className="text-blue-400 text-sm font-semibold hover:text-blue-300">
+        <Link href="/admin/tarefas" className="text-link text-sm font-semibold">
           + Nova tarefa
         </Link>
       </div>
@@ -44,11 +44,11 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
           tarefas.map((tarefa) => (
             <div
               key={tarefa.id}
-              className="flex items-start gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              className="flex items-start gap-3 rounded-lg border border-default bg-[var(--color-surface-alt)] p-3 transition-colors cursor-pointer hover:border-[rgba(29,211,192,0.25)] hover:bg-[rgba(29,211,192,0.08)]"
             >
               <input
                 type="checkbox"
-                className="mt-1 w-4 h-4 text-blue-600 rounded cursor-pointer"
+                className="mt-1 w-4 h-4 text-success rounded cursor-pointer"
                 onChange={() => {
                   // TODO: Implementar marcar como concluída
                 }}
@@ -76,3 +76,6 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
     </div>
   );
 }
+
+
+

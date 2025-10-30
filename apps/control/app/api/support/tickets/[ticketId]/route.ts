@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabaseServer";
+import { sendSupportEmail } from "@/lib/supportEmail";
 
 type Params = { ticketId: string };
 
@@ -37,10 +38,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  await supabase.rpc('enqueue_job', {
-    identifier: 'send_support_email',
-    payload: { type: 'ticket_updated', ticketId: data.id }
-  }).catch(() => null);
+  await sendSupportEmail({ type: 'ticket_updated', ticketId: data.id });
 
   return NextResponse.json({ ticket: data });
 }

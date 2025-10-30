@@ -3,7 +3,7 @@ import { NBadge, NButton } from "@/components/ui";
 
 export default function LeadTable({ leads }: { leads: any[] }) {
   return (
-    <div className="mx-auto max-w-7xl px-6 md:px-8">
+    <div className="mx-auto max-w-7xl px-6 md:px-8 my-6 md:my-8">
       <div className="overflow-x-auto rounded-xl border border-default surface-card shadow-[0_1px_0_0_rgba(255,255,255,0.03)]">
         <table className="min-w-full text-sm">
           <thead className="bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-white/10">

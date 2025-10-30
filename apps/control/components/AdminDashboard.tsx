@@ -41,7 +41,7 @@ export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: Admi
         {/* BOTÃO ALTERADO */}
         <Link
           href="/admin/leads/novo"
-          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-shadow"
+          className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold transition-transform duration-200 ease-in-out"
         >
           <Plus size={20} />
           Novo Lead
@@ -55,28 +55,28 @@ export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: Admi
           value={`R$ ${((metrics?.receita_periodo || 0) / 1000).toFixed(1)}k`}
           change={variacao.receita}
           icon={DollarSign}
-          color="text-green-600"
+          color="text-success"
         />
         <StatCard
           title="Novos Leads"
           value={metrics?.leads_novos_periodo || 0}
           change={variacao.leads}
           icon={Users}
-          color="text-orange-500"
+          color="text-accent"
         />
         <StatCard
           title="Pedidos Ativos"
           value={metrics?.pedidos_ativos || 0}
           change={variacao.pedidos}
           icon={CreditCard}
-          color="text-indigo-500"
+          color="text-success"
         />
         <StatCard
           title="Taxa Conversão"
           value={`${metrics?.taxa_conversao || 0}%`}
           change={variacao.conversao}
           icon={TrendingUp}
-          color="text-blue-600"
+          color="text-accent"
         />
       </div>
 

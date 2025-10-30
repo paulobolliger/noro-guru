@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabaseServer";
+import { sendSupportEmail } from "@/lib/supportEmail";
 
 export async function GET() {
   const supabase = getSupabaseServer();
@@ -25,21 +26,18 @@ export async function POST(request: Request) {
   const subject = String(body?.subject || '').trim();
   const summary = String(body?.summary || '').trim() || null;
   const tenant_id = String(body?.tenant_id || '').trim();
+  const priority = String(body?.priority || 'normal').trim().toLowerCase() || 'normal';
   if (!subject || !tenant_id) return NextResponse.json({ error: 'subject and tenant_id required' }, { status: 400 });
 
   const { data, error } = await supabase
     .schema('cp')
     .from('support_tickets')
-    .insert({ subject, summary, tenant_id, requester_id: auth.user.id, requester_email: auth.user.email || null })
+    .insert({ subject, summary, tenant_id, priority, requester_id: auth.user.id, requester_email: auth.user.email || null })
     .select('*')
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  // enqueue notification via DB RPC (Graphile Worker bridge)
-  await supabase.rpc('enqueue_job', {
-    identifier: 'send_support_email',
-    payload: { type: 'ticket_created', ticketId: data.id, tenantId: tenant_id }
-  }).catch(() => null);
+  await sendSupportEmail({ type: 'ticket_created', ticketId: data.id, tenantId: tenant_id });
 
   return NextResponse.json({ ticket: data });
 }

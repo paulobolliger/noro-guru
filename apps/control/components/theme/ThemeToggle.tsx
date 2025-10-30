@@ -33,7 +33,7 @@ export default function ThemeToggle() {
     <button
       aria-label="Alternar tema"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-primary transition-colors"
+      className="theme-toggle p-2 rounded-lg transition-colors"
       title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
     >
       {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}

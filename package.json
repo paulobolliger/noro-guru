@@ -9,8 +9,6 @@
     "start": "turbo start",
     "build:web": "next build apps/control",
     "start:web": "next start apps/control",
-    "build:worker": "npm run --workspace control-worker build",
-    "start:worker": "npm run --workspace control-worker start",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish"

@@ -4,7 +4,9 @@
     "baseUrl": "../..",
     "paths": {
       "@/*": ["apps/control/*"],
-      "@noro-types/*": ["packages/types/*"]
+      "@noro-types/*": ["packages/types/*"],
+      "@noro/ui/*": ["packages/ui/*"],
+      "@noro/lib/*": ["packages/lib/*"]
     }
   },
   "include": [

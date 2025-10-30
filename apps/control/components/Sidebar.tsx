@@ -76,8 +76,10 @@ export default function Sidebar({ user }: SidebarProps) {
   }, [sidebarOpen]);
 
   const NavGroup = ({ title, items }: { title: string, items: readonly { href: string; icon: any; label: string }[] }) => (
-    <div className="space-y-1 mt-4">
-      <div className="px-4 text-[11px] uppercase tracking-wide text-slate-400 mb-1">{title}</div>
+    <div className={`space-y-1 ${sidebarOpen ? 'mt-4 pt-2 border-t border-default' : 'mt-3'}`}>
+      {sidebarOpen && (
+        <div className="px-4 text-sm uppercase tracking-wide text-primary mb-1 font-semibold">{title}</div>
+      )}
       {items.map((item) => {
         // Active state only for exact path match to avoid multiple items active
         const isActive = pathname === item.href;
@@ -87,10 +89,18 @@ export default function Sidebar({ user }: SidebarProps) {
             key={item.href}
             href={item.href}
             aria-current={isActive ? 'page' : undefined}
-            className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all motion-safe:transform motion-safe:hover:scale-[1.02] ${isActive ? 'bg-white/5 text-indigo-300 ring-1 ring-white/10' : 'hover:bg-white/5 text-slate-300'}`}
+            className={`sidebar-link group flex items-center ${sidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center py-3'} rounded-lg transition-all motion-safe:transform motion-safe:hover:scale-[1.02] ${isActive ? 'sidebar-link-active' : ''}`}
           >
-            <Icon size={20} strokeWidth={2.25} className={`transition-transform motion-safe:group-hover:translate-x-0.5 ${isActive ? 'text-indigo-300' : 'text-slate-300'}`} />
-            {sidebarOpen && (<span className={`font-medium transition-colors ${isActive ? 'text-indigo-300' : 'text-slate-300'}`}>{item.label}</span>)}
+            <Icon
+                  size={20}
+                  strokeWidth={2.25}
+                  className={`sidebar-link-icon flex-shrink-0 transition-transform motion-safe:group-hover:translate-x-0.5 ${isActive ? 'sidebar-link-icon-active' : ''} ${!sidebarOpen ? 'mx-auto' : ''}`}
+            />
+            {sidebarOpen && (
+              <span className={`sidebar-link-label font-medium ${isActive ? 'sidebar-link-label-active' : ''}`}>
+                {item.label}
+              </span>
+            )}
           </Link>
         );
         if (sidebarOpen) return linkEl;
@@ -100,20 +110,20 @@ export default function Sidebar({ user }: SidebarProps) {
               {linkEl}
             </Popover.Trigger>
             <Popover.Portal>
-              <Popover.Content side="right" align="start" sideOffset={10} className="surface-card px-3 py-2 text-sm text-primary shadow-xl border border-white/10 rounded-lg">
+              <Popover.Content side="right" align="start" sideOffset={10} className="card noro-card dropdown-pop px-3 py-2 text-sm text-primary shadow-xl rounded-lg">
                 <div className="font-medium mb-2">{item.label}</div>
                 {item.href === '/control/leads' && (
                   <div className="flex flex-col gap-2">
-                    <Link href="/control/leads?open=create" className="inline-flex items-center gap-2 text-xs bg-indigo-600/90 hover:bg-indigo-600 text-white px-2.5 py-1.5 rounded-md">
+                    <Link href="/control/leads?open=create" className="inline-flex items-center gap-2 text-xs btn-primary px-2.5 py-1.5 rounded-md shadow-card">
                       + Novo Lead
                     </Link>
-                    <Link href="/control/leads?open=import" className="inline-flex items-center gap-2 text-xs bg-white/10 hover:bg-white/15 text-primary px-2.5 py-1.5 rounded-md">
+                    <Link href="/control/leads?open=import" className="inline-flex items-center gap-2 text-xs bg-gradient-button text-[#1b1b1b] px-2.5 py-1.5 rounded-md transition hover:opacity-90">
                       Importar CSV
                     </Link>
                   </div>
                 )}
                 {item.href === '/control/orgs' && (
-                  <Link href="/control/orgs?open=create" className="inline-flex items-center gap-2 text-xs bg-indigo-600/90 hover:bg-indigo-600 text-white px-2.5 py-1.5 rounded-md">
+                  <Link href="/control/orgs?open=create" className="inline-flex items-center gap-2 text-xs btn-primary px-2.5 py-1.5 rounded-md shadow-card">
                     + Novo Cliente/Empresa
                   </Link>
                 )}
@@ -148,15 +158,15 @@ export default function Sidebar({ user }: SidebarProps) {
       }}
     >
       {/* Header */}
-      <div className="h-16 px-4 border-b border-default border-default border-white/10 flex items-center justify-between">
+      <div className="h-16 px-4 border-b border-default flex items-center justify-between bg-gradient-header">
         {sidebarOpen && (
           <div>
-            <div className="text-xl font-bold tracking-tight text-slate-100">NORO | CONTROL</div>
-            <p className="text-xs text-primary0 -mt-1">v{version}</p>
+            <div className="text-xl font-bold tracking-tight text-white font-display">NORO | CONTROL</div>
+            <p className="text-xs text-[#D4AF37] -mt-1">v{version}</p>
           </div>
         )}
         <button aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} aria-expanded={sidebarOpen}
-          onClick={() => setSidebarOpen(!sidebarOpen)} className="text-muted hover:text-primary transition-transform hover:scale-105">
+          onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white/80 hover:text-white transition-transform hover:scale-105">
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
@@ -170,27 +180,40 @@ export default function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-white/10 p-4">
-        <div className="flex items-center gap-3">
-          <img
-            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`}
-            alt="Avatar"
-            className="w-8 h-8 rounded-full"
-          />
-          {sidebarOpen && (
+      <div className="border-t border-default p-4">
+        {/* Footer: when sidebar is open show avatar + name + logout; when collapsed show only logout icon in gold */}
+        {sidebarOpen ? (
+          <div className="flex items-center gap-3 text-primary">
+            <img
+              src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`}
+              alt="Avatar"
+              className="w-8 h-8 rounded-full"
+            />
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-semibold text-primary truncate">{user.nome || user.email?.split('@')[0]}</p>
             </div>
-          )}
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-            title="Sair"
-          >
-            {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
-          </button>
-        </div>
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+              title="Sair"
+            >
+              {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center">
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 text-[#D4AF37] hover:text-[#E6C25A] hover:bg-white/5 rounded-lg transition-colors"
+              title="Sair"
+              aria-label="Sair"
+            >
+              {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

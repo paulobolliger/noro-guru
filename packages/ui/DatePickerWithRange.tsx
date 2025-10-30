@@ -6,14 +6,14 @@ import { ptBR } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
-import { cn } from '@lib/utils';
-import { Button } from '@ui/button';
-import { Calendar } from '@ui/calendar';
+import { cn } from '@/../../packages/lib/utils';
+import { Button } from './button';
+import { Calendar } from './calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@ui/popover';
+} from './popover';
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   date: DateRange | undefined;

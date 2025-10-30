@@ -1,0 +1,20 @@
+﻿app = "noro-control-worker"
+primary_region = "gru"
+
+[build]
+  dockerfile = "deploy/worker/Dockerfile"
+
+[env]
+  WORKER_CONCURRENCY = "5"
+
+[processes]
+  worker = "npm run start:worker"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.tcp_checks]]
+    interval = "60s"
+    timeout = "5s"
+    grace_period = "30s"

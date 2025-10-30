@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar, Legend, AreaChart, Area, Brush, PieChart, Pie, Cell } from "recharts";
-import ChartCard from "./ChartCard";
+import NCard from "../ui/NCard";
 import LegendToggle from "./LegendToggle";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -32,7 +32,7 @@ async function downloadPNGFromSVG(container: HTMLElement, filename: string) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   ctx.scale(2,2);
-  ctx.fillStyle = '#0B1220'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#2E2E3A'; ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(img, 0, 0);
   canvas.toBlob((blob) => {
     if (!blob) return;
@@ -141,33 +141,39 @@ export default function DashboardCharts({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div ref={refUsage}>
-      <ChartCard title="Chamadas por dia" subtitle="Soma diária + média móvel (7d)" actions={
-        <LegendToggle
+      <NCard title={<>
+            <div className="noro-card-title">Chamadas por dia</div>
+            <div className="text-xs text-muted">Soma diaria + media movel (7d)</div>
+          </>} actions={
+          <LegendToggle
           series={[
-            { key: 'calls', label: 'Chamadas', color: '#5053C4', enabled: !!enabledUsage.calls },
-            { key: 'ma', label: 'Média 7d', color: '#8A8CE6', enabled: !!enabledUsage.ma },
+            { key: 'calls', label: 'Chamadas', color: 'var(--color-accent)', enabled: !!enabledUsage.calls },
+            { key: 'ma', label: 'Media 7d', color: 'var(--color-secondary)', enabled: !!enabledUsage.ma },
           ]}
           onToggle={(k) => toggleUsage(k as 'calls'|'ma')}
         />
-      }>
-        <ResponsiveContainer width="100%" height="100%">
+      } className="noro-card--chart">
+        <ResponsiveContainer className="chart-area" width="100%" height="100%">
           <AreaChart data={usageWithMA} margin={{ left: 8, right: 8, top: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="fillCalls" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#5053C4" stopOpacity={0.35}/>
-                <stop offset="100%" stopColor="#5053C4" stopOpacity={0}/>
+                <stop offset="0%" stopColor="var(--color-accent)" stopOpacity={0.32}/>
+                <stop offset="100%" stopColor="var(--color-accent)" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-            <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} width={40} />
-            <Tooltip contentStyle={{ background: '#1A1F2E', border: '1px solid rgba(255,255,255,0.08)' }} labelStyle={{ color: '#e5e7eb' }} />
-            {enabledUsage.calls && <Area type="monotone" dataKey="calls" stroke="#5053C4" fill="url(#fillCalls)" strokeWidth={2} />}
-            {enabledUsage.ma && <Line type="monotone" dataKey="ma" stroke="#8A8CE6" strokeWidth={2} dot={false} />}
-            <Brush dataKey="day" height={18} stroke="#5053C4" travellerWidth={10} />
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis dataKey="day" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
+            <YAxis tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} width={40} />
+            <Tooltip
+              contentStyle={{ background: 'var(--chart-tooltip-bg)', border: '1px solid var(--chart-tooltip-border)', color: 'var(--text-primary)' }}
+              labelStyle={{ color: 'var(--text-primary)' }}
+            />
+            {enabledUsage.calls && <Area type="monotone" dataKey="calls" stroke="var(--color-accent)" fill="url(#fillCalls)" strokeWidth={2} />}
+            {enabledUsage.ma && <Line type="monotone" dataKey="ma" stroke="var(--color-secondary)" strokeWidth={2} dot={false} />}
+            <Brush dataKey="day" height={18} stroke="var(--color-primary)" travellerWidth={10} />
           </AreaChart>
         </ResponsiveContainer>
-      </ChartCard>
+  </NCard>
       <div className="px-4 md:px-6 py-2 flex gap-2">
         <button className="text-xs text-muted hover:text-primary" onClick={() => downloadCSV(usageWithMA, 'chamadas_por_dia.csv')}>Exportar CSV</button>
         <button className="text-xs text-muted hover:text-primary" onClick={() => refUsage.current && downloadPNGFromSVG(refUsage.current, 'chamadas_por_dia.png')}>Exportar PNG</button>
@@ -175,76 +181,94 @@ export default function DashboardCharts({
       </div>
 
       <div ref={refPlans}>
-      <ChartCard title="Tenants por plano" subtitle="Distribuição atual">
-        <ResponsiveContainer width="100%" height="100%">
+      <NCard title={<>
+            <div className="noro-card-title">Tenants por plano</div>
+            <div className="text-xs text-muted">Distribuicao atual</div>
+          </>} className="noro-card--chart">
+        <ResponsiveContainer className="chart-area" width="100%" height="100%">
           <BarChart data={planData} margin={{ left: 8, right: 8, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-            <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} width={40} />
-            <Tooltip contentStyle={{ background: '#1A1F2E', border: '1px solid rgba(255,255,255,0.08)' }} labelStyle={{ color: '#e5e7eb' }} />
-            <Bar dataKey="count" fill="#342CA4" radius={[6,6,0,0]} />
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis dataKey="name" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} />
+            <YAxis tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} width={40} />
+            <Tooltip
+              contentStyle={{ background: 'var(--chart-tooltip-bg)', border: '1px solid var(--chart-tooltip-border)', color: 'var(--text-primary)' }}
+              labelStyle={{ color: 'var(--text-primary)' }}
+            />
+            <Bar dataKey="count" fill="var(--color-accent)" radius={[6,6,0,0]} />
           </BarChart>
         </ResponsiveContainer>
-      </ChartCard>
+  </NCard>
       <div className="px-4 md:px-6 py-2 flex gap-2">
         <button className="text-xs text-muted hover:text-primary" onClick={() => downloadCSV(planData, 'tenants_por_plano.csv')}>Exportar CSV</button>
         <button className="text-xs text-muted hover:text-primary" onClick={() => refPlans.current && downloadPNGFromSVG(refPlans.current, 'tenants_por_plano.png')}>Exportar PNG</button>
       </div>
       </div>
 
-      {/* Uso de API: latências p50/p95 se disponíveis */}
+      { /* Uso de API: latencias p50/p95 se disponiveis */ }
       <div className="lg:col-span-2" ref={refCreated}>
-      <ChartCard
-        title="Uso de API"
-        subtitle="Chamadas (barras), latência p50/p95 e erro rate 4xx/5xx (linhas)"
+      <NCard
+        title={<>
+          <div className="noro-card-title">Uso de API</div>
+          <div className="text-xs text-muted">Chamadas (barras), latencia p50/p95 e erro rate 4xx/5xx (linhas)</div>
+        </>}
         actions={
           <LegendToggle
             series={[
-              { key: 'calls', label: 'Chamadas', color: '#5053C4', enabled: !!enabled.calls },
-              { key: 'p50', label: 'p50 (ms)', color: '#8A8CE6', enabled: !!enabled.p50 },
-              { key: 'p95', label: 'p95 (ms)', color: '#C7C8FF', enabled: !!enabled.p95 },
+              { key: 'calls', label: 'Chamadas', color: 'var(--color-accent)', enabled: !!enabled.calls },
+              { key: 'p50', label: 'p50 (ms)', color: 'var(--color-secondary)', enabled: !!enabled.p50 },
+              { key: 'p95', label: 'p95 (ms)', color: 'var(--color-primary)', enabled: !!enabled.p95 },
               { key: 'e4', label: 'Erro 4xx (%)', color: '#E56464', enabled: !!enabled.e4 },
               { key: 'e5', label: 'Erro 5xx (%)', color: '#F59E0B', enabled: !!enabled.e5 },
             ]}
             onToggle={toggle}
           />
         }
+        className="noro-card--chart lg:col-span-2"
       >
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer className="chart-area" width="100%" height="100%">
           <BarChart data={usage} margin={{ left: 8, right: 8, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-            <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
-            <YAxis yAxisId="left" tick={{ fill: '#94a3b8', fontSize: 12 }} width={40} />
-            <YAxis yAxisId="right" orientation="right" tick={{ fill: '#94a3b8', fontSize: 12 }} width={40} />
-            <Tooltip contentStyle={{ background: '#1A1F2E', border: '1px solid rgba(255,255,255,0.08)' }} labelStyle={{ color: '#e5e7eb' }} />
-            {enabled.calls && <Bar yAxisId="left" dataKey="calls" fill="#5053C4" radius={[6,6,0,0]} />}
-            {enabled.p50 && <Line yAxisId="right" type="monotone" dataKey="p50_ms" stroke="#8A8CE6" dot={false} strokeWidth={2} />}
-            {enabled.p95 && <Line yAxisId="right" type="monotone" dataKey="p95_ms" stroke="#C7C8FF" dot={false} strokeWidth={2} />}
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis dataKey="day" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
+            <YAxis yAxisId="left" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} width={40} />
+            <YAxis yAxisId="right" orientation="right" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} width={40} />
+            <Tooltip
+              contentStyle={{ background: 'var(--chart-tooltip-bg)', border: '1px solid var(--chart-tooltip-border)', color: 'var(--text-primary)' }}
+              labelStyle={{ color: 'var(--text-primary)' }}
+            />
+            {enabled.calls && <Bar yAxisId="left" dataKey="calls" fill="var(--color-accent)" radius={[6,6,0,0]} />}
+            {enabled.p50 && <Line yAxisId="right" type="monotone" dataKey="p50_ms" stroke="var(--color-secondary)" dot={false} strokeWidth={2} />}
+            {enabled.p95 && <Line yAxisId="right" type="monotone" dataKey="p95_ms" stroke="var(--color-primary)" dot={false} strokeWidth={2} />}
             {enabled.e4 && <Line yAxisId="right" type="monotone" dataKey="err4xx_rate" stroke="#E56464" dot={false} strokeWidth={2} />}
             {enabled.e5 && <Line yAxisId="right" type="monotone" dataKey="err5xx_rate" stroke="#F59E0B" dot={false} strokeWidth={2} />}
-            <Brush dataKey="day" height={18} stroke="#5053C4" travellerWidth={10} />
+            <Brush dataKey="day" height={18} stroke="var(--color-primary)" travellerWidth={10} />
           </BarChart>
         </ResponsiveContainer>
-      </ChartCard>
+  </NCard>
       <div className="px-4 md:px-6 py-2 flex gap-2">
         <button className="text-xs text-muted hover:text-primary" onClick={() => downloadCSV(usage as any[], 'uso_api.csv')}>Exportar CSV</button>
         <button className="text-xs text-muted hover:text-primary" onClick={() => refCreated.current && downloadPNGFromSVG(refCreated.current, 'uso_api_latency.png')}>Exportar PNG</button>
       </div>
       </div>
 
-      {/* Tenants criados por dia + Ativos vs Inativos */}
+      { /* Uso de API: latencias p50/p95 se disponiveis */ }
       <div ref={refCreated}>
-      <ChartCard title="Tenants criados por dia" subtitle="Últimos cadastros">
-        <ResponsiveContainer width="100%" height="100%">
+      <NCard title={<>
+            <div className="noro-card-title">Tenants criados por dia</div>
+            <div className="text-xs text-muted">Ultimos cadastros</div>
+          </>} className="noro-card--chart">
+        <ResponsiveContainer className="chart-area" width="100%" height="100%">
           <BarChart data={createdDaily || []} margin={{ left: 8, right: 8, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-            <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 12 }} width={40} />
-            <Tooltip contentStyle={{ background: '#1A1F2E', border: '1px solid rgba(255,255,255,0.08)' }} labelStyle={{ color: '#e5e7eb' }} />
-            <Bar dataKey="count" fill="#5053C4" radius={[6,6,0,0]} />
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis dataKey="day" tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} tickFormatter={(d) => String(d).slice(5)} />
+            <YAxis tick={{ fill: 'var(--chart-tick)', fontSize: 12 }} width={40} />
+            <Tooltip
+              contentStyle={{ background: 'var(--chart-tooltip-bg)', border: '1px solid var(--chart-tooltip-border)', color: 'var(--text-primary)' }}
+              labelStyle={{ color: 'var(--text-primary)' }}
+            />
+            <Bar dataKey="count" fill="var(--color-accent)" radius={[6,6,0,0]} />
           </BarChart>
         </ResponsiveContainer>
-      </ChartCard>
+  </NCard>
       <div className="px-4 md:px-6 py-2 flex gap-2">
         <button className="text-xs text-muted hover:text-primary" onClick={() => downloadCSV(createdDaily||[], 'tenants_criados_por_dia.csv')}>Exportar CSV</button>
         <button className="text-xs text-muted hover:text-primary" onClick={() => refCreated.current && downloadPNGFromSVG(refCreated.current, 'tenants_criados_por_dia.png')}>Exportar PNG</button>
@@ -252,20 +276,26 @@ export default function DashboardCharts({
       </div>
 
       <div ref={refActive}>
-      <ChartCard title="Ativos vs Inativos" subtitle="Distribuição atual">
-        <ResponsiveContainer width="100%" height="100%">
+      <NCard title={<>
+            <div className="noro-card-title">Ativos vs Inativos</div>
+            <div className="text-xs text-muted">Distribuicao atual</div>
+          </>} className="noro-card--chart">
+        <ResponsiveContainer className="chart-area" width="100%" height="100%">
           <PieChart>
             <Pie dataKey="value" data={[
-              { name: 'Ativos', value: activeBreakdown?.active || 0, color: '#36C38A' },
-              { name: 'Inativos', value: activeBreakdown?.inactive || 0, color: '#E56464' },
-            ]} cx="50%" cy="50%" outerRadius={90} label={({name,percent})=>`${name}: ${(percent*100).toFixed(0)}%`}>
-              <Cell fill="#36C38A" />
-              <Cell fill="#E56464" />
+              { name: 'Ativos', value: activeBreakdown?.active || 0, color: 'var(--color-accent)' },
+              { name: 'Inativos', value: activeBreakdown?.inactive || 0, color: 'var(--color-secondary)' },
+            ]} cx="50%" cy="50%" outerRadius={90} label={({name,percent})=>`${name}: ${Math.round(((percent as number) || 0) * 100)}%`}>
+              <Cell fill="var(--color-accent)" />
+              <Cell fill="var(--color-secondary)" />
             </Pie>
-            <Tooltip contentStyle={{ background: '#1A1F2E', border: '1px solid rgba(255,255,255,0.08)' }} labelStyle={{ color: '#e5e7eb' }} />
+            <Tooltip
+              contentStyle={{ background: 'var(--chart-tooltip-bg)', border: '1px solid var(--chart-tooltip-border)', color: 'var(--text-primary)' }}
+              labelStyle={{ color: 'var(--text-primary)' }}
+            />
           </PieChart>
         </ResponsiveContainer>
-      </ChartCard>
+      </NCard>
       <div className="px-4 md:px-6 py-2 flex gap-2">
         <button className="text-xs text-muted hover:text-primary" onClick={() => downloadCSV([{status:'active',value:activeBreakdown?.active||0},{status:'inactive',value:activeBreakdown?.inactive||0}], 'tenants_ativos_vs_inativos.csv')}>Exportar CSV</button>
         <button className="text-xs text-muted hover:text-primary" onClick={() => refActive.current && downloadPNGFromSVG(refActive.current, 'tenants_ativos_vs_inativos.png')}>Exportar PNG</button>
@@ -274,3 +304,14 @@ export default function DashboardCharts({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+

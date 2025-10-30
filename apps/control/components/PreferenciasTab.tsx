@@ -3,9 +3,10 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { Globe, Clock, Calendar, DollarSign, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
-import { NSelect } from '@/components/ui';
 import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from "@/app/(protected)/configuracoes/config-actions";
-import { NAlert, NButton } from "@/components/ui";
+import { Button as NButton } from '@/../../packages/ui/button';
+import { Alert as NAlert } from '@/../../packages/ui/alert';
+import { Select as NSelect } from '@/../../packages/ui/select';
 
 interface PreferenciasTabProps {
   configSistema: ConfiguracaoSistema;
@@ -55,10 +56,10 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
   };
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       {/* Sistema (sem aparencia) */}
-      <div className="surface-card rounded-xl p-6 border border-default">
-        <h2 className="text-2xl font-bold text-primary mb-2">Configuracoes do Sistema</h2>
+      <div className='surface-card rounded-xl p-6 border border-default'>
+        <h2 className='text-2xl font-bold text-primary mb-2'>Configuracoes do Sistema</h2>
         <p className="text-muted mb-6">Defina as configuracoes globais (sem aparencia).</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -76,7 +77,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <option value="EUR">EUR (€) - Euro</option>
               <option value="USD">USD ($) - Dolar Americano</option>
               <option value="BRL">BRL (R$) - Real Brasileiro</option>
-            </select>
+            </NSelect>
           </div>
 
           {/* Fuso Horario */}
@@ -95,7 +96,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <option value="America/New_York">Nova York (GMT-5)</option>
               <option value="Europe/London">Londres (GMT+0)</option>
               <option value="America/Los_Angeles">Los Angeles (GMT-8)</option>
-            </select>
+            </NSelect>
           </div>
 
           {/* Idioma */}
@@ -112,7 +113,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <option value="pt">Portugues</option>
               <option value="en">English</option>
               <option value="es">Espanol</option>
-            </select>
+            </NSelect>
           </div>
 
           {/* Formato de Data */}
@@ -129,7 +130,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <option value="DD/MM/YYYY">DD/MM/YYYY (16/10/2025)</option>
               <option value="MM/DD/YYYY">MM/DD/YYYY (10/16/2025)</option>
               <option value="YYYY-MM-DD">YYYY-MM-DD (2025-10-16)</option>
-            </select>
+            </NSelect>
           </div>
         </div>
 
@@ -157,7 +158,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value as any)}
-                className="w-60 p-2.5 rounded-lg bg-white/5 border border-white/10 text-primary focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+                className="w-60 rounded-lg border border-default bg-[var(--color-surface-alt)] p-2.5 text-primary focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
               >
                 <option value="system">System</option>
                 <option value="dark">Dark</option>
@@ -182,3 +183,4 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
     </div>
   );
 }
+

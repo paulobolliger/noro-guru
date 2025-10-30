@@ -60,7 +60,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
   return (
     <div>
       <PageHeader title="Gestão de Clientes" subtitle="Base de dados central de todos os seus clientes" actions={(
-        <button onClick={() => router.push('/admin/clientes/novo')} className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition">
+        <button onClick={() => router.push('/admin/clientes/novo')} className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold transition-transform duration-200 ease-in-out">
           <Plus size={20} /> Novo Cliente
         </button>
       )} />
@@ -74,15 +74,15 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
         </div>
         <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)]">
           <p className="text-xs text-muted mb-1">Clientes Ativos</p>
-          <p className="text-3xl font-bold text-green-600">{estatisticas.ativos}</p>
+          <p className="text-3xl font-bold text-success">{estatisticas.ativos}</p>
         </div>
         <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)]">
           <p className="text-xs text-muted mb-1">Clientes VIP</p>
-          <p className="text-3xl font-bold text-purple-600">{estatisticas.vip}</p>
+          <p className="text-3xl font-bold text-accent">{estatisticas.vip}</p>
         </div>
         <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)]">
           <p className="text-xs text-muted mb-1">Receita Total</p>
-          <p className="text-3xl font-bold text-blue-600">
+          <p className="text-3xl font-bold text-success">
             €{(estatisticas.valorTotal / 1000).toFixed(1)}k
           </p>
         </div>
@@ -92,13 +92,13 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
       <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)] mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary0" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 transform text-secondary" size={20} />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome ou email..."
-              className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 text-primary placeholder:text-primary0 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+              className="w-full rounded-lg border border-default bg-[var(--color-surface-alt)] pl-10 pr-4 py-3 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
             />
           </div>
           
@@ -106,7 +106,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
           <select
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value as any)}
-            className="px-4 py-3 border border-white/10 rounded-lg bg-white/5 text-primary placeholder:text-primary0 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+            className="rounded-lg border border-default bg-[var(--color-surface-alt)] px-4 py-3 text-primary focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
           >
             <option value="todos">Todos os Tipos</option>
             <option value="pessoa_fisica">Pessoa Física</option>
@@ -117,7 +117,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="px-4 py-3 border border-white/10 rounded-lg bg-white/5 text-primary placeholder:text-primary0 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+            className="rounded-lg border border-default bg-[var(--color-surface-alt)] px-4 py-3 text-primary focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
           >
             <option value="todos">Todos os Status</option>
             <option value="ativo">Ativo</option>
@@ -125,7 +125,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
             <option value="inativo">Inativo</option>
           </select>
           
-          <button className="flex items-center gap-2 px-4 py-3 border border-default rounded-lg hover:bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+          <button className="btn-secondary inline-flex items-center gap-2 rounded-lg px-4 py-3 font-semibold">
             <Download size={20} />
             Exportar
           </button>
@@ -135,8 +135,8 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
       {/* Tabela de Clientes */}
       <div className="surface-card rounded-xl shadow-sm border border-default overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-white/5">
-            <thead className="bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+          <table className="min-w-full divide-y divide-default">
+            <thead className="bg-[var(--color-surface-alt)] border-b border-default">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">
                   Cliente
@@ -158,12 +158,12 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-[#0B1220] divide-y divide-white/5">
+            <tbody className="divide-y divide-default">
               {clientesFiltrados.length > 0 ? (
                 clientesFiltrados.map((cliente) => (
-                  <tr 
-                    key={cliente.id} 
-                    className="hover:bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20 cursor-pointer"
+                  <tr tabIndex={0}
+                    key={cliente.id}
+                    className="border-b border-default cursor-pointer transition-colors"
                     onClick={() => handleVerDetalhes(cliente.id)}
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -181,7 +181,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                           <div className="flex items-center gap-2">
                             <div className="text-sm font-medium text-primary">{cliente.nome}</div>
                             {cliente.status === 'vip' && (
-                              <span className="px-2 py-0.5 text-xs font-medium rounded-full border border-white/10 bg-white/5 text-indigo-300">
+                              <span className="px-2 py-0.5 text-xs font-medium rounded-full border border-default bg-[var(--color-surface-alt)] text-accent">
                                 VIP
                               </span>
                             )}
@@ -196,13 +196,13 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                       <div className="text-sm text-primary">
                         {cliente.email && (
                           <div className="flex items-center gap-2 mb-1">
-                            <Mail size={14} className="text-primary0" />
+                            <Mail size={14} className="text-secondary" />
                             <span className="truncate max-w-[200px]">{cliente.email}</span>
                           </div>
                         )}
                         {cliente.whatsapp && (
                           <div className="flex items-center gap-2 text-muted">
-                            <Phone size={14} className="text-primary0" />
+                            <Phone size={14} className="text-secondary" />
                             {cliente.whatsapp}
                           </div>
                         )}
@@ -210,10 +210,13 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        cliente.segmento === 'luxo' ? 'border border-white/10 bg-white/5 text-indigo-300' :
-                        cliente.segmento === 'familia' ? 'border border-white/10 bg-white/5 text-indigo-300' :
-                        cliente.segmento === 'aventura' ? 'border border-white/10 bg-white/5 text-emerald-300' :
-                        'border border-white/10 bg-white/5 text-slate-300'
+                        cliente.segmento === 'luxo'
+                          ? 'border border-default bg-[var(--color-surface-alt)] text-accent'
+                          : cliente.segmento === 'familia'
+                          ? 'border border-default bg-[var(--color-surface-alt)] text-primary'
+                          : cliente.segmento === 'aventura'
+                          ? 'border border-default bg-[var(--color-surface-alt)] text-success'
+                          : 'border border-default bg-[var(--color-surface-alt)] text-secondary'
                       }`}>
                         {cliente.segmento || 'Geral'}
                       </span>
@@ -237,7 +240,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                           e.stopPropagation();
                           handleVerDetalhes(cliente.id);
                         }}
-                        className="text-blue-600 hover:text-blue-900 mr-3 inline-flex items-center gap-1"
+                        className="text-link mr-3 inline-flex items-center gap-1 focus:outline-none"
                       >
                         <Eye size={16} />
                         Ver
@@ -249,7 +252,7 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center text-muted">
-                      <UserCheck size={48} className="mb-4 text-gray-300" />
+                      <UserCheck size={48} className="mb-4 text-secondary" />
                       <p className="text-lg font-medium">Nenhum cliente encontrado</p>
                       <p className="text-sm mt-2">Comece adicionando seu primeiro cliente</p>
                     </div>
@@ -263,3 +266,12 @@ export default function ClientesClientPage({ clientes }: ClientesClientPageProps
     </div>
   );
 }
+
+
+
+
+
+
+
+
+

@@ -3,7 +3,7 @@
 'use client';
 
 import * as React from 'react';
-import { cn } from '@lib/utils';
+import { cn } from '@/../../packages/lib/utils';
 import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import { Slot } from '@radix-ui/react-slot';
 
@@ -130,30 +130,30 @@ export function useToast() {
 // =======================================================================
 
 const iconMap: Record<Toast['variant'], React.ReactNode> = {
-    default: <Info size={18} />,
-    destructive: <AlertCircle size={18} />,
-    success: <CheckCircle2 size={18} />,
-    info: <Info size={18} />,
+    default: <Info size={18} className="text-[#3B2CA4]" />,
+    destructive: <AlertCircle size={18} className="text-white" />,
+    success: <CheckCircle2 size={18} className="text-[#1DD3C0]" />,
+    info: <Info size={18} className="text-[#D4AF37]" />,
 };
 
 const variantClasses: Record<Toast['variant'], string> = {
-    default: 'border-gray-200 bg-white text-gray-900',
-    destructive: 'border-red-500 bg-red-600 text-white',
-    success: 'border-green-500 bg-green-600 text-white',
-    info: 'border-blue-500 bg-blue-600 text-white',
+    default: 'card border-[#E0E2EA] bg-surface text-secondary',
+    destructive: 'border-[#EF4444] bg-[#EF4444] text-white',
+    success: 'bg-gradient-button text-[#1b1b1b] border border-[#D4AF37]/60 shadow-lg',
+    info: 'border-[#3B2CA4] bg-[#23214F] text-white',
 };
 
 const titleClasses: Record<Toast['variant'], string> = {
-    default: 'text-gray-900',
+    default: 'text-secondary',
     destructive: 'text-white',
-    success: 'text-white',
+    success: 'success font-semibold',
     info: 'text-white',
 };
 
 const descriptionClasses: Record<Toast['variant'], string> = {
-    default: 'text-gray-600',
+    default: 'text-[#9FA2B2]',
     destructive: 'text-white/80',
-    success: 'text-white/80',
+    success: 'text-[#1b1b1b]/85',
     info: 'text-white/80',
 };
 

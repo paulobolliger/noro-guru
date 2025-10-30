@@ -21,12 +21,15 @@ interface AdminLayoutClientProps {
 export default function AdminLayoutClient({ user, notificacoes, children, configSistema }: AdminLayoutClientProps) {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
   return (
-    <div className="admin-theme flex h-screen bg-[#0B0F14] text-slate-300">
+    <div className="admin-theme flex h-screen surface-app">
       <Sidebar user={user} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar user={user} initialNotificacoes={notificacoes} />
-        <main className="flex-1 overflow-y-auto">
-          <div key={pathname} className="page-enter mx-auto max-w-7xl px-6 md:px-8 py-8">
+        <main className="flex-1 overflow-y-auto bg-transparent">
+          <div
+            key={pathname}
+            className="page-enter mx-auto max-w-7xl px-6 md:px-8 my-6 md:my-8 space-y-6 text-primary"
+          >
             {children}
           </div>
         </main>

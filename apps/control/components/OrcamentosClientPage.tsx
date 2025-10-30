@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Plus, Search } from 'lucide-react';
 import PageHeader from './layout/PageHeader';
-import { orcamentoStatusText } from '@ui/status';
+import { orcamentoStatusText } from '@/../../packages/ui/status';
 import type { Database } from "@noro-types/supabase";
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
@@ -18,13 +18,13 @@ interface OrcamentosClientPageProps {
 }
 
 const statusColorMap: Record<OrcamentoStatus, { bg: string; text: string; label: string }> = {
-    rascunho: { bg: 'bg-white/10', text: 'text-gray-800', label: 'Rascunho' },
-    enviado: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Enviado' },
-    visualizado: { bg: 'bg-cyan-100', text: 'text-cyan-800', label: 'Visualizado' },
-    aceito: { bg: 'bg-green-100', text: 'text-green-800', label: 'Aceito' },
-    recusado: { bg: 'bg-red-100', text: 'text-red-800', label: 'Recusado' },
-    expirado: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'Expirado' },
-    revisao: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Revisão' },
+  rascunho: { bg: "border border-default bg-[var(--color-surface-alt)]", text: "text-secondary", label: "Rascunho" },
+  enviado: { bg: "border border-default bg-[var(--color-surface-alt)]", text: "text-primary", label: "Enviado" },
+  visualizado: { bg: "border border-default bg-[var(--color-surface-alt)]", text: "text-primary", label: "Visualizado" },
+  aceito: { bg: "border border-default bg-[rgba(29,211,192,0.18)]", text: "text-success", label: "Aceito" },
+  recusado: { bg: "border border-default bg-[rgba(239,68,68,0.18)]", text: "text-rose-400", label: "Recusado" },
+  expirado: { bg: "border border-default bg-[var(--color-surface-alt)]", text: "text-secondary", label: "Expirado" },
+  revisao: { bg: "border border-default bg-[var(--color-surface-alt)]", text: "text-accent", label: "Revisao" },
 };
 
 export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPageProps) {
@@ -53,13 +53,13 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
     return (
         <div className="space-y-6">
             <PageHeader title="Propostas e Orçamentos" subtitle={`${orcamentos.length} propostas encontradas.`} actions={(
-              <button onClick={() => router.push('/admin/orcamentos/novo')} className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition">
+              <button onClick={() => router.push('/admin/orcamentos/novo')} className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold transition-transform duration-200 ease-in-out">
                 <Plus size={20} /> Nova Proposta
               </button>
             )} />
             <div className="hidden">
                 <div className="flex items-center gap-4">
-                    <FileText size={32} className="text-blue-600" />
+                    <FileText size={32} className="text-link" />
                     <div>
                         <h1 className="text-3xl font-semibold text-primary">Propostas e Orçamentos</h1>
                         <p className="text-muted/80 mt-1">{orcamentos.length} propostas encontradas.</p>
@@ -67,7 +67,7 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
                 </div>
                 <button
                     onClick={() => router.push('/admin/orcamentos/novo')}
-                    className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-semibold transition-transform duration-200 ease-in-out"
                 >
                     <Plus size={20} />
                     Nova Proposta
@@ -83,14 +83,14 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Buscar por título ou número..."
-                            className="w-full pl-10 pr-4 py-3 border border-white/10 rounded-lg bg-white/5 text-primary placeholder:text-primary0 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+                            className="w-full rounded-lg border border-default bg-[var(--color-surface-alt)] pl-10 pr-4 py-3 text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
                         />
                     </div>
                     
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-4 py-3 border border-white/10 rounded-lg bg-white/5 text-primary placeholder:text-primary0 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+                        className="rounded-lg border border-default bg-[var(--color-surface-alt)] px-4 py-3 text-primary focus:outline-none focus:ring-2 focus:ring-[rgba(29,211,192,0.35)]"
                     >
                         {statusOptions.map(status => (
                             <option key={status} value={status}>
@@ -103,8 +103,8 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
 
             <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)] overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-white/5">
-                        <thead className="bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+                    <table className="min-w-full divide-y divide-default">
+                        <thead className="bg-[var(--color-surface-alt)] border-b border-default">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Nº</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Título</th>
@@ -114,18 +114,18 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
                                 <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Ações</th>
                             </tr>
                         </thead>
-                        <tbody className="surface-card divide-y divide-white/5">
+                        <tbody className="surface-card divide-y divide-default">
                             {filteredOrcamentos.length > 0 ? (
                                 filteredOrcamentos.map((orcamento) => {
                                     const statusConfig = statusColorMap[orcamento.status as OrcamentoStatus] || statusColorMap.rascunho;
                                     return (
-                                        <tr key={orcamento.id} className="hover:bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20 cursor-pointer" onClick={() => handleVerDetalhes(orcamento.id)}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{orcamento.numero_orcamento || orcamento.id.substring(0, 8)}</td>
+                                        <tr key={orcamento.id} className="border-b border-default cursor-pointer transition-colors" onClick={() => handleVerDetalhes(orcamento.id)}>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-link">{orcamento.numero_orcamento || orcamento.id.substring(0, 8)}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-primary">{orcamento.titulo}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary">{currencyFormat(orcamento.valor_total)}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap"><span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-md border border-white/10 bg-white/5 ${orcamentoStatusText[String(orcamento.status)] || 'text-slate-300'}`}>{String(orcamento.status).toUpperCase()}</span></td>
+                                            <td className="px-6 py-4 whitespace-nowrap"><span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-md ${statusConfig.bg} ${statusConfig.text}`}>{statusConfig.label.toUpperCase()}</span></td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{format(new Date(orcamento.created_at), 'dd/MM/yyyy')}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onClick={(e) => { e.stopPropagation(); handleVerDetalhes(orcamento.id);}} className="text-blue-600 hover:text-blue-900">Detalhes</button></td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"><button onClick={(e) => { e.stopPropagation(); handleVerDetalhes(orcamento.id);}} className="text-link">Detalhes</button></td>
                                         </tr>
                                     );
                                 })
@@ -139,3 +139,17 @@ export default function OrcamentosClientPage({ orcamentos }: OrcamentosClientPag
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

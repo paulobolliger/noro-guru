@@ -5,7 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useMemo, useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@ui/use-toast';
+import { useToast } from '@/../../packages/ui/use-toast';
 
 type Lead = { id: string; organization_name?: string; email?: string; phone?: string };
 type Column = { key: string; label: string };

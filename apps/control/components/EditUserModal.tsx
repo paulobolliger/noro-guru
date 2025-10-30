@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { updateUserRoleAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import { updateUserRoleAction } from '@/app/(protected)/configuracoes/actions';
 import Portal from "@/components/ui/portal";
 
 interface EditUserModalProps {

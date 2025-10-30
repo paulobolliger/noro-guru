@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+/* Estilos para KPIs e métricas */
+.kpi-value {
+  @apply text-kpi font-semibold text-primary tracking-tight;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.kpi-label {
+  @apply text-sm text-text-secondary-light dark:text-text-secondary-dark font-medium;
+}
+
+.kpi-card {
+  @apply bg-surface-light dark:bg-surface-dark 
+         border border-border-light dark:border-border-dark
+         rounded-xl p-4 shadow-DEFAULT-light dark:shadow-DEFAULT-dark
+         hover:shadow-glow-light dark:hover:shadow-glow-dark
+         transition-all duration-200;
+}
+
+/* Headers e títulos com gradiente */
+.gradient-title {
+  @apply text-header font-bold;
+  background: linear-gradient(90deg, #3B2CA4, #1DD3C0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* Botões refinados */
+.btn-primary {
+  @apply bg-primary hover:bg-primary-hover text-black
+         rounded-xl px-4 py-2
+         shadow-sm-light dark:shadow-sm-dark
+         hover:shadow-DEFAULT-light dark:hover:shadow-DEFAULT-dark
+         focus:ring-2 focus:ring-primary-accent focus:ring-opacity-50
+         transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply bg-white bg-opacity-5 dark:bg-opacity-10
+         text-text-primary-light dark:text-text-primary-dark
+         border border-transparent
+         rounded-xl px-4 py-2
+         hover:border-primary-accent
+         hover:shadow-sm-light dark:hover:shadow-sm-dark
+         focus:ring-2 focus:ring-primary-accent focus:ring-opacity-50
+         transition-all duration-200;
+}
+
+/* Cards e containers */
+.noro-card {
+  @apply bg-surface-light dark:bg-surface-dark
+         border border-border-light dark:border-border-dark
+         rounded-xl p-4
+         shadow-DEFAULT-light dark:shadow-DEFAULT-dark
+         hover:shadow-glow-light dark:hover:shadow-glow-dark
+         transition-all duration-200;
+}
+
+/* Kanban styles */
+.kanban-column {
+  @apply bg-surface-light dark:bg-surface-dark
+         border border-border-light dark:border-border-dark
+         rounded-xl p-4 min-h-[500px]
+         shadow-DEFAULT-light dark:shadow-DEFAULT-dark;
+}
+
+.kanban-card {
+  @apply bg-white dark:bg-opacity-80
+         border border-border-light dark:border-border-dark
+         rounded-xl p-4 mb-3
+         shadow-sm-light dark:shadow-sm-dark
+         hover:shadow-DEFAULT-light dark:hover:shadow-DEFAULT-dark
+         cursor-grab active:cursor-grabbing
+         transition-all duration-200;
+}
+
+.kanban-card.dragging {
+  @apply shadow-glow-light dark:shadow-glow-dark
+         border-primary-accent;
+}
+
+/* Dashboard charts */
+.chart-container {
+  @apply bg-surface-light dark:bg-surface-dark
+         border border-border-light dark:border-border-dark
+         rounded-xl p-4
+         shadow-DEFAULT-light dark:shadow-DEFAULT-dark
+         backdrop-blur-sm;
+}
+
+.chart-title {
+  @apply text-lg font-semibold
+         text-text-primary-light dark:text-text-primary-dark
+         mb-4;
+}
+
+/* Headers com divisor */
+.section-header {
+  @apply border-b border-primary-accent border-opacity-20
+         pb-4 mb-6;
+}
+
+/* Espaçamento vertical consistente */
+.section-spacing {
+  @apply space-y-6;
+}
+
+/* Texto com alto contraste */
+.high-contrast-text {
+  @apply text-text-primary-light dark:text-text-primary-dark;
+}

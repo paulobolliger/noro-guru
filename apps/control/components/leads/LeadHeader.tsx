@@ -24,11 +24,14 @@ export default function LeadHeader() {
   }
 
   return (
-    <div className="sticky top-0 z-30 border-b border-default surface-header backdrop-blur supports-[backdrop-filter]:bg-black/20">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between max-w-[1200px] mx-auto px-4 md:px-6 py-3">
+    <div className="sticky top-0 z-30">
+      <div
+        className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between max-w-[1200px] mx-auto px-4 md:px-6 p-6 md:p-8 mb-6 rounded-xl shadow-md"
+        style={{ background: 'linear-gradient(135deg, rgba(59, 44, 164, 0.94), rgba(35, 33, 79, 0.92))' }}
+      >
         <div className="transition-colors">
-          <h1 className="text-2xl md:text-3xl font-semibold text-primary tracking-tight">Leads</h1>
-          <p className="text-sm text-muted">Pipeline comercial (Control)</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#D4AF37] tracking-tight">Leads</h1>
+          <p className="text-sm text-white">Pipeline comercial (Control)</p>
         </div>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <div className="flex-1 md:w-72">

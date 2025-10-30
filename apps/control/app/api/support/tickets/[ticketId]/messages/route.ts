@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabaseServer";
+import { sendSupportEmail } from "@/lib/supportEmail";
 
 type Params = { ticketId: string };
 
@@ -35,10 +36,7 @@ export async function POST(request: Request, { params }: { params: Params }) {
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  await supabase.rpc('enqueue_job', {
-    identifier: 'send_support_email',
-    payload: { type: 'message_created', ticketId: params.ticketId, messageId: data.id }
-  }).catch(() => null);
+  await sendSupportEmail({ type: 'message_created', ticketId: params.ticketId, messageId: data.id, tenantId: tenant_id });
 
   return NextResponse.json({ message: data });
 }

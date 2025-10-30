@@ -3,7 +3,7 @@
 
 import { useState, useTransition, useRef, useEffect } from 'react';
 import { X, Mail, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { inviteUserAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import { inviteUserAction } from '@/app/(protected)/configuracoes/actions';
 import Portal from "@/components/ui/portal";
 
 interface InviteUserModalProps {

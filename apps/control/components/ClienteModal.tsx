@@ -246,7 +246,7 @@ export default function ClienteModal({ isOpen, onClose, cliente }: ClienteModalP
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="flex-1 px-6 py-3 border border-default rounded-lg font-semibold hover:bg-white/5 disabled:opacity-50"
+              className="flex-1 px-6 py-3 border border-default rounded-lg font-semibold hover:bg-[rgba(29,211,192,0.08)] disabled:opacity-50"
             >
               Cancelar
             </button>
@@ -265,3 +265,4 @@ export default function ClienteModal({ isOpen, onClose, cliente }: ClienteModalP
     </Portal>
   );
 }
+

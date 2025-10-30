@@ -17,13 +17,13 @@ function cx(...classes: (string | undefined | false)[]) {
 
 const VARIANT: Record<Variant, string> = {
   primary:
-    "bg-gradient-to-r from-[#5053C4] to-[#342CA4] text-white hover:shadow-lg focus:ring-2 focus:ring-[var(--ring)]",
+    "btn-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1DD3C0]/45",
   secondary:
-    "border border-default bg-white/5 text-primary hover:bg-white/10 focus:ring-2 focus:ring-[var(--ring)]",
+    "btn-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1DD3C0]/35",
   tertiary:
-    "text-indigo-300 hover:bg-white/10 focus:ring-2 focus:ring-[var(--ring)]",
+    "text-secondary hover:text-primary hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1DD3C0]/30 rounded-md",
   destructive:
-    "bg-rose-600 hover:bg-rose-700 text-white focus:ring-2 focus:ring-rose-400/40",
+    "bg-rose-600 hover:bg-rose-700 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/40",
 };
 
 const SIZE: Record<Size, string> = {
@@ -59,4 +59,3 @@ export default function NButton({
     </button>
   );
 }
-

@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, Loader2, AlertCircle } from 'lucide-react';
-import { deleteUserAction } from '@/apps/control/app/(protected)/configuracoes/actions';
+import { deleteUserAction } from '@/app/(protected)/configuracoes/actions';
 import Portal from "@/components/ui/portal";
 
 interface DeleteUserModalProps {

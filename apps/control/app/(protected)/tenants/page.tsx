@@ -1,11 +1,14 @@
 import PageContainer from "@/components/layout/PageContainer";
 import TenantsHeader from "@/components/tenants/TenantsHeader";
+import TenantsTable from "@/components/tenants/TenantsTable";
 
-export default async function TenantsPage() {
+export default function TenantsPage() {
   return (
     <PageContainer>
       <TenantsHeader />
-      {/* Poderemos listar tenants aqui futuramente */}
+      <div className="my-6">
+        <TenantsTable />
+      </div>
     </PageContainer>
   );
 }

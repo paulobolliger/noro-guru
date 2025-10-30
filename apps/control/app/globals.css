@@ -2,12 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '../styles/colors.css';
+@import '../styles/fonts.css';
+
 /* Admin theme scoped enhancements (inputs + scrollbar) */
 @layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--text-primary);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
+  }
+
+  a {
+    color: var(--color-link);
+    transition: color 0.2s ease-in-out;
+  }
+
+  a:hover {
+    color: var(--color-link-hover);
+  }
+
+  ::selection {
+    background: rgba(59, 44, 164, 0.85);
+    color: #ffffff;
+  }
+
   .admin-theme ::-webkit-scrollbar { width: 14px; }
-  .admin-theme ::-webkit-scrollbar-track { @apply bg-white; }
-  .admin-theme ::-webkit-scrollbar-thumb { @apply bg-primary rounded-full border-4 border-solid border-white; }
-  .admin-theme ::-webkit-scrollbar-thumb:hover { @apply bg-primary-dark; }
+  .admin-theme ::-webkit-scrollbar-track { background: var(--color-surface); }
+  .admin-theme ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 9999px;
+    border: 3px solid var(--color-surface);
+  }
+  .admin-theme ::-webkit-scrollbar-thumb:hover { background: #342CA4; }
 
   .admin-theme input[type='text'],
   .admin-theme input[type='email'],
@@ -15,13 +47,90 @@
   .admin-theme input[type='number'],
   .admin-theme select,
   .admin-theme textarea {
-    @apply bg-gray-100 text-gray-900 placeholder-gray-500;
+    background-color: var(--color-surface-alt);
+    color: var(--text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.6rem;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    padding: 0.65rem 0.85rem;
   }
-}
 
-/* Light theme override for main content (keeps sidebar/topbar dark) */
-:root[data-theme='light'] .admin-theme main {
-  background-color: rgba(15, 23, 42, 0.05);
+  .admin-theme input[type='text']::placeholder,
+  .admin-theme input[type='email']::placeholder,
+  .admin-theme input[type='password']::placeholder,
+  .admin-theme input[type='number']::placeholder,
+  .admin-theme textarea::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .admin-theme input[type='text']:focus,
+  .admin-theme input[type='email']:focus,
+  .admin-theme input[type='password']:focus,
+  .admin-theme input[type='number']:focus,
+  .admin-theme select:focus,
+  .admin-theme textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(29, 211, 192, 0.25);
+    outline: none;
+  }
+
+  .admin-theme label {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
 }
 
 /* Microinteractions: shimmer + helper classes */
@@ -29,55 +138,14 @@
   100% { transform: translateX(100%); }
 }
 
-/* Utility helpers (opt-in via className) */
-.card-interactive {
-  @apply relative rounded-xl transition-all duration-200 will-change-transform;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
-}
-.card-interactive:hover {
-  @apply -translate-y-0.5 ring-1 ring-indigo-400/20;
-  box-shadow: 0 8px 24px rgba(124,58,237,0.12);
-}
-.card-interactive::before {
-  content: "";
-  @apply absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 transition-opacity;
-}
-.card-interactive:hover::before { opacity: 1; }
-
-.skeleton { @apply relative overflow-hidden bg-white/5 animate-pulse; }
 .shimmer::after {
   content: "";
-  @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
   animation: shimmer 1.2s infinite;
 }
-
-/* Theme tokens (dark default) */
-:root {
-  --surface: #0B1220;
-  --surface-muted: rgba(255,255,255,0.03);
-  --border: rgba(255,255,255,0.05);
-  --text-primary: #e5e7eb; /* slate-200 */
-  --text-muted: #94a3b8;   /* slate-400 */
-}
-
-:root[data-theme='light'] {
-  --surface: #ffffff;
-  --surface-muted: rgba(0,0,0,0.02);
-  --border: rgba(0,0,0,0.08);
-  --text-primary: #0f172a; /* slate-900 */
-  --text-muted: #475569;   /* slate-600 */
-}
-
-.surface-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
-}
-.text-primary { color: var(--text-primary); }
-.text-muted { color: var(--text-muted); }
 
 /* Page enter animation (fade + slight slide) */
 @keyframes fadeSlideIn {
@@ -88,5 +156,14 @@
 
 /* Smooth theme transition */
 .theme-transition *, .theme-transition {
-  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  transition: background-color .4s ease, color .4s ease, border-color .4s ease;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

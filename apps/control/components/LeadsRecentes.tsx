@@ -8,16 +8,8 @@ interface LeadsRecentesProps {
 
 export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
   const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      novo: 'bg-blue-100 text-blue-700',
-      contato_inicial: 'bg-yellow-100 text-yellow-700',
-      qualificado: 'bg-green-100 text-green-700',
-      proposta_enviada: 'bg-purple-100 text-purple-700',
-      negociacao: 'bg-orange-100 text-orange-700',
-      ganho: 'bg-green-500 text-white',
-      perdido: 'bg-red-100 text-red-700',
-    };
-    return colors[status] || 'bg-white/10 text-primary';
+    const colors: Record<string, string> = {\n    novo: 'border border-default bg-[var(--color-surface-alt)] text-primary',\n    contato_inicial: 'border border-default bg-[var(--color-surface-alt)] text-secondary',\n    qualificado: 'border border-default bg-[rgba(29,211,192,0.18)] text-success',\n    proposta_enviada: 'border border-default bg-[var(--color-surface-alt)] text-accent',\n    negociacao: 'border border-default bg-[var(--color-surface-alt)] text-primary',\n    ganho: 'border border-default bg-[rgba(29,211,192,0.22)] text-success',\n    perdido: 'border border-default bg-[rgba(239,68,68,0.18)] text-rose-400',\n  };
+    return colors[status] || 'border border-default bg-[var(--color-surface-alt)] text-secondary';
   };
 
   const getStatusLabel = (status: string) => {
@@ -37,7 +29,7 @@ export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
     <div className="surface-card rounded-xl p-6 shadow-sm border border-default">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-primary">Leads Recentes</h2>
-        <Link href="/admin/leads" className="text-blue-400 text-sm font-semibold hover:text-blue-300">
+        <Link href="/admin/leads" className="text-link text-sm font-semibold">
           Ver todos →
         </Link>
       </div>
@@ -49,7 +41,7 @@ export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
             <Link
               key={lead.id}
               href={`/admin/leads/${lead.id}`}
-              className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              className="flex items-center justify-between rounded-lg border border-transparent bg-[var(--color-surface-alt)] p-3 transition-colors cursor-pointer hover:border-[rgba(29,211,192,0.25)] hover:bg-[rgba(29,211,192,0.08)]"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -77,3 +69,6 @@ export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
     </div>
   );
 }
+
+
+
