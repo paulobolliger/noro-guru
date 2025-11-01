@@ -1,4 +1,4 @@
-// app/admin/(protected)/pedidos/pedidos-actions.ts
+// apps/core/(protected)/pedidos/pedidos-actions.ts
 'use server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';

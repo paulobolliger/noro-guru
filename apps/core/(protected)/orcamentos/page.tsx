@@ -1,4 +1,4 @@
-// app/admin/(protected)/orcamentos/page.tsx
+// apps/core/(protected)/orcamentos/page.tsx
 import OrcamentosClientPage from '@/components/admin/OrcamentosClientPage';
 import { getOrcamentos } from './orcamentos-actions'; 
 

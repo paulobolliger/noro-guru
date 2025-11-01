@@ -1,4 +1,4 @@
-// app/admin/(protected)/geracao/artigos/page.tsx
+// apps/core/(protected)/geracao/artigos/page.tsx
 'use client';
 
 import BulkGenerateForm from '@/components/dashboard/BulkGenerateForm';

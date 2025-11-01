@@ -1,4 +1,4 @@
-// app/admin/(protected)/conteudo/roteiros/a-publicar/page.tsx
+// apps/core/(protected)/conteudo/roteiros/a-publicar/page.tsx
 'use client';
 
 import { FileText, AlertCircle } from 'lucide-react';

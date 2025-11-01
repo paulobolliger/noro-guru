@@ -1,4 +1,4 @@
-// app/admin/(protected)/tarefas/page.tsx
+// apps/core/(protected)/tarefas/page.tsx
 import { CalendarCheck } from 'lucide-react';
 
 export default function TarefasPage() {

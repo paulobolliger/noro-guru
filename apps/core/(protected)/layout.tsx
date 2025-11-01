@@ -1,14 +1,11 @@
-// app/admin/(protected)/layout.tsx
+// apps/core/(protected)/layout.tsx
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
 import type Database from '@/types/supabase';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import AdminLayoutClient from '@/components/admin/AdminLayoutClient';
 import { getNotificacoes } from '@/lib/supabase/admin';
-// NOVO: Importa a função de buscar config do sistema
-import { getConfiguracaoSistema } from './configuracoes/config-actions'; 
-// NOVO: Importa o Toaster
-import { Toaster } from '@/components/ui/use-toast'; // Assumindo que use-toast.tsx também exporta Toaster
+import { Toaster } from '@/components/ui/use-toast';
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 
@@ -21,7 +18,7 @@ export default async function ProtectedAdminLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/admin/login?redirect=/admin');
+    return redirect('/login?redirect=/dashboard');
   }
 
   const { data: userProfile } = await supabase
@@ -37,22 +34,16 @@ export default async function ProtectedAdminLayout({
     return redirect('/?error=unauthorized');
   }
 
-  // Busca as notificações E as configurações do sistema
-  const [notificacoes, configSistema] = await Promise.all([
-    getNotificacoes(user.id, 5),
-    getConfiguracaoSistema()
-  ]);
+  // Busca as notificações
+  const notificacoes = await getNotificacoes(user.id, 5);
 
   return (
-    // O Toaster deve ser renderizado no lado do cliente, assim como o AdminLayoutClient
-    <Suspense fallback={<div>A carregar layout do admin...</div>}>
+    <Suspense fallback={<div>Carregando...</div>}>
       <AdminLayoutClient 
         user={profile} 
         notificacoes={notificacoes}
-        configSistema={configSistema} // Passa a config para o layout do cliente
       >
         {children}
-        {/* CRÍTICO: O Toaster deve ser incluído para renderizar as notificações */}
         <Toaster /> 
       </AdminLayoutClient>
     </Suspense>

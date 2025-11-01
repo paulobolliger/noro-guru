@@ -3,57 +3,76 @@ import NoroLogo from './icons/NoroLogo';
 import Link from 'next/link';
 
 const brands = [
-  { name: 'Inteligência de Dados para Vistos', href: '/ecosystem/vistos-guru', position: 'top-0 left-1/2 -translate-x-1/2 -translate-y-[120%]' },
-  { name: 'Sites Inteligentes', href: '/ecosystem/intelligent-websites', position: 'top-1/2 right-0 translate-x-[75%] -translate-y-1/2' },
-  { name: 'CRM/ERP Inteligente', href: '/ecosystem/intelligent-crm-erp', position: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-[120%]' },
-  { name: 'ITTD', href: '/ecosystem/ittd', position: 'top-1/2 left-0 -translate-x-[75%] -translate-y-1/2' },
+  { 
+    name: 'Nomade Guru', 
+    description: 'Seguros de viagem com cobertura global inteligente',
+    href: 'https://nomade.guru',
+    color: 'from-blue-500 to-purple-500' 
+  },
+  { 
+    name: 'SafeTrip Guru', 
+    description: 'Proteção completa para você viajar tranquilo',
+    href: 'https://safetrip.guru',
+    color: 'from-green-500 to-emerald-500' 
+  },
+  { 
+    name: 'Vistos Guru', 
+    description: 'Processos de visto simplificados com tecnologia',
+    href: 'https://vistos.guru',
+    color: 'from-orange-500 to-red-500' 
+  },
+  { 
+    name: 'NORO', 
+    description: 'Gestão empresarial completa em uma plataforma',
+    href: 'https://noro.guru',
+    color: 'from-[#342CA4] to-[#1DD3C0]' 
+  },
 ];
 
-const EcosystemBrand: React.FC<{ name: string; href: string; position: string; }> = ({ name, href, position }) => (
-    <div className={`absolute w-40 text-center transition-transform hover:scale-105 ${position} hidden md:block`}>
-        <Link href={href} className="block p-4 bg-noro-dark-2/80 backdrop-blur-md rounded-lg border border-noro-dark-2 hover:border-noro-turquoise/50">
-            <h3 className="font-bold text-noro-accent text-sm">{name}</h3>
-        </Link>
-    </div>
+const EcosystemCard: React.FC<{ name: string; description: string; href: string; color: string; }> = ({ name, description, href, color }) => (
+    <Link href={href} className="card-noro bg-[#0B1220]/80 backdrop-blur-sm p-6 group block">
+        <div className={`w-full h-2 mb-4 rounded-full bg-gradient-to-r ${color}`}></div>
+        <h3 className="font-bold text-xl text-white mb-2 group-hover:text-[#1DD3C0] transition-colors">{name}</h3>
+        <p className="text-[#D1D5F0] text-sm font-medium">{description}</p>
+    </Link>
 );
 
 const Ecosystem: React.FC = () => {
   return (
-    <section id="ecosystem" className="container mx-auto px-6 py-20 md:py-32 overflow-hidden">
-      <div className="text-center mb-16 md:mb-24">
-        <h2 className="font-display text-4xl md:text-5xl font-bold">O Núcleo Inteligente do Ecossistema</h2>
-        <p className="mt-4 max-w-3xl mx-auto text-lg text-noro-accent/80">
-          NORO é o coração digital que conecta e potencializa todas as marcas do universo .guru, garantindo coesão, inteligência e crescimento escalável.
+    <section id="ecosystem" className="container mx-auto px-6 py-20 md:py-32">
+      <div className="text-center mb-16">
+        <h2 className="font-extrabold text-4xl md:text-5xl text-white tracking-wide mb-6">
+          Faça parte do ecossistema <span className="text-gradient-noro">.guru</span>
+        </h2>
+        <p className="mt-6 max-w-3xl mx-auto text-lg text-[#E0E3FF] font-medium">
+          Mais que produtos individuais, somos um ecossistema integrado de soluções 
+          que trabalham juntas para simplificar viagens, gestão e processos globais.
         </p>
       </div>
       
-      <div className="relative flex justify-center items-center h-96">
-        {/* Connection Lines */}
-        <div className="absolute w-full h-full flex justify-center items-center">
-            <div className="w-[400px] h-[400px] border-2 border-dashed border-noro-blue/20 rounded-full animate-spin-slow"></div>
-            <div className="absolute w-[600px] h-[600px] border border-dashed border-noro-purple/20 rounded-full animate-spin-slow [animation-direction:reverse]"></div>
+      {/* Logo central com animação */}
+      <div className="flex justify-center mb-16">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1DD3C0]/20 to-[#D4AF37]/20 rounded-full blur-3xl animate-pulse-slow"></div>
+          <NoroLogo className="relative w-32 h-32 md:w-48 md:h-48 animate-float" />
         </div>
+      </div>
 
-        {/* Central Core */}
-        <div className="relative z-10">
-          <NoroLogo className="w-40 h-40 animate-pulse-slow" />
-        </div>
-
-        {/* Satellite Brands */}
+      {/* Grid de produtos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
         {brands.map(brand => (
-           <EcosystemBrand key={brand.name} {...brand} />
+           <EcosystemCard key={brand.name} {...brand} />
         ))}
+      </div>
 
-        {/* Mobile View for Brands */}
-        <div className="md:hidden flex flex-col gap-4 mt-16 w-full max-w-sm mx-auto">
-            {brands.map(brand => (
-                <Link href={brand.href} key={brand.name} className="w-full text-center block">
-                    <div className="p-4 bg-noro-dark-2/80 backdrop-blur-md rounded-lg border border-noro-dark-2 active:border-noro-turquoise/50">
-                        <h3 className="font-bold text-noro-accent">{brand.name}</h3>
-                    </div>
-                </Link>
-            ))}
-        </div>
+      {/* Call to action */}
+      <div className="text-center mt-16">
+        <Link 
+          href="/ecosystem" 
+          className="inline-block btn-noro-secondary font-semibold py-4 px-10 rounded-2xl text-lg hover:scale-105 transition-transform"
+        >
+          Conheça todas as soluções →
+        </Link>
       </div>
     </section>
   );

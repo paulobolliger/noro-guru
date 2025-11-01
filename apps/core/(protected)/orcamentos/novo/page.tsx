@@ -1,4 +1,4 @@
-// app/admin/(protected)/orcamentos/novo/page.tsx
+// apps/core/(protected)/orcamentos/novo/page.tsx
 import { Metadata } from 'next';
 import NovoOrcamentoForm from '@/components/admin/orcamentos/NovoOrcamentoForm';
 

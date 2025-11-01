@@ -1,0 +1,22 @@
+-- =====================================================
+-- MIGRATION CONSOLIDADA: Módulo Financeiro Completo
+-- Data: 30/10/2025
+-- Descrição: Todas as migrations de financeiro em ordem
+-- Total: ~2,500 linhas
+-- =====================================================
+-- 
+-- ORDEM DE EXECUÇÃO:
+-- 1. financeiro_schema.sql (462 linhas) - Tabelas básicas
+-- 2. create_centros_custo.sql (185 linhas) - Centros de custo
+-- 3. create_duplicatas_avancado.sql (781 linhas) - Contas a receber/pagar
+-- 4. create_open_finance_conciliacao.sql (599 linhas) - Open Finance
+-- 5. financeiro_rls_dev.sql (211 linhas) - Políticas RLS
+-- 6. financeiro_seed_test_data.sql (234 linhas) - Dados de teste
+--
+-- EXECUTAR EM SEQUÊNCIA OU TUDO DE UMA VEZ
+-- =====================================================
+
+-- =====================================================
+-- PARTE 1: SCHEMA FINANCEIRO BÁSICO
+-- Arquivo: 20251030_financeiro_schema.sql
+-- =====================================================

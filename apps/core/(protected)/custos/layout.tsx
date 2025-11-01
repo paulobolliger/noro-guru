@@ -1,4 +1,4 @@
-// app/admin/(protected)/custos/layout.tsx
+// apps/core/(protected)/custos/layout.tsx
 'use client';
 
 import Link from 'next/link';

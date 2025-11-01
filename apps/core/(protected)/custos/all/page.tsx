@@ -1,4 +1,4 @@
-// app/admin/(protected)/custos/all/page.tsx
+// apps/core/(protected)/custos/all/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

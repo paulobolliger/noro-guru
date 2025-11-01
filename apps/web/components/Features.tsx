@@ -2,46 +2,55 @@ import React from 'react';
 import { BrainIcon } from './icons/BrainIcon';
 import { CircuitIcon } from './icons/CircuitIcon';
 import { ConnectIcon } from './icons/ConnectIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
 
 const features = [
   {
-    icon: <BrainIcon className="w-10 h-10" />,
-    title: 'Inteligência Aplicada',
-    description: 'Transformamos dados em clareza e complexidade em fluidez. Tecnologia com propósito para decisões mais inteligentes.',
+    icon: <ConnectIcon className="w-12 h-12" />,
+    title: 'Tudo integrado em um só lugar',
+    description: 'Centralize CRM, vendas, financeiro e operações em uma plataforma única. Elimine planilhas e sistemas dispersos.',
   },
   {
-    icon: <CircuitIcon className="w-10 h-10" />,
-    title: 'Automação Intuitiva',
-    description: 'Automatize sistemas, pessoas e dados de forma inteligente e acessível, permitindo foco total na criação de valor.',
+    icon: <CircuitIcon className="w-12 h-12" />,
+    title: 'Automação que economiza tempo',
+    description: 'Reduza em 80% as tarefas repetitivas. Workflows inteligentes que se adaptam ao seu processo de trabalho.',
   },
   {
-    icon: <ConnectIcon className="w-10 h-10" />,
-    title: 'Conexão Total',
-    description: 'Tudo se integra — sistemas, pessoas, ideias. NORO é o hub que unifica o ecossistema e impulsiona a colaboração.',
+    icon: <BrainIcon className="w-12 h-12" />,
+    title: 'Decisões baseadas em dados reais',
+    description: 'Dashboards com métricas em tempo real, previsões de vendas e alertas automáticos para oportunidades.',
+  },
+  {
+    icon: <SparklesIcon className="w-12 h-12" />,
+    title: 'IA que realmente ajuda seu negócio',
+    description: 'Sugestões inteligentes, análise preditiva e assistente virtual que entende suas necessidades.',
   },
 ];
 
 const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string; }> = ({ icon, title, description }) => (
-  <div className="bg-noro-dark-2/50 border border-noro-dark-2 rounded-xl p-8 backdrop-blur-sm transition-all duration-300 hover:border-noro-turquoise/50 hover:-translate-y-2">
-    <div className="mb-4 text-noro-turquoise">
+  <div className="card-noro bg-[#0B1220]/80 backdrop-blur-sm p-8 group">
+    <div className="mb-6 text-[#1DD3C0] group-hover:scale-110 transition-transform duration-300">
       {icon}
     </div>
-    <h3 className="font-display text-2xl font-bold text-noro-accent mb-3">{title}</h3>
-    <p className="text-noro-accent/70">{description}</p>
+    <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
+    <p className="text-[#D1D5F0] leading-relaxed font-medium">{description}</p>
   </div>
 );
-
 
 const Features: React.FC = () => {
   return (
     <section id="features" className="container mx-auto px-6 py-20 md:py-28">
-      <div className="text-center mb-12">
-        <h2 className="font-display text-4xl md:text-5xl font-bold">Automatize. Analise. Cresça.</h2>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-noro-accent/80">
-          NORO não é mais uma ferramenta. É o cérebro que aprende com você e simplifica a complexidade.
+      <div className="text-center mb-16">
+        <h2 className="font-extrabold text-4xl md:text-5xl text-white tracking-wide">
+          Gestão empresarial simplificada com tecnologia de ponta
+        </h2>
+        <p className="mt-6 max-w-2xl mx-auto text-lg text-[#E0E3FF] font-medium">
+          Pare de perder tempo com sistemas complicados. NORO é a solução completa que 
+          cresce junto com seu negócio — simples de usar, poderosa nos resultados.
         </p>
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feature) => (
           <FeatureCard key={feature.title} {...feature} />
         ))}

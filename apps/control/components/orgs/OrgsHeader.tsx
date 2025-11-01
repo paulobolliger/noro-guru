@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { NButton } from "@/components/ui";
 import OrgCreateModal from "./OrgCreateModal";
 
@@ -9,14 +9,17 @@ export default function OrgsHeader() {
   return (
     <div className="sticky top-0 z-30">
       <div
-        className="flex items-center justify-between max-w-[1200px] mx-auto px-4 md:px-6 p-6 md:p-8 mb-6 rounded-xl shadow-md"
+        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 max-w-[1200px] mx-auto px-4 md:px-6 py-4 mb-6 rounded-xl shadow-md"
         style={{ background: 'linear-gradient(135deg, rgba(59, 44, 164, 0.94), rgba(35, 33, 79, 0.92))' }}
       >
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#D4AF37] tracking-tight">Clientes/Empresas (Control)</h1>
-          <p className="text-sm text-white">Cadastro das organizações (tenants) do sistema.</p>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <Users size={28} className="text-[#D4AF37]" />
+          <h1 className="text-xl md:text-2xl font-bold text-[#D4AF37] tracking-tight">Clientes/Empresas</h1>
         </div>
-        <NButton onClick={() => setOpen(true)} variant="primary" leftIcon={<Plus size={18} />}>Novo Cliente/Empresa</NButton>
+        <NButton onClick={() => setOpen(true)} variant="primary" leftIcon={<Plus size={18} />}>
+          <span className="hidden lg:inline">Novo Cliente/Empresa</span>
+          <span className="lg:hidden">Novo</span>
+        </NButton>
       </div>
       {open && <OrgCreateModal isOpen={open} onClose={() => setOpen(false)} />}
     </div>

@@ -1,4 +1,4 @@
-// app/admin/(protected)/financeiro/page.tsx
+// apps/core/(protected)/financeiro/page.tsx
 import { DollarSign } from 'lucide-react';
 
 export default function FinanceiroPage() {

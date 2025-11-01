@@ -1,6 +1,7 @@
 // components/admin/AdminLayoutClient.tsx
 'use client';
 
+import { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import { usePathname } from 'next/navigation';
@@ -20,8 +21,15 @@ interface AdminLayoutClientProps {
 
 export default function AdminLayoutClient({ user, notificacoes, children, configSistema }: AdminLayoutClientProps) {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  
+  // Garantir que o tema dark esteja sempre aplicado no control plane
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark'); // Adiciona classe para Tailwind
+  }, []);
+  
   return (
-    <div className="admin-theme flex h-screen surface-app">
+    <div className="admin-theme flex h-screen surface-app dark">
       <Sidebar user={user} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar user={user} initialNotificacoes={notificacoes} />

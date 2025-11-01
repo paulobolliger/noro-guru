@@ -1,4 +1,4 @@
-// app/admin/(protected)/email/page.tsx
+// apps/core/(protected)/email/page.tsx
 import { Mail } from 'lucide-react';
 
 export default function EmailPage() {

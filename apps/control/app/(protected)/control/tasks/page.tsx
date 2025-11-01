@@ -1,14 +1,15 @@
 import { listTasks, createTask } from "./actions";
+import SectionHeader from '@/components/layout/SectionHeader';
 
 export default async function TasksPage() {
   const tasks = await listTasks();
   async function create(formData: FormData) { "use server"; await createTask(formData); }
   return (
     <div className="container-app py-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Tarefas (Control)</h1>
-        <p className="text-muted">Tarefas de onboarding/suporte/renovação por tenant.</p>
-      </div>
+      <SectionHeader 
+        title="Tarefas (Control)" 
+        subtitle="Tarefas de onboarding/suporte/renovação por tenant."
+      />
       <form action={create} className="grid grid-cols-1 md:grid-cols-6 gap-2">
         <input name="title" placeholder="Título" className="border px-3 py-2 rounded md:col-span-2" />
         <input name="tenant_id" placeholder="Tenant ID (opcional)" className="border px-3 py-2 rounded" />

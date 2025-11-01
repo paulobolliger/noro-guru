@@ -1,0 +1,217 @@
+/* NORO Design System - Color Variables */
+:root {
+  /* Primary Colors */
+  --color-noro-primary: #342CA4;
+  --color-noro-primary-deep: #3B2CA4;
+  --color-noro-primary-dark: #23214F;
+  
+  /* Accent Colors */
+  --color-noro-accent: #1DD3C0;
+  --color-noro-gold: #D4AF37;
+  --color-noro-gold-hover: #E5C04B;
+  
+  /* Background Colors */
+  --color-noro-dark: #0B1220;
+  --color-noro-gray-future: #2E2E3A;
+  --color-noro-light: #F8F9FB;
+  
+  /* Text Colors - WCAG AAA Compliant */
+  --color-noro-text-primary: #FFFFFF;
+  --color-noro-text-secondary: #E0E3FF; /* Melhor contraste que #C7C9FF */
+  --color-noro-text-muted: #B8C1E0; /* Melhor contraste que #A9ADC4 - ratio 7.2:1 */
+  --color-noro-text-body: #D1D5F0; /* Para textos longos - ratio 9.5:1 */
+  
+  /* Shadow & Glow */
+  --shadow-noro-base: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-noro-glow-gold: 0 0 10px #D4AF37;
+  --shadow-noro-glow-turquoise: 0 0 15px rgba(29, 211, 192, 0.3);
+}
+
+/* Dark mode (padrão) */
+.dark {
+  --bg-primary: var(--color-noro-dark);
+  --bg-secondary: var(--color-noro-gray-future);
+  --text-primary: var(--color-noro-text-primary);
+  --text-secondary: var(--color-noro-text-secondary);
+}
+
+/* Typography improvements for better readability */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scroll padding for fixed header */
+html {
+  scroll-padding-top: 80px;
+}
+
+p, span, li {
+  font-weight: 450; /* Slightly heavier for better readability */
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-noro-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Utility classes */
+.gradient-noro-hero {
+  background: linear-gradient(135deg, var(--color-noro-primary-deep) 0%, var(--color-noro-primary-dark) 100%);
+}
+
+.text-gradient-noro {
+  background: linear-gradient(90deg, var(--color-noro-accent) 0%, var(--color-noro-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-noro-primary {
+  background: var(--color-noro-gold);
+  color: var(--color-noro-dark);
+  transition: all 0.3s ease;
+}
+
+.btn-noro-primary:hover {
+  box-shadow: var(--shadow-noro-glow-gold);
+  transform: translateY(-2px);
+}
+
+.btn-noro-secondary {
+  border: 1px solid var(--color-noro-accent);
+  color: var(--color-noro-accent);
+  transition: all 0.3s ease;
+}
+
+.btn-noro-secondary:hover {
+  background: var(--color-noro-accent);
+  color: var(--color-noro-dark);
+  box-shadow: var(--shadow-noro-glow-turquoise);
+}
+
+.card-noro {
+  border: 1px solid var(--color-noro-accent);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-noro-base);
+  transition: all 0.3s ease;
+}
+
+.card-noro:hover {
+  box-shadow: var(--shadow-noro-glow-turquoise);
+  transform: translateY(-4px);
+}
+
+/* Animation utilities */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Slide in from right */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+/* Bounce animation for CTAs */
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Glow effects */
+.glow-turquoise {
+  box-shadow: 0 0 20px rgba(29, 211, 192, 0.4);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}

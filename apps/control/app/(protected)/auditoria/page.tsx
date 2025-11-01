@@ -2,6 +2,7 @@
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import PageContainer from "@/components/layout/PageContainer";
 import SectionHeader from "@/components/layout/SectionHeader";
+import { FileSearch } from 'lucide-react';
 
 export default async function AuditoriaPage() {
   const supabase = createAdminSupabaseClient();
@@ -20,7 +21,12 @@ export default async function AuditoriaPage() {
   return (
     <div className="container-app py-8 space-y-6">
       <PageContainer>
-        <SectionHeader title="Auditoria" subtitle="Tabelas e eventos recentes para diagnóstico." sticky />
+        <SectionHeader 
+          title="Auditoria" 
+          subtitle="Tabelas e eventos recentes para diagnóstico." 
+          sticky 
+          icon={<FileSearch size={28} />}
+        />
       </PageContainer>
 
       {sections.length === 0 && (
@@ -31,22 +37,22 @@ export default async function AuditoriaPage() {
       <div className="space-y-8">
         {sections.map((s, idx) => (
           <div key={idx}>
-            <h2 className="text-lg font-medium mb-3">{s.label}</h2>
-            <div className="overflow-auto rounded-xl bg-[#0B1220] border border-white/5">
-              <table className="min-w-full text-sm">
-                <thead className="sticky top-[68px] z-10 bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent border-b border-default border-default border-white/10 backdrop-blur supports-[backdrop-filter]:bg-black/20">
+            <h2 className="text-lg font-medium mb-3 text-gray-900 dark:text-white">{s.label}</h2>
+            <div className="overflow-auto rounded-xl border-2 border-[#D4AF37] dark:border-[#4aede5] shadow-lg">
+              <table className="min-w-full text-sm bg-white dark:bg-[#1a1625]">
+                <thead className="sticky top-[68px] z-10 bg-gradient-to-b from-gray-100 dark:from-indigo-500/10 via-gray-50 dark:via-purple-500/5 to-transparent border-b-2 border-[#D4AF37] dark:border-[#4aede5] backdrop-blur supports-[backdrop-filter]:bg-white/90 dark:supports-[backdrop-filter]:bg-black/20">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-400">ID</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-400">created_at</th>
-                    <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wide text-slate-400">payload</th>
+                    <th className="px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-[#D4AF37]">ID</th>
+                    <th className="px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-[#D4AF37]">created_at</th>
+                    <th className="px-3 py-2 text-left text-xs font-bold uppercase tracking-wide text-[#D4AF37]">payload</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-gray-200 dark:divide-white/10">
                   {s.rows.map((r: any) => (
-                    <tr key={r.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-3 py-2 align-top text-slate-300">{r.id}</td>
-                      <td className="px-3 py-2 align-top text-slate-300">{r.created_at}</td>
-                      <td className="px-3 py-2 align-top text-slate-300">
+                    <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                      <td className="px-3 py-2 align-top text-gray-900 dark:text-white">{r.id}</td>
+                      <td className="px-3 py-2 align-top text-gray-700 dark:text-gray-300">{r.created_at}</td>
+                      <td className="px-3 py-2 align-top text-gray-700 dark:text-gray-300">
                         <pre className="whitespace-pre-wrap break-words text-xs">{JSON.stringify(r, null, 2)}</pre>
                       </td>
                     </tr>

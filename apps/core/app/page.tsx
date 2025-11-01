@@ -1,3 +1,6 @@
-export default function Page() {
-  return <h1>Core App</h1>;
+import { redirect } from 'next/navigation'
+
+export default function HomePage() {
+  // Redireciona para a área protegida
+  redirect('/dashboard')
 }

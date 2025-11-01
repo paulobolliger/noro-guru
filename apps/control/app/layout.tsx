@@ -1,5 +1,6 @@
 import "./globals.css";
 import RouteProgress from "@/components/layout/RouteProgress";
+import { ToastContainer } from "@/components/ui/ToastContainer";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="surface-app">
         <RouteProgress />
         {children}
+        <ToastContainer />
       </body>
     </html>
   );

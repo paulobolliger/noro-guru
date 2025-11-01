@@ -1,4 +1,4 @@
-// app/admin/(protected)/configuracoes/actions.ts
+// apps/core/(protected)/configuracoes/actions.ts
 'use server';
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";

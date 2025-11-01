@@ -22,7 +22,15 @@ module.exports = {
   				DEFAULT: 'hsl(var(--primary))',
   				hover: '#E6C25A',
   				accent: '#1DD3C0',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				foreground: 'hsl(var(--primary-foreground))',
+  				accessible: '#A88A1E',      // WCAG AA compliant for light mode
+  				'hover-accessible': '#917718'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))',
+  				accessible: '#0FA89A',      // WCAG AA compliant for light mode
+  				'hover-accessible': '#0D8C7F'
   			},
   			surface: {
   				light: '#FFFFFF',

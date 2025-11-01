@@ -1,4 +1,4 @@
-    // app/admin/debug/page.tsx
+    // apps/core/debug/page.tsx
     // Esta página é um Componente de Servidor e roda apenas no backend.
 
     export default function DebugPage() {

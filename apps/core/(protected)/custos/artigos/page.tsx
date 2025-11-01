@@ -1,4 +1,4 @@
-// app/admin/(protected)/custos/artigos/page.tsx
+// apps/core/(protected)/custos/artigos/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';

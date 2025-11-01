@@ -1,4 +1,4 @@
-// app/admin/(protected)/configuracoes/redes-sociais/page.tsx
+// apps/core/(protected)/configuracoes/redes-sociais/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import RedesSociaisClient from './RedesSociaisClient';

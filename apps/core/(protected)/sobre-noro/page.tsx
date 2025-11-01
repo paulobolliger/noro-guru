@@ -1,4 +1,4 @@
-// app/admin/(protected)/sobre-noro/page.tsx
+// apps/core/(protected)/sobre-noro/page.tsx
 import { Info } from 'lucide-react';
 import packageJson from '@/../package.json';
 

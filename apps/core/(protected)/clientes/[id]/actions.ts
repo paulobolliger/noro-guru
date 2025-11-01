@@ -1,8 +1,8 @@
 // app/admin/(protected)/clientes/[id]/actions.ts
 'use server';
 
-import { createServerSupabaseClient } from '@lib/supabase/server';
-import { Database } from '@types/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import type { Database } from '@/types/supabase';
 import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
 

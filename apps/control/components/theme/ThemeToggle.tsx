@@ -23,7 +23,17 @@ export default function ThemeToggle() {
     if (typeof document === 'undefined') return;
     const root = document.documentElement;
     root.classList.add('theme-transition');
+    
+    // Set data-theme attribute for CSS variables
     root.setAttribute('data-theme', theme);
+    
+    // Set class for Tailwind dark mode
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    
     if (typeof window !== 'undefined') localStorage.setItem('noro.theme', theme);
     const t = setTimeout(() => root.classList.remove('theme-transition'), 250);
     return () => clearTimeout(t);

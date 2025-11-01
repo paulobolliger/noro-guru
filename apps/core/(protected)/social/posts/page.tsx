@@ -1,4 +1,4 @@
-// app/admin/(protected)/social/posts/page.tsx
+// apps/core/(protected)/social/posts/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import SocialPostsClient from '@/components/admin/social/SocialPostsClient';

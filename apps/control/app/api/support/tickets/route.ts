@@ -27,12 +27,13 @@ export async function POST(request: Request) {
   const summary = String(body?.summary || '').trim() || null;
   const tenant_id = String(body?.tenant_id || '').trim();
   const priority = String(body?.priority || 'normal').trim().toLowerCase() || 'normal';
+  const source = String(body?.source || 'manual').trim().toLowerCase() || 'manual';
   if (!subject || !tenant_id) return NextResponse.json({ error: 'subject and tenant_id required' }, { status: 400 });
 
   const { data, error } = await supabase
     .schema('cp')
     .from('support_tickets')
-    .insert({ subject, summary, tenant_id, priority, requester_id: auth.user.id, requester_email: auth.user.email || null })
+    .insert({ subject, summary, tenant_id, priority, source, requester_id: auth.user.id, requester_email: auth.user.email || null })
     .select('*')
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });

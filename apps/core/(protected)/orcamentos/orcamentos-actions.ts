@@ -1,4 +1,4 @@
-// app/admin/(protected)/orcamentos/orcamentos-actions.ts
+// apps/core/(protected)/orcamentos/orcamentos-actions.ts
 'use server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';

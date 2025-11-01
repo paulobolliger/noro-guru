@@ -1,4 +1,4 @@
-// app/admin/(protected)/conteudo/page.tsx
+// apps/core/(protected)/conteudo/page.tsx
 'use client';
 
 import { useRouter } from 'next/navigation';

@@ -1,4 +1,4 @@
-// app/admin/(protected)/marketing/page.tsx
+// apps/core/(protected)/marketing/page.tsx
 import { Megaphone } from 'lucide-react';
 
 export default function MarketingPage() {

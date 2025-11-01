@@ -332,11 +332,9 @@ CREATE TABLE IF NOT EXISTS cp.control_plane_user_activities (
     metadata jsonb DEFAULT '{}',
     created_at timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT fk_tenant_user CHECK (
-        tenant_id = (
-            SELECT tenant_id 
-            FROM cp.control_plane_users 
-            WHERE id = user_id
-        )
+        true  -- Removed subquery-based check constraint because PostgreSQL does not allow
+        -- subqueries in CHECK constraints. We'll enforce consistency via a trigger
+        -- created below (ensure tenant_id of the activity matches the user's tenant).
     )
 );
 
@@ -349,6 +347,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Enforce tenant consistency for control_plane_user_activities via trigger
+CREATE OR REPLACE FUNCTION cp.ensure_activity_tenant_matches_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.tenant_id IS NOT NULL AND NEW.user_id IS NOT NULL THEN
+        PERFORM 1 FROM cp.control_plane_users u WHERE u.id = NEW.user_id AND u.tenant_id = NEW.tenant_id;
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'tenant_id (%) does not match control_plane_user tenant for user %', NEW.tenant_id, NEW.user_id;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_control_plane_user_activities_tenant_check ON cp.control_plane_user_activities;
+CREATE TRIGGER tr_control_plane_user_activities_tenant_check
+    BEFORE INSERT OR UPDATE ON cp.control_plane_user_activities
+    FOR EACH ROW
+    EXECUTE FUNCTION cp.ensure_activity_tenant_matches_user();
 -- Triggers para updated_at
 DROP TRIGGER IF EXISTS tr_control_plane_users_updated_at ON cp.control_plane_users;
 CREATE TRIGGER tr_control_plane_users_updated_at
@@ -362,8 +379,6 @@ CREATE TRIGGER tr_control_plane_config_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION cp.set_updated_at();
 
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Função para adicionar domínio a um tenant
 CREATE OR REPLACE FUNCTION cp.add_tenant_domain(
@@ -481,6 +496,13 @@ CREATE INDEX IF NOT EXISTS idx_subscription_plans_public ON cp.subscription_plan
 CREATE INDEX IF NOT EXISTS idx_subscription_plans_sort ON cp.subscription_plans(sort_order) WHERE is_public = true;
 
 CREATE INDEX IF NOT EXISTS idx_subscriptions_tenant ON cp.subscriptions(tenant_id);
+-- Ensure columns added by later iterations exist before creating indexes
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS next_billing_date timestamptz;
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS base_price decimal(10,2) DEFAULT 0;
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS final_price decimal(10,2) DEFAULT 0;
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS discounts decimal(10,2) DEFAULT 0;
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS add_ons decimal(10,2) DEFAULT 0;
+ALTER TABLE cp.subscriptions ADD COLUMN IF NOT EXISTS trial_end timestamptz;
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON cp.subscriptions(status);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_dates ON cp.subscriptions(current_period_end, next_billing_date);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_trial ON cp.subscriptions(trial_end) WHERE trial_end IS NOT NULL;

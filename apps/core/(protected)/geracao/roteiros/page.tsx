@@ -1,4 +1,4 @@
-// app/admin/(protected)/geracao/roteiros/page.tsx
+// apps/core/(protected)/geracao/roteiros/page.tsx
 'use client';
 
 import BulkGenerateForm from '@/components/dashboard/BulkGenerateForm';

@@ -1,54 +1,82 @@
-import { createServerSupabaseClient } from "@lib/supabase/server";
-import PageContainer from "@/components/layout/PageContainer";
-import SectionHeader from "@/components/layout/SectionHeader";
+// app/(protected)/users/page.tsx
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { redirect } from 'next/navigation';
+import UsersTableClient from '@/app/(protected)/users/UsersTableClient';
+import SectionHeader from '@/components/layout/SectionHeader';
+import { UserCog } from 'lucide-react';
 
 export default async function UsersPage() {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase
-    .schema('cp')
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  // Buscar vínculos user-tenant com dados relacionados (email do usuário e nome do tenant)
+  const { data: userTenantRoles, error } = await supabase
     .from('user_tenant_roles')
-    .select('user_id, tenant_id, role')
-    .order('role', { ascending: false })
-    .limit(100);
-  if (error) throw new Error(error.message);
+    .select(`
+      id,
+      user_id,
+      tenant_id,
+      role,
+      created_at,
+      tenant:tenants(name, slug, status, plan),
+      user:users(email)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user-tenant roles:', error);
+  }
+
+  // Calculate metrics
+  const data = userTenantRoles || [];
+  const uniqueUsers = new Set(data.map(r => r.user_id)).size;
+  const uniqueTenants = new Set(data.map(r => r.tenant_id)).size;
+  const admins = data.filter(r => r.role?.toLowerCase() === 'admin').length;
+  
+  // Recent logins - last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const recentUsers = data.filter(r => new Date(r.created_at) > sevenDaysAgo).length;
+
+  const metrics = [
+    { label: "Total Usuários", value: uniqueUsers, color: "text-[#4aede5]", borderColor: "border-[#4aede5]" },
+    { label: "Tenants Ativos", value: uniqueTenants, color: "text-green-400", borderColor: "border-green-400" },
+    { label: "Administradores", value: admins, color: "text-purple-400", borderColor: "border-purple-400" },
+    { label: "Novos (7d)", value: recentUsers, color: "text-yellow-400", borderColor: "border-yellow-400" },
+  ];
 
   return (
-    <div className="container-app py-8 space-y-6">
-      <PageContainer>
-        <SectionHeader title="Usuários" subtitle="Vínculos usuário ↔ tenant com roles." sticky />
-      </PageContainer>
+    <div className="space-y-6">
+      <SectionHeader 
+        title="Usuários e Tenants" 
+        subtitle="Gerencie os vínculos entre usuários e tenants"
+        icon={<UserCog size={28} />}
+      />
 
-      <PageContainer>
-        <div>
-          <h1 className="text-2xl font-semibold mb-2">Usuários</h1>
-          <p className="text-muted mb-4">Vínculos usuário ↔ tenant com roles.</p>
-          <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)] overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-white/5 sticky top-[68px] z-10 border-b border-default">
-                <tr>
-                  <th className="text-left px-4 md:px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted">User ID</th>
-                  <th className="text-left px-4 md:px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted">Tenant</th>
-                  <th className="text-left px-4 md:px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted">Role</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {(data ?? []).map((r: any) => (
-                  <tr key={String(r.user_id) + '-' + String(r.tenant_id)} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-4 md:px-6 py-3 text-primary">{r.user_id}</td>
-                    <td className="px-4 md:px-6 py-3 text-primary">{r.tenant_id}</td>
-                    <td className="px-4 md:px-6 py-3 text-primary">{r.role}</td>
-                  </tr>
-                ))}
-                {!data?.length && (
-                  <tr>
-                    <td className="p-3 text-muted" colSpan={3}>Sem vínculos</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[1200px] mx-auto px-4 md:px-6">
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            className={`bg-gray-50 dark:bg-[#1a1625] border-2 ${m.borderColor} rounded-xl p-4 shadow-md hover:shadow-lg transition-all hover:scale-105`}
+          >
+            <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
+              {m.label}
+            </div>
+            <div className={`text-3xl font-bold ${m.color}`}>{m.value}</div>
           </div>
-        </div>
-      </PageContainer>
+        ))}
+      </div>
+
+      <UsersTableClient data={userTenantRoles || []} />
     </div>
   );
 }
+

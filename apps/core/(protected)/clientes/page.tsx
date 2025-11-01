@@ -1,4 +1,4 @@
-// app/admin/(protected)/clientes/page.tsx
+// apps/core/(protected)/clientes/page.tsx
 import ClientesClientPage from '@/components/admin/ClientesClientPage';
 import { getClientes } from './actions';
 

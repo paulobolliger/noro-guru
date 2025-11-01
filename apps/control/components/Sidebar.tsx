@@ -1,13 +1,14 @@
 // components/admin/Sidebar.tsx
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import * as Popover from '@radix-ui/react-popover';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home, Users, MessageSquare, DollarSign,
   Settings, Calendar, Menu, X, UserCheck, Key as KeyIcon,
-  LogOut, Loader2, BookOpenText, ShieldCheck
+  LogOut, Loader2, BookOpenText, ShieldCheck, LifeBuoy, CheckSquare
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import packageJson from '@/package.json';
@@ -46,50 +47,70 @@ export default function Sidebar({ user }: SidebarProps) {
 
   // ASCII-only labels to avoid UTF-8 issues on Windows
   const areaComercial = [
-    { href: '/control', icon: Home, label: 'Dashboard' },
-    { href: '/control/leads', icon: Users, label: 'Leads' },
-    { href: '/control/orgs', icon: UserCheck, label: 'Clientes/Empresas' },
+    { href: '/control', icon: 'Home', label: 'Dashboard' },
+    { href: '/control/leads', icon: 'Users', label: 'Leads' },
+    { href: '/control/orgs', icon: 'UserCheck', label: 'Clientes/Empresas' },
   ] as const;
 
   const areaOperacoes = [
-    { href: '/tenants', icon: Users, label: 'Tenants' },
-    { href: '/domains', icon: Settings, label: 'Dominios' },
-    { href: '/api-keys', icon: KeyIcon, label: 'API Keys' },
-    { href: '/webhooks', icon: MessageSquare, label: 'Webhooks' },
-    { href: '/webhooks/endpoints', icon: Settings, label: 'Webhook Endpoints' },
-    { href: '/control/tasks', icon: Calendar, label: 'Tarefas' },
+    { href: '/tenants', icon: 'Users', label: 'Tenants' },
+    { href: '/domains', icon: 'Settings', label: 'Dominios' },
+    { href: '/api-keys', icon: 'KeyIcon', label: 'API Keys' },
+    { href: '/webhooks', icon: 'MessageSquare', label: 'Webhooks' },
+    { href: '/comunicacao', icon: 'MessageSquare', label: 'Chat & Atendimento' },
+    { href: '/tarefas', icon: 'CheckSquare', label: 'Tarefas' },
+    { href: '/support', icon: 'LifeBuoy', label: 'Suporte' },
   ] as const;
 
   const areaBilling = [
-    { href: '/billing', icon: DollarSign, label: 'Billing' },
-    { href: '/financeiro', icon: BookOpenText, label: 'Financeiro' },
+    { href: '/billing', icon: 'DollarSign', label: 'Billing' },
+    { href: '/financeiro', icon: 'BookOpenText', label: 'Financeiro' },
   ] as const;
 
   const areaAdministracao = [
-    { href: '/users', icon: UserCheck, label: 'Usuarios' },
-    { href: '/auditoria', icon: ShieldCheck, label: 'Auditoria' },
-    { href: '/configuracoes', icon: Settings, label: 'Configuracoes' },
+    { href: '/users', icon: 'UserCheck', label: 'Usuários (tenants)' },
+    { href: '/auditoria', icon: 'ShieldCheck', label: 'Auditoria' },
+    { href: '/configuracoes', icon: 'Settings', label: 'Configurações' },
   ] as const;
+
+  // Icon mapping
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    Home,
+    Users,
+    UserCheck,
+    Settings,
+    KeyIcon,
+    MessageSquare,
+    CheckSquare,
+    LifeBuoy,
+    DollarSign,
+    BookOpenText,
+    ShieldCheck,
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') localStorage.setItem('noro.sidebar', sidebarOpen ? '1' : '0');
   }, [sidebarOpen]);
 
-  const NavGroup = ({ title, items }: { title: string, items: readonly { href: string; icon: any; label: string }[] }) => (
+  const NavGroup = ({ title, items }: { title: string, items: readonly { href: string; icon: string; label: string }[] }) => (
     <div className={`space-y-1 ${sidebarOpen ? 'mt-4 pt-2 border-t border-default' : 'mt-3'}`}>
       {sidebarOpen && (
-        <div className="px-4 text-sm uppercase tracking-wide text-primary mb-1 font-semibold">{title}</div>
+        <div className="px-4 text-sm uppercase tracking-wide text-[#D4AF37] mb-1 font-semibold">{title}</div>
       )}
       {items.map((item) => {
-        // Active state only for exact path match to avoid multiple items active
-        const isActive = pathname === item.href;
-        const Icon = item.icon as any;
+        // Active state for exact match or sub-routes (e.g., /webhooks matches /webhooks/endpoints)
+        const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+        const Icon = iconMap[item.icon];
+        
+        // Show badge for /comunicacao
+        const isChatRoute = item.href === '/comunicacao';
+        
         const linkEl = (
           <Link
             key={item.href}
             href={item.href}
             aria-current={isActive ? 'page' : undefined}
-            className={`sidebar-link group flex items-center ${sidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center py-3'} rounded-lg transition-all motion-safe:transform motion-safe:hover:scale-[1.02] ${isActive ? 'sidebar-link-active' : ''}`}
+            className={`sidebar-link group flex items-center ${sidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center py-3'} rounded-lg transition-all motion-safe:transform motion-safe:hover:scale-[1.02] ${isActive ? 'sidebar-link-active' : ''} ${isChatRoute ? 'relative' : ''}`}
           >
             <Icon
                   size={20}
@@ -97,9 +118,19 @@ export default function Sidebar({ user }: SidebarProps) {
                   className={`sidebar-link-icon flex-shrink-0 transition-transform motion-safe:group-hover:translate-x-0.5 ${isActive ? 'sidebar-link-icon-active' : ''} ${!sidebarOpen ? 'mx-auto' : ''}`}
             />
             {sidebarOpen && (
-              <span className={`sidebar-link-label font-medium ${isActive ? 'sidebar-link-label-active' : ''}`}>
-                {item.label}
-              </span>
+              <>
+                <span className={`sidebar-link-label font-medium ${isActive ? 'sidebar-link-label-active' : ''}`}>
+                  {item.label}
+                </span>
+                {isChatRoute && (
+                  <span className="ml-auto bg-[#D4AF37] text-[#1b1b1b] text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    NEW
+                  </span>
+                )}
+              </>
+            )}
+            {!sidebarOpen && isChatRoute && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse"></span>
             )}
           </Link>
         );
@@ -157,14 +188,8 @@ export default function Sidebar({ user }: SidebarProps) {
         }
       }}
     >
-      {/* Header */}
-      <div className="h-16 px-4 border-b border-default flex items-center justify-between bg-gradient-header">
-        {sidebarOpen && (
-          <div>
-            <div className="text-xl font-bold tracking-tight text-white font-display">NORO | CONTROL</div>
-            <p className="text-xs text-[#D4AF37] -mt-1">v{version}</p>
-          </div>
-        )}
+      {/* Toggle button - com gradiente para continuidade com TopBar */}
+      <div className="h-16 px-4 border-b border-default flex items-center justify-end bg-gradient-header">
         <button aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} aria-expanded={sidebarOpen}
           onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white/80 hover:text-white transition-transform hover:scale-105">
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -174,28 +199,28 @@ export default function Sidebar({ user }: SidebarProps) {
       {/* Menu */}
       <nav className="flex-1 p-4 overflow-y-auto">
         <NavGroup title="Comercial" items={areaComercial} />
-        <NavGroup title="Operacoes" items={areaOperacoes} />
+        <NavGroup title="Operações" items={areaOperacoes} />
         <NavGroup title="Billing & Financeiro" items={areaBilling} />
-        <NavGroup title="Administracao" items={areaAdministracao} />
+        <NavGroup title="Administração" items={areaAdministracao} />
       </nav>
 
       {/* Footer */}
       <div className="border-t border-default p-4">
         {/* Footer: when sidebar is open show avatar + name + logout; when collapsed show only logout icon in gold */}
         {sidebarOpen ? (
-          <div className="flex items-center gap-3 text-primary">
+          <div className="flex items-center gap-3">
             <img
               src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`}
               alt="Avatar"
               className="w-8 h-8 rounded-full"
             />
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-primary truncate">{user.nome || user.email?.split('@')[0]}</p>
+              <p className="text-sm font-semibold text-white truncate">{user.nome || user.email?.split('@')[0]}</p>
             </div>
             <button
               onClick={handleLogout}
               disabled={loggingOut}
-              className="p-2 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+              className="p-2 text-white/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
               title="Sair"
             >
               {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}

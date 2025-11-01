@@ -1,4 +1,4 @@
-// app/admin/(protected)/conteudo/artigos/publicados/page.tsx
+// apps/core/(protected)/conteudo/artigos/publicados/page.tsx
 'use client';
 
 import { CheckCircle2, FileText } from 'lucide-react';

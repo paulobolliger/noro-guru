@@ -1,4 +1,4 @@
-// app/admin/(protected)/comunicacao/page.tsx
+// apps/core/(protected)/comunicacao/page.tsx
 import { MessageSquare } from 'lucide-react';
 
 export default function ComunicacaoPage() {

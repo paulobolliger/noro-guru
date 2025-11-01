@@ -10,6 +10,7 @@ import { getConfiguracaoSistema } from './configuracoes/config-actions';
 import { getUserTenants, getActiveTenantId, setActiveTenant } from './tenants/actions';
 // NOVO: Importa o Toaster
 import { Toaster } from "@ui/use-toast"; // Assumindo que use-toast.tsx também exporta Toaster
+// TenantSelector removido - não será mais exibido globalmente
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 
@@ -55,17 +56,17 @@ export default async function ProtectedAdminLayout({
         notificacoes={notificacoes}
         configSistema={configSistema} // Passa a config para o layout do cliente
       >
+        {/* REMOVIDO: TenantSelector não aparece mais em todas as páginas
         {tenants.length > 0 && (
-          <form action={setActiveTenant} className="p-3 border-b border-default border-default bg-white/5 flex items-center gap-2">
-            <label className="text-sm text-muted">Tenant ativo</label>
-            <select name="tenant_id" defaultValue={activeTenantId ?? undefined} className="border rounded px-2 py-1">
-              {tenants.map((t) => (
-                <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>
-              ))}
-            </select>
-          <button className="text-sm btn-primary px-3 py-1 rounded shadow-card">Trocar</button>
-          </form>
+          <div className="border-b border-border bg-card/50">
+            <TenantSelector 
+              tenants={tenants}
+              activeTenantId={activeTenantId}
+              onTenantChange={setActiveTenant}
+            />
+          </div>
         )}
+        */}
         {children}
         {/* CRÍTICO: O Toaster deve ser incluído para renderizar as notificações */}
         <Toaster /> 

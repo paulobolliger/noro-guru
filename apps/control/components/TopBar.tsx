@@ -1,15 +1,17 @@
 // components/admin/TopBar.tsx
 'use client';
 
-import { Search, Bell, ChevronRight } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Bell, ChevronRight, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from './layout/Breadcrumbs';
 import ThemeToggle from './theme/ThemeToggle';
 import CommandPalette from './command/CommandPalette';
+import GlobalSearch from './GlobalSearch';
 import { createClient } from '@lib/supabase/client';
 import type { Database } from '@noro-types/supabase';
+import packageJson from '@/package.json';
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 type Notificacao = Database['public']['Tables']['noro_notificacoes']['Row'];
@@ -22,13 +24,12 @@ interface TopBarProps {
 export default function TopBar({ user, initialNotificacoes }: TopBarProps) {
   const pathname = usePathname();
   const supabase = createClient();
+  const version = packageJson.version;
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
   const [clienteNome, setClienteNome] = useState<string | null>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   useEffect(() => {
     const parts = pathname.split('/');
@@ -56,30 +57,31 @@ export default function TopBar({ user, initialNotificacoes }: TopBarProps) {
     }
   }, [pathname, supabase]);
 
+  // Buscar mensagens não lidas
   useEffect(() => {
-    if (isSearchOpen) {
-      searchInputRef.current?.focus();
-    }
-  }, [isSearchOpen]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      const typing = tag === 'input' || tag === 'textarea' || (e.target as HTMLElement)?.isContentEditable;
-      if (!typing && e.key === '/') {
-        e.preventDefault();
-        setIsSearchOpen(true);
-        setTimeout(() => searchInputRef.current?.focus(), 0);
-      }
-      if (e.key === 'Escape') {
-        setIsSearchOpen(false);
-        (document.activeElement as HTMLElement)?.blur?.();
+    const fetchUnreadMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('conversations')
+          .select('unread_count')
+          .eq('status', 'active');
+        
+        if (data && !error) {
+          const total = data.reduce((sum, conv) => sum + (conv.unread_count || 0), 0);
+          setUnreadMessages(total);
+        }
+      } catch (error) {
+        console.error('Error fetching unread messages:', error);
       }
     };
 
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+    fetchUnreadMessages();
+
+    // Atualizar a cada 30 segundos
+    const interval = setInterval(fetchUnreadMessages, 30000);
+    
+    return () => clearInterval(interval);
+  }, [supabase]);
 
   const base = pathname.startsWith('/control') ? '/control' : '/admin';
   const isClientePage = pathname.includes('/admin/clientes/');
@@ -91,9 +93,14 @@ export default function TopBar({ user, initialNotificacoes }: TopBarProps) {
         <div className="flex items-center gap-4">
           <Link
             href={pathname.startsWith('/control') ? '/control' : '/admin'}
-            className="logo-text font-display text-2xl font-semibold text-white"
+            className="flex items-center gap-3"
           >
-            NORO
+            <div>
+              <div className="logo-text font-display text-xl font-bold tracking-tight text-white">
+                NORO | CONTROL
+              </div>
+              <p className="text-xs text-[#D4AF37] -mt-0.5">v{version}</p>
+            </div>
           </Link>
 
           <div className="hidden md:flex items-center gap-2 text-sm breadcrumb-text font-medium">
@@ -107,24 +114,21 @@ export default function TopBar({ user, initialNotificacoes }: TopBarProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="relative flex items-center justify-end">
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchOpen(true)}
-              onBlur={() => setIsSearchOpen(false)}
-              placeholder={isSearchOpen ? 'Buscar...' : ''}
-              className={`topbar-search h-10 rounded-lg text-sm transition-all duration-200 ease-in-out focus-visible:outline-none ${
-                isSearchOpen ? 'w-64 pl-10 pr-4 cursor-text' : 'w-10 pl-2 cursor-pointer'
-              }`}
-            />
-            <Search
-              className="topbar-icon pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 transform"
-              size={18}
-            />
-          </div>
+          <GlobalSearch />
+
+          {/* Chat Button with Badge */}
+          <Link
+            href="/comunicacao"
+            className="btn-secondary relative flex h-10 w-10 items-center justify-center rounded-lg hover:scale-105 transition-transform"
+            title="Chat e Atendimento"
+          >
+            <MessageSquare size={20} />
+            {unreadMessages > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 min-w-[1.1rem] rounded-full bg-[#D4AF37] px-1 text-[10px] leading-4 text-[#1b1b1b] font-bold text-center animate-pulse">
+                {unreadMessages > 9 ? '9+' : unreadMessages}
+              </span>
+            )}
+          </Link>
 
           <ThemeToggle />
           <CommandPalette />

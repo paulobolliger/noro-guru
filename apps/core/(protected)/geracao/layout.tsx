@@ -1,4 +1,4 @@
-// app/admin/(protected)/geracao/layout.tsx
+// apps/core/(protected)/geracao/layout.tsx
 'use client';
 
 import Link from 'next/link';

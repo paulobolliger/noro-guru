@@ -1,4 +1,4 @@
-// app/admin/(protected)/leads/page.tsx
+// apps/core/(protected)/leads/page.tsx
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import type { Database } from '@/types/supabase';
 import { format } from 'date-fns';

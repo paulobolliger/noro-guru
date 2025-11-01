@@ -3,289 +3,265 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Shield, User2, Clock, History, Key, Settings2 } from 'lucide-react';
-import { Button as NButton } from '@/../../packages/ui/button';
-import { Alert as NAlert } from '@/../../packages/ui/alert';
-import { Select as NSelect } from '@/../../packages/ui/select';
-import type { ControlPlaneUser, UserActivity, ControlPlaneRole, UserStatus } from '@/../../packages/types/control-plane-users';
-import UserDetailsForm from './UserDetailsForm';
-import PermissionGrid from './PermissionGrid';
+import { Shield, User2, Search, Plus, Edit2, Trash2, Mail, Phone } from 'lucide-react';
+import type { NoroUser, NoroUserRole } from '@/../../packages/types/noro-users';
+import EditNoroUserModal from './EditNoroUserModal';
+import DeleteNoroUserModal from './DeleteNoroUserModal';
 
 interface UtilizadoresTabProps {
-  users: ControlPlaneUser[];
+  users: NoroUser[];
   currentUserId: string;
-  userActivities: UserActivity[];
   refetchUsers: () => Promise<void>;
 }
 
-export default function UtilizadoresTab({ users, currentUserId, userActivities, refetchUsers }: UtilizadoresTabProps) {
-  const [selectedUser, setSelectedUser] = useState<ControlPlaneUser | null>(null);
-  const [activeView, setActiveView] = useState<'lista' | 'detalhes' | 'atividade' | 'permissoes'>('lista');
-  const [filterRole, setFilterRole] = useState<ControlPlaneRole | 'all'>('all');
-  const [filterStatus, setFilterStatus] = useState<UserStatus | 'all'>('all');
+export default function UtilizadoresTab({ users, currentUserId, refetchUsers }: UtilizadoresTabProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState<NoroUserRole | 'all'>('all');
+  const [selectedUser, setSelectedUser] = useState<NoroUser | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   if (!users?.length) {
     return (
       <div className="surface-card p-6 rounded-xl border border-default">
         <div className="text-center py-12">
+          <User2 size={48} className="mx-auto text-secondary mb-4" />
           <h3 className="text-lg font-semibold text-primary mb-2">Nenhum usuário encontrado</h3>
-          <p className="text-muted mb-6">Não há usuários registrados no Control Plane.</p>
-          <NButton
-            onClick={() => {/* TODO: Implementar convite */}}
-            variant="default"
-            className="bg-blue-600 text-white hover:bg-blue-700"
+          <p className="text-description mb-6">Não há usuários registrados no sistema NORO.</p>
+          <button
+            onClick={() => {/* TODO: Implementar criação de usuário */}}
+            className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 mx-auto"
           >
-            Convidar Usuário
-          </NButton>
+            <Plus size={16} />
+            Adicionar Usuário
+          </button>
         </div>
       </div>
     );
   }
 
   const filteredUsers = users.filter(user => {
-    if (filterRole !== 'all' && user.role !== filterRole) return false;
-    if (filterStatus !== 'all' && user.status !== filterStatus) return false;
-    return true;
+    const matchesSearch = 
+      user.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    return matchesSearch && matchesRole;
   });
 
-  // Map de cores por status
-  const statusColors: Record<UserStatus, { bg: string; text: string }> = {
-    ativo: { bg: 'bg-emerald-100/10', text: 'text-emerald-400' },
-    inativo: { bg: 'bg-gray-100/10', text: 'text-gray-400' },
-    pendente: { bg: 'bg-amber-100/10', text: 'text-amber-400' },
-    bloqueado: { bg: 'bg-red-100/10', text: 'text-red-400' }
-  };
-
   // Map de cores por role
-  const roleColors: Record<ControlPlaneRole, { bg: string; text: string }> = {
-    super_admin: { bg: 'bg-purple-100/10', text: 'text-purple-400' },
-    admin: { bg: 'bg-blue-100/10', text: 'text-blue-400' },
-    operador: { bg: 'bg-green-100/10', text: 'text-green-400' },
-    auditor: { bg: 'bg-amber-100/10', text: 'text-amber-400' },
-    readonly: { bg: 'bg-gray-100/10', text: 'text-gray-400' }
-  };
-
-  const renderUserList = () => (
-    <div className="surface-card rounded-xl border border-default">
-      <div className="p-6 border-b border-default">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <h3 className="text-lg font-semibold text-primary">Lista de Utilizadores</h3>
-          <div className="flex items-center gap-4">
-            <NSelect
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value as any)}
-              className="w-40"
-            >
-              <option value="all">Todas as Roles</option>
-              <option value="super_admin">Super Admin</option>
-              <option value="admin">Admin</option>
-              <option value="operador">Operador</option>
-              <option value="auditor">Auditor</option>
-              <option value="readonly">Readonly</option>
-            </NSelect>
-            <NSelect
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="w-40"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
-              <option value="pendente">Pendente</option>
-              <option value="bloqueado">Bloqueado</option>
-            </NSelect>
-            <NButton
-              onClick={() => {/* TODO: Implementar convite */}}
-              variant="default"
-              className="bg-blue-600 text-white hover:bg-blue-700"
-            >
-              Convidar Usuário
-            </NButton>
-          </div>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-[var(--color-surface-alt)]">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Usuário</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">2FA</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted uppercase">Último Acesso</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-default">
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-[var(--color-surface-alt)] transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 flex-shrink-0">
-                      {user.avatar_url ? (
-                        <img className="h-10 w-10 rounded-full" src={user.avatar_url} alt="" />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-gray-100/10 flex items-center justify-center">
-                          <User2 className="h-5 w-5 text-gray-400" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-primary">{user.nome || 'Sem nome'}</div>
-                      <div className="text-sm text-muted">{user.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleColors[user.role].bg} ${roleColors[user.role].text}`}>
-                    {user.role.toUpperCase()}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[user.status].bg} ${statusColors[user.status].text}`}>
-                    {user.status.toUpperCase()}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {user.two_factor_enabled ? (
-                    <span className="inline-flex items-center text-emerald-400">
-                      <Shield className="h-4 w-4 mr-1" />
-                      <span className="text-xs">Ativado</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center text-gray-400">
-                      <Shield className="h-4 w-4 mr-1" />
-                      <span className="text-xs">Desativado</span>
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
-                  {user.ultimo_acesso ? format(new Date(user.ultimo_acesso), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : 'Nunca'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <div className="flex items-center justify-end gap-2">
-                    <NButton
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setActiveView('detalhes');
-                      }}
-                      variant="ghost"
-                      className="text-primary"
-                    >
-                      <Settings2 className="h-4 w-4" />
-                    </NButton>
-                    <NButton
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setActiveView('atividade');
-                      }}
-                      variant="ghost"
-                      className="text-primary"
-                    >
-                      <History className="h-4 w-4" />
-                    </NButton>
-                    <NButton
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setActiveView('permissoes');
-                      }}
-                      variant="ghost"
-                      className="text-primary"
-                    >
-                      <Key className="h-4 w-4" />
-                    </NButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
-  const renderUserDetails = () => {
-    if (!selectedUser) return null;
-
-    return (
-      <UserDetailsForm 
-        user={selectedUser} 
-        onClose={() => {
-          setSelectedUser(null);
-          setActiveView('lista');
-        }}
-        onUpdate={refetchUsers}
-      />
-    );
-  };
-
-  const renderUserActivity = () => {
-    if (!selectedUser) return null;
-
-    const userLogs = userActivities.filter(
-      (activity) => activity.user_id === selectedUser.id
-    );
-
-    return (
-      <div className="surface-card rounded-xl border border-default p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-primary">Log de Atividades</h3>
-          <NButton
-            onClick={() => {
-              setSelectedUser(null);
-              setActiveView('lista');
-            }}
-            variant="ghost"
-          >
-            Voltar para Lista
-          </NButton>
-        </div>
-
-        <div className="space-y-4">
-          {userLogs.map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-start gap-4 p-4 border border-default rounded-lg"
-            >
-              <Clock className="h-5 w-5 text-muted flex-shrink-0 mt-0.5" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-primary font-medium">
-                  {activity.descricao}
-                </p>
-                <div className="mt-1 text-xs text-muted flex items-center gap-4">
-                  <span>{format(new Date(activity.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}</span>
-                  {activity.ip_address && <span>IP: {activity.ip_address}</span>}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderUserPermissions = () => {
-    if (!selectedUser) return null;
-
-    return (
-      <PermissionGrid 
-        user={selectedUser} 
-        onClose={() => {
-          setSelectedUser(null);
-          setActiveView('lista');
-        }}
-        onUpdate={refetchUsers}
-      />
-    );
+  const roleColors: Record<NoroUserRole, { bg: string; text: string; label: string }> = {
+    super_admin: { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Super Admin' },
+    admin: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Admin' },
+    agente: { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Agente' },
+    financeiro: { bg: 'bg-amber-500/20', text: 'text-amber-400', label: 'Financeiro' },
+    cliente: { bg: 'bg-gray-500/20', text: 'text-gray-400', label: 'Cliente' }
   };
 
   return (
     <div className="space-y-6">
-      {activeView === 'lista' && renderUserList()}
-      {activeView === 'detalhes' && renderUserDetails()}
-      {activeView === 'atividade' && renderUserActivity()}
-      {activeView === 'permissoes' && renderUserPermissions()}
+      {/* Modals */}
+      {selectedUser && (
+        <>
+          <EditNoroUserModal
+            user={selectedUser}
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setSelectedUser(null);
+            }}
+            onSuccess={() => {
+              refetchUsers();
+            }}
+          />
+          <DeleteNoroUserModal
+            user={selectedUser}
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setSelectedUser(null);
+            }}
+            onSuccess={() => {
+              refetchUsers();
+            }}
+          />
+        </>
+      )}
+
+      {/* Header com Filtros */}
+      <div className="surface-card rounded-xl border border-default p-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold text-primary">Utilizadores do Sistema NORO</h3>
+            <p className="text-sm text-description mt-1">
+              Gerencie todos os utilizadores (clientes, agentes, administradores)
+            </p>
+          </div>
+          <button
+            onClick={() => {/* TODO: Implementar criação */}}
+            className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <Plus size={16} />
+            Novo Utilizador
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {/* Busca */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" size={18} />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar por nome ou email..."
+              className="input-field w-full pl-10"
+            />
+          </div>
+
+          {/* Filtro de Role */}
+          <select
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value as NoroUserRole | 'all')}
+            className="input-field"
+          >
+            <option value="all">Todas as Funções</option>
+            <option value="super_admin">Super Admin</option>
+            <option value="admin">Admin</option>
+            <option value="agente">Agente</option>
+            <option value="financeiro">Financeiro</option>
+            <option value="cliente">Cliente</option>
+          </select>
+        </div>
+
+        {/* Estatísticas */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6 pt-6 border-t border-default">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-primary">{users.length}</div>
+            <div className="text-xs text-description mt-1">Total</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-400">{users.filter(u => u.role === 'super_admin').length}</div>
+            <div className="text-xs text-description mt-1">Super Admins</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-400">{users.filter(u => u.role === 'admin').length}</div>
+            <div className="text-xs text-description mt-1">Admins</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-400">{users.filter(u => u.role === 'agente').length}</div>
+            <div className="text-xs text-description mt-1">Agentes</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-400">{users.filter(u => u.role === 'cliente').length}</div>
+            <div className="text-xs text-description mt-1">Clientes</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabela de Usuários */}
+      <div className="surface-card rounded-xl border border-default overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-[var(--color-surface-alt)]">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-description uppercase">Utilizador</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-description uppercase">Função</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-description uppercase">Contacto</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-description uppercase">Criado em</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-description uppercase">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-default">
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-[var(--color-surface-alt)] transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        {user.avatar_url ? (
+                          <img className="h-10 w-10 rounded-full object-cover" src={user.avatar_url} alt="" />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                            <span className="text-white font-semibold text-sm">
+                              {user.nome?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-primary">{user.nome || 'Sem nome'}</div>
+                        <div className="text-sm text-description flex items-center gap-1">
+                          <Mail size={12} />
+                          {user.email}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${roleColors[user.role].bg} ${roleColors[user.role].text}`}>
+                      {roleColors[user.role].label}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-description space-y-1">
+                      {user.telefone && (
+                        <div className="flex items-center gap-1">
+                          <Phone size={12} />
+                          {user.telefone}
+                        </div>
+                      )}
+                      {user.whatsapp && (
+                        <div className="flex items-center gap-1 text-green-400">
+                          <Phone size={12} />
+                          {user.whatsapp}
+                        </div>
+                      )}
+                      {!user.telefone && !user.whatsapp && (
+                        <span className="text-secondary italic">Sem contacto</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-description">
+                    {format(new Date(user.created_at), 'dd/MM/yyyy', { locale: ptBR })}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsEditModalOpen(true);
+                        }}
+                        className="p-2 rounded text-secondary hover:text-primary hover:bg-[var(--color-surface)] transition-colors"
+                        title="Editar"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsDeleteModalOpen(true);
+                        }}
+                        className="p-2 rounded text-secondary hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                        title="Remover"
+                        disabled={user.id === currentUserId}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredUsers.length === 0 && (
+          <div className="text-center py-12">
+            <Search size={48} className="mx-auto text-secondary mb-4" />
+            <h3 className="text-lg font-semibold text-primary mb-2">Nenhum resultado encontrado</h3>
+            <p className="text-description">Tente ajustar os filtros de busca</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// app/admin/(protected)/configuracoes/page.tsx
+// apps/core/(protected)/configuracoes/page.tsx
 import ConfiguracoesClient from '@/components/admin/ConfiguracoesClient';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';

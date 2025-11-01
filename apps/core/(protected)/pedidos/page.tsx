@@ -1,4 +1,4 @@
-// app/admin/(protected)/pedidos/page.tsx
+// apps/core/(protected)/pedidos/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { PedidosList } from '@/components/admin/pedidos/PedidosList';
 import { Database } from '@/types/supabase';

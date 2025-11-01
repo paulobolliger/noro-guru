@@ -1,4 +1,4 @@
-// app/admin/(protected)/relatorios/page.tsx
+// apps/core/(protected)/relatorios/page.tsx
 import { BarChart3 } from 'lucide-react';
 
 export default function RelatoriosPage() {

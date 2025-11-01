@@ -1,34 +1,36 @@
 ﻿"use server";
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { getActiveTenantId } from "../../../tenants/actions";
 
 export async function listLeadsByStage() {
   const supabase = createServerSupabaseClient();
-  const tenantId = await getActiveTenantId();
 
-  // Fetch stages via admin to avoid RLS blocking empty columns for new users
+  // Fetch stages globais (Control Plane não usa tenant_id para stages)
   const admin = createAdminSupabaseClient();
   const { data: stagesData } = await admin
     .schema("cp")
     .from("lead_stages")
     .select("slug,label,ord")
+    .is("tenant_id", null) // Stages globais do Control Plane
     .order("ord", { ascending: true });
 
   let stageSlugs = (stagesData || []).map((s: any) => s.slug);
   if (!stageSlugs.length) {
     // fallback defaults
-    stageSlugs = ["novo","qualificado","proposta","ganho","perdido"];
+    stageSlugs = ["novo","contato_inicial","qualificado","proposta","negociacao","ganho","perdido"];
   }
   const map: Record<string, any[]> = Object.fromEntries(stageSlugs.map((s: string) => [s, []]));
 
+  // Buscar TODOS os leads do Control Plane (não filtrar por tenant)
+  // Leads no Control Plane são prospects para virar tenants, não têm tenant_id ainda
   let q = admin
     .schema("cp")
     .from("leads")
     .select("*")
     .order("position", { ascending: true })
     .order("created_at", { ascending: false });
-  if (tenantId) q = q.eq("tenant_id", tenantId);
+  
   const { data, error } = await q;
   if (error) throw new Error(error.message);
 

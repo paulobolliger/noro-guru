@@ -1,4 +1,4 @@
-// app/admin/(protected)/custos/roteiros/page.tsx
+// apps/core/(protected)/custos/roteiros/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
