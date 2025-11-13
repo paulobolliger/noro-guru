@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 /**
  * POST - Aplicar crédito a duplicata
@@ -17,6 +17,7 @@ export async function POST(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     const body = await request.json();
     
@@ -46,7 +47,7 @@ export async function POST(
       .from('fin_duplicatas_pagar')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (duplicataError || !duplicata) {
@@ -61,7 +62,7 @@ export async function POST(
       .from('fin_creditos')
       .select('*')
       .eq('id', credito_id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (creditoError || !credito) {
@@ -116,7 +117,7 @@ export async function POST(
     const { data: utilizacao, error: utilizacaoError } = await supabase
       .from('fin_utilizacoes')
       .insert({
-        tenant_id: TENANT_ID,
+        tenant_id: tenantId,
         credito_id,
         duplicata_pagar_id: id,
         valor_utilizado: valor_aplicar,
@@ -165,7 +166,7 @@ export async function POST(
         data_pagamento: novo_status === 'paga' ? new Date().toISOString().split('T')[0] : duplicata.data_pagamento,
       })
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
     

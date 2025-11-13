@@ -2,7 +2,6 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { FinAnaliseIA } from '@/types/financeiro';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function GET(
   request: Request,
@@ -19,7 +18,7 @@ export async function GET(
       .from('fin_centros_custo')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
 
     if (!centroCusto) {
@@ -47,7 +46,7 @@ export async function GET(
     const { data: projetosSimilares } = await supabase
       .from('vw_rentabilidade_centros_custo')
       .select('*')
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .eq('tipo', centroCusto.tipo)
       .neq('id', id)
       .limit(10);

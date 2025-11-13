@@ -1,7 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function GET(
   request: Request,
@@ -15,7 +14,7 @@ export async function GET(
       .from('fin_centros_custo')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
 
     if (error) {
@@ -45,7 +44,7 @@ export async function PUT(
       .from('fin_centros_custo')
       .update(body)
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
 
@@ -77,7 +76,7 @@ export async function DELETE(
       .from('fin_alocacoes')
       .select('id')
       .eq('centro_custo_id', id)
-      .eq('tenant_id', TENANT_ID);
+      .eq('tenant_id', tenantId);
 
     if (alocacoes && alocacoes.length > 0) {
       return NextResponse.json(
@@ -90,7 +89,7 @@ export async function DELETE(
       .from('fin_centros_custo')
       .delete()
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID);
+      .eq('tenant_id', tenantId);
 
     if (error) {
       console.error('❌ Erro ao deletar centro de custo:', error);

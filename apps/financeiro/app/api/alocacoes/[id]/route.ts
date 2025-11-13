@@ -1,7 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function DELETE(
   request: Request,
@@ -17,7 +16,7 @@ export async function DELETE(
       .from('fin_alocacoes')
       .delete()
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID);
+      .eq('tenant_id', tenantId);
 
     if (error) {
       console.error('❌ Erro ao deletar alocação:', error);
@@ -47,7 +46,7 @@ export async function PUT(
       .from('fin_alocacoes')
       .update(body)
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
 

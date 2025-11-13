@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // GET - Listar adiantamentos com filtros
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { searchParams } = new URL(request.url);
-    
+
     // Filtros
     const status = searchParams.get('status');
     const fornecedor_id = searchParams.get('fornecedor_id');
@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
     const data_fim = searchParams.get('data_fim');
     const com_saldo = searchParams.get('com_saldo'); // 'true' = apenas com saldo disponível
     const search = searchParams.get('search'); // busca em descrição
-    
+
     let query = supabase
       .from('fin_adiantamentos')
       .select('*')
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .order('data_adiantamento', { ascending: false });
     
     if (status) {
@@ -83,8 +83,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const body = await request.json();
-    
+
     // Validações
     if (!body.fornecedor_id) {
       return NextResponse.json(
@@ -92,23 +93,23 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     if (!body.valor_total || body.valor_total <= 0) {
       return NextResponse.json(
         { error: 'Valor total deve ser maior que zero' },
         { status: 400 }
       );
     }
-    
+
     if (!body.data_adiantamento) {
       return NextResponse.json(
         { error: 'Data do adiantamento é obrigatória' },
         { status: 400 }
       );
     }
-    
+
     const adiantamentoData = {
-      tenant_id: TENANT_ID,
+      tenant_id: tenantId,
       fornecedor_id: body.fornecedor_id,
       valor_total: body.valor_total,
       valor_utilizado: 0,
