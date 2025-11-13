@@ -129,6 +129,25 @@ npm-debug.log*
 yarn-debug.log*
 lerna-debug.log*
 
+# TypeScript build info
+*.tsbuildinfo
+
+# Executáveis (Stripe CLI, etc)
+*.exe
+*.zip
+
+# Arquivos temporários
+temp*.txt
+resumo*.txt
+
+# Scripts de setup/test temporários
+*.ps1
+update_imports.py
+
+# CSVs de análise (exportações do Supabase)
+*Snippet*.csv
+*Catalog*.csv
+
 # =====================================================
 # ==============================
 # Local / Windows reserved files
