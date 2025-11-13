@@ -1,42 +1,41 @@
-'use client'
+﻿// components/admin/AdminLayoutClient.tsx
+'use client';
 
-import { ReactNode } from 'react'
+import Sidebar from './Sidebar';
+import TopBar from './TopBar';
+import AdminFooter from './AdminFooter';
+import type { Database } from '@/types/supabase';
+import type { ConfiguracaoSistema } from '@/app/configuracoes/config-actions'; // Importa o tipo
+
+type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
+type Notificacao = Database['public']['Tables']['noro_notificacoes']['Row'];
 
 interface AdminLayoutClientProps {
-  user: any
-  notificacoes: any[]
-  children: ReactNode
+  user: NomadeUser;
+  notificacoes: Notificacao[];
+  children: React.ReactNode;
+  configSistema: ConfiguracaoSistema; // Adiciona a prop
 }
 
-export default function AdminLayoutClient({
-  user,
-  notificacoes,
-  children,
-}: AdminLayoutClientProps) {
+export default function AdminLayoutClient({ user, notificacoes, children, configSistema }: AdminLayoutClientProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">NORO Core</h1>
-              <p className="text-sm text-gray-600 mt-1">Portal do Tenant</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user?.nome || user?.email}</p>
-                <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar 
+        user={user} 
+        topbarColor={configSistema.topbar_color} // Passa a cor para a Sidebar
+      />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar 
+          user={user} 
+          initialNotificacoes={notificacoes}
+          logoUrl={configSistema.logo_url_admin} // Passa a URL do logo
+          topbarColor={configSistema.topbar_color} // Passa a cor
+        />
+        <main className="flex-1 overflow-y-auto p-8">
+          {children}
+        </main>
+        <AdminFooter />
+      </div>
     </div>
-  )
+  );
 }
