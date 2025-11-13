@@ -130,5 +130,13 @@ yarn-debug.log*
 lerna-debug.log*
 
 # =====================================================
+# ==============================
+# Local / Windows reserved files
+# Evita problemas com arquivos temporários e nomes reservados no Windows
+CON
+
+# Turbo daemon logs (gerados localmente, não enviar ao repositório)
+.turbo/daemon/
+
 # ✅ Fim do .gitignore
 # =====================================================
