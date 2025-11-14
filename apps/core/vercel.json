@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/cleanup-notifications",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/upcoming-trips-reminder",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/check-overdue-payments",
+      "schedule": "0 10 * * *"
+    }
+  ]
+}

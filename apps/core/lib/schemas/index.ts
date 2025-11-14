@@ -19,3 +19,6 @@ export * from './pagamento.schema';
 
 // Usuário
 export * from './usuario.schema';
+
+// Notificação
+export * from './notificacao.schema';
