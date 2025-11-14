@@ -1,20 +1,27 @@
-// app/admin/(protected)/geracao/layout.tsx
+// app/geracao/layout.tsx
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Sparkles, Map, FileText } from 'lucide-react';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function GeracaoLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  const mockUser = {
+    email: 'dev@noro.com.br',
+    nome: 'Desenvolvedor'
+  };
+
   const tabs = [
-    { href: '/admin/geracao/roteiros', icon: Map, label: 'Roteiros' },
-    { href: '/admin/geracao/artigos', icon: FileText, label: 'Artigos' },
+    { href: '/geracao/roteiros', icon: Map, label: 'Roteiros' },
+    { href: '/geracao/artigos', icon: FileText, label: 'Artigos' },
   ];
 
   return (
-    <div className="p-6">
+    <MainLayout user={mockUser}>
+      <div>
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -49,8 +56,9 @@ export default function GeracaoLayout({ children }: { children: React.ReactNode 
         </nav>
       </div>
 
-      {/* Content */}
-      {children}
-    </div>
+        {/* Content */}
+        {children}
+      </div>
+    </MainLayout>
   );
 }
