@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { DuplicatasPagarClient } from './duplicatas-pagar-client';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // Metadata
 export const metadata = {
@@ -7,12 +8,10 @@ export const metadata = {
   description: 'Gestão de duplicatas a pagar',
 };
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
-
 async function getDuplicatasPagar() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/duplicatas-pagar?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/duplicatas-pagar`, {
       cache: 'no-store',
     });
     
@@ -37,7 +36,7 @@ async function getFornecedores() {
 async function getAdiantamentos() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/adiantamentos?com_saldo=true&tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/adiantamentos?com_saldo=true`, {
       cache: 'no-store',
     });
     
@@ -56,7 +55,7 @@ async function getAdiantamentos() {
 async function getCreditos() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/creditos?com_saldo=true&tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/creditos?com_saldo=true`, {
       cache: 'no-store',
     });
     
@@ -75,7 +74,7 @@ async function getCreditos() {
 async function getCategorias() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/categorias?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/categorias`, {
       cache: 'no-store',
     });
     
@@ -94,7 +93,7 @@ async function getCategorias() {
 async function getContasBancarias() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/bancos?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/bancos`, {
       cache: 'no-store',
     });
     
@@ -111,6 +110,7 @@ async function getContasBancarias() {
 }
 
 export default async function DuplicatasPagarPage() {
+  const tenantId = await getCurrentTenantId();
   const [duplicatas, fornecedores, adiantamentos, creditos, categorias, contas] = await Promise.all([
     getDuplicatasPagar(),
     getFornecedores(),
@@ -130,7 +130,7 @@ export default async function DuplicatasPagarPage() {
           creditos={creditos}
           categorias={categorias}
           contas={contas}
-          tenantId={TENANT_ID}
+          tenantId={tenantId}
         />
       </Suspense>
     </div>

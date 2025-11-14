@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 /**
  * GET - Buscar saldos consolidados de créditos
@@ -15,6 +15,7 @@ const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { searchParams } = new URL(request.url);
     
     const fornecedor_id = searchParams.get('fornecedor_id');
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('vw_saldo_creditos')
       .select('*')
-      .eq('tenant_id', TENANT_ID);
+      .eq('tenant_id', tenantId);
     
     if (fornecedor_id) {
       query = query.eq('fornecedor_id', fornecedor_id);

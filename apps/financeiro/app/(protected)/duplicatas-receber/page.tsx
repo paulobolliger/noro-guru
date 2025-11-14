@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { DuplicatasReceberClient } from './duplicatas-receber-client';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // Metadata
 export const metadata = {
@@ -7,12 +8,10 @@ export const metadata = {
   description: 'Gestão de duplicatas a receber',
 };
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
-
 async function getDuplicatasReceber() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/duplicatas-receber?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/duplicatas-receber`, {
       cache: 'no-store',
     });
     
@@ -37,7 +36,7 @@ async function getClientes() {
 async function getCategorias() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/categorias?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/categorias`, {
       cache: 'no-store',
     });
     
@@ -56,7 +55,7 @@ async function getCategorias() {
 async function getContasBancarias() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/bancos?tenant_id=${TENANT_ID}`, {
+    const response = await fetch(`${baseUrl}/api/bancos`, {
       cache: 'no-store',
     });
     
@@ -73,6 +72,7 @@ async function getContasBancarias() {
 }
 
 export default async function DuplicatasReceberPage() {
+  const tenantId = await getCurrentTenantId();
   const [duplicatas, clientes, categorias, contas] = await Promise.all([
     getDuplicatasReceber(),
     getClientes(),
@@ -88,7 +88,7 @@ export default async function DuplicatasReceberPage() {
           clientes={clientes}
           categorias={categorias}
           contas={contas}
-          tenantId={TENANT_ID}
+          tenantId={tenantId}
         />
       </Suspense>
     </div>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 // GET - Buscar duplicata específica com detalhes
 export async function GET(
@@ -10,13 +10,14 @@ export async function GET(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     
     const { data, error } = await supabase
       .from('fin_duplicatas_pagar')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (error) {
@@ -78,6 +79,7 @@ export async function PUT(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     const body = await request.json();
     
@@ -99,7 +101,7 @@ export async function PUT(
         updated_by: body.updated_by || null,
       })
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
     
@@ -128,6 +130,7 @@ export async function DELETE(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     
     // Buscar duplicata para reverter adiantamento/créditos se necessário
@@ -135,7 +138,7 @@ export async function DELETE(
       .from('fin_duplicatas_pagar')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (duplicata) {
@@ -202,7 +205,7 @@ export async function DELETE(
       .from('fin_duplicatas_pagar')
       .delete()
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID);
+      .eq('tenant_id', tenantId);
     
     if (error) {
       console.error('Erro ao deletar duplicata:', error);

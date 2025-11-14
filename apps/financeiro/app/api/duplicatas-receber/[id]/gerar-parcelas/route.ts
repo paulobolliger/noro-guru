@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 // POST - Gerar parcelas automaticamente
 export async function POST(
@@ -10,6 +10,7 @@ export async function POST(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     const body = await request.json();
     
@@ -26,7 +27,7 @@ export async function POST(
       .from('fin_duplicatas_receber')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (fetchError || !duplicata) {
@@ -73,7 +74,7 @@ export async function POST(
         : valorParcela;
       
       parcelas.push({
-        tenant_id: TENANT_ID,
+        tenant_id: tenantId,
         duplicata_receber_id: id,
         duplicata_pagar_id: null,
         numero_parcela: i + 1,

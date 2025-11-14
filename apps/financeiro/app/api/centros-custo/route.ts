@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 import { NextResponse } from 'next/server';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function GET(request: Request) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { searchParams } = new URL(request.url);
     
     const status = searchParams.get('status');
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from('fin_centros_custo')
       .select('*')
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false });
 
     if (status) query = query.eq('status', status);
@@ -40,13 +41,14 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const body = await request.json();
 
     console.log('📥 Criando centro de custo:', body);
 
     const dados = {
       ...body,
-      tenant_id: TENANT_ID,
+      tenant_id: tenantId,
     };
 
     const { data, error } = await supabase

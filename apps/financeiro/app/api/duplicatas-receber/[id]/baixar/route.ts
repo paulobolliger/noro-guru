@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 // POST - Baixar recebimento (registrar pagamento)
 export async function POST(
@@ -10,6 +10,7 @@ export async function POST(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     const body = await request.json();
     
@@ -26,7 +27,7 @@ export async function POST(
       .from('fin_duplicatas_receber')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (fetchError || !duplicata) {
@@ -61,7 +62,7 @@ export async function POST(
       .from('fin_duplicatas_receber')
       .update(updateData)
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
     
@@ -89,7 +90,7 @@ export async function POST(
     // Criar receita correspondente (opcional, se body.criar_receita === true)
     if (body.criar_receita) {
       const receitaData = {
-        tenant_id: TENANT_ID,
+        tenant_id: tenantId,
         marca: duplicata.marca,
         descricao: `Recebimento ${duplicata.numero_duplicata}${body.parcela_numero ? ` - Parcela ${body.parcela_numero}` : ''}`,
         categoria_id: body.categoria_id || null,

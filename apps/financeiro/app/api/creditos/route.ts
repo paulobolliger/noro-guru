@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 // GET - Listar créditos com filtros
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { searchParams } = new URL(request.url);
     
     // Filtros
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('fin_creditos')
       .select('*')
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .order('data_credito', { ascending: false });
     
     if (status) {
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const body = await request.json();
     
     // Validações
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
     
     const creditoData = {
-      tenant_id: TENANT_ID,
+      tenant_id: tenantId,
       fornecedor_id: body.fornecedor_id,
       valor_total: body.valor_total,
       valor_utilizado: 0,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 /**
  * POST - Registrar pagamento de duplicata
@@ -21,6 +21,7 @@ export async function POST(
 ) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { id } = params;
     const body = await request.json();
     
@@ -54,7 +55,7 @@ export async function POST(
       .from('fin_duplicatas_pagar')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
     
     if (duplicataError || !duplicata) {
@@ -131,7 +132,7 @@ export async function POST(
         observacoes: observacoes || duplicata.observacoes,
       })
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .select()
       .single();
     
@@ -149,7 +150,7 @@ export async function POST(
       const { data: despesaData, error: despesaError } = await supabase
         .from('fin_despesas')
         .insert({
-          tenant_id: TENANT_ID,
+          tenant_id: tenantId,
           tipo: 'Fornecedor',
           descricao: `Pagamento - ${duplicata.numero_documento || duplicata.descricao || 'Duplicata'}`,
           valor: valor_pago,

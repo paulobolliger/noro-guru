@@ -1,16 +1,16 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { CentroCustoDetalhesClient } from './centro-custo-detalhes-client';
-
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
+import { getCurrentTenantId } from '@/lib/tenant';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerSupabaseClient();
+  const tenantId = await getCurrentTenantId();
   const { data: centroCusto } = await supabase
     .from('fin_centros_custo')
     .select('nome')
     .eq('id', params.id)
-    .eq('tenant_id', TENANT_ID)
+    .eq('tenant_id', tenantId)
     .single();
 
   return {
@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 export default async function CentroCustoDetalhesPage({ params }: { params: { id: string } }) {
   const supabase = createServerSupabaseClient();
+  const tenantId = await getCurrentTenantId();
   const { id } = params;
 
   // Buscar centro de custo
@@ -28,7 +29,7 @@ export default async function CentroCustoDetalhesPage({ params }: { params: { id
     .from('fin_centros_custo')
     .select('*')
     .eq('id', id)
-    .eq('tenant_id', TENANT_ID)
+    .eq('tenant_id', tenantId)
     .single();
 
   if (error || !centroCusto) {
@@ -50,7 +51,7 @@ export default async function CentroCustoDetalhesPage({ params }: { params: { id
       receita:fin_receitas(*)
     `)
     .eq('centro_custo_id', id)
-    .eq('tenant_id', TENANT_ID)
+    .eq('tenant_id', tenantId)
     .not('receita_id', 'is', null)
     .order('created_at', { ascending: false });
 
@@ -63,7 +64,7 @@ export default async function CentroCustoDetalhesPage({ params }: { params: { id
       categoria:fin_categorias(nome)
     `)
     .eq('centro_custo_id', id)
-    .eq('tenant_id', TENANT_ID)
+    .eq('tenant_id', tenantId)
     .not('despesa_id', 'is', null)
     .order('created_at', { ascending: false });
 
@@ -74,7 +75,7 @@ export default async function CentroCustoDetalhesPage({ params }: { params: { id
         rentabilidade={rentabilidade}
         alocacoesReceitas={alocacoesReceitas || []}
         alocacoesDespesas={alocacoesDespesas || []}
-        tenantId={TENANT_ID}
+        tenantId={tenantId}
       />
     </div>
   );

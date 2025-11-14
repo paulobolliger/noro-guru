@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 import type { FinDuplicataPagar, FinDuplicataPagarInsert } from '@/types/financeiro';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2';
 
 // GET - Listar duplicatas a pagar com filtros
 export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const searchParams = request.nextUrl.searchParams;
     
     // Filtros
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('fin_duplicatas_pagar')
       .select('*')
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .order('data_vencimento', { ascending: true });
     
     // Aplicar filtros
@@ -92,6 +93,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const body = await request.json();
     
     // Validações básicas
@@ -104,7 +106,7 @@ export async function POST(request: NextRequest) {
     
     // Preparar dados para inserção
     const duplicataData: FinDuplicataPagarInsert = {
-      tenant_id: TENANT_ID,
+      tenant_id: tenantId,
       marca: body.marca || 'noro',
       
       // Identificação
@@ -198,7 +200,7 @@ export async function POST(request: NextRequest) {
         await supabase
           .from('fin_utilizacoes')
           .insert({
-            tenant_id: TENANT_ID,
+            tenant_id: tenantId,
             adiantamento_id: body.adiantamento_id,
             credito_id: null,
             duplicata_pagar_id: data.id,
@@ -213,7 +215,7 @@ export async function POST(request: NextRequest) {
     // Se tiver parcelas, criar parcelas
     if (body.parcelas && Array.isArray(body.parcelas) && body.parcelas.length > 0) {
       const parcelasData = body.parcelas.map((parcela: any, index: number) => ({
-        tenant_id: TENANT_ID,
+        tenant_id: tenantId,
         duplicata_receber_id: null,
         duplicata_pagar_id: data.id,
         numero_parcela: index + 1,

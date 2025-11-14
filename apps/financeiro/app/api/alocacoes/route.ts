@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentTenantId } from '@/lib/tenant';
 import { NextResponse } from 'next/server';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function GET(request: Request) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const { searchParams } = new URL(request.url);
     
     const centro_custo_id = searchParams.get('centro_custo_id');
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
         receita:fin_receitas(id, descricao, valor_brl),
         despesa:fin_despesas(id, descricao, valor_brl)
       `)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false });
 
     if (centro_custo_id) query = query.eq('centro_custo_id', centro_custo_id);
@@ -45,6 +46,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const supabase = createClient();
+    const tenantId = await getCurrentTenantId();
     const body = await request.json();
 
     console.log('📥 Criando alocação:', body);
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
 
     const dados = {
       ...body,
-      tenant_id: TENANT_ID,
+      tenant_id: tenantId,
     };
 
     const { data, error } = await supabase

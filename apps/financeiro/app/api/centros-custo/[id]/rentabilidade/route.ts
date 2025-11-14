@@ -2,7 +2,6 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { FinRelatorioRentabilidade } from '@/types/financeiro';
 
-const TENANT_ID = 'd43ef2d2-cbf1-4133-b805-77c3f6444bc2'; // NORO
 
 export async function GET(
   request: Request,
@@ -19,7 +18,7 @@ export async function GET(
       .from('fin_centros_custo')
       .select('*')
       .eq('id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .single();
 
     if (errorCC || !centroCusto) {
@@ -34,7 +33,7 @@ export async function GET(
         receita:fin_receitas(id, descricao, valor_brl, data_competencia, status)
       `)
       .eq('centro_custo_id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .not('receita_id', 'is', null);
 
     // 3. Buscar alocações com despesas
@@ -46,7 +45,7 @@ export async function GET(
         categoria:fin_despesas(categoria_id(nome))
       `)
       .eq('centro_custo_id', id)
-      .eq('tenant_id', TENANT_ID)
+      .eq('tenant_id', tenantId)
       .not('despesa_id', 'is', null);
 
     // 4. Calcular totais
