@@ -1,20 +1,91 @@
 ﻿'use client';
 
-import { useState, useTransition, useMemo } from 'react';
+import { useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  User, Building2, Mail, Phone, MapPin, DollarSign, FileText, 
-  Loader2, AlertCircle, CheckCircle2, Calendar, Globe, Briefcase, CreditCard
+import { z } from 'zod';
+import {
+  User,
+  Building2,
+  Mail,
+  Phone,
+  Loader2,
+  Calendar,
+  Globe,
+  Briefcase,
+  CreditCard,
+  FileText,
 } from 'lucide-react';
 import { createClienteAction } from '@/app/clientes/actions';
-import type { ClienteStatus, ClienteTipo, ClienteSegmento, ClienteNivel } from '@/types/clientes';
-// NOVO: Importa as listas de dados
-import { PROFISSOES, PAISES_E_NACIONALIDADES } from '@/lib/client-data'; 
+import type {
+  ClienteStatus,
+  ClienteTipo,
+  ClienteSegmento,
+  ClienteNivel,
+} from '@/types/clientes';
+import { PROFISSOES, PAISES_E_NACIONALIDADES } from '@/lib/client-data';
+
+// Novos componentes do Sprint 2
+import { FormField, FormSection, FormGrid, FormActions } from '@/components/ui/form-field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { SimpleSelect } from '@/components/ui/select';
+import { useFormValidation } from '@/lib/hooks/useFormValidation';
+import { useErrorHandler } from '@/lib/hooks/useErrorHandler';
 
 // --- Constantes para as opções de Select ---
-const STATUS_OPTIONS: ClienteStatus[] = ['ativo', 'vip', 'inativo', 'blacklist'];
-const NIVEL_OPTIONS: ClienteNivel[] = ['bronze', 'prata', 'ouro', 'platina', 'diamante'];
-const SEGMENTO_OPTIONS: ClienteSegmento[] = ['luxo', 'familia', 'aventura', 'corporativo', 'mochileiro', 'romantico'];
+const STATUS_OPTIONS: ClienteStatus[] = [
+  'ativo',
+  'vip',
+  'inativo',
+  'blacklist',
+];
+const NIVEL_OPTIONS: ClienteNivel[] = [
+  'bronze',
+  'prata',
+  'ouro',
+  'platina',
+  'diamante',
+];
+const SEGMENTO_OPTIONS: ClienteSegmento[] = [
+  'luxo',
+  'familia',
+  'aventura',
+  'corporativo',
+  'mochileiro',
+  'romantico',
+];
+
+// Schema de validação com Zod
+const clienteSchema = z.object({
+  // Básico
+  nome: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
+  email: z.string().email('E-mail inválido'),
+  telefone: z.string().optional(),
+  whatsapp: z.string().optional(),
+  tipo: z.enum(['pessoa_fisica', 'pessoa_juridica']),
+  observacoes: z.string().optional(),
+
+  // Classificação
+  status: z.enum(['ativo', 'vip', 'inativo', 'blacklist']),
+  nivel: z.enum(['bronze', 'prata', 'ouro', 'platina', 'diamante']),
+  segmento: z.string().optional(),
+  idioma_preferido: z.string(),
+  moeda_preferida: z.string(),
+
+  // Pessoa Física
+  cpf: z.string().optional(),
+  passaporte: z.string().optional(),
+  data_nascimento: z.string().optional(),
+  nacionalidade: z.string().optional(),
+  profissao: z.string().optional(),
+
+  // Pessoa Jurídica
+  cnpj: z.string().optional(),
+  razao_social: z.string().optional(),
+  nome_fantasia: z.string().optional(),
+  responsavel_nome: z.string().optional(),
+  responsavel_cargo: z.string().optional(),
+});
 
 // Define o estado inicial unificado
 const initialFormData = {
@@ -23,13 +94,13 @@ const initialFormData = {
   email: '',
   telefone: '',
   whatsapp: '',
-  tipo: 'pessoa_fisica' as ClienteTipo, // Default
+  tipo: 'pessoa_fisica' as ClienteTipo,
   observacoes: '',
-  
+
   // Classificação
   status: 'ativo' as ClienteStatus,
   nivel: 'bronze' as ClienteNivel,
-  segmento: '' as ClienteSegmento | '', // Vazio se não selecionado
+  segmento: '',
   idioma_preferido: 'pt',
   moeda_preferida: 'EUR',
 
@@ -37,9 +108,9 @@ const initialFormData = {
   cpf: '',
   passaporte: '',
   data_nascimento: '',
-  nacionalidade: '', // Será o valor da nacionalidade
-  profissao: '', // Será o valor da profissão
-  
+  nacionalidade: '',
+  profissao: '',
+
   // Pessoa Jurídica
   cnpj: '',
   razao_social: '',
@@ -50,70 +121,77 @@ const initialFormData = {
 
 export default function NovoClienteForm() {
   const router = useRouter();
-  const [formData, setFormData] = useState(initialFormData);
   const [isPending, startTransition] = useTransition();
-  const [status, setStatus] = useState<{ success: boolean; message: string; data?: any } | null>(null);
+  const { handleSuccess, handleError } = useErrorHandler();
 
-  const isPessoaFisica = useMemo(() => formData.tipo === 'pessoa_fisica', [formData.tipo]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Se o tipo for alterado, reinicia os campos específicos do outro tipo para evitar dados misturados.
-    if (name === 'tipo') {
-        setFormData(prev => ({
-            ...prev,
-            [name]: value as ClienteTipo,
-            // Resetar campos não-aplicáveis (opcional, mas boa prática)
-            cpf: '', passaporte: '', data_nascimento: '', nacionalidade: '', profissao: '',
-            cnpj: '', razao_social: '', nome_fantasia: '', responsavel_nome: '', responsavel_cargo: '',
-        }));
-    }
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setStatus(null);
-
-    // Validação básica
-    if (!formData.nome || !formData.email) {
-        setStatus({ success: false, message: 'Nome e E-mail são obrigatórios.' });
-        return;
-    }
-    
-    // Converter estado para FormData
-    const formDataToSend = new FormData();
-    Object.keys(formData).forEach(key => {
-        // Envia apenas o que não for vazio para manter o payload limpo
-        const value = formData[key as keyof typeof formData];
+  // Usa o hook de validação
+  const {
+    values: formData,
+    errors,
+    handleChange,
+    handleSubmit,
+    setFormValues,
+  } = useFormValidation({
+    schema: clienteSchema,
+    initialValues: initialFormData,
+    mode: 'onBlur',
+    onSubmit: async (data) => {
+      // Converter estado para FormData
+      const formDataToSend = new FormData();
+      Object.keys(data).forEach((key) => {
+        const value = data[key as keyof typeof data];
         if (value) {
-            formDataToSend.append(key, value);
+          formDataToSend.append(key, String(value));
         }
-    });
+      });
 
-    startTransition(async () => {
-      const result = await createClienteAction(formDataToSend);
+      startTransition(async () => {
+        const result = await createClienteAction(formDataToSend);
 
-      if (result.success) {
-        setStatus({ success: true, message: `Cliente ${result.data?.nome} criado com sucesso!`, data: result.data });
-        
-        // Redireciona para a página de detalhes do novo cliente
-        setTimeout(() => {
-          if (result.data?.id) {
-            router.push(`/admin/clientes/${result.data.id}`);
-          } else {
-            router.push('/clientes'); // Fallback para a lista
-          }
-        }, 1500);
+        if (result.success) {
+          handleSuccess(
+            `Cliente ${result.data?.nome} criado com sucesso!`,
+            { duration: 3000 }
+          );
 
-      } else {
-        setStatus(result);
-        setTimeout(() => setStatus(null), 5000);
-      }
+          // Redireciona para a página de detalhes do novo cliente
+          setTimeout(() => {
+            if (result.data?.id) {
+              router.push(`/admin/clientes/${result.data.id}`);
+            } else {
+              router.push('/clientes');
+            }
+          }, 1500);
+        } else {
+          handleError(new Error(result.message || 'Erro ao criar cliente'), {
+            context: 'Criar Cliente',
+            userMessage: result.message,
+          });
+        }
+      });
+    },
+  });
+
+  const isPessoaFisica = useMemo(
+    () => formData.tipo === 'pessoa_fisica',
+    [formData.tipo]
+  );
+
+  // Handler especial para mudança de tipo (limpa campos)
+  const handleTipoChange = (value: string) => {
+    setFormValues({
+      tipo: value as ClienteTipo,
+      // Resetar campos não-aplicáveis
+      cpf: '',
+      passaporte: '',
+      data_nascimento: '',
+      nacionalidade: '',
+      profissao: '',
+      cnpj: '',
+      razao_social: '',
+      nome_fantasia: '',
+      responsavel_nome: '',
+      responsavel_cargo: '',
     });
   };
 
@@ -121,278 +199,418 @@ export default function NovoClienteForm() {
     <div className="bg-white rounded-xl shadow-lg border border-gray-100">
       <form onSubmit={handleSubmit}>
         <div className="p-8 space-y-8">
-          
           {/* Seletor de Tipo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Cliente *
-            </label>
+          <FormSection title="Tipo de Cliente">
             <div className="flex space-x-4">
-              <label className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
-                isPessoaFisica ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'
-              }`}>
+              <label
+                className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
+                  isPessoaFisica
+                    ? 'border-primary-500 bg-primary-50'
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}
+              >
                 <input
                   type="radio"
                   name="tipo"
                   value="pessoa_fisica"
                   checked={isPessoaFisica}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                  onChange={(e) => handleTipoChange(e.target.value)}
+                  className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                 />
-                <User size={18} /> Pessoa Física
+                <User size={18} aria-hidden="true" /> Pessoa Física
               </label>
-              <label className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
-                !isPessoaFisica ? 'border-purple-500 bg-purple-50' : 'border-gray-300 hover:bg-gray-50'
-              }`}>
+              <label
+                className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer flex-1 transition-all ${
+                  !isPessoaFisica
+                    ? 'border-primary-500 bg-primary-50'
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}
+              >
                 <input
                   type="radio"
                   name="tipo"
                   value="pessoa_juridica"
                   checked={!isPessoaFisica}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                  onChange={(e) => handleTipoChange(e.target.value)}
+                  className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                 />
-                <Building2 size={18} /> Pessoa Jurídica
+                <Building2 size={18} aria-hidden="true" /> Pessoa Jurídica
               </label>
             </div>
-          </div>
+          </FormSection>
 
           {/* DADOS BÁSICOS */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <User size={20} /> Informações de Contato
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
+          <FormSection
+            title="Informações de Contato"
+            description="Dados principais para contato com o cliente"
+          >
+            <FormGrid columns={2}>
               {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {isPessoaFisica ? 'Nome Completo' : 'Nome Fantasia'} *
-                </label>
-                <input
-                  type="text"
-                  name="nome" // Usamos 'nome' como campo principal para exibição em listas
-                  value={formData.nome}
-                  onChange={handleChange}
-                  placeholder={isPessoaFisica ? 'Ex: João da Silva' : 'Ex: Agência XYZ'}
+                <FormField
+                  label={isPessoaFisica ? 'Nome Completo' : 'Nome Fantasia'}
+                  name="nome"
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                />
+                  error={errors.nome}
+                  help="Nome usado para identificação do cliente"
+                >
+                  <Input
+                    type="text"
+                    name="nome"
+                    value={formData.nome}
+                    onChange={(e) => handleChange('nome', e.target.value)}
+                    placeholder={
+                      isPessoaFisica ? 'Ex: João da Silva' : 'Ex: Agência XYZ'
+                    }
+                    error={!!errors.nome}
+                    leftIcon={<User size={20} />}
+                  />
+                </FormField>
               </div>
-              
+
               {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                <input
+              <FormField
+                label="E-mail"
+                name="email"
+                required
+                error={errors.email}
+              >
+                <Input
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange('email', e.target.value)}
                   placeholder="exemplo@email.com"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  error={!!errors.email}
+                  leftIcon={<Mail size={20} />}
                 />
-              </div>
+              </FormField>
 
               {/* Telefone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
-                <input
+              <FormField label="Telefone" name="telefone" error={errors.telefone}>
+                <Input
                   type="tel"
                   name="telefone"
                   value={formData.telefone}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange('telefone', e.target.value)}
                   placeholder="+55 (11) 99999-9999"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  leftIcon={<Phone size={20} />}
                 />
-              </div>
-              
+              </FormField>
+
               {/* WhatsApp */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
-                <input
+              <FormField label="WhatsApp" name="whatsapp" error={errors.whatsapp}>
+                <Input
                   type="tel"
                   name="whatsapp"
                   value={formData.whatsapp}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange('whatsapp', e.target.value)}
                   placeholder="+55 (11) 99999-9999"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  leftIcon={<Phone size={20} />}
                 />
-              </div>
-            </div>
-          </section>
+              </FormField>
+            </FormGrid>
+          </FormSection>
 
           {/* DADOS ESPECÍFICOS (PF/PJ) */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText size={20} /> Dados de Documentação
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+          <FormSection
+            title="Dados de Documentação"
+            description={
+              isPessoaFisica
+                ? 'Documentos e informações pessoais'
+                : 'Documentos e informações da empresa'
+            }
+          >
+            <FormGrid columns={2}>
               {isPessoaFisica ? (
                 <>
                   {/* PF: CPF */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CPF</label>
-                    <input type="text" name="cpf" value={formData.cpf} onChange={handleChange} placeholder="000.000.000-00" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
+                  <FormField label="CPF" name="cpf" error={errors.cpf}>
+                    <Input
+                      type="text"
+                      name="cpf"
+                      value={formData.cpf}
+                      onChange={(e) => handleChange('cpf', e.target.value)}
+                      placeholder="000.000.000-00"
+                    />
+                  </FormField>
+
                   {/* PF: Passaporte */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Passaporte</label>
-                    <input type="text" name="passaporte" value={formData.passaporte} onChange={handleChange} placeholder="AB123456" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
+                  <FormField
+                    label="Passaporte"
+                    name="passaporte"
+                    error={errors.passaporte}
+                  >
+                    <Input
+                      type="text"
+                      name="passaporte"
+                      value={formData.passaporte}
+                      onChange={(e) =>
+                        handleChange('passaporte', e.target.value)
+                      }
+                      placeholder="AB123456"
+                    />
+                  </FormField>
+
                   {/* PF: Data de Nascimento */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Calendar size={14} /> Data de Nascimento</label>
-                    <input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
-                  
-                  {/* PF: Nacionalidade (NOVO SELECT) */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Globe size={14} /> Nacionalidade</label>
-                    <select name="nacionalidade" value={formData.nacionalidade} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                        <option value="">Selecione a Nacionalidade...</option>
-                        {PAISES_E_NACIONALIDADES.map(p => (
-                            <option key={p.sigla} value={p.gentilico}>
-                                {p.gentilico} ({p.nome_pais})
-                            </option>
-                        ))}
-                    </select>
-                  </div>
-                  
-                  {/* PF: Profissão (NOVO SELECT) */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"><Briefcase size={14} /> Profissão</label>
-                    <select name="profissao" value={formData.profissao} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                        <option value="">Selecione a Profissão...</option>
-                        {PROFISSOES.map(p => (
-                            <option key={p} value={p}>{p}</option>
-                        ))}
-                    </select>
-                  </div>
+                  <FormField
+                    label="Data de Nascimento"
+                    name="data_nascimento"
+                    error={errors.data_nascimento}
+                  >
+                    <Input
+                      type="date"
+                      name="data_nascimento"
+                      value={formData.data_nascimento}
+                      onChange={(e) =>
+                        handleChange('data_nascimento', e.target.value)
+                      }
+                      leftIcon={<Calendar size={20} />}
+                    />
+                  </FormField>
+
+                  {/* PF: Nacionalidade */}
+                  <FormField
+                    label="Nacionalidade"
+                    name="nacionalidade"
+                    error={errors.nacionalidade}
+                  >
+                    <SimpleSelect
+                      name="nacionalidade"
+                      value={formData.nacionalidade}
+                      onChange={(e) =>
+                        handleChange('nacionalidade', e.target.value)
+                      }
+                      placeholder="Selecione a nacionalidade..."
+                      options={PAISES_E_NACIONALIDADES.map((p) => ({
+                        value: p.gentilico,
+                        label: `${p.gentilico} (${p.nome_pais})`,
+                      }))}
+                    />
+                  </FormField>
+
+                  {/* PF: Profissão */}
+                  <FormField
+                    label="Profissão"
+                    name="profissao"
+                    error={errors.profissao}
+                  >
+                    <SimpleSelect
+                      name="profissao"
+                      value={formData.profissao}
+                      onChange={(e) =>
+                        handleChange('profissao', e.target.value)
+                      }
+                      placeholder="Selecione a profissão..."
+                      options={PROFISSOES.map((p) => ({
+                        value: p,
+                        label: p,
+                      }))}
+                    />
+                  </FormField>
                 </>
               ) : (
                 <>
                   {/* PJ: Razão Social */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Razão Social</label>
-                    <input type="text" name="razao_social" value={formData.razao_social} onChange={handleChange} placeholder="Ex: Nomade Guru Viagens e Turismo Ltda" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
+                    <FormField
+                      label="Razão Social"
+                      name="razao_social"
+                      error={errors.razao_social}
+                    >
+                      <Input
+                        type="text"
+                        name="razao_social"
+                        value={formData.razao_social}
+                        onChange={(e) =>
+                          handleChange('razao_social', e.target.value)
+                        }
+                        placeholder="Ex: Nomade Guru Viagens e Turismo Ltda"
+                        leftIcon={<Building2 size={20} />}
+                      />
+                    </FormField>
                   </div>
+
                   {/* PJ: CNPJ */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CNPJ</label>
-                    <input type="text" name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
+                  <FormField label="CNPJ" name="cnpj" error={errors.cnpj}>
+                    <Input
+                      type="text"
+                      name="cnpj"
+                      value={formData.cnpj}
+                      onChange={(e) => handleChange('cnpj', e.target.value)}
+                      placeholder="00.000.000/0000-00"
+                    />
+                  </FormField>
+
                   {/* PJ: Responsável */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nome do Responsável</label>
-                    <input type="text" name="responsavel_nome" value={formData.responsavel_nome} onChange={handleChange} placeholder="Ex: Maria Santos" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
+                  <FormField
+                    label="Nome do Responsável"
+                    name="responsavel_nome"
+                    error={errors.responsavel_nome}
+                  >
+                    <Input
+                      type="text"
+                      name="responsavel_nome"
+                      value={formData.responsavel_nome}
+                      onChange={(e) =>
+                        handleChange('responsavel_nome', e.target.value)
+                      }
+                      placeholder="Ex: Maria Santos"
+                      leftIcon={<User size={20} />}
+                    />
+                  </FormField>
+
                   {/* PJ: Cargo do Responsável */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Cargo do Responsável</label>
-                    <input type="text" name="responsavel_cargo" value={formData.responsavel_cargo} onChange={handleChange} placeholder="Ex: CEO" className="w-full px-4 py-3 border border-gray-300 rounded-lg" />
-                  </div>
+                  <FormField
+                    label="Cargo do Responsável"
+                    name="responsavel_cargo"
+                    error={errors.responsavel_cargo}
+                  >
+                    <Input
+                      type="text"
+                      name="responsavel_cargo"
+                      value={formData.responsavel_cargo}
+                      onChange={(e) =>
+                        handleChange('responsavel_cargo', e.target.value)
+                      }
+                      placeholder="Ex: CEO"
+                      leftIcon={<Briefcase size={20} />}
+                    />
+                  </FormField>
                 </>
               )}
-            </div>
-          </section>
+            </FormGrid>
+          </FormSection>
 
-          {/* CLASSIFICAÇÃO E PREFERÊNCIAS GERAIS */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <CreditCard size={20} /> Classificação e Preferências
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
+          {/* CLASSIFICAÇÃO E PREFERÊNCIAS */}
+          <FormSection
+            title="Classificação e Preferências"
+            description="Informações para segmentação e personalização do atendimento"
+          >
+            <FormGrid columns={3}>
               {/* Status */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                  {STATUS_OPTIONS.map(opt => (
-                    <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
-                  ))}
-                </select>
-              </div>
+              <FormField label="Status" name="status" error={errors.status}>
+                <SimpleSelect
+                  name="status"
+                  value={formData.status}
+                  onChange={(e) => handleChange('status', e.target.value)}
+                  options={STATUS_OPTIONS.map((opt) => ({
+                    value: opt,
+                    label: opt.charAt(0).toUpperCase() + opt.slice(1),
+                  }))}
+                />
+              </FormField>
 
               {/* Nível */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nível</label>
-                <select name="nivel" value={formData.nivel} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                  {NIVEL_OPTIONS.map(opt => (
-                    <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
-                  ))}
-                </select>
-              </div>
-              
-              {/* Segmento */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Segmento</label>
-                <select name="segmento" value={formData.segmento} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                    <option value="">(Não definido)</option>
-                    {SEGMENTO_OPTIONS.map(opt => (
-                        <option key={opt} value={opt}>{opt.charAt(0).toUpperCase() + opt.slice(1)}</option>
-                    ))}
-                </select>
-              </div>
-              
-              {/* Idioma Preferido */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Idioma</label>
-                <select name="idioma_preferido" value={formData.idioma_preferido} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                  <option value="pt">Português</option>
-                  <option value="en">Inglês</option>
-                  <option value="es">Espanhol</option>
-                </select>
-              </div>
+              <FormField label="Nível" name="nivel" error={errors.nivel}>
+                <SimpleSelect
+                  name="nivel"
+                  value={formData.nivel}
+                  onChange={(e) => handleChange('nivel', e.target.value)}
+                  options={NIVEL_OPTIONS.map((opt) => ({
+                    value: opt,
+                    label: opt.charAt(0).toUpperCase() + opt.slice(1),
+                  }))}
+                />
+              </FormField>
 
-              {/* Moeda Preferida */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Moeda</label>
-                <select name="moeda_preferida" value={formData.moeda_preferida} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg">
-                  <option value="EUR">Euro (€)</option>
-                  <option value="BRL">Real (R$)</option>
-                  <option value="USD">Dólar ($)</option>
-                </select>
-              </div>
-            </div>
-          </section>
+              {/* Segmento */}
+              <FormField
+                label="Segmento"
+                name="segmento"
+                error={errors.segmento}
+              >
+                <SimpleSelect
+                  name="segmento"
+                  value={formData.segmento}
+                  onChange={(e) => handleChange('segmento', e.target.value)}
+                  placeholder="(Não definido)"
+                  options={SEGMENTO_OPTIONS.map((opt) => ({
+                    value: opt,
+                    label: opt.charAt(0).toUpperCase() + opt.slice(1),
+                  }))}
+                />
+              </FormField>
+
+              {/* Idioma */}
+              <FormField
+                label="Idioma Preferido"
+                name="idioma_preferido"
+                error={errors.idioma_preferido}
+              >
+                <SimpleSelect
+                  name="idioma_preferido"
+                  value={formData.idioma_preferido}
+                  onChange={(e) =>
+                    handleChange('idioma_preferido', e.target.value)
+                  }
+                  options={[
+                    { value: 'pt', label: 'Português' },
+                    { value: 'en', label: 'Inglês' },
+                    { value: 'es', label: 'Espanhol' },
+                  ]}
+                  leftIcon={<Globe size={20} />}
+                />
+              </FormField>
+
+              {/* Moeda */}
+              <FormField
+                label="Moeda Preferida"
+                name="moeda_preferida"
+                error={errors.moeda_preferida}
+              >
+                <SimpleSelect
+                  name="moeda_preferida"
+                  value={formData.moeda_preferida}
+                  onChange={(e) =>
+                    handleChange('moeda_preferida', e.target.value)
+                  }
+                  options={[
+                    { value: 'EUR', label: 'Euro (€)' },
+                    { value: 'BRL', label: 'Real (R$)' },
+                    { value: 'USD', label: 'Dólar ($)' },
+                  ]}
+                />
+              </FormField>
+            </FormGrid>
+          </FormSection>
 
           {/* Observações */}
-          <section className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText size={20} /> Observações
-            </h3>
-            <textarea
+          <FormSection
+            title="Observações"
+            description="Notas internas sobre o cliente"
+          >
+            <FormField
+              label="Observações Internas"
               name="observacoes"
-              value={formData.observacoes}
-              onChange={handleChange}
-              rows={4}
-              placeholder="Notas internas sobre o cliente, histórico de leads, etc."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
-            />
-          </section>
+              error={errors.observacoes}
+              help="Histórico de leads, preferências, informações relevantes"
+            >
+              <Textarea
+                name="observacoes"
+                value={formData.observacoes}
+                onChange={(e) =>
+                  handleChange('observacoes', e.target.value)
+                }
+                rows={4}
+                placeholder="Notas internas sobre o cliente, histórico de leads, etc."
+                maxLength={1000}
+                showCharCount
+              />
+            </FormField>
+          </FormSection>
 
-          {/* Feedback e Ação */}
-          {status && (
-            <div className={`mt-6 flex items-center gap-2 p-4 rounded-lg ${
-              status.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}>
-              {status.success ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-              <p className="text-sm font-medium">{status.message}</p>
-            </div>
-          )}
-
-          <div className="pt-6 border-t border-gray-200">
+          {/* Botão de Submit */}
+          <FormActions align="right">
             <button
               type="submit"
               disabled={isPending || !formData.nome || !formData.email}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center justify-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors min-w-[200px]"
             >
               {isPending && <Loader2 className="animate-spin" size={20} />}
               {isPending ? 'Criando Cliente...' : 'Adicionar Cliente'}
             </button>
-          </div>
+          </FormActions>
         </div>
       </form>
     </div>
