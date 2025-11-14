@@ -2,6 +2,7 @@
 'use server';
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { getCurrentTenantId } from '@/lib/tenant';
 import { revalidatePath } from "next/cache";
 
 // Tipos para as configurações
@@ -28,10 +29,12 @@ export interface ConfiguracaoUsuario {
 export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabaseAdmin
       .from('noro_configuracoes')
       .select('*')
+      .eq('tenant_id', tenantId)
       .eq('tipo', 'sistema')
       .is('user_id', null);
 
@@ -44,7 +47,7 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
       idioma: 'pt',
       formato_data: 'DD/MM/YYYY',
       // VALORES PADRÃO PARA OS NOVOS CAMPOS
-      logo_url_admin: '', 
+      logo_url_admin: '',
       topbar_color: '#232452' // Cor secundária padrão
     };
 
@@ -74,9 +77,11 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
 export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    
+    const tenantId = await getCurrentTenantId();
+
     // Preparar os dados para inserção/atualização
     const configs = Object.entries(config).map(([chave, valor]) => ({
+      tenant_id: tenantId,
       tipo: 'sistema',
       chave,
       valor: valor || '', // Garante que não salvamos undefined
@@ -88,13 +93,14 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
       const { error } = await supabaseAdmin
         .from('noro_configuracoes')
         .upsert({
+          tenant_id: item.tenant_id,
           tipo: item.tipo,
           chave: item.chave,
           valor: item.valor,
           user_id: item.user_id,
           updated_at: new Date().toISOString()
         }, {
-          onConflict: 'tipo,chave,user_id',
+          onConflict: 'tenant_id,tipo,chave,user_id',
           ignoreDuplicates: false
         });
 
@@ -105,7 +111,7 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
     return { success: true, message: 'Configurações do sistema salvas com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao salvar configurações do sistema:', error);
-    return { success: false, message: `Erro: ${error.message}` };
+    return { success: false, message: 'Erro ao salvar configurações. Tente novamente.' };
   }
 }
 
@@ -114,10 +120,12 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
 export async function getConfiguracaoUsuario(userId: string): Promise<ConfiguracaoUsuario> {
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabaseAdmin
       .from('noro_configuracoes')
       .select('*')
+      .eq('tenant_id', tenantId)
       .eq('tipo', 'usuario')
       .eq('user_id', userId);
 
@@ -148,8 +156,10 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
 export async function saveConfiguracaoUsuario(userId: string, config: ConfiguracaoUsuario) {
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    
+    const tenantId = await getCurrentTenantId();
+
     const configs = Object.entries(config).map(([chave, valor]) => ({
+      tenant_id: tenantId,
       tipo: 'usuario',
       chave,
       valor,
@@ -160,13 +170,14 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
       const { error } = await supabaseAdmin
         .from('noro_configuracoes')
         .upsert({
+          tenant_id: item.tenant_id,
           tipo: item.tipo,
           chave: item.chave,
           valor: item.valor,
           user_id: item.user_id,
           updated_at: new Date().toISOString()
         }, {
-          onConflict: 'tipo,chave,user_id',
+          onConflict: 'tenant_id,tipo,chave,user_id',
           ignoreDuplicates: false
         });
 
@@ -177,6 +188,6 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
     return { success: true, message: 'Suas preferências foram salvas!' };
   } catch (error: any) {
     console.error('Erro ao salvar configurações do usuário:', error);
-    return { success: false, message: `Erro: ${error.message}` };
+    return { success: false, message: 'Erro ao salvar suas preferências. Tente novamente.' };
   }
 }

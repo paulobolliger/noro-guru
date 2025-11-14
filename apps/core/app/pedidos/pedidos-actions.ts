@@ -5,9 +5,10 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { Database } from '@/types/supabase';
 import { createStripeCharge } from './providers/stripe-provider';
-import { createCieloCharge } from './providers/cielo-provider'; 
-import { createBTGCharge } from './providers/btg-provider'; 
+import { createCieloCharge } from './providers/cielo-provider';
+import { createBTGCharge } from './providers/btg-provider';
 import { PedidoComRelacionamentos } from '@/types/admin';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // Definição da interface para o retorno padrão das Server Actions
 export type ServerActionReturn = {
@@ -21,29 +22,38 @@ export type ServerActionReturn = {
 // ================================================================
 
 async function recalculatePedidoTotal(pedidoId: string, supabase: ReturnType<typeof createServerSupabaseClient>): Promise<number | null> {
-    const { data: itens, error: fetchError } = await supabase
-        .from('pedido_itens')
-        .select('valor_total')
-        .eq('pedido_id', pedidoId);
+    try {
+        const tenantId = await getCurrentTenantId();
 
-    if (fetchError || !itens) {
-        console.error(`Erro ao buscar itens para recálculo do Pedido ${pedidoId}:`, fetchError);
+        const { data: itens, error: fetchError } = await supabase
+            .from('pedido_itens')
+            .select('valor_total')
+            .eq('pedido_id', pedidoId)
+            .eq('tenant_id', tenantId);
+
+        if (fetchError || !itens) {
+            console.error(`Erro ao buscar itens para recálculo do Pedido ${pedidoId}`);
+            return null;
+        }
+
+        const newTotal = itens.reduce((sum, item) => sum + (item.valor_total || 0), 0);
+
+        const { error: updateError } = await supabase
+            .from('pedidos')
+            .update({ valor_total: newTotal })
+            .eq('id', pedidoId)
+            .eq('tenant_id', tenantId);
+
+        if (updateError) {
+            console.error(`Erro ao atualizar valor total do Pedido ${pedidoId}`);
+            return null;
+        }
+
+        return newTotal;
+    } catch (error) {
+        console.error(`Erro na recalculatePedidoTotal para Pedido ${pedidoId}`);
         return null;
     }
-
-    const newTotal = itens.reduce((sum, item) => sum + (item.valor_total || 0), 0);
-
-    const { error: updateError } = await supabase
-        .from('pedidos')
-        .update({ valor_total: newTotal })
-        .eq('id', pedidoId);
-
-    if (updateError) {
-        console.error(`Erro ao atualizar valor total do Pedido ${pedidoId}:`, updateError);
-        return null;
-    }
-
-    return newTotal;
 }
 
 
@@ -54,6 +64,7 @@ async function recalculatePedidoTotal(pedidoId: string, supabase: ReturnType<typ
 export async function convertToPedido(orcamentoId: string): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
+        const tenantId = await getCurrentTenantId();
         console.log('🔄 Iniciando conversão de orçamento para pedido:', orcamentoId);
 
         // 1. Buscar orçamento com dados do lead
@@ -61,10 +72,11 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
             .from('noro_orcamentos')
             .select('*, noro_leads(*)')
             .eq('id', orcamentoId)
+            .eq('tenant_id', tenantId)
             .single();
 
         if (orcamentoError || !orcamento) {
-            throw new Error('Orçamento não encontrado: ' + (orcamentoError?.message || ''));
+            throw new Error('Orçamento não encontrado');
         }
 
         console.log('📋 Orçamento encontrado:', {
@@ -95,6 +107,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
                 .from('noro_clientes')
                 .select('id')
                 .eq('email', lead.email)
+                .eq('tenant_id', tenantId)
                 .single();
 
             if (clienteExistente) {
@@ -106,6 +119,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
                 const { data: novoCliente, error: clienteError } = await supabase
                     .from('noro_clientes')
                     .insert({
+                        tenant_id: tenantId,
                         nome: lead.nome,
                         email: lead.email,
                         telefone: lead.telefone,
@@ -120,7 +134,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
                     .single();
 
                 if (clienteError || !novoCliente) {
-                    throw new Error('Erro ao criar cliente: ' + (clienteError?.message || ''));
+                    throw new Error('Erro ao criar cliente');
                 }
 
                 clienteId = novoCliente.id;
@@ -130,7 +144,8 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
                 await supabase
                     .from('noro_leads')
                     .update({ cliente_id: clienteId, status: 'ganho' })
-                    .eq('id', lead.id);
+                    .eq('id', lead.id)
+                    .eq('tenant_id', tenantId);
             }
         }
 
@@ -141,7 +156,8 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
         // 4. Gerar número do pedido
         const { count } = await supabase
             .from('noro_pedidos')
-            .select('*', { count: 'exact', head: true });
+            .select('*', { count: 'exact', head: true })
+            .eq('tenant_id', tenantId);
 
         const numeroPedido = `PED-${new Date().getFullYear()}-${String((count || 0) + 1).padStart(4, '0')}`;
 
@@ -153,6 +169,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
         const dataFim = orcamento.data_viagem_fim || new Date(Date.now() + 37 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
         const pedidoData: any = {
+            tenant_id: tenantId,
             numero_pedido: numeroPedido,
             orcamento_id: orcamento.id,
             cliente_id: clienteId,
@@ -182,7 +199,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
             .single();
 
         if (pedidoError || !novoPedido) {
-            throw new Error('Erro ao criar pedido: ' + (pedidoError?.message || ''));
+            throw new Error('Erro ao criar pedido');
         }
 
         console.log('✅ Pedido criado:', novoPedido.id);
@@ -195,7 +212,8 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
                 cliente_id: clienteId,
                 updated_at: new Date().toISOString()
             })
-            .eq('id', orcamentoId);
+            .eq('id', orcamentoId)
+            .eq('tenant_id', tenantId);
 
         console.log('✅ Orçamento atualizado para status aprovado');
 
@@ -214,8 +232,8 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
             data: { pedidoId: novoPedido.id }
         };
     } catch (error: any) {
-        console.error('❌ Erro na conversão:', error);
-        return { success: false, message: error.message || 'Ocorreu um erro inesperado.' };
+        console.error('❌ Erro na conversão', error);
+        return { success: false, message: error.message || 'Ocorreu um erro ao processar a conversão do orçamento' };
     }
 }
 
@@ -228,13 +246,14 @@ export async function updatePedido(pedidoId: string, payload: PedidoUpdatePayloa
     const supabase = createServerSupabaseClient();
     if (!pedidoId) return { success: false, message: 'ID do Pedido é obrigatório.' };
     try {
-        await supabase.from('pedidos').update(payload).eq('id', pedidoId).throwOnError();
+        const tenantId = await getCurrentTenantId();
+        await supabase.from('pedidos').update(payload).eq('id', pedidoId).eq('tenant_id', tenantId).throwOnError();
         revalidatePath('/admin/pedidos');
         revalidatePath(`/admin/pedidos/${pedidoId}`);
         revalidatePath('/admin/pagamentos');
         return { success: true, message: 'Pedido atualizado com sucesso!' };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao atualizar pedido' };
     }
 }
 
@@ -242,22 +261,24 @@ interface PedidoItemPayload { pedido_id: string; servico_nome: string; quantidad
 export async function addPedidoItem(payload: PedidoItemPayload): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
+        const tenantId = await getCurrentTenantId();
         const valor_total = payload.quantidade * payload.valor_unitario;
-        const { data } = await supabase.from('pedido_itens').insert({ ...payload, valor_total }).select('id').single().throwOnError();
+        const { data } = await supabase.from('pedido_itens').insert({ ...payload, tenant_id: tenantId, valor_total }).select('id').single().throwOnError();
         await recalculatePedidoTotal(payload.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${payload.pedido_id}`);
         return { success: true, message: 'Item adicionado com sucesso!', data };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao adicionar item' };
     }
 }
 
 export async function updatePedidoItem(itemId: string, payload: Partial<PedidoItemPayload>): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
-        const { data: currentItem } = await supabase.from('pedido_itens').select('*').eq('id', itemId).single();
-        if (!currentItem) throw new Error('Item não encontrado.');
-        
+        const tenantId = await getCurrentTenantId();
+        const { data: currentItem } = await supabase.from('pedido_itens').select('*').eq('id', itemId).eq('tenant_id', tenantId).single();
+        if (!currentItem) throw new Error('Item não encontrado');
+
         const newQty = payload.quantidade ?? currentItem.quantidade;
         const newValorUnit = payload.valor_unitario ?? currentItem.valor_unitario;
 
@@ -266,47 +287,49 @@ export async function updatePedidoItem(itemId: string, payload: Partial<PedidoIt
             valor_total: (newQty || 0) * (newValorUnit || 0)
         }
 
-        const { data: itemData } = await supabase.from('pedido_itens').update(updates).eq('id', itemId).select('pedido_id').single().throwOnError();
+        const { data: itemData } = await supabase.from('pedido_itens').update(updates).eq('id', itemId).eq('tenant_id', tenantId).select('pedido_id').single().throwOnError();
         if(!itemData) throw new Error('Item não encontrado após atualização');
         await recalculatePedidoTotal(itemData.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${itemData.pedido_id}`);
         return { success: true, message: 'Item atualizado com sucesso!' };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao atualizar item' };
     }
 }
 
 export async function deletePedidoItem(itemId: string): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
-        const { data: item } = await supabase.from('pedido_itens').select('pedido_id').eq('id', itemId).single().throwOnError();
+        const tenantId = await getCurrentTenantId();
+        const { data: item } = await supabase.from('pedido_itens').select('pedido_id').eq('id', itemId).eq('tenant_id', tenantId).single().throwOnError();
         if(!item) throw new Error('Item não encontrado');
-        await supabase.from('pedido_itens').delete().eq('id', itemId).throwOnError();
+        await supabase.from('pedido_itens').delete().eq('id', itemId).eq('tenant_id', tenantId).throwOnError();
         await recalculatePedidoTotal(item.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${item.pedido_id}`);
         return { success: true, message: 'Item excluído com sucesso!' };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao excluir item' };
     }
 }
 
 // ================================================================
 // FUNÇÕES DE PAGAMENTO E COBRANÇA
 // ================================================================
-export type PaymentProvider = 'CIELO' | 'STRIPE' | 'BOLETO' | 'BTG'; 
+export type PaymentProvider = 'CIELO' | 'STRIPE' | 'BOLETO' | 'BTG';
 interface EmitirCobrancaPayload { pedido_id: string; provider: PaymentProvider; data_vencimento: string; cartaoToken?: string; parcelas?: number; }
 export async function emitirCobranca(payload: EmitirCobrancaPayload): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
-    const { pedido_id, provider, data_vencimento, cartaoToken, parcelas = 1 } = payload; 
-    
+    const { pedido_id, provider, data_vencimento, cartaoToken, parcelas = 1 } = payload;
+
     try {
-        const { data: pedido } = await supabase.from('pedidos').select('*, pedido_itens(*), clientes:noro_clientes(*)').eq('id', pedido_id).single().throwOnError();
-        if (!pedido || !pedido.valor_total) throw new Error('Pedido não encontrado ou sem valor.');
-        
+        const tenantId = await getCurrentTenantId();
+        const { data: pedido } = await supabase.from('pedidos').select('*, pedido_itens(*), clientes:noro_clientes(*)').eq('id', pedido_id).eq('tenant_id', tenantId).single().throwOnError();
+        if (!pedido || !pedido.valor_total) throw new Error('Pedido não encontrado ou sem valor');
+
         const pedidoComRelacionamentos = pedido as PedidoComRelacionamentos;
 
-        const { data: novaCobranca } = await supabase.from('cobrancas').insert({ pedido_id: pedido_id, cliente_id: pedidoComRelacionamentos.cliente_id, valor: pedidoComRelacionamentos.valor_total, provider: provider, status: 'PENDENTE', data_vencimento: data_vencimento, parcelas: parcelas, }).select('id').single().throwOnError();
-        if (!novaCobranca) throw new Error('Falha ao criar registro de cobrança.');
+        const { data: novaCobranca } = await supabase.from('cobrancas').insert({ tenant_id: tenantId, pedido_id: pedido_id, cliente_id: pedidoComRelacionamentos.cliente_id, valor: pedidoComRelacionamentos.valor_total, provider: provider, status: 'PENDENTE', data_vencimento: data_vencimento, parcelas: parcelas, }).select('id').single().throwOnError();
+        if (!novaCobranca) throw new Error('Falha ao criar registro de cobrança');
         
         let providerResult: ServerActionReturn;
         const successUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/admin/pedidos/${pedido_id}?payment=success`;
@@ -320,18 +343,18 @@ export async function emitirCobranca(payload: EmitirCobrancaPayload): Promise<Se
         }
 
         if (!providerResult.success) {
-            await supabase.from('cobrancas').update({ status: 'ERRO_API' }).eq('id', novaCobranca.id);
+            await supabase.from('cobrancas').update({ status: 'ERRO_API' }).eq('id', novaCobranca.id).eq('tenant_id', tenantId);
             return providerResult;
         }
-        
-        await supabase.from('cobrancas').update({ status: 'AGUARDANDO_PAGAMENTO', transaction_id: providerResult.data?.collectionId || providerResult.data?.sessionId, provider_data: providerResult.data || null }).eq('id', novaCobranca.id);
-        await supabase.from('pedidos').update({ status: 'AGUARDANDO_PAGAMENTO' }).eq('id', pedido_id);
+
+        await supabase.from('cobrancas').update({ status: 'AGUARDANDO_PAGAMENTO', transaction_id: providerResult.data?.collectionId || providerResult.data?.sessionId, provider_data: providerResult.data || null }).eq('id', novaCobranca.id).eq('tenant_id', tenantId);
+        await supabase.from('pedidos').update({ status: 'AGUARDANDO_PAGAMENTO' }).eq('id', pedido_id).eq('tenant_id', tenantId);
 
         revalidatePath(`/admin/pedidos/${pedido_id}`);
         revalidatePath('/admin/pagamentos');
         return { success: true, message: `Cobrança emitida via ${provider} com sucesso!`, data: { ...providerResult.data, cobrancaId: novaCobranca.id }};
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao emitir cobrança' };
     }
 }
 
@@ -339,16 +362,17 @@ interface RegisterPaymentPayload { valor_pago: number; forma_pagamento: string; 
 export async function registerPayment(pedidoId: string, payload: RegisterPaymentPayload): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
-        if (!pedidoId) throw new Error("ID do Pedido não fornecido.");
+        if (!pedidoId) throw new Error("ID do Pedido não fornecido");
 
-        const { error } = await supabase.from('pedidos').update({ status: 'CONCLUIDO', valor_pago: payload.valor_pago }).eq('id', pedidoId);
+        const tenantId = await getCurrentTenantId();
+        const { error } = await supabase.from('pedidos').update({ status: 'CONCLUIDO', valor_pago: payload.valor_pago }).eq('id', pedidoId).eq('tenant_id', tenantId);
         if (error) throw error;
-        
+
         revalidatePath(`/admin/pedidos/${pedidoId}`);
         revalidatePath('/admin/pagamentos');
-        
+
         return { success: true, message: "Pagamento manual registrado e pedido concluído." };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: 'Erro ao registrar pagamento' };
     }
 }

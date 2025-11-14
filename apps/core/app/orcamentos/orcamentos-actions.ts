@@ -4,6 +4,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/supabase';
 import { revalidatePath } from 'next/cache';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // Tipos baseados na estrutura do Supabase para garantir segurança
 type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];
@@ -16,15 +17,17 @@ type OrcamentoUpdate = Database['public']['Tables']['noro_orcamentos']['Update']
 
 export async function getOrcamentos(): Promise<OrcamentoRow[]> {
   const supabase = createServerSupabaseClient();
-  
+  const tenantId = await getCurrentTenantId();
+
   // Busca todos os orçamentos, ordenados pelo mais recente
   const { data, error } = await supabase
     .from('noro_orcamentos')
     .select('*')
+    .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Erro ao buscar orçamentos:', error.message);
+    console.error('Erro ao buscar orçamentos');
     return [];
   }
 
@@ -37,16 +40,18 @@ export async function getOrcamentos(): Promise<OrcamentoRow[]> {
 
 export async function getOrcamentoById(orcamentoId: string) {
   const supabase = createServerSupabaseClient();
-  
+  const tenantId = await getCurrentTenantId();
+
   const { data, error } = await supabase
     .from('noro_orcamentos')
     .select('*')
     .eq('id', orcamentoId)
+    .eq('tenant_id', tenantId)
     .single();
 
   if (error) {
-    console.error(`Erro ao buscar orçamento ${orcamentoId}:`, error.message);
-    return { success: false, error: error.message };
+    console.error('Erro ao buscar orçamento');
+    return { success: false, error: 'Não foi possível buscar o orçamento' };
   }
 
   return { success: true, data };
@@ -58,7 +63,8 @@ export async function getOrcamentoById(orcamentoId: string) {
 
 export async function createOrcamento(formData: FormData) {
   const supabase = createServerSupabaseClient();
-  
+  const tenantId = await getCurrentTenantId();
+
   const itensString = formData.get('itens') as string;
   let itensParsed: any = [];
   try {
@@ -70,7 +76,7 @@ export async function createOrcamento(formData: FormData) {
   // Corrigindo a inserção: garantimos que os itens sejam inseridos como JSONB.
   // O tipo `OrcamentoInsert` deve tratar isso automaticamente, mas para forçar
   // o DB a aceitar o JSON, passamos o objeto (que é o que `JSON.parse` retorna).
-  
+
   const orcamentoData: OrcamentoInsert = {
     titulo: formData.get('titulo') as string,
     lead_id: formData.get('lead_id') as string || null,
@@ -86,9 +92,10 @@ export async function createOrcamento(formData: FormData) {
     validade_ate: formData.get('validade_ate') as string || null,
     observacoes: formData.get('observacoes') as string || null,
     termos_condicoes: formData.get('termos_condicoes') as string || null,
-    // CORREÇÃO AQUI: Passamos o objeto parseado. Se o erro persistir, 
+    // CORREÇÃO AQUI: Passamos o objeto parseado. Se o erro persistir,
     // significa que o cache ou a tipagem no `types/supabase.ts` está errada
-    itens: itensParsed, 
+    itens: itensParsed,
+    tenant_id: tenantId,
   };
 
   const { data, error } = await supabase
@@ -98,10 +105,10 @@ export async function createOrcamento(formData: FormData) {
     .single();
 
   if (error) {
-    console.error('Erro ao criar orçamento:', error.message);
+    console.error('Erro ao criar orçamento');
     // Adicionamos revalidatePath aqui para forçar um refresh no cache do Next.js
-    revalidatePath('/admin/orcamentos'); 
-    return { success: false, message: `Erro ao criar orçamento: ${error.message}. Tente recarregar a página.` };
+    revalidatePath('/admin/orcamentos');
+    return { success: false, message: 'Não foi possível criar o orçamento. Tente novamente.' };
   }
 
   revalidatePath('/admin/orcamentos');
@@ -109,10 +116,10 @@ export async function createOrcamento(formData: FormData) {
     revalidatePath(`/admin/clientes/${data.lead_id}`);
   }
 
-  return { 
-    success: true, 
-    message: 'Orçamento criado com sucesso!', 
-    data 
+  return {
+    success: true,
+    message: 'Orçamento criado com sucesso!',
+    data
   };
 }
 
@@ -123,7 +130,8 @@ export async function createOrcamento(formData: FormData) {
 
 export async function updateOrcamento(orcamentoId: string, formData: FormData) {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const itensString = formData.get('itens') as string;
     let itensParsed: any = undefined;
 
@@ -156,25 +164,27 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
       .from('noro_orcamentos')
       .select('lead_id')
       .eq('id', orcamentoId)
+      .eq('tenant_id', tenantId)
       .limit(1)
       .single();
-    
-    
+
+
     const { error } = await supabase
         .from('noro_orcamentos')
         .update(updates)
-        .eq('id', orcamentoId);
+        .eq('id', orcamentoId)
+        .eq('tenant_id', tenantId);
 
     if (error) {
-        console.error('Erro ao atualizar orçamento:', error.message);
-        return { success: false, message: `Erro ao atualizar orçamento: ${error.message}` };
+        console.error('Erro ao atualizar orçamento');
+        return { success: false, message: 'Não foi possível atualizar o orçamento' };
     }
 
     revalidatePath(`/admin/orcamentos/${orcamentoId}`);
     if (orcamento?.lead_id) {
         revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
     }
-    
+
     return { success: true, message: 'Orçamento atualizado com sucesso!' };
 }
 
@@ -184,29 +194,31 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
 
 export async function deleteOrcamento(orcamentoId: string) {
     const supabase = createServerSupabaseClient();
+    const tenantId = await getCurrentTenantId();
 
     const { data: orcamento } = await supabase
       .from('noro_orcamentos')
       .select('lead_id')
       .eq('id', orcamentoId)
+      .eq('tenant_id', tenantId)
       .limit(1)
       .single();
-      
 
     const { error } = await supabase
         .from('noro_orcamentos')
         .delete()
-        .eq('id', orcamentoId);
+        .eq('id', orcamentoId)
+        .eq('tenant_id', tenantId);
 
     if (error) {
-        console.error('Erro ao deletar orçamento:', error.message);
-        return { success: false, message: `Erro ao deletar orçamento: ${error.message}` };
+        console.error('Erro ao deletar orçamento');
+        return { success: false, message: 'Não foi possível deletar o orçamento' };
     }
 
     revalidatePath('/admin/orcamentos');
     if (orcamento?.lead_id) {
         revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
     }
-    
+
     return { success: true, message: 'Orçamento deletado com sucesso.' };
 }

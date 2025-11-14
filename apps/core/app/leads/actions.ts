@@ -2,14 +2,17 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getCurrentTenantId, validateTenantOwnership } from '@/lib/tenant'
 
 export async function getLeads() {
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const { data, error } = await supabase
       .from('noro_leads')
       .select('*')
+      .eq('tenant_id', tenantId)  // ✅ Filtro de isolamento multi-tenant
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -27,14 +30,17 @@ export async function getLeads() {
 export async function getLeadById(leadId: string) {
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const { data, error } = await supabase
       .from('noro_leads')
       .select('*')
       .eq('id', leadId)
+      .eq('tenant_id', tenantId)  // ✅ Filtro de isolamento multi-tenant
       .single()
 
     if (error) throw error
+
     return data
   } catch (error: any) {
     console.error('Erro ao buscar lead:', error)
@@ -57,7 +63,8 @@ export async function createLeadAction(formData: FormData) {
 
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const novoLead = {
       organization_name,
       email,
@@ -66,6 +73,7 @@ export async function createLeadAction(formData: FormData) {
       value_cents: value_cents ? parseInt(value_cents) : 0,
       stage: stage || 'novo',
       notes: notes || null,
+      tenant_id: tenantId,  // ✅ Sempre incluir tenant_id em INSERTs
       created_at: new Date().toISOString(),
     }
 
@@ -81,7 +89,7 @@ export async function createLeadAction(formData: FormData) {
     return { success: true, message: 'Lead criado com sucesso!', data }
   } catch (error: any) {
     console.error('Erro ao criar lead:', error)
-    return { success: false, message: `Erro: ${error.message}` }
+    return { success: false, message: 'Erro ao criar lead. Tente novamente.' }
   }
 }
 
@@ -95,7 +103,8 @@ export async function updateLeadAction(leadId: string, formData: FormData) {
 
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const updates = {
       stage: stage || 'novo',
       notes: notes || null,
@@ -106,6 +115,7 @@ export async function updateLeadAction(leadId: string, formData: FormData) {
       .from('noro_leads')
       .update(updates)
       .eq('id', leadId)
+      .eq('tenant_id', tenantId)  // ✅ Filtro de isolamento multi-tenant
 
     if (error) throw error
 
@@ -113,7 +123,7 @@ export async function updateLeadAction(leadId: string, formData: FormData) {
     return { success: true, message: 'Lead atualizado com sucesso!' }
   } catch (error: any) {
     console.error('Erro ao atualizar lead:', error)
-    return { success: false, message: `Erro: ${error.message}` }
+    return { success: false, message: 'Erro ao atualizar lead. Tente novamente.' }
   }
 }
 
@@ -124,14 +134,16 @@ export async function updateLeadStageAction(leadId: string, newStage: string) {
 
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const { error } = await supabase
       .from('noro_leads')
-      .update({ 
+      .update({
         stage: newStage,
         updated_at: new Date().toISOString()
       })
       .eq('id', leadId)
+      .eq('tenant_id', tenantId)  // ✅ Filtro de isolamento multi-tenant
 
     if (error) throw error
 
@@ -139,7 +151,7 @@ export async function updateLeadStageAction(leadId: string, newStage: string) {
     return { success: true, message: 'Stage atualizado!' }
   } catch (error: any) {
     console.error('Erro ao atualizar stage:', error)
-    return { success: false, message: `Erro: ${error.message}` }
+    return { success: false, message: 'Erro ao atualizar stage. Tente novamente.' }
   }
 }
 
@@ -150,11 +162,13 @@ export async function deleteLeadAction(leadId: string) {
 
   try {
     const supabase = createServerSupabaseClient()
-    
+    const tenantId = await getCurrentTenantId()
+
     const { error } = await supabase
       .from('noro_leads')
       .delete()
       .eq('id', leadId)
+      .eq('tenant_id', tenantId)  // ✅ Filtro de isolamento multi-tenant
 
     if (error) throw error
 
@@ -162,6 +176,6 @@ export async function deleteLeadAction(leadId: string) {
     return { success: true, message: 'Lead removido com sucesso!' }
   } catch (error: any) {
     console.error('Erro ao deletar lead:', error)
-    return { success: false, message: `Erro: ${error.message}` }
+    return { success: false, message: 'Erro ao deletar lead. Tente novamente.' }
   }
 }

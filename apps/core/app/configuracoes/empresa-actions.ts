@@ -2,6 +2,7 @@
 'use server';
 
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { getCurrentTenantId } from '@/lib/tenant';
 import { revalidatePath } from "next/cache";
 
 // Tipo para os dados da empresa, baseado no seu SQL
@@ -22,10 +23,13 @@ export type EmpresaDados = {
 export async function getEmpresaDados(): Promise<EmpresaDados> {
   const supabaseAdmin = getSupabaseAdmin();
   try {
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabaseAdmin
       .from('noro_empresa')
       .select('*')
-      .single(); // Usamos single() pois só haverá uma linha
+      .eq('tenant_id', tenantId)
+      .single(); // Usamos single() pois só haverá uma linha por tenant
 
     if (error) {
       // Se der erro 'PGRST116' (0 rows), significa que a linha padrão não foi criada, mas não quebramos a app
@@ -35,10 +39,10 @@ export async function getEmpresaDados(): Promise<EmpresaDados> {
       }
       throw error;
     }
-    
+
     return data || { id: '' };
   } catch (error: any) {
-    console.error("Erro ao buscar dados da empresa:", error.message);
+    console.error("Erro ao buscar dados da empresa:", error);
     return { id: '' }; // Retorna um objeto vazio em caso de erro
   }
 }
@@ -46,6 +50,7 @@ export async function getEmpresaDados(): Promise<EmpresaDados> {
 // --- Atualizar Dados da Empresa ---
 export async function updateEmpresaDados(formData: FormData) {
   const supabaseAdmin = getSupabaseAdmin();
+  const tenantId = await getCurrentTenantId();
 
   // Mapeia o FormData para o formato que o Supabase espera (com objetos JSONB)
   const updates = {
@@ -75,11 +80,12 @@ export async function updateEmpresaDados(formData: FormData) {
   };
 
   try {
-    // Como garantimos que sempre haverá uma linha, usamos update
+    // Como garantimos que sempre haverá uma linha, usamos update com tenant isolation
     const { error } = await supabaseAdmin
       .from('noro_empresa')
       .update(updates)
-      .eq('id', formData.get('empresa_id') as string); // Assume que o ID da empresa é passado no form
+      .eq('tenant_id', tenantId)
+      .eq('id', formData.get('empresa_id') as string);
 
     if (error) throw error;
 
@@ -87,7 +93,7 @@ export async function updateEmpresaDados(formData: FormData) {
     return { success: true, message: 'Dados da empresa atualizados com sucesso!' };
 
   } catch (error: any) {
-    console.error("Erro ao atualizar dados da empresa:", error.message);
-    return { success: false, message: `Erro: ${error.message}` };
+    console.error("Erro ao atualizar dados da empresa:", error);
+    return { success: false, message: 'Erro ao atualizar dados da empresa. Tente novamente.' };
   }
 }

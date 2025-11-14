@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { getCurrentTenantId } from '@/lib/tenant';
 
 // ============================================================================
 // BUSCAR TODOS OS CLIENTES
@@ -10,7 +11,8 @@ import { revalidatePath } from 'next/cache';
 export async function getClientes() {
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabase
       .from('noro_clientes')
       .select(`
@@ -30,6 +32,7 @@ export async function getClientes() {
         created_at,
         updated_at
       `)
+      .eq('tenant_id', tenantId)
       .is('deleted_at', null)
       .order('updated_at', { ascending: false });
 
@@ -52,7 +55,8 @@ export async function getClientes() {
 export async function getClienteById(clienteId: string) {
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabase
       .from('noro_clientes')
       .select(`
@@ -85,6 +89,7 @@ export async function getClienteById(clienteId: string) {
         responsavel_cargo
       `)
       .eq('id', clienteId)
+      .eq('tenant_id', tenantId)
       .is('deleted_at', null)
       .single();
 
@@ -140,7 +145,8 @@ export async function createClienteAction(formData: FormData) {
 
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const novoCliente = {
       nome,
       email,
@@ -152,7 +158,8 @@ export async function createClienteAction(formData: FormData) {
       segmento: segmento || null,
       idioma_preferido: idioma_preferido || 'pt',
       moeda_preferida: moeda_preferida || 'EUR',
-      
+      tenant_id: tenantId,
+
       // Pessoa Física
       ...(tipo === 'pessoa_fisica' && {
         cpf: cpf || null,
@@ -161,7 +168,7 @@ export async function createClienteAction(formData: FormData) {
         nacionalidade: nacionalidade || null,
         profissao: profissao || null,
       }),
-      
+
       // Pessoa Jurídica
       ...(tipo === 'pessoa_juridica' && {
         cnpj: cnpj || null,
@@ -171,7 +178,7 @@ export async function createClienteAction(formData: FormData) {
         responsavel_nome: responsavel_nome || null,
         responsavel_cargo: responsavel_cargo || null, // Adicionado Cargo
       }),
-      
+
       observacoes: observacoes || null,
       data_primeiro_contato: new Date().toISOString(),
     };
@@ -188,7 +195,7 @@ export async function createClienteAction(formData: FormData) {
     return { success: true, message: 'Cliente adicionado com sucesso!', data };
   } catch (error: any) {
     console.error('Erro ao criar cliente:', error);
-    return { success: false, message: `Erro: ${error.message}` };
+    return { success: false, message: 'Erro ao processar. Tente novamente.' };
   }
 }
 
@@ -210,7 +217,8 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
 
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const updates = {
       nome,
       email,
@@ -224,7 +232,8 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
     const { error } = await supabase
       .from('noro_clientes')
       .update(updates)
-      .eq('id', clienteId);
+      .eq('id', clienteId)
+      .eq('tenant_id', tenantId);
 
     if (error) throw error;
 
@@ -232,7 +241,7 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
     return { success: true, message: 'Cliente atualizado com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao atualizar cliente:', error);
-    return { success: false, message: `Erro: ${error.message}` };
+    return { success: false, message: 'Erro ao processar. Tente novamente.' };
   }
 }
 
@@ -247,15 +256,17 @@ export async function deleteClienteAction(clienteId: string) {
 
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     // Soft delete
     const { error } = await supabase
       .from('noro_clientes')
-      .update({ 
+      .update({
         deleted_at: new Date().toISOString(),
         status: 'inativo'
       })
-      .eq('id', clienteId);
+      .eq('id', clienteId)
+      .eq('tenant_id', tenantId);
 
     if (error) throw error;
 
@@ -263,7 +274,7 @@ export async function deleteClienteAction(clienteId: string) {
     return { success: true, message: 'Cliente removido com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao deletar cliente:', error);
-    return { success: false, message: `Erro: ${error.message}` };
+    return { success: false, message: 'Erro ao processar. Tente novamente.' };
   }
 }
 
@@ -274,10 +285,12 @@ export async function deleteClienteAction(clienteId: string) {
 export async function getClientesStats() {
   try {
     const supabase = createServerSupabaseClient();
-    
+    const tenantId = await getCurrentTenantId();
+
     const { data, error } = await supabase
       .from('noro_clientes')
       .select('status, tipo, nivel')
+      .eq('tenant_id', tenantId)
       .is('deleted_at', null);
 
     if (error) throw error;
