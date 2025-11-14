@@ -2,6 +2,7 @@
 import { NextRequest } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getCurrentTenantId } from '@/lib/tenant';
+import { generateArtigo, generateSEOMetadata } from '@/lib/ai/openai';
 
 // Função helper para enviar eventos SSE
 function sendSSE(controller: ReadableStreamDefaultController, message: string) {
@@ -39,11 +40,16 @@ export async function POST(request: NextRequest) {
           sendSSE(controller, `\n📝 [${i + 1}/${topicos.length}] Processando: ${topico}`);
 
           try {
-            // Aqui você implementaria a lógica real de geração com IA
-            // Por exemplo, chamada para OpenAI, Anthropic, etc.
+            // Gerar conteúdo com OpenAI
+            sendSSE(controller, `🤖 Gerando artigo com IA...`);
 
-            // Simulação de delay (remover quando implementar IA real)
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await generateArtigo(topico, options);
+
+            sendSSE(controller, `📊 Tokens: ${result.tokensUsed.total} | Custo: $${result.cost.total.toFixed(4)}`);
+
+            // Gerar metadados SEO
+            sendSSE(controller, `🔍 Gerando metadados SEO...`);
+            const seoMetadata = await generateSEOMetadata(topico, result.content);
 
             // Preparar dados do artigo
             const artigoData = {
@@ -53,14 +59,13 @@ export async function POST(request: NextRequest) {
                 .replace(/[^a-z0-9\s-]/g, '')
                 .replace(/\s+/g, '-')
                 .substring(0, 100),
-              conteudo: `<!-- Conteúdo gerado para: ${topico} -->`,
+              conteudo: result.content,
               categoria: options?.categoria || null,
               tom: options?.tom || 'Informativo',
               tamanho: options?.tamanho || 'Médio',
               status: 'draft',
-              // Campos de SEO (podem ser gerados pela IA)
-              meta_title: null,
-              meta_description: null,
+              meta_title: seoMetadata.meta_title,
+              meta_description: seoMetadata.meta_description,
               og_image: null,
               tags: [],
               created_by: user.id,
@@ -80,25 +85,18 @@ export async function POST(request: NextRequest) {
               continue;
             }
 
-            // Registrar custo (opcional)
-            // Assumindo valores simulados - ajustar com custos reais da IA
-            const tamanhoMultiplier: Record<string, number> = {
-              'Curto': 0.03,
-              'Médio': 0.05,
-              'Longo': 0.08,
-            };
-            const textCost = tamanhoMultiplier[options?.tamanho || 'Médio'] || 0.05;
-
+            // Registrar custo real da IA
             const costData = {
               tenant_id: tenantId,
               type: 'bulk_artigo',
               title: artigoData.titulo,
-              text_cost: textCost,
-              image_cost: 0.0, // Sem custo de imagem neste exemplo
-              total_cost: textCost,
+              text_cost: result.cost.text,
+              image_cost: 0.0,
+              total_cost: result.cost.total,
               metadata: {
                 topico,
                 options,
+                tokens: result.tokensUsed,
               },
               created_at: new Date().toISOString(),
             };

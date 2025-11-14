@@ -2,6 +2,7 @@
 import { NextRequest } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getCurrentTenantId } from '@/lib/tenant';
+import { generateRoteiro, generateSEOMetadata } from '@/lib/ai/openai';
 
 // Função helper para enviar eventos SSE
 function sendSSE(controller: ReadableStreamDefaultController, message: string) {
@@ -39,26 +40,34 @@ export async function POST(request: NextRequest) {
           sendSSE(controller, `\n📍 [${i + 1}/${destinos.length}] Processando: ${destino}`);
 
           try {
-            // Aqui você implementaria a lógica real de geração com IA
-            // Por exemplo, chamada para OpenAI, Anthropic, etc.
+            // Gerar conteúdo com OpenAI
+            sendSSE(controller, `🤖 Gerando conteúdo com IA...`);
 
-            // Simulação de delay (remover quando implementar IA real)
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await generateRoteiro(destino, options);
+
+            sendSSE(controller, `📊 Tokens: ${result.tokensUsed.total} | Custo: $${result.cost.total.toFixed(4)}`);
+
+            // Gerar metadados SEO
+            sendSSE(controller, `🔍 Gerando metadados SEO...`);
+            const seoMetadata = await generateSEOMetadata(
+              `Roteiro para ${destino}`,
+              result.content
+            );
 
             // Preparar dados do roteiro
+            const titulo = `Roteiro para ${destino}`;
             const roteiroData = {
               tenant_id: tenantId,
-              titulo: `Roteiro para ${destino}`,
-              slug: `roteiro-${destino.toLowerCase().replace(/\s+/g, '-')}`,
+              titulo,
+              slug: `roteiro-${destino.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-')}`,
               destino: destino,
               tipo: options?.tipo || null,
               dificuldade: options?.dificuldade || null,
               categoria: options?.categoria || null,
               status: 'draft',
-              conteudo: `<!-- Conteúdo gerado para ${destino} -->`,
-              // Campos de SEO (podem ser gerados pela IA)
-              meta_title: null,
-              meta_description: null,
+              conteudo: result.content,
+              meta_title: seoMetadata.meta_title,
+              meta_description: seoMetadata.meta_description,
               og_image: null,
               created_by: user.id,
               created_at: new Date().toISOString(),
@@ -77,18 +86,18 @@ export async function POST(request: NextRequest) {
               continue;
             }
 
-            // Registrar custo (opcional)
-            // Assumindo valores simulados - ajustar com custos reais da IA
+            // Registrar custo real da IA
             const costData = {
               tenant_id: tenantId,
               type: 'bulk_roteiro',
               title: roteiroData.titulo,
-              text_cost: 0.05, // Custo simulado
-              image_cost: 0.0, // Sem custo de imagem neste exemplo
-              total_cost: 0.05,
+              text_cost: result.cost.text,
+              image_cost: 0.0,
+              total_cost: result.cost.total,
               metadata: {
                 destino,
                 options,
+                tokens: result.tokensUsed,
               },
               created_at: new Date().toISOString(),
             };
