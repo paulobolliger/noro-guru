@@ -7,13 +7,22 @@ import TenantMetrics from "../../../components/tenants/TenantMetrics";
 
 export default function TenantsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleTenantCreated = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <PageContainer>
-      <TenantsHeader searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+      <TenantsHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onTenantCreated={handleTenantCreated}
+      />
       <TenantMetrics />
       <div className="my-6">
-        <TenantsTable searchQuery={searchQuery} />
+        <TenantsTable key={refreshKey} searchQuery={searchQuery} />
       </div>
     </PageContainer>
   );

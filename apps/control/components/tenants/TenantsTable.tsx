@@ -82,8 +82,8 @@ export default function TenantsTable({ searchQuery = "" }: TenantsTableProps) {
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.status || "-"}</td>
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.created_at ? new Date(t.created_at).toLocaleString() : "-"}</td>
                 <td className="p-3">
-                  <Link href={`/control/orgs/${t.id}`} className="text-[#4aede5] hover:underline font-medium">
-                    Abrir
+                  <Link href={`/tenants/${t.id}`} className="text-[#4aede5] hover:underline font-medium">
+                    Ver Detalhes
                   </Link>
                 </td>
               </tr>

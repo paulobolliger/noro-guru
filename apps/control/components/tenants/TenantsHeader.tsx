@@ -2,16 +2,24 @@
 import React, { useState } from "react";
 import { Plus, Building2, Search } from "lucide-react";
 import { NButton } from "@/components/ui";
-import OrgCreateModal from "@/components/orgs/OrgCreateModal";
+import CreateTenantModal from "./CreateTenantModal";
 
 interface TenantsHeaderProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  onTenantCreated?: () => void;
 }
 
-export default function TenantsHeader({ searchQuery, onSearchChange }: TenantsHeaderProps) {
+export default function TenantsHeader({ searchQuery, onSearchChange, onTenantCreated }: TenantsHeaderProps) {
   const [open, setOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
+
+  const handleTenantCreated = () => {
+    setOpen(false);
+    if (onTenantCreated) {
+      onTenantCreated();
+    }
+  };
 
   return (
     <div className="sticky top-0 z-30">
@@ -65,7 +73,13 @@ export default function TenantsHeader({ searchQuery, onSearchChange }: TenantsHe
           </NButton>
         </div>
       </div>
-      {open && <OrgCreateModal isOpen={open} onClose={() => setOpen(false)} />}
+      {open && (
+        <CreateTenantModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          onSuccess={handleTenantCreated}
+        />
+      )}
     </div>
   );
 }
