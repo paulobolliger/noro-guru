@@ -2,6 +2,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { Database } from '@/types/supabase';
+import MainLayout from '@/components/layout/MainLayout';
 import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
 import EditPedidoForm from '@/components/admin/pedidos/EditPedidoForm';
 import { Button } from '@/components/ui/button';
@@ -45,34 +46,40 @@ async function fetchPedidoDetalhesParaEdicao(id: string): Promise<PedidoComRelac
   return pedido as PedidoComRelacionamentos; 
 }
 
+const mockUser = {
+  email: 'dev@noro.com.br',
+  nome: 'Desenvolvedor'
+};
+
 export default async function PedidoEditarPage({ params }: PedidoEditarPageProps) {
   const pedido = await fetchPedidoDetalhesParaEdicao(params.id);
 
   if (!pedido) {
-    return notFound(); 
+    return notFound();
   }
 
   return (
-    <main className="flex-1 space-y-8 p-6 md:p-10">
-      <header className="border-b pb-4 mb-6">
-        <Link href={`/admin/pedidos/${pedido.id}`}>
-          <Button variant="ghost" className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar ao Pedido
-          </Button>
-        </Link>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Editar Pedido #{pedido.id.slice(0, 8)}...
-        </h1>
-        <p className="text-gray-600">
+    <MainLayout user={mockUser}>
+      <div className="space-y-8">
+        <header className="border-b pb-4 mb-6">
+          <Link href={`/pedidos/${pedido.id}`}>
+            <Button variant="ghost" className="mb-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar ao Pedido
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Editar Pedido #{pedido.id.slice(0, 8)}...
+          </h1>
+          <p className="text-gray-600">
             Cliente: {pedido.clientes?.nome || 'Cliente Desconhecido'}
-        </p>
-      </header>
-      
-      <section className="max-w-4xl">
-        <EditPedidoForm initialPedido={pedido} />
-      </section>
+          </p>
+        </header>
 
-    </main>
+        <section className="max-w-4xl">
+          <EditPedidoForm initialPedido={pedido} />
+        </section>
+      </div>
+    </MainLayout>
   );
 }

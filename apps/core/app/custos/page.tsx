@@ -2,5 +2,5 @@
 import { redirect } from 'next/navigation';
 
 export default function CustosPage() {
-  redirect('/admin/custos/all');
+  redirect('/custos/all');
 }

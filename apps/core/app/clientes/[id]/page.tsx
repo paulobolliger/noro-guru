@@ -1,11 +1,17 @@
 import { notFound } from 'next/navigation';
 import { getClienteDetalhes } from './actions';
+import MainLayout from '@/components/layout/MainLayout';
 import ClienteDetalhes360 from '@/components/admin/clientes/ClienteDetalhes360';
 
 // Interface CORRIGIDA: params é um objeto, não uma Promise.
 interface PageProps {
   params: { id: string };
 }
+
+const mockUser = {
+  email: 'dev@noro.com.br',
+  nome: 'Desenvolvedor'
+};
 
 export default async function ClienteDetalhesPage({ params }: PageProps) {
   // Acesso CORRETO: diretamente do objeto params, sem await.
@@ -18,7 +24,11 @@ export default async function ClienteDetalhesPage({ params }: PageProps) {
     notFound();
   }
 
-  return <ClienteDetalhes360 cliente={result.data} />;
+  return (
+    <MainLayout user={mockUser}>
+      <ClienteDetalhes360 cliente={result.data} />
+    </MainLayout>
+  );
 }
 
 // Corrigindo a função de metadados também
