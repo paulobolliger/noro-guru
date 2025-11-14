@@ -1,12 +1,19 @@
 // apps/core/(protected)/sobre-noro/page.tsx
 import { Info } from 'lucide-react';
+import MainLayout from '@/components/layout/MainLayout';
 import packageJson from '@/../package.json';
+
+const mockUser = {
+  email: 'dev@noro.com.br',
+  nome: 'Desenvolvedor'
+};
 
 export default function SobreNoroPage() {
   const version = packageJson.version;
 
   return (
-    <div>
+    <MainLayout user={mockUser}>
+      <div>
       <div className="flex items-center gap-4 mb-8">
         <Info size={32} className="text-blue-600" />
         <div>
@@ -53,6 +60,7 @@ export default function SobreNoroPage() {
 
         </div>
       </div>
-    </div>
+      </div>
+    </MainLayout>
   );
 }

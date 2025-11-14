@@ -1,8 +1,9 @@
 // app/admin/(protected)/orcamentos/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import MainLayout from '@/components/layout/MainLayout';
 import OrcamentoDetalhes from '@/components/admin/orcamentos/OrcamentoDetalhes';
-import { getOrcamentoById } from '../orcamentos-actions'; 
+import { getOrcamentoById } from '../orcamentos-actions';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 interface PageProps {
@@ -53,5 +54,14 @@ export default async function OrcamentoDetalhesPage({ params }: PageProps) {
     lead: leadData || null
   };
 
-  return <OrcamentoDetalhes orcamento={orcamentoComLead} />;
+  const mockUser = {
+    email: 'dev@noro.com.br',
+    nome: 'Desenvolvedor'
+  };
+
+  return (
+    <MainLayout user={mockUser}>
+      <OrcamentoDetalhes orcamento={orcamentoComLead} />
+    </MainLayout>
+  );
 }

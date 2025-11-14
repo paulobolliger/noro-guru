@@ -1,6 +1,7 @@
 // app/admin/(protected)/social/posts/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import MainLayout from '@/components/layout/MainLayout';
 import SocialPostsClient from '@/components/admin/social/SocialPostsClient';
 
 export const metadata = {
@@ -19,6 +20,21 @@ export default async function SocialPostsPage() {
   if (!user) {
     redirect('/login');
   }
+
+  // Fetch user profile
+  const { data: userProfile } = await supabase
+    .from('noro_users')
+    .select('nome, email, role, avatar_url')
+    .eq('id', user.id)
+    .single();
+
+  const fullUser = {
+    id: user.id,
+    nome: userProfile?.nome || null,
+    email: userProfile?.email || user.email || '',
+    role: userProfile?.role || 'user',
+    avatar_url: userProfile?.avatar_url || null,
+  };
 
   // Fetch initial posts
   const { data: posts } = await supabase
@@ -39,9 +55,11 @@ export default async function SocialPostsPage() {
     socialConfig?.status === 'connected';
 
   return (
-    <SocialPostsClient
-      initialPosts={posts || []}
-      isUploadPostConnected={isUploadPostConnected}
-    />
+    <MainLayout user={fullUser}>
+      <SocialPostsClient
+        initialPosts={posts || []}
+        isUploadPostConnected={isUploadPostConnected}
+      />
+    </MainLayout>
   );
 }

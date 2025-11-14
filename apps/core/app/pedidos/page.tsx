@@ -1,6 +1,7 @@
 // app/admin/(protected)/pedidos/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { PedidosList } from '@/components/admin/pedidos/PedidosList';
+import MainLayout from '@/components/layout/MainLayout';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
@@ -30,24 +31,31 @@ async function fetchPedidos(): Promise<any[]> {
   return data || [];
 }
 
+const mockUser = {
+  email: 'dev@noro.com.br',
+  nome: 'Desenvolvedor'
+};
+
 export default async function PedidosPage() {
   const pedidos = await fetchPedidos();
 
   return (
-    <main className="flex-1 space-y-8 p-6 md:p-10">
-      <header className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
-        <div className="flex space-x-2">
-          {/* Adicionar botão 'Novo Pedido' no futuro, se for possível criar um diretamente. */}
-          {/* <Button>Novo Pedido</Button> */}
-        </div>
-      </header>
-      
-      <section className="bg-white p-6 rounded-xl shadow-lg">
-        <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>}>
-          <PedidosList pedidos={pedidos} />
-        </Suspense>
-      </section>
-    </main>
+    <MainLayout user={mockUser}>
+      <div className="space-y-8">
+        <header className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
+          <div className="flex space-x-2">
+            {/* Adicionar botão 'Novo Pedido' no futuro, se for possível criar um diretamente. */}
+            {/* <Button>Novo Pedido</Button> */}
+          </div>
+        </header>
+
+        <section className="bg-white p-6 rounded-xl shadow-lg">
+          <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-8 w-8 animate-spin text-indigo-600" /></div>}>
+            <PedidosList pedidos={pedidos} />
+          </Suspense>
+        </section>
+      </div>
+    </MainLayout>
   );
 }
