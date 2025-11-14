@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/config-actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCurrentTenantId } from '@/lib/tenant';
 import { revalidatePath } from "next/cache";
 
@@ -28,7 +28,7 @@ export interface ConfiguracaoUsuario {
 
 export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const tenantId = await getCurrentTenantId();
 
     const { data, error } = await supabaseAdmin
@@ -76,7 +76,7 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
 
 export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const tenantId = await getCurrentTenantId();
 
     // Preparar os dados para inserção/atualização
@@ -119,7 +119,7 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
 
 export async function getConfiguracaoUsuario(userId: string): Promise<ConfiguracaoUsuario> {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const tenantId = await getCurrentTenantId();
 
     const { data, error } = await supabaseAdmin
@@ -155,7 +155,7 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
 
 export async function saveConfiguracaoUsuario(userId: string, config: ConfiguracaoUsuario) {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const tenantId = await getCurrentTenantId();
 
     const configs = Object.entries(config).map(([chave, valor]) => ({

@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 // --- Funções de Gestão de Utilizadores ---
@@ -15,7 +15,7 @@ export async function inviteUserAction(formData: FormData) {
   }
 
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: { role: role }
     });
@@ -36,7 +36,7 @@ export async function inviteUserAction(formData: FormData) {
 
 export async function updateUserRoleAction(userId: string, newRole: string) {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
       user_metadata: { role: newRole },
     });
@@ -52,7 +52,7 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
 
 export async function deleteUserAction(userId: string) {
   try {
-    const supabaseAdmin = getSupabaseAdmin();
+    const supabaseAdmin = createServerSupabaseClient();
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (error) throw error;
@@ -72,8 +72,8 @@ export async function saveSecretAction(secretName: string, secretValue: string) 
   }
 
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    
+    const supabaseAdmin = createServerSupabaseClient();
+
     // CORREÇÃO: Chamando a função 'upsert_secret' que agora está no schema 'public'.
     // Como 'public' está no search_path padrão, não precisamos especificar 'public.upsert_secret'.
     const { error } = await supabaseAdmin.rpc('upsert_secret', {

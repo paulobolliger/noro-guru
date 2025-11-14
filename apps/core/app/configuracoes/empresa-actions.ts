@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/empresa-actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCurrentTenantId } from '@/lib/tenant';
 import { revalidatePath } from "next/cache";
 
@@ -21,7 +21,7 @@ export type EmpresaDados = {
 
 // --- Buscar Dados da Empresa ---
 export async function getEmpresaDados(): Promise<EmpresaDados> {
-  const supabaseAdmin = getSupabaseAdmin();
+  const supabaseAdmin = createServerSupabaseClient();
   try {
     const tenantId = await getCurrentTenantId();
 
@@ -49,7 +49,7 @@ export async function getEmpresaDados(): Promise<EmpresaDados> {
 
 // --- Atualizar Dados da Empresa ---
 export async function updateEmpresaDados(formData: FormData) {
-  const supabaseAdmin = getSupabaseAdmin();
+  const supabaseAdmin = createServerSupabaseClient();
   const tenantId = await getCurrentTenantId();
 
   // Mapeia o FormData para o formato que o Supabase espera (com objetos JSONB)
