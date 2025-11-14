@@ -57,9 +57,13 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
   ];
 
   return (
-    <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-secondary text-slate-300 transition-all duration-300 flex flex-col h-screen`}>
+    <aside
+      className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-secondary text-slate-300 transition-all duration-300 flex flex-col h-screen`}
+      role="navigation"
+      aria-label="Menu principal"
+    >
       {/* Header */}
-      <div 
+      <div
         className="h-16 px-4 border-b flex items-center justify-between"
         style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
       >
@@ -71,11 +75,13 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
             <p className="text-xs text-slate-500 -mt-1">v{version}</p>
           </div>
         )}
-        <button 
-          onClick={() => setSidebarOpen(!sidebarOpen)} 
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
           className="text-slate-400 hover:text-white transition-colors"
+          aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'}
+          aria-expanded={sidebarOpen}
         >
-          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          {sidebarOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
         </button>
       </div>
 
@@ -95,11 +101,14 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
                     ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                     : 'hover:bg-white/5'
                 }`}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <item.icon 
-                  size={20} 
+                <item.icon
+                  size={20}
                   strokeWidth={2.5}
-                  className={isActive ? 'text-white' : 'text-primary group-hover:text-primary-dark transition-colors'} 
+                  className={isActive ? 'text-white' : 'text-primary group-hover:text-primary-dark transition-colors'}
+                  aria-hidden="true"
                 />
                 {sidebarOpen && (
                     <span className={`font-medium transition-colors ${isActive ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
@@ -115,9 +124,9 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
       {/* Rodapé com Utilizador e Botão de Logout */}
       <div className="border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
-          <img 
-            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`} 
-            alt="Avatar"
+          <img
+            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`}
+            alt={`Avatar de ${user.nome || user.email}`}
             className="w-8 h-8 rounded-full"
           />
           {sidebarOpen && (
@@ -129,12 +138,13 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
             onClick={handleLogout}
             disabled={loggingOut}
             className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+            aria-label={loggingOut ? 'Saindo...' : 'Sair da aplicação'}
             title="Sair"
           >
-            {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} />}
+            {loggingOut ? <Loader2 className="animate-spin" size={20} aria-hidden="true" /> : <LogOut size={20} aria-hidden="true" />}
           </button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }
