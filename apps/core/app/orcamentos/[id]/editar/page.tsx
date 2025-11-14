@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import { getOrcamentoById } from '../../orcamentos-actions';
-import { getClientes } from '@/app/admin/(protected)/clientes/actions';
+import { getClientes } from '@/app/clientes/actions';
 import EditOrcamentoForm from '@/components/admin/orcamentos/EditOrcamentoForm';
 
 interface PageProps {

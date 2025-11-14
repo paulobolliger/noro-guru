@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { Database } from '@/types/supabase';
 import MainLayout from '@/components/layout/MainLayout';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
+import { PedidoComRelacionamentos } from '@/types/admin';
 import EditPedidoForm from '@/components/admin/pedidos/EditPedidoForm';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

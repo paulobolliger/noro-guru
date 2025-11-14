@@ -64,8 +64,20 @@ export const ARTICLE_TONES = [
   'Persuasivo',
 ] as const;
 
+/**
+ * Períodos para análise de custos
+ */
+export const COST_PERIODS = {
+  '7d': { label: 'Últimos 7 dias', days: 7 },
+  '30d': { label: 'Últimos 30 dias', days: 30 },
+  '90d': { label: 'Últimos 90 dias', days: 90 },
+  '365d': { label: 'Último ano', days: 365 },
+  'all': { label: 'Todo período', days: 99999 },
+} as const;
+
 export type DestinationType = typeof DESTINATION_TYPES[number];
 export type DifficultyLevel = typeof DIFFICULTY_LEVELS[number];
 export type DurationOption = typeof DURATION_OPTIONS[number];
 export type PublicationStatus = typeof PUBLICATION_STATUS[number];
 export type ArticleTone = typeof ARTICLE_TONES[number];
+export type CostPeriod = keyof typeof COST_PERIODS;
