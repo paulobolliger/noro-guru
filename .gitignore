@@ -138,5 +138,9 @@ CON
 # Turbo daemon logs (gerados localmente, não enviar ao repositório)
 .turbo/daemon/
 
+# Arquivos CSV de export/metadata grandes gerados localmente - não versionar
+# Ex: Supabase Snippet Column Metadata with Primary & Foreign Key Details (1).csv
+"Supabase Snippet Column Metadata with Primary & Foreign Key Details (1).csv"
+
 # ✅ Fim do .gitignore
 # =====================================================
