@@ -1,4 +1,5 @@
 // app/admin/(protected)/configuracoes/page.tsx
+import MainLayout from '@/components/layout/MainLayout';
 import ConfiguracoesClient from '@/components/admin/ConfiguracoesClient';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
@@ -12,6 +13,22 @@ export default async function ConfiguracoesPage() {
   if (!user) {
     return redirect('/admin/login');
   }
+
+  // Busca dados do usuário
+  const userProfile = await supabase
+    .from('noro_users')
+    .select('nome, email, role, avatar_url')
+    .eq('id', user.id)
+    .single()
+    .then(res => res.data);
+
+  const fullUser = {
+    id: user.id,
+    nome: userProfile?.nome || null,
+    email: userProfile?.email || user.email || '',
+    role: userProfile?.role || 'user',
+    avatar_url: userProfile?.avatar_url || null,
+  };
 
   // Busca todos os dados em paralelo
   const [
@@ -38,13 +55,15 @@ export default async function ConfiguracoesPage() {
     : 'disconnected';
 
   return (
-    <ConfiguracoesClient
-      serverUsers={users || []}
-      configSistema={configSistema}
-      configUsuario={configUsuario}
-      empresaDados={empresaDados}
-      currentUserId={user.id}
-      uploadPostStatus={uploadPostStatus as 'connected' | 'disconnected'}
-    />
+    <MainLayout user={fullUser}>
+      <ConfiguracoesClient
+        serverUsers={users || []}
+        configSistema={configSistema}
+        configUsuario={configUsuario}
+        empresaDados={empresaDados}
+        currentUserId={user.id}
+        uploadPostStatus={uploadPostStatus as 'connected' | 'disconnected'}
+      />
+    </MainLayout>
   );
 }

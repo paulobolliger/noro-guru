@@ -58,14 +58,13 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
 
   return (
     <aside
-      className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-secondary text-slate-300 transition-all duration-300 flex flex-col h-screen`}
+      className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col h-screen border-r border-slate-800`}
       role="navigation"
       aria-label="Menu principal"
     >
       {/* Header */}
       <div
-        className="h-16 px-4 border-b flex items-center justify-between"
-        style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+        className="h-16 px-4 border-b border-slate-800 flex items-center justify-between"
       >
         {sidebarOpen && (
           <div>
@@ -77,7 +76,7 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
         )}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-slate-400 hover:text-white transition-colors"
+          className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
           aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'}
           aria-expanded={sidebarOpen}
         >
@@ -98,8 +97,8 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
                 href={item.href}
                 className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                    : 'hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-900/30'
+                    : 'hover:bg-slate-800 text-slate-400 hover:text-white'
                 }`}
                 aria-label={item.label}
                 aria-current={isActive ? 'page' : undefined}
@@ -107,7 +106,7 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
                 <item.icon
                   size={20}
                   strokeWidth={2.5}
-                  className={isActive ? 'text-white' : 'text-primary group-hover:text-primary-dark transition-colors'}
+                  className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-white transition-colors'}
                   aria-hidden="true"
                 />
                 {sidebarOpen && (
@@ -122,22 +121,23 @@ export default function Sidebar({ user, topbarColor }: SidebarProps) {
       </nav>
 
       {/* Rodapé com Utilizador e Botão de Logout */}
-      <div className="border-t border-white/10 p-4">
+      <div className="border-t border-slate-800 p-4 bg-slate-950">
         <div className="flex items-center gap-3">
           <img
-            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=random&color=fff`}
+            src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.nome || user.email}&background=5053c4&color=fff`}
             alt={`Avatar de ${user.nome || user.email}`}
-            className="w-8 h-8 rounded-full"
+            className="w-8 h-8 rounded-full ring-2 ring-slate-700"
           />
           {sidebarOpen && (
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-semibold text-slate-200 truncate">{user.nome || user.email?.split('@')[0]}</p>
+              <p className="text-sm font-semibold text-slate-100 truncate">{user.nome || user.email?.split('@')[0]}</p>
+              <p className="text-xs text-slate-400 truncate">{user.role === 'admin' ? 'Administrador' : 'Usuário'}</p>
             </div>
           )}
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+            className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
             aria-label={loggingOut ? 'Saindo...' : 'Sair da aplicação'}
             title="Sair"
           >
