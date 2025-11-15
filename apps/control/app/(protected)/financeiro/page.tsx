@@ -1,6 +1,6 @@
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import SectionHeader from '@/components/layout/SectionHeader';
-import { DollarSign, TrendingUp, Building2, Users } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import KpiCard from '@/components/dashboard/KpiCard';
 import ChartCard from '@/components/dashboard/ChartCard';
 import FinanceiroConsolidadoClient from './FinanceiroConsolidadoClient';
@@ -73,28 +73,24 @@ export default async function FinanceiroConsolidadoPage() {
         <KpiCard
           label="Total de Tenants"
           value={metricas.total_tenants_ativos}
-          icon={Building2}
           delta={{ value: 0, period: 'último mês' }}
         />
 
         <KpiCard
           label="MRR (Receita Mensal Recorrente)"
           value={formatCurrency(metricas.mrr_estimado)}
-          icon={DollarSign}
           delta={{ value: 0, period: 'último mês' }}
         />
 
         <KpiCard
           label="ARR (Receita Anual Recorrente)"
           value={formatCurrency(metricas.arr_estimado)}
-          icon={TrendingUp}
           delta={{ value: 0, period: 'último ano' }}
         />
 
         <KpiCard
           label="Margem de Lucro"
           value={formatPercentage(metricas.margem_lucro)}
-          icon={TrendingUp}
           delta={{ value: metricas.margem_lucro, period: 'média' }}
         />
       </div>
