@@ -39,12 +39,13 @@ export async function GET(request: NextRequest) {
     const dataInicioISO = dataInicio.toISOString();
     const dataFimISO = dataFim.toISOString();
 
-    // 1. Buscar todos os tenants ativos
+    // 1. Buscar todos os tenants ativos (com subscriptions ativas)
+    // Usa a nova view que considera o status da subscription
     let tenantsQuery = supabase
       .schema('cp')
-      .from('tenants')
-      .select('id, name, slug, plan, status, created_at')
-      .eq('status', 'active');
+      .from('active_tenants_with_billing')
+      .select('id, name, slug, plan, tenant_status, created_at, subscription_status, plan_name, price_brl, current_period_end')
+      .eq('is_active', true);
 
     if (tenant_id) {
       tenantsQuery = tenantsQuery.eq('id', tenant_id);
@@ -154,7 +155,7 @@ export async function GET(request: NextRequest) {
     // 3. Calcular totais consolidados
     const metricas_consolidadas = {
       total_tenants: tenants?.length || 0,
-      total_tenants_ativos: tenants?.filter(t => t.status === 'active').length || 0,
+      total_tenants_ativos: tenants?.length || 0, // Já filtrados por is_active
 
       receitas_total: metricasPorTenant.reduce((acc, m) => acc + (m.receitas_total || 0), 0),
       despesas_total: metricasPorTenant.reduce((acc, m) => acc + (m.despesas_total || 0), 0),
@@ -163,11 +164,11 @@ export async function GET(request: NextRequest) {
       duplicatas_receber_total: metricasPorTenant.reduce((acc, m) => acc + (m.duplicatas_receber_pendentes || 0), 0),
       duplicatas_pagar_total: metricasPorTenant.reduce((acc, m) => acc + (m.duplicatas_pagar_pendentes || 0), 0),
 
-      // MRR estimado (assumindo que receitas são mensais)
-      mrr_estimado: metricasPorTenant.reduce((acc, m) => acc + (m.receitas_total || 0), 0),
+      // MRR calculado com base nos planos de billing
+      mrr_estimado: (tenants || []).reduce((acc, t: any) => acc + (t.price_brl || 0), 0),
 
       // ARR = MRR * 12
-      arr_estimado: metricasPorTenant.reduce((acc, m) => acc + (m.receitas_total || 0), 0) * 12,
+      arr_estimado: (tenants || []).reduce((acc, t: any) => acc + (t.price_brl || 0), 0) * 12,
     };
 
     // Calcular margem de lucro consolidada
