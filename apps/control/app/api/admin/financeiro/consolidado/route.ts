@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 2. Para cada tenant, buscar métricas financeiras
+    // 2. Para cada tenant, buscar métricas financeiras usando RPC
     const metricasPorTenant = await Promise.all(
       (tenants || []).map(async (tenant) => {
         const schemaName = `tenant_${tenant.slug}`;
@@ -87,24 +87,50 @@ export async function GET(request: NextRequest) {
         }
 
         try {
-          // Buscar receitas (aproximado - não temos acesso direto ao schema do tenant via admin)
-          // NOTA: Isso só funcionará se as tabelas financeiras estiverem no schema `public`
-          // ou se tivermos views/funções RPC que consolidam os dados
+          // Buscar métricas financeiras usando RPC function
+          const { data: metrics, error: metricsError } = await supabase
+            .rpc('get_tenant_financial_metrics', {
+              p_tenant_slug: tenant.slug,
+              p_data_inicio: dataInicioISO,
+              p_data_fim: dataFimISO,
+            })
+            .single();
 
-          // Por enquanto, retornar dados mockados
-          // TODO: Implementar funções RPC que retornem métricas de cada tenant
+          if (metricsError) {
+            console.error(`[Financeiro] RPC error for tenant ${tenant.slug}:`, metricsError);
+            throw metricsError;
+          }
 
+          // Se a RPC retornou erro
+          if (metrics && !metrics.success) {
+            console.error(`[Financeiro] Metrics error for tenant ${tenant.slug}:`, metrics.error);
+            return {
+              tenant_id: tenant.id,
+              tenant_name: tenant.name,
+              tenant_slug: tenant.slug,
+              schema_provisionado: true,
+              receitas_total: 0,
+              despesas_total: 0,
+              lucro: 0,
+              margem_lucro: 0,
+              duplicatas_receber_pendentes: 0,
+              duplicatas_pagar_pendentes: 0,
+              error: metrics.error,
+            };
+          }
+
+          // Retornar métricas do tenant
           return {
             tenant_id: tenant.id,
             tenant_name: tenant.name,
             tenant_slug: tenant.slug,
             schema_provisionado: true,
-            receitas_total: 0, // TODO: RPC para buscar do schema do tenant
-            despesas_total: 0, // TODO: RPC para buscar do schema do tenant
-            lucro: 0,
-            margem_lucro: 0,
-            duplicatas_receber_pendentes: 0,
-            duplicatas_pagar_pendentes: 0,
+            receitas_total: metrics.receitas_total || 0,
+            despesas_total: metrics.despesas_total || 0,
+            lucro: metrics.lucro || 0,
+            margem_lucro: metrics.margem_lucro || 0,
+            duplicatas_receber_pendentes: metrics.duplicatas_receber_pendentes || 0,
+            duplicatas_pagar_pendentes: metrics.duplicatas_pagar_pendentes || 0,
           };
         } catch (err) {
           console.error(`[Financeiro] Error fetching metrics for tenant ${tenant.slug}:`, err);
