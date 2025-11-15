@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Card, CardHeader, CardContent, NButton, NBadge } from "@/components/ui";
-import { ArrowLeft, Building2, Globe, Users, Activity, AlertCircle } from "lucide-react";
+import { ArrowLeft, Building2, Globe, Users, Activity, AlertCircle, BarChart3, Database, Settings } from "lucide-react";
 import TenantOverview from "@/components/tenants/TenantOverview";
+import TenantStats from "@/components/tenants/TenantStats";
 import TenantDomains from "@/components/tenants/TenantDomains";
-import TenantUsers from "@/components/tenants/TenantUsers";
+import TenantUserManagement from "@/components/tenants/TenantUserManagement";
 import TenantEvents from "@/components/tenants/TenantEvents";
+import TenantProvisioning from "@/components/tenants/TenantProvisioning";
+import TenantSettings from "@/components/tenants/TenantSettings";
 
 type TenantDetails = {
   tenant: {
@@ -54,7 +57,7 @@ export default function TenantDetailsPage() {
   const [details, setDetails] = useState<TenantDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "domains" | "users" | "events">("overview");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "overview" | "domains" | "users" | "provisioning" | "settings" | "events">("dashboard");
 
   useEffect(() => {
     loadDetails();
@@ -147,10 +150,23 @@ export default function TenantDetailsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab("dashboard")}
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
+            activeTab === "dashboard"
+              ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <BarChart3 size={18} />
+            <span>Painel</span>
+          </div>
+        </button>
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
             activeTab === "overview"
               ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
               : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
@@ -158,12 +174,12 @@ export default function TenantDetailsPage() {
         >
           <div className="flex items-center gap-2">
             <Building2 size={18} />
-            <span>Visão Geral</span>
+            <span>Informações</span>
           </div>
         </button>
         <button
           onClick={() => setActiveTab("domains")}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
             activeTab === "domains"
               ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
               : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
@@ -176,7 +192,7 @@ export default function TenantDetailsPage() {
         </button>
         <button
           onClick={() => setActiveTab("users")}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
             activeTab === "users"
               ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
               : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
@@ -188,8 +204,34 @@ export default function TenantDetailsPage() {
           </div>
         </button>
         <button
+          onClick={() => setActiveTab("provisioning")}
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
+            activeTab === "provisioning"
+              ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Database size={18} />
+            <span>Provisionamento</span>
+          </div>
+        </button>
+        <button
+          onClick={() => setActiveTab("settings")}
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
+            activeTab === "settings"
+              ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Settings size={18} />
+            <span>Configurações</span>
+          </div>
+        </button>
+        <button
           onClick={() => setActiveTab("events")}
-          className={`px-4 py-2 font-medium transition-colors ${
+          className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
             activeTab === "events"
               ? "text-[#D4AF37] border-b-2 border-[#D4AF37]"
               : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
@@ -204,6 +246,9 @@ export default function TenantDetailsPage() {
 
       {/* Content */}
       <div className="space-y-6">
+        {activeTab === "dashboard" && (
+          <TenantStats tenantId={tenant.id} tenantSlug={tenant.slug} />
+        )}
         {activeTab === "overview" && (
           <TenantOverview tenant={tenant} onUpdate={loadDetails} />
         )}
@@ -211,7 +256,18 @@ export default function TenantDetailsPage() {
           <TenantDomains tenantId={tenant.id} domains={domains} onUpdate={loadDetails} />
         )}
         {activeTab === "users" && (
-          <TenantUsers tenantId={tenant.id} users={users} onUpdate={loadDetails} />
+          <TenantUserManagement tenantId={tenant.id} users={users} onUpdate={loadDetails} />
+        )}
+        {activeTab === "provisioning" && (
+          <TenantProvisioning
+            tenantId={tenant.id}
+            tenantSlug={tenant.slug}
+            schemaProvisioned={false}
+            onUpdate={loadDetails}
+          />
+        )}
+        {activeTab === "settings" && (
+          <TenantSettings tenantId={tenant.id} tenantName={tenant.name} />
         )}
         {activeTab === "events" && (
           <TenantEvents events={events} />
