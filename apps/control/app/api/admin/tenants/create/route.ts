@@ -157,22 +157,37 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 9. Provisionar schema (opcional, pode ser feito depois)
-    // const provisionResult = await provisionSchema({
-    //   tenant_id: tenant.id,
-    //   slug: tenant.slug,
-    //   copy_from_core: true,
-    // });
+    // 9. Provisionar schema automaticamente
+    console.log('[Create Tenant] Provisioning schema...');
+    let schemaProvisioned = false;
 
-    // if (!provisionResult.success) {
-    //   console.error('[Create Tenant] Provisioning failed:', provisionResult.error);
-    // }
+    try {
+      const provisionResult = await provisionSchema({
+        tenant_id: tenant.id,
+        slug: tenant.slug,
+        name: tenant.name,
+      });
 
-    // 10. Atualizar status do tenant para 'active'
+      if (provisionResult.success) {
+        console.log('[Create Tenant] Schema provisioned:', provisionResult.schemaName);
+        schemaProvisioned = true;
+      } else {
+        console.error('[Create Tenant] Provisioning failed:', provisionResult.error);
+        // Não falhar a criação do tenant, apenas logar
+      }
+    } catch (provisionError: any) {
+      console.error('[Create Tenant] Provisioning error:', provisionError);
+      // Continuar mesmo se o provisionamento falhar
+    }
+
+    // 10. Atualizar status do tenant para 'active' e flag de provisionamento
     await supabase
       .schema('cp')
       .from('tenants')
-      .update({ status: 'active' })
+      .update({
+        status: 'active',
+        schema_provisioned: schemaProvisioned,
+      })
       .eq('id', tenant.id);
 
     // 11. Registrar evento no sistema
@@ -182,11 +197,12 @@ export async function POST(request: NextRequest) {
       .insert({
         tenant_id: tenant.id,
         type: 'tenant_created',
-        message: `Tenant ${tenant.name} created`,
+        message: `Tenant ${tenant.name} created ${schemaProvisioned ? 'with schema provisioned' : '(schema provisioning failed)'}`,
         data: {
           slug: tenant.slug,
           plan: tenant.plan,
           admin_email: validated.admin_email,
+          schema_provisioned: schemaProvisioned,
         },
       });
 
@@ -208,8 +224,11 @@ export async function POST(request: NextRequest) {
         plan: tenant.plan,
         status: 'active',
         domain: defaultDomain,
+        schema_provisioned: schemaProvisioned,
       },
-      message: 'Tenant criado com sucesso!',
+      message: schemaProvisioned
+        ? 'Tenant criado e provisionado com sucesso!'
+        : 'Tenant criado com sucesso! (Provisionamento do schema falhou, você pode tentar novamente na aba Provisionamento)',
     });
 
   } catch (error: any) {
