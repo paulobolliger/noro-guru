@@ -116,7 +116,7 @@ export default function TenantOverview({ tenant, onUpdate }: TenantOverviewProps
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Informações do Tenant</h2>
             {!editing ? (
-              <NButton onClick={() => setEditing(true)} variant="outline" leftIcon={<Edit2 size={16} />}>
+              <NButton onClick={() => setEditing(true)} variant="secondary" leftIcon={<Edit2 size={16} />}>
                 Editar
               </NButton>
             ) : (
@@ -139,7 +139,7 @@ export default function TenantOverview({ tenant, onUpdate }: TenantOverviewProps
                       notes: tenant.notes || "",
                     });
                   }}
-                  variant="outline"
+                  variant="secondary"
                   leftIcon={<X size={16} />}
                   disabled={loading}
                 >
@@ -260,7 +260,7 @@ export default function TenantOverview({ tenant, onUpdate }: TenantOverviewProps
               {tenant.status === "active" ? (
                 <NButton
                   onClick={() => handleSuspend(true)}
-                  variant="outline"
+                  variant="destructive"
                   disabled={loading}
                   leftIcon={<AlertTriangle size={16} />}
                 >

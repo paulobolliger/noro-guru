@@ -133,7 +133,7 @@ export default function TenantDomains({ tenantId, domains, onUpdate }: TenantDom
                     setAdding(false);
                     setNewDomain("");
                   }}
-                  variant="outline"
+                  variant="secondary"
                   disabled={loading}
                   leftIcon={<X size={16} />}
                 >
@@ -177,7 +177,7 @@ export default function TenantDomains({ tenantId, domains, onUpdate }: TenantDom
                   {!domain.is_default && (
                     <NButton
                       onClick={() => handleDelete(domain.id, domain.domain)}
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
                       leftIcon={<Trash2 size={14} />}
                       disabled={loading}

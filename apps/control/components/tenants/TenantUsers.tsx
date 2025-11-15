@@ -22,11 +22,11 @@ export default function TenantUsers({ tenantId, users, onUpdate }: TenantUsersPr
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case "super_admin":
-        return "default";
+        return "error";
       case "admin":
         return "success";
       case "user":
-        return "secondary";
+        return "info";
       default:
         return "default";
     }

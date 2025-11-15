@@ -36,7 +36,7 @@ export default function TenantEvents({ events }: TenantEventsProps) {
       return "warning";
     }
     if (type.includes("error") || type.includes("failed")) {
-      return "danger";
+      return "error";
     }
     return "default";
   };

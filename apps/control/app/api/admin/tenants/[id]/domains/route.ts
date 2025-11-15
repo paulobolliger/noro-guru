@@ -1,6 +1,6 @@
 // app/api/admin/tenants/[id]/domains/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@lib/supabase/server';
+import { createAdminSupabaseClient } from '@lib/supabase/admin';
 
 /**
  * POST /api/admin/tenants/[id]/domains
@@ -11,7 +11,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createAdminSupabaseClient();
     const tenantId = params.id;
     const body = await request.json();
     const { domain, is_default } = body;
@@ -97,7 +97,7 @@ export async function POST(
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createAdminSupabaseClient();
     const url = new URL(request.url);
     const domainId = url.searchParams.get('domainId');
 
