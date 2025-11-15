@@ -1,6 +1,6 @@
 // app/api/admin/tenants/[id]/settings/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@lib/supabase/admin';
+import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 
 /**
  * PATCH /api/admin/tenants/[id]/settings

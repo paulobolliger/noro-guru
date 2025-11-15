@@ -1,7 +1,7 @@
 // app/api/admin/tenants/[id]/provision/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@lib/supabase/admin';
-import { createTenantSchema, deleteTenantSchema } from '@lib/provisioning/tenant-provisioner';
+import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { createTenantSchema, deleteTenantSchema } from '@/lib/provisioning/tenant-provisioner';
 
 /**
  * POST /api/admin/tenants/[id]/provision
