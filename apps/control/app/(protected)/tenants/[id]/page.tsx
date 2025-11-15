@@ -23,6 +23,7 @@ type TenantDetails = {
     notes?: string;
     created_at: string;
     updated_at?: string;
+    schema_provisioned?: boolean;
   };
   domains: Array<{
     id: string;
@@ -262,7 +263,7 @@ export default function TenantDetailsPage() {
           <TenantProvisioning
             tenantId={tenant.id}
             tenantSlug={tenant.slug}
-            schemaProvisioned={false}
+            schemaProvisioned={tenant.schema_provisioned || false}
             onUpdate={loadDetails}
           />
         )}
