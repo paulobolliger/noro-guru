@@ -1,12 +1,20 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@noro/typescript-config/nextjs.json",
   "compilerOptions": {
-    "baseUrl": "../..",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["apps/control/*"],
-      "@noro-types/*": ["packages/types/*"],
-      "@noro/ui/*": ["packages/ui/*"],
-      "@noro/lib/*": ["packages/lib/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@noro-types/*": [
+        "../../packages/types/*"
+      ],
+      "@noro/ui/*": [
+        "../../packages/ui/*"
+      ],
+      "@noro/lib/*": [
+        "../../packages/lib/*"
+      ]
     }
   },
   "include": [
@@ -15,5 +23,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

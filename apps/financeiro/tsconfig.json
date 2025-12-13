@@ -19,7 +19,8 @@
       "@noro/types": [
         "../../packages/types/src"
       ]
-    }
+    },
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",

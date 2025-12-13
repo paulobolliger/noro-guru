@@ -37,6 +37,8 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@noro/eslint-config": "*",
+    "@noro/typescript-config": "*",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "24.7.0",
     "@types/react": "19.2.2",
