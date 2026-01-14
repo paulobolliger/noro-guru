@@ -13,6 +13,10 @@ export async function listLeads() {
   return data || [];
 }
 
+// Alias for compatibility
+export const getLeads = listLeads;
+
+
 export async function createLead(formData: FormData) {
   const supabase = createAdminSupabaseClient();
   const payload: any = {

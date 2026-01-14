@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./global.css";
@@ -40,12 +41,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`dark ${inter.variable} ${poppins.variable}`}>
       <head>
-        <Analytics />
-        <StructuredData 
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
+        <StructuredData
           data={[
             getOrganizationSchema(),
             getWebsiteSchema(),
-          ]} 
+          ]}
         />
       </head>
       <body className="bg-[#0B1220] font-sans text-[#D1D5F0] min-h-screen overflow-x-hidden antialiased">
@@ -56,7 +59,7 @@ export default function RootLayout({
               <div className="absolute top-[-20%] left-[-20%] w-[60vw] h-[60vw] bg-[#3B2CA4]/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
               <div className="absolute bottom-[-20%] right-[-20%] w-[50vw] h-[50vw] bg-[#1DD3C0]/10 rounded-full filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
             </div>
-            
+
             <div className="relative z-10 flex flex-col min-h-screen">
               <Header />
               <main className="flex-grow">

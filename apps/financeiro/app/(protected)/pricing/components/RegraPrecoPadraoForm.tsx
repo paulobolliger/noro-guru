@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { RegraPreco, TipoRegraPreco } from '../../../types/pricing'
+import { RegraPreco, TipoRegraPreco } from '@/types/pricing'
 import { Button } from '@noro/ui'
-import { 
+import {
   Form,
   FormControl,
   FormField,
@@ -37,27 +37,27 @@ const formSchema = z.object({
   nome: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   tipo: z.enum(['markup_padrao', 'volume', 'sazonalidade', 'cliente_categoria', 'destino', 'fornecedor', 'produto'] as const),
   descricao: z.string().optional(),
-  
+
   // Condições
   valor_minimo: z.number().optional(),
   valor_maximo: z.number().optional(),
   data_inicio: z.string().optional(),
   data_fim: z.string().optional(),
-  
+
   // Markup
-  tipo_markup: z.enum(['fixo', 'percentual'] as const),
+  tipo_markup: z.enum(['fixo', 'percentual', 'dinamico', 'personalizado'] as const),
   valor_markup: z.number()
     .min(-100, 'Valor mínimo é -100%')
     .max(999.99, 'Valor máximo excedido'),
-  moeda: z.enum(['EUR', 'USD', 'BRL']),
-  
+  moeda: z.enum(['EUR', 'USD', 'BRL', 'GBP', 'AUD', 'CAD']),
+
   // Controle
   prioridade: z.number().int().min(0).max(100),
   sobrepor_regras: z.boolean(),
   ativo: z.boolean(),
-  
+
   // Metadados específicos por tipo
-  metadados: z.record(z.any()).optional()
+  metadados: z.record(z.string(), z.any()).optional()
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -152,7 +152,7 @@ export default function RegraPrecoPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Regra</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value)
                       setSelectedTipo(value as TipoRegraPreco)
@@ -202,7 +202,7 @@ export default function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Valor Mínimo</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         {...field}
@@ -222,7 +222,7 @@ export default function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Valor Máximo</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         {...field}
@@ -245,7 +245,7 @@ export default function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Data Início</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="date"
                         {...field}
                         disabled={isLoading}
@@ -263,7 +263,7 @@ export default function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Data Fim</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="date"
                         {...field}
                         disabled={isLoading}
@@ -309,12 +309,12 @@ export default function RegraPrecoPadraoForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {form.watch('tipo_markup') === 'percentual' 
-                        ? 'Percentual (%)' 
+                      {form.watch('tipo_markup') === 'percentual'
+                        ? 'Percentual (%)'
                         : 'Valor'}
                     </FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step={form.watch('tipo_markup') === 'percentual' ? '0.01' : '1'}
                         {...field}
@@ -364,7 +364,7 @@ export default function RegraPrecoPadraoForm({
                 <FormItem>
                   <FormLabel>Prioridade</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="0"
                       max="100"

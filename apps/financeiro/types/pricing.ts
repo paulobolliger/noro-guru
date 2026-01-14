@@ -1,4 +1,4 @@
-import { Moeda } from '@noro/types'
+import { Moeda } from '@noro/types/financeiro'
 
 // Tipos de Markup
 export type TipoMarkup = 'fixo' | 'percentual' | 'dinamico' | 'personalizado'

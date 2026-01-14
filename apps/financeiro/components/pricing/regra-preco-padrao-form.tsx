@@ -2,12 +2,12 @@
 
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@noro/ui"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@noro/ui"
+import { Input } from "@noro/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@noro/ui"
+import { Switch } from "@noro/ui"
+import { Card, CardContent } from "@noro/ui"
 import { RegraPreco, TipoRegraPreco } from "@/types/pricing"
 
 interface FormValues {
@@ -46,7 +46,7 @@ interface RegraPrecoPadraoFormProps {
   isSubmitting?: boolean
 }
 
-export function RegraPrecoPadraoForm({ 
+export function RegraPrecoPadraoForm({
   regra,
   onSubmit: onSubmitProp,
   isSubmitting = false
@@ -82,9 +82,9 @@ export function RegraPrecoPadraoForm({
 
   return (
     <Form {...form}>
-      <form 
+      <form
         id="regra-preco-form"
-        onSubmit={form.handleSubmit(handleSubmit)} 
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-8"
       >
         {/* Informações Básicas */}
@@ -111,9 +111,9 @@ export function RegraPrecoPadraoForm({
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Ex: Regra para produtos padrão" 
-                      {...field} 
+                    <Input
+                      placeholder="Ex: Regra para produtos padrão"
+                      {...field}
                       value={field.value || ""}
                     />
                   </FormControl>
@@ -128,8 +128,8 @@ export function RegraPrecoPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Regra</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -165,7 +165,7 @@ export function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Valor Mínimo (R$)</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         placeholder="Ex: 100.00"
@@ -184,7 +184,7 @@ export function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Valor Máximo (R$)</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         placeholder="Ex: 1000.00"
@@ -205,7 +205,7 @@ export function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Data Início</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="date"
                         {...field}
                       />
@@ -222,7 +222,7 @@ export function RegraPrecoPadraoForm({
                   <FormItem>
                     <FormLabel>Data Fim</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="date"
                         {...field}
                       />
@@ -244,8 +244,8 @@ export function RegraPrecoPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Markup</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -271,16 +271,16 @@ export function RegraPrecoPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {form.watch("tipo_markup") === "percentual" 
-                      ? "Percentual (%)" 
+                    {form.watch("tipo_markup") === "percentual"
+                      ? "Percentual (%)"
                       : "Valor (R$)"}
                   </FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       step="0.01"
-                      placeholder={form.watch("tipo_markup") === "percentual" 
-                        ? "Ex: 25.5" 
+                      placeholder={form.watch("tipo_markup") === "percentual"
+                        ? "Ex: 25.5"
                         : "Ex: 100.00"}
                       {...field}
                     />
@@ -297,7 +297,7 @@ export function RegraPrecoPadraoForm({
                 <FormItem>
                   <FormLabel>Prioridade</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       min="1"
                       max="100"

@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog-simple';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@noro/ui';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@noro/ui';
 
 interface DespesaFormModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export function DespesaFormModal({
   tenantId,
 }: DespesaFormModalProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -49,10 +49,10 @@ export function DespesaFormModal({
     setError(null);
 
     try {
-      const url = despesa 
-        ? `/api/despesas/${despesa.id}` 
+      const url = despesa
+        ? `/api/despesas/${despesa.id}`
         : '/api/despesas';
-      
+
       const method = despesa ? 'PUT' : 'POST';
 
       // Preparar dados convertendo strings vazias em null para campos UUID
@@ -81,18 +81,30 @@ export function DespesaFormModal({
 
       if (response.ok) {
         console.log('✅ Sucesso:', data);
-        showToast('success', `Despesa ${despesa ? 'atualizada' : 'criada'} com sucesso!`);
+        toast({
+          title: 'Sucesso',
+          description: `Despesa ${despesa ? 'atualizada' : 'criada'} com sucesso!`,
+          variant: 'success',
+        });
         router.refresh();
         onClose();
       } else {
         console.error('❌ Erro na resposta:', data);
         setError(data.error || 'Erro desconhecido ao salvar despesa');
-        showToast('error', 'Erro ao salvar', data.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao salvar',
+          description: data.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('❌ Erro ao salvar despesa:', error);
       setError('Erro ao conectar com o servidor');
-      showToast('error', 'Erro ao salvar despesa', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao salvar despesa',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }

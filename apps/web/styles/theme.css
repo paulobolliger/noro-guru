@@ -4,23 +4,35 @@
   --color-noro-primary: #342CA4;
   --color-noro-primary-deep: #3B2CA4;
   --color-noro-primary-dark: #23214F;
-  
+
   /* Accent Colors */
   --color-noro-accent: #1DD3C0;
   --color-noro-gold: #D4AF37;
   --color-noro-gold-hover: #E5C04B;
-  
+
   /* Background Colors */
   --color-noro-dark: #0B1220;
+  --color-noro-dark-purple: #12152C;
+  /* Old noro-dark from tailwind */
+  --color-noro-surface-dark: #2B2E48;
+  /* noro-dark-2 */
   --color-noro-gray-future: #2E2E3A;
   --color-noro-light: #F8F9FB;
-  
+  --color-noro-gray-accent: #E2E8F0;
+
+  /* Additional Brand Colors */
+  --color-noro-purple-light: #5053C4;
+  /* noro-purple */
+
   /* Text Colors - WCAG AAA Compliant */
   --color-noro-text-primary: #FFFFFF;
-  --color-noro-text-secondary: #E0E3FF; /* Melhor contraste que #C7C9FF */
-  --color-noro-text-muted: #B8C1E0; /* Melhor contraste que #A9ADC4 - ratio 7.2:1 */
-  --color-noro-text-body: #D1D5F0; /* Para textos longos - ratio 9.5:1 */
-  
+  --color-noro-text-secondary: #E0E3FF;
+  /* Melhor contraste que #C7C9FF */
+  --color-noro-text-muted: #B8C1E0;
+  /* Melhor contraste que #A9ADC4 - ratio 7.2:1 */
+  --color-noro-text-body: #D1D5F0;
+  /* Para textos longos - ratio 9.5:1 */
+
   /* Shadow & Glow */
   --shadow-noro-base: 0 2px 8px rgba(0, 0, 0, 0.25);
   --shadow-noro-glow-gold: 0 0 10px #D4AF37;
@@ -51,8 +63,11 @@ html {
   scroll-padding-top: 80px;
 }
 
-p, span, li {
-  font-weight: 450; /* Slightly heavier for better readability */
+p,
+span,
+li {
+  font-weight: 450;
+  /* Slightly heavier for better readability */
 }
 
 /* Focus styles for accessibility */
@@ -111,9 +126,12 @@ p, span, li {
 
 /* Animation utilities */
 @keyframes pulse-slow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.3;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -128,9 +146,12 @@ p, span, li {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
@@ -146,6 +167,7 @@ p, span, li {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -162,6 +184,7 @@ p, span, li {
     opacity: 0;
     transform: translateX(100%);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -174,9 +197,12 @@ p, span, li {
 
 /* Bounce animation for CTAs */
 @keyframes bounce-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-5px);
   }
@@ -191,6 +217,7 @@ p, span, li {
   0% {
     background-position: -1000px 0;
   }
+
   100% {
     background-position: 1000px 0;
   }
@@ -198,12 +225,10 @@ p, span, li {
 
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%);
   background-size: 1000px 100%;
 }
 

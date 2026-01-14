@@ -3,7 +3,7 @@
 
 import { useState, useTransition, useRef, useEffect } from 'react';
 import { X, Mail, Shield, Loader2, AlertCircle } from 'lucide-react';
-import { inviteUserAction } from '@/app/configuracoes/actions';
+import { inviteUserAction } from '@/app/(protected)/configuracoes/actions';
 
 interface InviteUserModalProps {
   isOpen: boolean;
@@ -44,18 +44,18 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-white rounded-xl w-full max-w-md p-8 shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X size={24} />
         </button>
-        
+
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Convidar Novo Utilizador</h2>
 
         <form ref={formRef} action={handleSubmit} className="space-y-6">
@@ -75,7 +75,7 @@ export default function InviteUserModal({ isOpen, onClose }: InviteUserModalProp
               />
             </div>
           </div>
-          
+
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
               Função (Role)

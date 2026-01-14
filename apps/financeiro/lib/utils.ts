@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Moeda } from '@noro/types'
+import { Moeda } from '@noro/types/financeiro'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

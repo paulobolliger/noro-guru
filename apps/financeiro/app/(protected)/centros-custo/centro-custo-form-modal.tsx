@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog-simple';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@noro/ui';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/toast';
-import type { FinCentroCusto, TipoCentroCusto, StatusCentroCusto, Marca } from '@/types/financeiro';
+import { useToast } from '@noro/ui';
+import type { FinCentroCusto, TipoCentroCusto, StatusCentroCusto, Marca } from '@noro/types/financeiro';
 
 interface CentroCustoFormModalProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export function CentroCustoFormModal({
   tenantId,
 }: CentroCustoFormModalProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     codigo: centroCusto?.codigo || '',
@@ -68,7 +68,7 @@ export function CentroCustoFormModal({
     try {
       // Converter tags de string para array
       const tagsArray = formData.tags
-        ? formData.tags.split(',').map(t => t.trim()).filter(t => t)
+        ? formData.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t)
         : [];
 
       const dadosParaEnviar = {
@@ -98,16 +98,28 @@ export function CentroCustoFormModal({
 
       if (response.ok) {
         console.log('✅ Sucesso:', data);
-        showToast('success', `Centro de custo ${centroCusto ? 'atualizado' : 'criado'} com sucesso!`);
+        toast({
+          title: 'Sucesso',
+          description: `Centro de custo ${centroCusto ? 'atualizado' : 'criado'} com sucesso!`,
+          variant: 'success',
+        });
         router.refresh();
         onClose();
       } else {
         console.error('❌ Erro na resposta:', data);
-        showToast('error', 'Erro ao salvar', data.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao salvar',
+          description: data.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('❌ Erro ao salvar centro de custo:', error);
-      showToast('error', 'Erro ao salvar centro de custo', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao salvar centro de custo',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -130,7 +142,7 @@ export function CentroCustoFormModal({
           {/* Identificação */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground">IDENTIFICAÇÃO</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -192,7 +204,7 @@ export function CentroCustoFormModal({
           {/* Classificação */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground">CLASSIFICAÇÃO</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -246,7 +258,7 @@ export function CentroCustoFormModal({
           {/* Período */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground">PERÍODO</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
@@ -274,7 +286,7 @@ export function CentroCustoFormModal({
           {/* Financeiro */}
           <div className="space-y-4">
             <h3 className="font-semibold text-sm text-muted-foreground">FINANCEIRO</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">

@@ -13,16 +13,16 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui'
+import { Badge } from '@noro/ui'
+import { Button } from '@noro/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@noro/ui'
 import Link from 'next/link'
 
 interface DuplicataReceber {

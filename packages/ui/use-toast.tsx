@@ -3,7 +3,7 @@
 'use client';
 
 import * as React from 'react';
-import { cn } from '@/../../packages/lib/utils';
+import { cn } from '@noro/lib/utils';
 import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import { Slot } from '@radix-ui/react-slot';
 
@@ -46,16 +46,16 @@ const initialState: State = {
 
 type Action =
   | {
-      type: 'ADD_TOAST';
-      toast: Omit<Toast, 'id' | 'duration'> & {
-        id?: string;
-        duration?: number;
-      };
-    }
-  | {
-      type: 'DISMISS_TOAST';
-      toastId?: string;
+    type: 'ADD_TOAST';
+    toast: Omit<Toast, 'id' | 'duration'> & {
+      id?: string;
+      duration?: number;
     };
+  }
+  | {
+    type: 'DISMISS_TOAST';
+    toastId?: string;
+  };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -130,31 +130,31 @@ export function useToast() {
 // =======================================================================
 
 const iconMap: Record<Toast['variant'], React.ReactNode> = {
-    default: <Info size={18} className="text-[#3B2CA4]" />,
-    destructive: <AlertCircle size={18} className="text-white" />,
-    success: <CheckCircle2 size={18} className="text-[#1DD3C0]" />,
-    info: <Info size={18} className="text-[#D4AF37]" />,
+  default: <Info size={18} className="text-[#3B2CA4]" />,
+  destructive: <AlertCircle size={18} className="text-white" />,
+  success: <CheckCircle2 size={18} className="text-[#1DD3C0]" />,
+  info: <Info size={18} className="text-[#D4AF37]" />,
 };
 
 const variantClasses: Record<Toast['variant'], string> = {
-    default: 'card border-[#E0E2EA] bg-surface text-secondary',
-    destructive: 'border-[#EF4444] bg-[#EF4444] text-white',
-    success: 'bg-gradient-button text-[#1b1b1b] border border-[#D4AF37]/60 shadow-lg',
-    info: 'border-[#3B2CA4] bg-[#23214F] text-white',
+  default: 'card border-[#E0E2EA] bg-surface text-secondary',
+  destructive: 'border-[#EF4444] bg-[#EF4444] text-white',
+  success: 'bg-gradient-button text-[#1b1b1b] border border-[#D4AF37]/60 shadow-lg',
+  info: 'border-[#3B2CA4] bg-[#23214F] text-white',
 };
 
 const titleClasses: Record<Toast['variant'], string> = {
-    default: 'text-secondary',
-    destructive: 'text-white',
-    success: 'success font-semibold',
-    info: 'text-white',
+  default: 'text-secondary',
+  destructive: 'text-white',
+  success: 'success font-semibold',
+  info: 'text-white',
 };
 
 const descriptionClasses: Record<Toast['variant'], string> = {
-    default: 'text-[#9FA2B2]',
-    destructive: 'text-white/80',
-    success: 'text-[#1b1b1b]/85',
-    info: 'text-white/80',
+  default: 'text-[#9FA2B2]',
+  destructive: 'text-white/80',
+  success: 'text-[#1b1b1b]/85',
+  info: 'text-white/80',
 };
 
 type ToastProps = Toast & {
@@ -203,7 +203,7 @@ const ToastComponent = React.forwardRef<HTMLDivElement, ToastProps>(
         {...props}
       >
         <div className="flex-shrink-0 mt-0.5">
-            {Icon}
+          {Icon}
         </div>
         <div className="flex-1">
           {title && <div className={cn('font-semibold', titleClasses[variant])}>{title}</div>}
@@ -211,13 +211,13 @@ const ToastComponent = React.forwardRef<HTMLDivElement, ToastProps>(
         </div>
 
         <button
-            onClick={handleDismiss}
-            className={cn(
-                'flex-shrink-0 p-1 rounded-md transition-colors ml-auto mt-0.5',
-                variant === 'default' ? 'text-gray-400 hover:text-gray-800 hover:bg-gray-50' : 'text-white/80 hover:text-white hover:bg-white/10'
-            )}
+          onClick={handleDismiss}
+          className={cn(
+            'flex-shrink-0 p-1 rounded-md transition-colors ml-auto mt-0.5',
+            variant === 'default' ? 'text-gray-400 hover:text-gray-800 hover:bg-gray-50' : 'text-white/80 hover:text-white hover:bg-white/10'
+          )}
         >
-            <X size={16} />
+          <X size={16} />
         </button>
       </div>
     );

@@ -1,8 +1,10 @@
+"use client"
+
 import { useEffect, useState } from 'react'
-import { RegraPreco } from '../../../types/pricing'
+import { RegraPreco } from '@/types/pricing'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@noro/ui'
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -19,7 +21,7 @@ import {
 } from '@noro/ui'
 import { Plus, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { formatarMoeda, formatarPorcentagem } from '../../../lib/pricing'
+import { formatarMoeda, formatarPorcentagem } from '@/lib/pricing'
 import RegraPrecoPadraoForm from './RegraPrecoPadraoForm'
 
 // Labels para tipos de regra
@@ -38,7 +40,7 @@ export default function GerenciarRegrasPreco() {
   const [isLoading, setIsLoading] = useState(false)
   const [editingRegra, setEditingRegra] = useState<RegraPreco | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  
+
   const supabase = createClientComponentClient()
 
   // Carregar regras
@@ -135,10 +137,10 @@ export default function GerenciarRegrasPreco() {
       return 'Sem período definido'
     }
 
-    const inicio = regra.data_inicio 
+    const inicio = regra.data_inicio
       ? new Date(regra.data_inicio).toLocaleDateString('pt-BR')
       : 'Início'
-    
+
     const fim = regra.data_fim
       ? new Date(regra.data_fim).toLocaleDateString('pt-BR')
       : 'Fim'
@@ -153,7 +155,7 @@ export default function GerenciarRegrasPreco() {
         <h2 className="text-2xl font-bold text-gray-900">
           Regras de Preço
         </h2>
-        
+
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button>
@@ -215,11 +217,10 @@ export default function GerenciarRegrasPreco() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                    regra.ativo 
-                      ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20' 
-                      : 'bg-gray-50 text-gray-600 ring-1 ring-gray-500/20'
-                  }`}>
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${regra.ativo
+                    ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
+                    : 'bg-gray-50 text-gray-600 ring-1 ring-gray-500/20'
+                    }`}>
                     {regra.ativo ? 'Ativo' : 'Inativo'}
                   </span>
                 </TableCell>

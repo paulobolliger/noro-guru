@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@noro/ui';
 import {
   Dialog,
   DialogContent,
@@ -9,20 +9,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { Checkbox } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Loader2, DollarSign } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@noro/ui';
 
 interface BaixarRecebimentoModalProps {
   open: boolean;
@@ -39,9 +39,9 @@ export function BaixarRecebimentoModal({
   contas,
   onSuccess,
 }: BaixarRecebimentoModalProps) {
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     valor_recebido: '',
     data_recebimento: new Date().toISOString().split('T')[0],
@@ -53,30 +53,30 @@ export function BaixarRecebimentoModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!duplicata) return;
 
     // Validações
     if (!formData.valor_recebido || parseFloat(formData.valor_recebido) <= 0) {
-      showToast(
-        'Erro',
-        'Valor recebido deve ser maior que zero',
-        'destructive'
-      );
+      toast({
+        title: 'Erro',
+        description: 'Valor recebido deve ser maior que zero',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (parseFloat(formData.valor_recebido) > duplicata.valor_pendente) {
-      showToast(
-        'Erro',
-        `Valor recebido não pode ser maior que o pendente (${duplicata.valor_pendente})`,
-        'destructive'
-      );
+      toast({
+        title: 'Erro',
+        description: `Valor recebido não pode ser maior que o pendente (${duplicata.valor_pendente})`,
+        variant: 'destructive',
+      });
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch(`/api/duplicatas-receber/${duplicata.id}/baixar`, {
         method: 'POST',
@@ -100,20 +100,20 @@ export function BaixarRecebimentoModal({
 
       const result = await response.json();
 
-      showToast(
-        'Sucesso',
-        `Recebimento registrado com sucesso. ${result.criar_receita ? 'Receita criada.' : ''}`,
-        'success'
-      );
+      toast({
+        title: 'Sucesso',
+        description: `Recebimento registrado com sucesso. ${result.criar_receita ? 'Receita criada.' : ''}`,
+        variant: 'success',
+      });
 
       onSuccess();
     } catch (error: any) {
       console.error('Erro ao registrar recebimento:', error);
-      showToast(
-        'Erro',
-        error.message || 'Erro ao registrar recebimento',
-        'destructive'
-      );
+      toast({
+        title: 'Erro',
+        description: error.message || 'Erro ao registrar recebimento',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

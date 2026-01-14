@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Wallet, AlertCircle } from 'lucide-react';
-import type { FinKPIs } from '@/types/financeiro';
+import type { FinKPIs } from '@noro/types/financeiro';
 import { formatCurrency } from '@/lib/utils';
 import {
   LineChart,
@@ -115,21 +115,19 @@ export default function DashboardClient({ kpis, graficos }: DashboardClientProps
       <div className="flex gap-2">
         <button
           onClick={() => setPeriodoSelecionado('mes')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            periodoSelecionado === 'mes'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${periodoSelecionado === 'mes'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-          }`}
+            }`}
         >
           Este Mês
         </button>
         <button
           onClick={() => setPeriodoSelecionado('ano')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            periodoSelecionado === 'ano'
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${periodoSelecionado === 'ano'
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-          }`}
+            }`}
         >
           Este Ano
         </button>

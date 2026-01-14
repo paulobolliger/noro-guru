@@ -2,18 +2,18 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@noro/ui';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast';
+import { Badge } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { CategoriaFormModal } from './categoria-form-modal';
 
 interface CategoriasClientProps {
@@ -23,7 +23,7 @@ interface CategoriasClientProps {
 
 export function CategoriasClient({ categorias, tenantId }: CategoriasClientProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [busca, setBusca] = useState('');
   const [filtroTipo, setFiltroTipo] = useState<string>('todas');
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -73,14 +73,26 @@ export function CategoriasClient({ categorias, tenantId }: CategoriasClientProps
 
       if (response.ok) {
         router.refresh();
-        showToast('success', 'Categoria deletada com sucesso!');
+        toast({
+          title: 'Sucesso',
+          description: 'Categoria deletada com sucesso!',
+          variant: 'success',
+        });
       } else {
         const error = await response.json();
-        showToast('error', 'Erro ao deletar', error.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao deletar',
+          description: error.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Erro ao deletar categoria:', error);
-      showToast('error', 'Erro ao deletar categoria', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao deletar categoria',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     }
   };
 

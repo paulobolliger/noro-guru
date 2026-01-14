@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { X, Loader2, AlertCircle } from 'lucide-react';
-import { deleteUserAction } from '@/app/configuracoes/actions';
+import { deleteUserAction } from '@/app/(protected)/configuracoes/actions';
 
 interface DeleteUserModalProps {
   isOpen: boolean;
@@ -38,17 +38,17 @@ export default function DeleteUserModal({ isOpen, onClose, user }: DeleteUserMod
         <p className="text-gray-600 mb-6">
           Tem a certeza de que quer remover <strong className="text-gray-900">{user.email}</strong>? Esta ação é irreversível.
         </p>
-        
+
         {error && <div className="flex items-center gap-2 rounded-lg bg-red-100 p-3 text-red-700 mb-4 text-left"><AlertCircle size={20} /><p className="text-sm">{error}</p></div>}
 
         <div className="flex gap-4">
-            <button onClick={onClose} disabled={isPending} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
-                Cancelar
-            </button>
-            <button onClick={handleDelete} disabled={isPending} className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:bg-red-400">
-                {isPending && <Loader2 className="animate-spin" size={20} />}
-                {isPending ? 'A remover...' : 'Sim, Remover'}
-            </button>
+          <button onClick={onClose} disabled={isPending} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+            Cancelar
+          </button>
+          <button onClick={handleDelete} disabled={isPending} className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:bg-red-400">
+            {isPending && <Loader2 className="animate-spin" size={20} />}
+            {isPending ? 'A remover...' : 'Sim, Remover'}
+          </button>
         </div>
       </div>
     </div>

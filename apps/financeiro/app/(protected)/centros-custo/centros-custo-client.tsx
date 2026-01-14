@@ -2,21 +2,21 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  TrendingDown, 
+} from '@noro/ui';
+import {
+  Plus,
+  Search,
+  Filter,
+  TrendingUp,
+  TrendingDown,
   AlertCircle,
   Calendar,
   DollarSign,
@@ -26,11 +26,11 @@ import {
   MapPin,
   PackageOpen
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast';
+import { Badge } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import Link from 'next/link';
 import { CentroCustoFormModal } from './centro-custo-form-modal';
-import type { FinCentroCusto, TipoCentroCusto, StatusCentroCusto } from '@/types/financeiro';
+import type { FinCentroCusto, TipoCentroCusto, StatusCentroCusto } from '@noro/types/financeiro';
 
 interface CentrosCustoClientProps {
   centrosCusto: any[];
@@ -39,8 +39,8 @@ interface CentrosCustoClientProps {
 
 export function CentrosCustoClient({ centrosCusto, tenantId }: CentrosCustoClientProps) {
   const router = useRouter();
-  const { showToast } = useToast();
-  
+  const { toast } = useToast();
+
   const [busca, setBusca] = useState('');
   const [filtroTipo, setFiltroTipo] = useState<string>('todos');
   const [filtroStatus, setFiltroStatus] = useState<string>('todos');
@@ -203,7 +203,7 @@ export function CentrosCustoClient({ centrosCusto, tenantId }: CentrosCustoClien
             onChange={(e) => setBusca(e.target.value)}
             className="max-w-sm"
           />
-          
+
           <Select value={filtroTipo} onValueChange={setFiltroTipo}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Tipo" />
@@ -264,8 +264,8 @@ export function CentrosCustoClient({ centrosCusto, tenantId }: CentrosCustoClien
       {/* Grid de Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {centrosFiltrados.map((cc) => (
-          <Link 
-            key={cc.id} 
+          <Link
+            key={cc.id}
             href={`/centros-custo/${cc.id}`}
             className={`block bg-white rounded-lg shadow border-2 hover:shadow-lg transition-shadow ${getMargemBg(cc.rentabilidade.margem_percentual)}`}
           >
@@ -333,33 +333,32 @@ export function CentrosCustoClient({ centrosCusto, tenantId }: CentrosCustoClien
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className={`h-2 rounded-full ${
-                      cc.rentabilidade.percentual_orcamento_utilizado > 100
-                        ? 'bg-red-500'
-                        : cc.rentabilidade.percentual_orcamento_utilizado > 80
+                    className={`h-2 rounded-full ${cc.rentabilidade.percentual_orcamento_utilizado > 100
+                      ? 'bg-red-500'
+                      : cc.rentabilidade.percentual_orcamento_utilizado > 80
                         ? 'bg-yellow-500'
                         : 'bg-green-500'
-                    }`}
+                      }`}
                     style={{ width: `${Math.min(cc.rentabilidade.percentual_orcamento_utilizado, 100)}%` }}
                   />
                 </div>
               </div>
 
               {/* Alertas */}
-              {(cc.rentabilidade.margem_percentual < cc.meta_margem_percentual || 
+              {(cc.rentabilidade.margem_percentual < cc.meta_margem_percentual ||
                 cc.rentabilidade.percentual_orcamento_utilizado > 90) && (
-                <div className="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                  <div className="text-xs text-yellow-800">
-                    {cc.rentabilidade.margem_percentual < cc.meta_margem_percentual && (
-                      <p>Margem abaixo da meta</p>
-                    )}
-                    {cc.rentabilidade.percentual_orcamento_utilizado > 90 && (
-                      <p>Orçamento quase esgotado</p>
-                    )}
+                  <div className="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                    <div className="text-xs text-yellow-800">
+                      {cc.rentabilidade.margem_percentual < cc.meta_margem_percentual && (
+                        <p>Margem abaixo da meta</p>
+                      )}
+                      {cc.rentabilidade.percentual_orcamento_utilizado > 90 && (
+                        <p>Orçamento quase esgotado</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </Link>
         ))}

@@ -8,21 +8,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Label } from '@noro/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { useToast } from '@/hooks/use-toast'
+} from '@noro/ui'
+import { Alert, AlertDescription } from '@noro/ui'
+import { Badge } from '@noro/ui'
+import { Card, CardContent } from '@noro/ui'
+import { useToast } from '@noro/ui'
 
 interface Credito {
   id: string
@@ -64,7 +64,7 @@ export default function AplicarCreditoRapidoModal({
   tenantId,
   onSuccess,
 }: Props) {
-  const { showToast } = useToast()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -82,10 +82,10 @@ export default function AplicarCreditoRapidoModal({
     return duplicatasPagar.filter((dup) => {
       // Mesmo fornecedor
       if (dup.fornecedor_id !== credito.fornecedor_id) return false
-      
+
       // Mesma moeda
       if (dup.moeda !== credito.moeda) return false
-      
+
       // Tem valor pendente
       if (dup.valor_pendente <= 0) return false
 
@@ -149,24 +149,40 @@ export default function AplicarCreditoRapidoModal({
 
     // Validações
     if (!formData.duplicata_pagar_id) {
-      showToast('error', 'Selecione uma duplicata')
+      toast({
+        title: 'Erro',
+        description: 'Selecione uma duplicata',
+        variant: 'destructive',
+      })
       return
     }
 
     const valorAplicar = parseFloat(formData.valor_aplicar)
     if (isNaN(valorAplicar) || valorAplicar <= 0) {
-      showToast('error', 'Valor deve ser maior que zero')
+      toast({
+        title: 'Erro',
+        description: 'Valor deve ser maior que zero',
+        variant: 'destructive',
+      })
       return
     }
 
     const saldoCredito = credito.valor_total - credito.valor_utilizado
     if (valorAplicar > saldoCredito) {
-      showToast('error', 'Valor maior que o saldo do crédito', `Saldo disponível: ${formatCurrency(saldoCredito, credito.moeda)}`)
+      toast({
+        title: 'Erro',
+        description: `Valor maior que o saldo do crédito. Saldo disponível: ${formatCurrency(saldoCredito, credito.moeda)}`,
+        variant: 'destructive',
+      })
       return
     }
 
     if (valorAplicar > duplicataSelecionada.valor_pendente) {
-      showToast('error', 'Valor maior que o pendente da duplicata', `Pendente: ${formatCurrency(duplicataSelecionada.valor_pendente, duplicataSelecionada.moeda)}`)
+      toast({
+        title: 'Erro',
+        description: `Valor maior que o pendente da duplicata. Pendente: ${formatCurrency(duplicataSelecionada.valor_pendente, duplicataSelecionada.moeda)}`,
+        variant: 'destructive',
+      })
       return
     }
 
@@ -190,16 +206,26 @@ export default function AplicarCreditoRapidoModal({
       )
 
       if (res.ok) {
-        showToast('success', 'Crédito aplicado com sucesso!')
+        toast({
+          title: 'Crédito aplicado com sucesso!',
+          variant: 'success',
+        })
         onSuccess()
         onClose()
       } else {
         const error = await res.json()
-        showToast('error', 'Erro ao aplicar crédito', error.error || 'Tente novamente.')
+        toast({
+          title: 'Erro ao aplicar crédito',
+          description: error.error || 'Tente novamente.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Erro ao aplicar crédito:', error)
-      showToast('error', 'Erro ao aplicar crédito')
+      toast({
+        title: 'Erro ao aplicar crédito',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }

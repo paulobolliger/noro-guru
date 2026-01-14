@@ -2,23 +2,23 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  X, 
+} from '@noro/ui';
+import {
+  Plus,
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  X,
   DollarSign,
   FileText,
   Clock,
@@ -27,8 +27,8 @@ import {
   CreditCard,
   TrendingUp
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@noro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui';
 import {
   Table,
   TableBody,
@@ -36,8 +36,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { DuplicataPagarFormModal } from './duplicata-form-modal';
 import { PagarDuplicataModal } from './pagar-duplicata-modal';
 import { AplicarCreditoModal } from './aplicar-credito-modal';
@@ -52,29 +52,29 @@ interface DuplicatasPagarClientProps {
   tenantId: string;
 }
 
-export function DuplicatasPagarClient({ 
-  duplicatas, 
+export function DuplicatasPagarClient({
+  duplicatas,
   fornecedores,
   adiantamentos,
   creditos,
-  categorias, 
-  contas, 
-  tenantId 
+  categorias,
+  contas,
+  tenantId
 }: DuplicatasPagarClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { showToast } = useToast();
-  
+  const { toast } = useToast();
+
   // Estados de filtros
-  const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams.get('status') || 'todos');
-  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams.get('marca') || 'todas');
-  const [filtroFornecedor, setFiltroFornecedor] = useState<string>(searchParams.get('fornecedor') || 'todos');
-  const [dataInicio, setDataInicio] = useState(searchParams.get('dataInicio') || '');
-  const [dataFim, setDataFim] = useState(searchParams.get('dataFim') || '');
-  const [vencimentoProximo, setVencimentoProximo] = useState<string>(searchParams.get('vencimentoProximo') || '');
-  
+  const [busca, setBusca] = useState(searchParams?.get('busca') || '');
+  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams?.get('status') || 'todos');
+  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams?.get('marca') || 'todas');
+  const [filtroFornecedor, setFiltroFornecedor] = useState<string>(searchParams?.get('fornecedor') || 'todos');
+  const [dataInicio, setDataInicio] = useState(searchParams?.get('data_inicio') || '');
+  const [dataFim, setDataFim] = useState(searchParams?.get('data_fim') || '');
+  const [vencimentoProximo, setVencimentoProximo] = useState<string>(searchParams?.get('vencimentoProximo') || '');
+
   // Estados de modais
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPagarOpen, setIsPagarOpen] = useState(false);
@@ -94,8 +94,8 @@ export function DuplicatasPagarClient({
     if (vencimentoProximo) params.set('vencimentoProximo', vencimentoProximo);
 
     const queryString = params.toString();
-    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
-    router.replace(newUrl, { scroll: false });
+    const url = queryString ? `${pathname || ''}?${queryString}` : pathname || '';
+    router.replace(url, { scroll: false });
   }, [busca, filtroStatus, filtroMarca, filtroFornecedor, dataInicio, dataFim, vencimentoProximo, pathname, router]);
 
   // Filtrar duplicatas
@@ -105,11 +105,11 @@ export function DuplicatasPagarClient({
         busca === '' ||
         duplicata.numero_documento?.toLowerCase().includes(busca.toLowerCase()) ||
         duplicata.descricao?.toLowerCase().includes(busca.toLowerCase());
-      
+
       const matchStatus = filtroStatus === 'todos' || duplicata.status === filtroStatus;
       const matchMarca = filtroMarca === 'todas' || duplicata.marca === filtroMarca;
       const matchFornecedor = filtroFornecedor === 'todos' || duplicata.fornecedor_id === filtroFornecedor;
-      
+
       const dataVencimento = new Date(duplicata.data_vencimento);
       const matchDataInicio = !dataInicio || dataVencimento >= new Date(dataInicio);
       const matchDataFim = !dataFim || dataVencimento <= new Date(dataFim);
@@ -136,16 +136,16 @@ export function DuplicatasPagarClient({
         acc.pago += dup.valor_pago || 0;
         acc.pendente += dup.valor_pendente || 0;
         acc.credito_aplicado += dup.valor_credito_aplicado || 0;
-        
+
         if (dup.status === 'paga') acc.count_pagas++;
         else if (dup.status === 'vencida') acc.count_vencidas++;
         else if (dup.status === 'pendente') acc.count_pendentes++;
-        
+
         return acc;
       },
-      { 
-        total: 0, 
-        pago: 0, 
+      {
+        total: 0,
+        pago: 0,
         pendente: 0,
         credito_aplicado: 0,
         count_pagas: 0,
@@ -189,7 +189,7 @@ export function DuplicatasPagarClient({
 
   const handleDeletar = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar esta duplicata? Adiantamentos e créditos vinculados serão revertidos.')) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/duplicatas-pagar/${id}`, {
@@ -200,12 +200,20 @@ export function DuplicatasPagarClient({
         throw new Error('Erro ao deletar duplicata');
       }
 
-      showToast('success', 'Duplicata deletada com sucesso');
+      toast({
+        title: 'Sucesso',
+        description: 'Duplicata deletada com sucesso',
+        variant: 'success',
+      });
 
       router.refresh();
     } catch (error) {
       console.error('Erro ao deletar:', error);
-      showToast('error', 'Erro ao deletar duplicata');
+      toast({
+        title: 'Erro ao deletar duplicata',
+        description: 'Não foi possível deletar a duplicata.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -214,7 +222,7 @@ export function DuplicatasPagarClient({
   const handleGerarParcelas = async (duplicata: any) => {
     const numeroParcelas = prompt('Número de parcelas:', '2');
     if (!numeroParcelas) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/duplicatas-pagar/${duplicata.id}/gerar-parcelas`, {
@@ -230,12 +238,20 @@ export function DuplicatasPagarClient({
         throw new Error('Erro ao gerar parcelas');
       }
 
-      showToast('success', 'Parcelas geradas com sucesso');
+      toast({
+        title: 'Sucesso',
+        description: 'Parcelas geradas com sucesso',
+        variant: 'success',
+      });
 
       router.refresh();
     } catch (error) {
       console.error('Erro ao gerar parcelas:', error);
-      showToast('error', 'Erro ao gerar parcelas');
+      toast({
+        title: 'Erro ao gerar parcelas',
+        description: 'Não foi possível gerar as parcelas.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -512,7 +528,7 @@ export function DuplicatasPagarClient({
                     </TableCell>
                     <TableCell>
                       {duplicata.adiantamento_id ? (
-                        <Badge variant="success" className="text-xs">
+                        <Badge variant="outline" className="text-xs bg-green-100 text-green-800 hover:bg-green-100 border-green-200">
                           Vinculado
                         </Badge>
                       ) : (

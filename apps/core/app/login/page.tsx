@@ -27,13 +27,13 @@ export default async function LoginPage({
             Portal do Tenant
           </p>
         </div>
-        
+
         {searchParams.error && (
           <div className="rounded-md bg-red-50 p-4">
             <p className="text-sm text-red-800">{searchParams.error}</p>
           </div>
         )}
-        
+
         <LoginForm redirectTo={searchParams.redirect} />
       </div>
     </div>

@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import { Plus, Search, Download, Eye, Edit, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast';
+import { Badge } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { BancoFormModal } from './banco-form-modal';
 
 interface BancosClientProps {
@@ -16,7 +16,7 @@ interface BancosClientProps {
 
 export function BancosClient({ contas, tenantId }: BancosClientProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [busca, setBusca] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState<any>(null);
@@ -62,14 +62,26 @@ export function BancosClient({ contas, tenantId }: BancosClientProps) {
 
       if (response.ok) {
         router.refresh();
-        showToast('success', 'Conta deletada com sucesso!');
+        toast({
+          title: 'Sucesso',
+          description: 'Conta deletada com sucesso!',
+          variant: 'success',
+        });
       } else {
         const error = await response.json();
-        showToast('error', 'Erro ao deletar', error.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao deletar',
+          description: error.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Erro ao deletar conta:', error);
-      showToast('error', 'Erro ao deletar conta', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao deletar conta',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -203,9 +215,8 @@ export function BancosClient({ contas, tenantId }: BancosClientProps) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Saldo Atual:</span>
-                  <span className={`font-bold text-lg ${
-                    (conta.saldo_calculado || 0) >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <span className={`font-bold text-lg ${(conta.saldo_calculado || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
                     {formatarMoeda(conta.saldo_calculado || 0)}
                     {(conta.saldo_calculado || 0) >= 0 ? (
                       <TrendingUp className="inline ml-1 h-4 w-4" />

@@ -7,15 +7,18 @@
         "next.js",
         "react-internal.js"
     ],
-    "devDependencies": {
+    "dependencies": {
+        "@vercel/style-guide": "^6.0.0",
         "eslint-config-next": "^14.2.3",
         "eslint-config-prettier": "^9.1.0",
+        "eslint-config-turbo": "^2.0.0",
         "eslint-plugin-only-warn": "^1.1.0",
         "eslint-plugin-react": "^7.34.1",
         "eslint-plugin-turbo": "^2.0.0",
         "globals": "^15.0.0",
         "typescript": "^5.4.5"
     },
+    "devDependencies": {},
     "peerDependencies": {
         "eslint": "^8.57.0"
     }

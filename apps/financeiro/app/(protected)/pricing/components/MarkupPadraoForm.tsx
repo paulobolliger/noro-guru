@@ -2,15 +2,16 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MarkupPadrao, TipoMarkup } from '../../../types/pricing'
+import { MarkupPadrao, TipoMarkup } from '@/types/pricing'
 import { Button } from '@noro/ui'
-import { 
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage 
+  FormMessage,
+  FormDescription
 } from '@noro/ui'
 import {
   Card,
@@ -39,7 +40,7 @@ const formSchema = z.object({
   valor_markup: z.number()
     .min(0, 'Valor deve ser positivo')
     .max(999.99, 'Valor máximo excedido'),
-  moeda: z.enum(['EUR', 'USD', 'BRL']),
+  moeda: z.enum(['EUR', 'USD', 'BRL', 'GBP', 'AUD', 'CAD']),
   ativo: z.boolean(),
   ordem: z.number().int().min(0)
 })
@@ -52,33 +53,35 @@ interface MarkupPadraoFormProps {
   isLoading?: boolean
 }
 
-export default function MarkupPadraoForm({ 
+export default function MarkupPadraoForm({
   markup,
   onSubmit,
-  isLoading = false 
+  isLoading = false
 }: MarkupPadraoFormProps) {
   // Form initialization
+  const defaultValues = markup ? {
+    tipo_produto: markup.tipo_produto,
+    nome: markup.nome,
+    descricao: markup.descricao,
+    tipo_markup: markup.tipo_markup as any,
+    valor_markup: markup.valor_markup,
+    moeda: markup.moeda as any,
+    ativo: markup.ativo,
+    ordem: markup.ordem
+  } : {
+    tipo_produto: '',
+    nome: '',
+    descricao: '',
+    tipo_markup: 'percentual' as any,
+    valor_markup: 0,
+    moeda: 'EUR' as any,
+    ativo: true,
+    ordem: 0
+  };
+
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: markup ? {
-      tipo_produto: markup.tipo_produto,
-      nome: markup.nome,
-      descricao: markup.descricao,
-      tipo_markup: markup.tipo_markup,
-      valor_markup: markup.valor_markup,
-      moeda: markup.moeda,
-      ativo: markup.ativo,
-      ordem: markup.ordem
-    } : {
-      tipo_produto: '',
-      nome: '',
-      descricao: '',
-      tipo_markup: 'percentual',
-      valor_markup: 0,
-      moeda: 'EUR',
-      ativo: true,
-      ordem: 0
-    }
+    resolver: zodResolver(formSchema) as any, // Type assertion to bypass Zod preprocess inference issue
+    defaultValues,
   })
 
   // Tipos de produto disponíveis
@@ -109,7 +112,7 @@ export default function MarkupPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Produto</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     disabled={isLoading}
@@ -198,14 +201,14 @@ export default function MarkupPadraoForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {form.watch('tipo_markup') === 'percentual' 
-                      ? 'Percentual (%)' 
+                    {form.watch('tipo_markup') === 'percentual'
+                      ? 'Percentual (%)'
                       : 'Valor'}
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step={form.watch('tipo_markup') === 'percentual' ? '0.01' : '1'} 
+                    <Input
+                      type="number"
+                      step={form.watch('tipo_markup') === 'percentual' ? '0.01' : '1'}
                       {...field}
                       onChange={(e) => field.onChange(parseFloat(e.target.value))}
                       disabled={isLoading}
@@ -237,6 +240,9 @@ export default function MarkupPadraoForm({
                       <SelectItem value="EUR">Euro (€)</SelectItem>
                       <SelectItem value="USD">Dólar ($)</SelectItem>
                       <SelectItem value="BRL">Real (R$)</SelectItem>
+                      <SelectItem value="GBP">Libra (£)</SelectItem>
+                      <SelectItem value="AUD">Dólar Australiano (A$)</SelectItem>
+                      <SelectItem value="CAD">Dólar Canadense (C$)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

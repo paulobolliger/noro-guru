@@ -2,19 +2,19 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@noro/ui';
 import { Plus, Search, Filter, Download, Eye, Edit, Trash2, X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@noro/ui';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@noro/ui';
 import { DespesaFormModal } from './despesa-form-modal';
 import { DespesaDetalhesModal } from './despesa-detalhes-modal';
 
@@ -29,15 +29,15 @@ export function DespesasClient({ despesas, categorias, contas, tenantId }: Despe
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { showToast } = useToast();
-  
+  const { toast } = useToast();
+
   // Inicializar estados com valores da URL
-  const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams.get('status') || 'todos');
-  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams.get('marca') || 'todas');
-  const [filtroCategoria, setFiltroCategoria] = useState<string>(searchParams.get('categoria') || 'todas');
-  const [dataInicio, setDataInicio] = useState(searchParams.get('dataInicio') || '');
-  const [dataFim, setDataFim] = useState(searchParams.get('dataFim') || '');
+  const [busca, setBusca] = useState(searchParams?.get('busca') || '');
+  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams?.get('status') || 'todos');
+  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams?.get('marca') || 'todas');
+  const [filtroCategoria, setFiltroCategoria] = useState<string>(searchParams?.get('categoria') || 'todas');
+  const [dataInicio, setDataInicio] = useState(searchParams?.get('dataInicio') || '');
+  const [dataFim, setDataFim] = useState(searchParams?.get('dataFim') || '');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDetalhesOpen, setIsDetalhesOpen] = useState(false);
   const [despesaSelecionada, setDespesaSelecionada] = useState<any>(null);
@@ -53,7 +53,7 @@ export function DespesasClient({ despesas, categorias, contas, tenantId }: Despe
     if (dataFim) params.set('dataFim', dataFim);
 
     const queryString = params.toString();
-    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+    const newUrl = queryString ? `${pathname || ''}?${queryString}` : (pathname || '');
     router.replace(newUrl, { scroll: false });
   }, [busca, filtroStatus, filtroMarca, filtroCategoria, dataInicio, dataFim, pathname, router]);
 
@@ -69,7 +69,7 @@ export function DespesasClient({ despesas, categorias, contas, tenantId }: Despe
         filtroMarca === 'todas' || despesa.marca === filtroMarca;
       const matchCategoria =
         filtroCategoria === 'todas' || despesa.categoria_id === filtroCategoria;
-      
+
       // Filtro de data (vencimento)
       const dataVencimento = new Date(despesa.data_vencimento);
       const matchDataInicio = !dataInicio || dataVencimento >= new Date(dataInicio);
@@ -119,7 +119,7 @@ export function DespesasClient({ despesas, categorias, contas, tenantId }: Despe
     setDataFim('');
   };
 
-  const temFiltrosAtivos = busca || filtroStatus !== 'todos' || filtroMarca !== 'todas' || 
+  const temFiltrosAtivos = busca || filtroStatus !== 'todos' || filtroMarca !== 'todas' ||
     filtroCategoria !== 'todas' || dataInicio || dataFim;
 
   const handleDeletar = async (despesa: any) => {
@@ -134,14 +134,26 @@ export function DespesasClient({ despesas, categorias, contas, tenantId }: Despe
 
       if (response.ok) {
         router.refresh();
-        showToast('success', 'Despesa deletada com sucesso!');
+        toast({
+          title: 'Sucesso',
+          description: 'Despesa deletada com sucesso!',
+          variant: 'success',
+        });
       } else {
         const error = await response.json();
-        showToast('error', 'Erro ao deletar', error.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao deletar',
+          description: error.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Erro ao deletar despesa:', error);
-      showToast('error', 'Erro ao deletar despesa', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao deletar despesa',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     }
   };
 

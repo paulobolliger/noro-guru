@@ -2,21 +2,28 @@
 import packageJson from '@/../package.json';
 import Link from 'next/link';
 
-export default function AdminFooter() {
+interface AdminFooterProps {
+  footerColor?: string;
+}
+
+export default function AdminFooter({ footerColor }: AdminFooterProps) {
   // Lê a versão do build do Vercel, ou usa a versão do package.json como fallback
   const version = process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version;
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 px-8 py-2 text-center text-xs text-gray-500">
+    <footer
+      className="border-t border-white/10 px-8 py-3 text-center text-xs text-slate-300 font-medium"
+      style={{ backgroundColor: footerColor || '#232452' }}
+    >
       <div className="flex justify-center items-center gap-x-2">
-        <span>&copy; {currentYear} Nomade Guru. Todos os direitos reservados.</span>
-        <span className="text-gray-300">|</span>
-        <Link href="/sobre-noro" className="hover:text-blue-600 hover:underline">
+        <span className="font-bold text-white">&copy; {currentYear} Noro Tecnologia. Todos os direitos reservados.</span>
+        <span className="text-white/20">|</span>
+        <Link href="/sobre-noro" className="hover:text-white hover:underline transition-colors font-bold">
           Sobre o NORO
         </Link>
-        <span className="text-gray-300">|</span>
-        <span>Versão {version}</span>
+        <span className="text-white/20">|</span>
+        <span className="font-bold opacity-80">Versão {version}</span>
       </div>
     </footer>
   );

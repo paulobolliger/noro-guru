@@ -6,7 +6,7 @@ import { ptBR } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 
-import { cn } from '@/../../packages/lib/utils';
+import { cn } from '@noro/lib/utils';
 import { Button } from './button';
 import { Calendar } from './calendar';
 import {
@@ -62,7 +62,7 @@ export function DatePickerWithRange({
             numberOfMonths={2}
             locale={ptBR}
             formatters={{
-              formatWeekdayName: (date) => ['D','S','T','Q','Q','S','S'][date.getDay()],
+              formatWeekdayName: (date) => ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'][date.getDay()],
               formatCaption: (date) => format(date, 'LLLL yyyy', { locale: ptBR }),
             }}
             classNames={{

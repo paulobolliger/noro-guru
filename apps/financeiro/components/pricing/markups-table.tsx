@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@noro/ui"
 import {
   Table,
   TableBody,
@@ -15,9 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from "@noro/ui"
+import { Badge } from "@noro/ui"
+import { Button } from "@noro/ui"
 import { formatCurrency } from '@/lib/utils'
 import { useState } from 'react'
 import { EditMarkupForm } from './edit-markup-form'
@@ -28,10 +28,10 @@ interface MarkupsTableProps {
   onToggleStatus?: (markup: MarkupPadrao) => void
 }
 
-export function MarkupsTable({ 
-  markups, 
+export function MarkupsTable({
+  markups,
   onEdit,
-  onToggleStatus 
+  onToggleStatus
 }: MarkupsTableProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof MarkupPadrao
@@ -43,11 +43,16 @@ export function MarkupsTable({
   const [editingMarkup, setEditingMarkup] = useState<MarkupPadrao | null>(null)
 
   const sortedMarkups = [...markups].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1
+    if (!sortConfig) return 0;
+    const key = sortConfig.key;
+    const direction = sortConfig.direction;
+    const aVal = a[key] as any;
+    const bVal = b[key] as any;
+    if (aVal < bVal) {
+      return direction === 'asc' ? -1 : 1
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1
+    if (aVal > bVal) {
+      return direction === 'asc' ? 1 : -1
     }
     return 0
   })
@@ -55,9 +60,9 @@ export function MarkupsTable({
   const handleSort = (key: keyof MarkupPadrao) => {
     setSortConfig({
       key,
-      direction: 
-        sortConfig.key === key && sortConfig.direction === 'asc' 
-          ? 'desc' 
+      direction:
+        sortConfig.key === key && sortConfig.direction === 'asc'
+          ? 'desc'
           : 'asc',
     })
   }
@@ -86,7 +91,7 @@ export function MarkupsTable({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead 
+                  <TableHead
                     className="w-[200px] cursor-pointer"
                     onClick={() => handleSort('nome')}
                   >
@@ -105,13 +110,14 @@ export function MarkupsTable({
                     <TableCell className="font-medium">{markup.nome}</TableCell>
                     <TableCell>{markup.tipo_produto}</TableCell>
                     <TableCell className="text-right">
-                      {markup.tipo_markup === 'percentual' 
+                      {markup.tipo_markup === 'percentual'
                         ? `${markup.valor_markup}%`
                         : formatCurrency(markup.valor_markup, markup.moeda)}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge 
-                        variant={markup.ativo ? "success" : "secondary"}
+                      <Badge
+                        variant={markup.ativo ? "default" : "secondary"}
+                        className={markup.ativo ? "bg-green-500" : ""}
                       >
                         {markup.ativo ? 'Ativo' : 'Inativo'}
                       </Badge>
@@ -127,7 +133,7 @@ export function MarkupsTable({
                           Editar
                         </Button>
                         <Button
-                          variant={markup.ativo ? "secondary" : "default"}
+                          variant={markup.ativo ? "outline" : "default"}
                           size="sm"
                           onClick={() => onToggleStatus?.(markup)}
                         >
@@ -144,7 +150,7 @@ export function MarkupsTable({
       </Card>
 
       {editingMarkup && (
-        <EditMarkupForm 
+        <EditMarkupForm
           markup={editingMarkup}
           open={!!editingMarkup}
           onOpenChange={(open) => !open && setEditingMarkup(null)}

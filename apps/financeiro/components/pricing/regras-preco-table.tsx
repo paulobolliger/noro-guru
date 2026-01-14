@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@noro/ui"
 import {
   Table,
   TableBody,
@@ -15,9 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+} from "@noro/ui"
+import { Badge } from "@noro/ui"
+import { Button } from "@noro/ui"
 import { formatCurrency } from '@/lib/utils'
 import { useState } from 'react'
 
@@ -40,7 +40,7 @@ function formatMarkup(tipo: TipoMarkup, valor: number, moeda: string): string {
     case 'percentual':
       return `${valor}%`
     case 'fixo':
-      return formatCurrency(valor, moeda)
+      return formatCurrency(valor, moeda as any)
     case 'dinamico':
       return 'Dinâmico'
     case 'personalizado':
@@ -56,10 +56,10 @@ interface RegrasPrecoTableProps {
   onToggleStatus?: (regra: RegraPreco) => void
 }
 
-export function RegrasPrecoTable({ 
-  regras, 
+export function RegrasPrecoTable({
+  regras,
   onEdit,
-  onToggleStatus 
+  onToggleStatus
 }: RegrasPrecoTableProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof RegraPreco
@@ -70,11 +70,15 @@ export function RegrasPrecoTable({
   })
 
   const sortedRegras = [...regras].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1
+    const key = sortConfig.key;
+    const direction = sortConfig.direction;
+    const aVal = a[key] as any;
+    const bVal = b[key] as any;
+    if (aVal < bVal) {
+      return direction === 'asc' ? -1 : 1
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1
+    if (aVal > bVal) {
+      return direction === 'asc' ? 1 : -1
     }
     return 0
   })
@@ -82,9 +86,9 @@ export function RegrasPrecoTable({
   const handleSort = (key: keyof RegraPreco) => {
     setSortConfig({
       key,
-      direction: 
-        sortConfig.key === key && sortConfig.direction === 'asc' 
-          ? 'desc' 
+      direction:
+        sortConfig.key === key && sortConfig.direction === 'asc'
+          ? 'desc'
           : 'asc',
     })
   }
@@ -102,7 +106,7 @@ export function RegrasPrecoTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead 
+                <TableHead
                   className="w-[200px] cursor-pointer"
                   onClick={() => handleSort('nome')}
                 >
@@ -111,7 +115,7 @@ export function RegrasPrecoTable({
                 <TableHead className="w-[150px]">Tipo</TableHead>
                 <TableHead className="w-[100px] text-right">Markup</TableHead>
                 <TableHead className="w-[100px] text-center">Status</TableHead>
-                <TableHead 
+                <TableHead
                   className="w-[100px] text-right cursor-pointer"
                   onClick={() => handleSort('prioridade')}
                 >
@@ -129,7 +133,7 @@ export function RegrasPrecoTable({
                     {formatMarkup(regra.tipo_markup, regra.valor_markup, regra.moeda)}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge 
+                    <Badge
                       variant={regra.ativo ? "default" : "secondary"}
                     >
                       {regra.ativo ? 'Ativa' : 'Inativa'}

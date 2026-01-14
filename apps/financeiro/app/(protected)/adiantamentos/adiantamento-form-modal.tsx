@@ -8,18 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
+  Button,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useToast } from '@/hooks/use-toast'
+  useToast
+} from '@noro/ui'
 
 interface Adiantamento {
   id: string
@@ -55,7 +53,7 @@ export default function AdiantamentoFormModal({
   tenantId,
   onSuccess,
 }: Props) {
-  const { showToast } = useToast()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -100,23 +98,23 @@ export default function AdiantamentoFormModal({
 
     // Validações
     if (!formData.descricao.trim()) {
-      showToast('error', 'Descrição é obrigatória')
+      toast({ title: 'Erro', description: 'Descrição é obrigatória', variant: 'destructive' })
       return
     }
 
     if (!formData.fornecedor_id) {
-      showToast('error', 'Fornecedor é obrigatório')
+      toast({ title: 'Erro', description: 'Fornecedor é obrigatório', variant: 'destructive' })
       return
     }
 
     const valorTotal = parseFloat(formData.valor_total)
     if (isNaN(valorTotal) || valorTotal <= 0) {
-      showToast('error', 'Valor total deve ser maior que zero')
+      toast({ title: 'Erro', description: 'Valor total deve ser maior que zero', variant: 'destructive' })
       return
     }
 
     if (!formData.data_adiantamento) {
-      showToast('error', 'Data do adiantamento é obrigatória')
+      toast({ title: 'Erro', description: 'Data do adiantamento é obrigatória', variant: 'destructive' })
       return
     }
 
@@ -143,19 +141,20 @@ export default function AdiantamentoFormModal({
       })
 
       if (res.ok) {
-        showToast(
-          'success',
-          adiantamento ? 'Adiantamento atualizado!' : 'Adiantamento criado com sucesso!'
-        )
+        toast({
+          title: 'Sucesso',
+          description: adiantamento ? 'Adiantamento atualizado!' : 'Adiantamento criado com sucesso!',
+          variant: 'success'
+        })
         onSuccess()
         onClose()
       } else {
         const error = await res.json()
-        showToast('error', 'Erro ao salvar adiantamento', error.error || 'Tente novamente.')
+        toast({ title: 'Erro', description: error.error || 'Tente novamente.', variant: 'destructive' })
       }
     } catch (error) {
       console.error('Erro ao salvar adiantamento:', error)
-      showToast('error', 'Erro ao salvar adiantamento')
+      toast({ title: 'Erro', description: 'Erro ao salvar adiantamento', variant: 'destructive' })
     } finally {
       setLoading(false)
     }
@@ -179,7 +178,7 @@ export default function AdiantamentoFormModal({
                 onValueChange={(value) =>
                   setFormData({ ...formData, fornecedor_id: value })
                 }
-                disabled={adiantamento && adiantamento.valor_utilizado > 0}
+                disabled={!!(adiantamento && adiantamento.valor_utilizado > 0)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o fornecedor" />
@@ -223,7 +222,7 @@ export default function AdiantamentoFormModal({
                     setFormData({ ...formData, valor_total: e.target.value })
                   }
                   placeholder="0.00"
-                  disabled={adiantamento && adiantamento.valor_utilizado > 0}
+                  disabled={!!(adiantamento && adiantamento.valor_utilizado > 0)}
                 />
                 {adiantamento && adiantamento.valor_utilizado > 0 && (
                   <p className="text-xs text-muted-foreground">
@@ -237,7 +236,7 @@ export default function AdiantamentoFormModal({
                 <Select
                   value={formData.moeda}
                   onValueChange={(value) => setFormData({ ...formData, moeda: value })}
-                  disabled={adiantamento && adiantamento.valor_utilizado > 0}
+                  disabled={!!(adiantamento && adiantamento.valor_utilizado > 0)}
                 >
                   <SelectTrigger>
                     <SelectValue />

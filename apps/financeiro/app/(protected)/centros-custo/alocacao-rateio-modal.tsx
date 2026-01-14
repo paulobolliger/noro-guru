@@ -2,16 +2,16 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@noro/ui';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@noro/ui';
+import { Badge } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Search, Plus, Trash2, Edit, AlertCircle, CheckCircle2 } from 'lucide-react';
-import type { FinCentroCusto, FinAlocacao, TipoRateio, FinReceita, FinDespesa } from '@/types/financeiro';
+import type { FinCentroCusto, FinAlocacao, TipoRateio, FinReceita, FinDespesa } from '@noro/types/financeiro';
 
 interface AlocacaoRateioModalProps {
   centroCusto: FinCentroCusto;
@@ -34,22 +34,22 @@ export default function AlocacaoRateioModal({
   onOpenChange,
 }: AlocacaoRateioModalProps) {
   const router = useRouter();
-  const { showToast } = useToast();
-  
+  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'receitas' | 'despesas'>('receitas');
-  
+
   // Listas de receitas e despesas disponíveis
   const [receitas, setReceitas] = useState<FinReceita[]>([]);
   const [despesas, setDespesas] = useState<FinDespesa[]>([]);
-  
+
   // Alocações existentes
   const [alocacoes, setAlocacoes] = useState<FinAlocacao[]>([]);
-  
+
   // Filtros de busca
   const [searchReceita, setSearchReceita] = useState('');
   const [searchDespesa, setSearchDespesa] = useState('');
-  
+
   // Formulário de nova alocação
   const [showForm, setShowForm] = useState(false);
   const [editingAlocacao, setEditingAlocacao] = useState<FinAlocacao | null>(null);
@@ -91,7 +91,11 @@ export default function AlocacaoRateioModal({
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
-      showToast('error', 'Erro', 'Não foi possível carregar os dados.');
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível carregar os dados.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -100,13 +104,13 @@ export default function AlocacaoRateioModal({
   // Filtrar receitas
   const receitasFiltradas = useMemo(() => {
     return receitas.filter((receita) => {
-      const matchSearch = searchReceita === '' || 
+      const matchSearch = searchReceita === '' ||
         receita.descricao?.toLowerCase().includes(searchReceita.toLowerCase()) ||
         receita.categoria_id?.toLowerCase().includes(searchReceita.toLowerCase());
-      
+
       // Verificar se já está alocada
       const jaAlocada = alocacoes.some(a => a.receita_id === receita.id);
-      
+
       return matchSearch && !jaAlocada;
     });
   }, [receitas, searchReceita, alocacoes]);
@@ -114,13 +118,13 @@ export default function AlocacaoRateioModal({
   // Filtrar despesas
   const despesasFiltradas = useMemo(() => {
     return despesas.filter((despesa) => {
-      const matchSearch = searchDespesa === '' || 
+      const matchSearch = searchDespesa === '' ||
         despesa.descricao?.toLowerCase().includes(searchDespesa.toLowerCase()) ||
         despesa.categoria_id?.toLowerCase().includes(searchDespesa.toLowerCase());
-      
+
       // Verificar se já está alocada
       const jaAlocada = alocacoes.some(a => a.despesa_id === despesa.id);
-      
+
       return matchSearch && !jaAlocada;
     });
   }, [despesas, searchDespesa, alocacoes]);
@@ -145,14 +149,14 @@ export default function AlocacaoRateioModal({
     const totalReceitasPercentual = alocacoesReceitas
       .filter(a => a.tipo_rateio === 'percentual')
       .reduce((sum, a) => sum + (a.percentual_alocacao || 0), 0);
-    
+
     const totalDespesasPercentual = alocacoesDespesas
       .filter(a => a.tipo_rateio === 'percentual')
       .reduce((sum, a) => sum + (a.percentual_alocacao || 0), 0);
-    
+
     const totalReceitasValor = alocacoesReceitas
       .reduce((sum, a) => sum + (a.valor_alocado || 0), 0);
-    
+
     const totalDespesasValor = alocacoesDespesas
       .reduce((sum, a) => sum + (a.valor_alocado || 0), 0);
 
@@ -202,12 +206,20 @@ export default function AlocacaoRateioModal({
         throw new Error('Erro ao remover alocação');
       }
 
-      showToast('success', 'Alocação removida com sucesso.');
+      toast({
+        title: 'Sucesso',
+        description: 'Alocação removida com sucesso.',
+        variant: 'success',
+      });
 
       await loadData();
     } catch (error) {
       console.error('Erro ao remover alocação:', error);
-      showToast('error', 'Erro', 'Não foi possível remover a alocação.');
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível remover a alocação.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -216,18 +228,30 @@ export default function AlocacaoRateioModal({
 
     // Validações
     if (!formData.origem_id) {
-      showToast('error', 'Erro', 'Selecione uma receita ou despesa.');
+      toast({
+        title: 'Erro',
+        description: 'Selecione uma receita ou despesa.',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (formData.tipo_rateio === 'percentual') {
       if (!formData.percentual_alocacao || formData.percentual_alocacao <= 0 || formData.percentual_alocacao > 100) {
-        showToast('error', 'Erro', 'O percentual deve ser entre 0 e 100%.');
+        toast({
+          title: 'Erro',
+          description: 'O percentual deve ser entre 0 e 100%.',
+          variant: 'destructive',
+        });
         return;
       }
     } else {
       if (!formData.valor_alocado || formData.valor_alocado <= 0) {
-        showToast('error', 'Erro', 'O valor alocado deve ser maior que zero.');
+        toast({
+          title: 'Erro',
+          description: 'O valor alocado deve ser maior que zero.',
+          variant: 'destructive',
+        });
         return;
       }
     }
@@ -244,10 +268,10 @@ export default function AlocacaoRateioModal({
         observacoes: formData.observacoes || null,
       };
 
-      const url = editingAlocacao 
+      const url = editingAlocacao
         ? `/api/alocacoes/${editingAlocacao.id}`
         : '/api/alocacoes';
-      
+
       const method = editingAlocacao ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -260,9 +284,13 @@ export default function AlocacaoRateioModal({
         throw new Error('Erro ao salvar alocação');
       }
 
-      showToast('success', editingAlocacao 
-        ? 'Alocação atualizada com sucesso.'
-        : 'Alocação criada com sucesso.');
+      toast({
+        title: 'Sucesso',
+        description: editingAlocacao
+          ? 'Alocação atualizada com sucesso.'
+          : 'Alocação criada com sucesso.',
+        variant: 'success',
+      });
 
       setShowForm(false);
       setFormData({
@@ -275,7 +303,11 @@ export default function AlocacaoRateioModal({
       await loadData();
     } catch (error) {
       console.error('Erro ao salvar alocação:', error);
-      showToast('error', 'Erro', 'Não foi possível salvar a alocação.');
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível salvar a alocação.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -407,8 +439,8 @@ export default function AlocacaoRateioModal({
                           <div className="flex-1">
                             <div className="font-medium">{(alocacao.origem as any)?.descricao || 'Receita não encontrada'}</div>
                             <div className="text-sm text-muted-foreground">
-                              {alocacao.tipo_rateio === 'percentual' 
-                                ? `${alocacao.percentual_alocacao}%` 
+                              {alocacao.tipo_rateio === 'percentual'
+                                ? `${alocacao.percentual_alocacao}%`
                                 : formatCurrency(alocacao.valor_alocado || 0)}
                               {alocacao.observacoes && ` • ${alocacao.observacoes}`}
                             </div>
@@ -447,7 +479,7 @@ export default function AlocacaoRateioModal({
                       className="pl-9"
                     />
                   </div>
-                  
+
                   <div className="max-h-[300px] overflow-y-auto space-y-2">
                     {receitasFiltradas.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
@@ -506,8 +538,8 @@ export default function AlocacaoRateioModal({
                           <div className="flex-1">
                             <div className="font-medium">{(alocacao.origem as any)?.descricao || 'Despesa não encontrada'}</div>
                             <div className="text-sm text-muted-foreground">
-                              {alocacao.tipo_rateio === 'percentual' 
-                                ? `${alocacao.percentual_alocacao}%` 
+                              {alocacao.tipo_rateio === 'percentual'
+                                ? `${alocacao.percentual_alocacao}%`
                                 : formatCurrency(alocacao.valor_alocado || 0)}
                               {alocacao.observacoes && ` • ${alocacao.observacoes}`}
                             </div>
@@ -546,7 +578,7 @@ export default function AlocacaoRateioModal({
                       className="pl-9"
                     />
                   </div>
-                  
+
                   <div className="max-h-[300px] overflow-y-auto space-y-2">
                     {despesasFiltradas.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">

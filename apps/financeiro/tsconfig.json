@@ -10,14 +10,17 @@
       "@/*": [
         "./*"
       ],
-      "@noro/ui": [
-        "../../packages/ui/src"
+      "@noro/ui/*": [
+        "../../packages/ui/*"
       ],
-      "@noro/lib": [
-        "../../packages/lib/src"
+      "@noro/lib/*": [
+        "../../packages/lib/*"
       ],
-      "@noro/types": [
-        "../../packages/types/src"
+      "@noro/types/*": [
+        "../../packages/types/*"
+      ],
+      "@noro-types/*": [
+        "../../packages/types/*"
       ]
     },
     "strictNullChecks": true
@@ -26,6 +29,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.mjs",
     ".next/types/**/*.ts"
   ],
   "exclude": [

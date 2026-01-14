@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Button from './ui/Button';
 
 interface NewsletterProps {
   variant?: 'light' | 'dark';
@@ -15,7 +16,7 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setStatus('error');
       setMessage('Por favor, insira um email válido');
@@ -39,7 +40,7 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
         setStatus('success');
         setMessage('✨ Pronto! Verifique seu email para confirmar a inscrição.');
         setEmail('');
-        
+
         // Auto-hide success message after 5s
         setTimeout(() => setStatus('idle'), 5000);
       } else {
@@ -57,7 +58,7 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
   };
 
   const isDark = variant === 'dark';
-  
+
   if (compact) {
     return (
       <div className="w-full">
@@ -67,20 +68,21 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Seu email"
-            className={`flex-1 px-4 py-2 rounded-lg ${
-              isDark 
-                ? 'bg-white/10 text-white placeholder-white/50 border border-white/20' 
-                : 'bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-300'
-            } focus:outline-none focus:ring-2 focus:ring-[#1DD3C0]`}
+            className={`flex-1 px-4 py-2 rounded-lg ${isDark
+              ? 'bg-white/10 text-white placeholder-white/50 border border-white/20'
+              : 'bg-gray-100 text-gray-900 placeholder-gray-500 border border-gray-300'
+              } focus:outline-none focus:ring-2 focus:ring-[#1DD3C0]`}
             disabled={isLoading}
           />
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="bg-[#1DD3C0] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#1DD3C0]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            variant="secondary"
+            size="sm"
+            className="px-6 py-2 rounded-lg"
           >
             {isLoading ? '...' : 'Assinar'}
-          </button>
+          </Button>
         </form>
         {status !== 'idle' && (
           <p className={`mt-2 text-sm ${status === 'success' ? 'text-green-500' : 'text-red-500'}`}>
@@ -109,15 +111,12 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Digite seu melhor email"
-              className={`w-full px-6 py-4 rounded-xl ${
-                isDark 
-                  ? 'bg-white/10 text-white placeholder-white/50 border border-white/20' 
-                  : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-[#1DD3C0] transition-all ${
-                status === 'error' ? 'border-red-500 focus:ring-red-500' : ''
-              } ${
-                status === 'success' ? 'border-green-500 focus:ring-green-500' : ''
-              }`}
+              className={`w-full px-6 py-4 rounded-xl ${isDark
+                ? 'bg-white/10 text-white placeholder-white/50 border border-white/20'
+                : 'bg-white text-gray-900 placeholder-gray-500 border border-gray-300'
+                } focus:outline-none focus:ring-2 focus:ring-[#1DD3C0] transition-all ${status === 'error' ? 'border-red-500 focus:ring-red-500' : ''
+                } ${status === 'success' ? 'border-green-500 focus:ring-green-500' : ''
+                }`}
               disabled={isLoading}
               aria-label="Email para newsletter"
               aria-describedby={status !== 'idle' ? 'newsletter-status' : undefined}
@@ -128,31 +127,32 @@ export default function Newsletter({ variant = 'light', compact = false }: Newsl
               </div>
             )}
           </div>
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="bg-gradient-to-r from-[#1DD3C0] to-[#342CA4] text-white font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_20px_#1DD3C0] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300"
+            variant="primary"
+            size="lg"
+            className="px-8 py-4 rounded-xl shadow-[0_0_20px_#1DD3C0] hover:scale-105"
             aria-label={isLoading ? 'Inscrevendo...' : 'Assinar Newsletter'}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-noro-dark border-t-transparent"></div>
                 Inscrevendo...
               </span>
             ) : (
               'Assinar Newsletter'
             )}
-          </button>
+          </Button>
         </form>
 
         {status !== 'idle' && (
-          <div 
+          <div
             id="newsletter-status"
-            className={`mt-4 p-4 rounded-lg animate-fade-in ${
-              status === 'success' 
-                ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
-                : 'bg-red-500/20 text-red-300 border border-red-500/30'
-            }`}
+            className={`mt-4 p-4 rounded-lg animate-fade-in ${status === 'success'
+              ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+              : 'bg-red-500/20 text-red-300 border border-red-500/30'
+              }`}
             role="alert"
             aria-live="polite"
           >

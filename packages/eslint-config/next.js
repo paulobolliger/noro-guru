@@ -26,6 +26,10 @@ module.exports = {
         node: true,
         browser: true,
     },
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+        project: true,
+    },
     plugins: ["only-warn"],
     settings: {
         "import/resolver": {

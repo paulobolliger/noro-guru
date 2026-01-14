@@ -1,8 +1,10 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
-import { formatCurrency, formatPercent } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
+
+const formatPercent = (value: number) => `${value.toFixed(2)}%`
 
 interface MargemData {
   data: string
@@ -99,41 +101,41 @@ export function DashboardPrecos({ margens, distribuicaoRegras, metricas }: Dashb
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={margens}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="data" 
+                <XAxis
+                  dataKey="data"
                   tickFormatter={(value) => new Date(value).toLocaleDateString()}
                 />
                 <YAxis tickFormatter={(value) => `${value}%`} />
-                <Tooltip 
+                <Tooltip
                   formatter={(value: number) => `${value.toFixed(2)}%`}
                   labelFormatter={(label) => new Date(label).toLocaleDateString()}
                 />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="margem_media" 
+                <Line
+                  type="monotone"
+                  dataKey="margem_media"
                   name="Margem Média"
-                  stroke="#8884d8" 
+                  stroke="#8884d8"
                   activeDot={{ r: 8 }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="markup_medio" 
+                <Line
+                  type="monotone"
+                  dataKey="markup_medio"
                   name="Markup Médio"
-                  stroke="#82ca9d" 
+                  stroke="#82ca9d"
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="margem_minima" 
+                <Line
+                  type="monotone"
+                  dataKey="margem_minima"
                   name="Margem Mínima"
-                  stroke="#ff7300" 
+                  stroke="#ff7300"
                   strokeDasharray="3 3"
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="margem_maxima" 
+                <Line
+                  type="monotone"
+                  dataKey="margem_maxima"
                   name="Margem Máxima"
-                  stroke="#ff0000" 
+                  stroke="#ff0000"
                   strokeDasharray="3 3"
                 />
               </LineChart>
@@ -151,7 +153,7 @@ export function DashboardPrecos({ margens, distribuicaoRegras, metricas }: Dashb
           <CardContent>
             <div className="space-y-4">
               {distribuicaoRegras.map((regra) => (
-                <div 
+                <div
                   key={regra.tipo}
                   className="flex items-center justify-between p-2 border-b"
                 >
@@ -192,17 +194,17 @@ export function DashboardPrecos({ margens, distribuicaoRegras, metricas }: Dashb
                 </div>
               )}
 
-              {margens.length > 1 && 
-               margens[margens.length - 1].margem_media < margens[margens.length - 2].margem_media && (
-                <div className="p-3 rounded-md bg-orange-50 border border-orange-200">
-                  <div className="font-medium text-orange-800">
-                    Queda na Margem
+              {margens.length > 1 &&
+                margens[margens.length - 1].margem_media < margens[margens.length - 2].margem_media && (
+                  <div className="p-3 rounded-md bg-orange-50 border border-orange-200">
+                    <div className="font-medium text-orange-800">
+                      Queda na Margem
+                    </div>
+                    <p className="text-sm text-orange-700 mt-1">
+                      Houve uma redução na margem média em relação ao período anterior.
+                    </p>
                   </div>
-                  <p className="text-sm text-orange-700 mt-1">
-                    Houve uma redução na margem média em relação ao período anterior.
-                  </p>
-                </div>
-              )}
+                )}
 
               {distribuicaoRegras.some(r => r.quantidade === 0) && (
                 <div className="p-3 rounded-md bg-blue-50 border border-blue-200">

@@ -1,5 +1,7 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+
+const tenantId = '00000000-0000-0000-0000-000000000000'; // TODO: Get from context
 
 
 export async function GET(
@@ -7,7 +9,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { id } = params;
 
     const { data, error } = await supabase
@@ -34,7 +36,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { id } = params;
     const body = await request.json();
 
@@ -66,7 +68,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { id } = params;
 
     console.log('🗑️ Deletando centro de custo:', id);

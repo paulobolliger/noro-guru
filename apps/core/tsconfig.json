@@ -3,10 +3,21 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@noro/ui": ["../../packages/ui"],
-      "@noro/lib": ["../../packages/lib"],
-      "@noro/types": ["../../packages/types"]
+      "@/*": [
+        "./*"
+      ],
+      "@noro/ui": [
+        "../../packages/ui"
+      ],
+      "@noro/ui/*": [
+        "../../packages/ui/*"
+      ],
+      "@noro/lib": [
+        "../../packages/lib"
+      ],
+      "@noro/types": [
+        "../../packages/types"
+      ]
     },
     "plugins": [
       {
@@ -14,6 +25,14 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

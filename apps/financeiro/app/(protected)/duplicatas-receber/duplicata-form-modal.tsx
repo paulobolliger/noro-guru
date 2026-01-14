@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@noro/ui';
 import {
   Dialog,
   DialogContent,
@@ -10,18 +10,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
+import { Textarea } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Loader2 } from 'lucide-react';
 
 interface DuplicataReceberFormModalProps {
@@ -42,9 +42,9 @@ export function DuplicataReceberFormModal({
   tenantId,
 }: DuplicataReceberFormModalProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     numero_documento: '',
     descricao: '',
@@ -89,10 +89,10 @@ export function DuplicataReceberFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validações
     if (!formData.descricao) {
-      showToast({
+      toast({
         title: 'Erro',
         description: 'Descrição é obrigatória',
         variant: 'destructive',
@@ -101,7 +101,7 @@ export function DuplicataReceberFormModal({
     }
 
     if (!formData.valor_total || parseFloat(formData.valor_total) <= 0) {
-      showToast({
+      toast({
         title: 'Erro',
         description: 'Valor total deve ser maior que zero',
         variant: 'destructive',
@@ -110,7 +110,7 @@ export function DuplicataReceberFormModal({
     }
 
     if (!formData.data_vencimento) {
-      showToast({
+      toast({
         title: 'Erro',
         description: 'Data de vencimento é obrigatória',
         variant: 'destructive',
@@ -119,14 +119,14 @@ export function DuplicataReceberFormModal({
     }
 
     setLoading(true);
-    
+
     try {
       const url = duplicata
         ? `/api/duplicatas-receber/${duplicata.id}`
         : '/api/duplicatas-receber';
-      
+
       const method = duplicata ? 'PUT' : 'POST';
-      
+
       const payload = {
         ...formData,
         valor_total: parseFloat(formData.valor_total),
@@ -149,7 +149,7 @@ export function DuplicataReceberFormModal({
         throw new Error(error.error || 'Erro ao salvar duplicata');
       }
 
-      showToast({
+      toast({
         title: 'Sucesso',
         description: duplicata
           ? 'Duplicata atualizada com sucesso'
@@ -160,7 +160,7 @@ export function DuplicataReceberFormModal({
       onSuccess();
     } catch (error: any) {
       console.error('Erro ao salvar:', error);
-      showToast({
+      toast({
         title: 'Erro',
         description: error.message || 'Erro ao salvar duplicata',
         variant: 'destructive',

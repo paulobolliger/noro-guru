@@ -11,17 +11,17 @@ import type { Database } from "@noro-types/supabase";
 // Tipos para as props
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
 type Tarefa = Database['public']['Tables']['noro_tarefas']['Row'] & {
-    noro_leads?: { nome: string } | null;
+  noro_leads?: { nome: string } | null;
 };
 
 interface AdminDashboardProps {
-  metrics: any; 
+  metrics: any;
   leadsRecentes: Lead[];
   tarefas: Tarefa[];
 }
 
 export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: AdminDashboardProps) {
-  
+
   // Dados de variação estáticos, apenas para exibição
   const variacao = {
     receita: 12.5,

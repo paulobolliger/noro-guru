@@ -13,18 +13,18 @@ import {
   Loader2,
   CreditCard,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Badge } from '@noro/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useToast } from '@/hooks/use-toast'
+} from '@noro/ui'
+import { useToast } from '@noro/ui'
 import CreditoFormModal from './credito-form-modal'
 import VerUtilizacoesModal from './ver-utilizacoes-modal'
 import AplicarCreditoRapidoModal from './aplicar-credito-rapido-modal'
@@ -90,16 +90,16 @@ export default function CreditosClient({
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { showToast } = useToast()
+  const { toast } = useToast()
 
   // Estados de filtros
-  const [busca, setBusca] = useState(searchParams.get('busca') || '')
-  const [filtroStatus, setFiltroStatus] = useState(searchParams.get('status') || 'todos')
-  const [filtroTipo, setFiltroTipo] = useState(searchParams.get('tipo') || 'todos')
-  const [filtroMarca, setFiltroMarca] = useState(searchParams.get('marca') || 'todas')
-  const [filtroFornecedor, setFiltroFornecedor] = useState(searchParams.get('fornecedor') || 'todos')
-  const [dataInicio, setDataInicio] = useState(searchParams.get('data_inicio') || '')
-  const [dataFim, setDataFim] = useState(searchParams.get('data_fim') || '')
+  const [busca, setBusca] = useState(searchParams?.get('busca') || '')
+  const [filtroStatus, setFiltroStatus] = useState(searchParams?.get('status') || 'todos')
+  const [filtroTipo, setFiltroTipo] = useState(searchParams?.get('tipo') || 'todos')
+  const [filtroMarca, setFiltroMarca] = useState(searchParams?.get('marca') || 'todas')
+  const [filtroFornecedor, setFiltroFornecedor] = useState(searchParams?.get('fornecedor') || 'todos')
+  const [dataInicio, setDataInicio] = useState(searchParams?.get('data_inicio') || '')
+  const [dataFim, setDataFim] = useState(searchParams?.get('data_fim') || '')
 
   // Estados de modais
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -195,23 +195,23 @@ export default function CreditosClient({
   // Função para obter badge de tipo de crédito
   const getTipoCreditoBadge = (tipo: string) => {
     const badges = {
-      refund: { variant: 'success' as const, label: 'Reembolso' },
-      overpayment: { variant: 'info' as const, label: 'Pagamento Excedente' },
-      promotional: { variant: 'warning' as const, label: 'Promocional' },
-      other: { variant: 'secondary' as const, label: 'Outro' },
+      refund: { variant: 'outline' as const, label: 'Reembolso', className: 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' },
+      overpayment: { variant: 'outline' as const, label: 'Pagamento Excedente', className: 'bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200' },
+      promotional: { variant: 'outline' as const, label: 'Promocional', className: 'bg-purple-100 text-purple-800 hover:bg-purple-100 border-purple-200' },
+      other: { variant: 'secondary' as const, label: 'Outro', className: '' },
     }
-    return badges[tipo as keyof typeof badges] || { variant: 'secondary' as const, label: tipo }
+    return badges[tipo as keyof typeof badges] || { variant: 'secondary' as const, label: tipo, className: '' }
   }
 
   // Função para obter badge de status
   const getStatusBadge = (status: string) => {
     const badges = {
-      disponivel: { variant: 'success' as const, label: 'Disponível' },
-      parcialmente_utilizado: { variant: 'warning' as const, label: 'Parcialmente Utilizado' },
-      esgotado: { variant: 'destructive' as const, label: 'Esgotado' },
-      expirado: { variant: 'secondary' as const, label: 'Expirado' },
+      disponivel: { variant: 'outline' as const, label: 'Disponível', className: 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' },
+      parcialmente_utilizado: { variant: 'outline' as const, label: 'Parcialmente Utilizado', className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200' },
+      esgotado: { variant: 'destructive' as const, label: 'Esgotado', className: '' },
+      expirado: { variant: 'secondary' as const, label: 'Expirado', className: '' },
     }
-    return badges[status as keyof typeof badges] || { variant: 'secondary' as const, label: status }
+    return badges[status as keyof typeof badges] || { variant: 'secondary' as const, label: status, className: '' }
   }
 
   // Função para recarregar créditos
@@ -236,7 +236,11 @@ export default function CreditosClient({
     if (!credito) return
 
     if (credito.valor_utilizado > 0) {
-      showToast('error', 'Não é possível deletar', 'Este crédito já foi utilizado em duplicatas.')
+      toast({
+        title: 'Não é possível deletar',
+        description: 'Este crédito já foi utilizado em duplicatas.',
+        variant: 'destructive',
+      })
       return
     }
 
@@ -251,15 +255,25 @@ export default function CreditosClient({
       })
 
       if (res.ok) {
-        showToast('success', 'Crédito deletado com sucesso!')
-        await recarregarCreditos()
+        toast({
+          title: 'Sucesso',
+          description: 'Crédito deletado com sucesso!',
+          variant: 'success',
+        })
       } else {
         const error = await res.json()
-        showToast('error', 'Erro ao deletar crédito', error.error || 'Tente novamente.')
+        toast({
+          title: 'Erro ao deletar crédito',
+          description: error.error || 'Tente novamente.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Erro ao deletar crédito:', error)
-      showToast('error', 'Erro ao deletar crédito')
+      toast({
+        title: 'Erro ao deletar crédito',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -281,7 +295,10 @@ export default function CreditosClient({
   const handleAplicar = (credito: Credito) => {
     const saldoDisponivel = credito.valor_total - credito.valor_utilizado
     if (saldoDisponivel <= 0) {
-      showToast('warning', 'Crédito sem saldo disponível')
+      toast({
+        title: 'Crédito sem saldo disponível',
+        variant: 'destructive',
+      })
       return
     }
     setCreditoSelecionado(credito)
@@ -491,7 +508,7 @@ export default function CreditosClient({
                       <tr key={credito.id} className="border-b">
                         <td className="py-3">{credito.fornecedor?.nome || '-'}</td>
                         <td className="py-3">
-                          <Badge variant={tipoBadge.variant}>{tipoBadge.label}</Badge>
+                          <Badge variant={tipoBadge.variant} className={tipoBadge.className}>{tipoBadge.label}</Badge>
                         </td>
                         <td className="py-3">{credito.descricao}</td>
                         <td className="py-3">
@@ -519,7 +536,7 @@ export default function CreditosClient({
                           )}
                         </td>
                         <td className="py-3">
-                          <Badge variant={statusBadge.variant}>{statusBadge.label}</Badge>
+                          <Badge variant={statusBadge.variant} className={statusBadge.className}>{statusBadge.label}</Badge>
                         </td>
                         <td className="py-3">
                           <div className="flex justify-end gap-2">
@@ -527,7 +544,7 @@ export default function CreditosClient({
                               variant="ghost"
                               size="sm"
                               onClick={() => handleAplicar(credito)}
-                              disabled={saldoDisponivel <= 0 || isExpirado}
+                              disabled={!!(saldoDisponivel <= 0 || isExpirado)}
                               title="Aplicar a duplicata"
                             >
                               <CreditCard className="h-4 w-4" />

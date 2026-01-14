@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentTenantId } from '@/lib/tenant';
-import type { FinDuplicataPagar, FinDuplicataPagarInsert } from '@/types/financeiro';
+import type { FinDuplicataPagar, FinDuplicataPagarInsert } from '@noro/types/financeiro';
 
 
 // GET - Listar duplicatas a pagar com filtros

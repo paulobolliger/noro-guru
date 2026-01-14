@@ -1,95 +1,103 @@
-// components/admin/LeadsClientPage.tsx
 'use client';
 
 import { useState } from 'react';
-import type { Database } from "@noro-types/supabase";
-import KanbanBoard from './KanbanBoard';
-import { format } from 'date-fns';
-import { LayoutGrid, List, Plus } from 'lucide-react';
+import LeadKpis from './leads/LeadKpis';
+import LeadTable from './leads/LeadTable';
+import { Search, Plus, LayoutGrid, List } from 'lucide-react';
 import Link from 'next/link';
-import PageHeader from './layout/PageHeader';
-import LeadCreateModal from './leads/LeadCreateModal';
 
-type Lead = Database['public']['Tables']['noro_leads']['Row'];
-
-interface LeadsClientPageProps {
-  leads: Lead[];
+export interface LeadsClientPageProps {
+  leads: any[];
 }
 
 export default function LeadsClientPage({ leads }: LeadsClientPageProps) {
-  const [view, setView] = useState<'table' | 'kanban'>('table');
-  const [createOpen, setCreateOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
+
+  const filteredLeads = leads.filter((lead) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      lead.organization_name?.toLowerCase().includes(query) ||
+      lead.email?.toLowerCase().includes(query) ||
+      lead.phone?.toLowerCase().includes(query)
+    );
+  });
+
+  // Calculate KPI totals
+  const totals = {
+    total: leads.length,
+    valorTotal: leads.reduce((acc, l) => acc + (l.value_cents || 0), 0),
+    abertos: leads.filter((l) => !['ganho', 'perdido'].includes((l.stage || '').toLowerCase())).length,
+    ganhos: leads.filter((l) => (l.stage || '').toLowerCase() === 'ganho').length,
+  };
 
   return (
-    <div className="rounded-xl surface-card border border-default shadow-[0_1px_0_0_rgba(255,255,255,0.03)]">
-      <PageHeader
-        title="Todos os Leads"
-        actions={(
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 rounded-lg border border-default bg-[var(--color-surface-alt)] p-1">
-              <button onClick={() => setView('table')} className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'table' ? 'bg-white/90 text-slate-900 shadow' : 'text-muted hover:bg-white/10'}`}>
-                <List size={16} />
-                Tabela
-              </button>
-              <button onClick={() => setView('kanban')} className={`px-3 py-1.5 rounded-md text-sm font-semibold flex items-center gap-2 ${view === 'kanban' ? 'bg-white/90 text-slate-900 shadow' : 'text-muted hover:bg-white/10'}`}>
-                <LayoutGrid size={16} />
-                Kanban
-              </button>
-            </div>
-            <button onClick={() => setCreateOpen(true)} className="btn-primary inline-flex items-center gap-2 rounded-lg px-5 py-2.5 font-semibold transition-transform duration-200 ease-in-out">
-              <Plus size={20} />
-              Novo Lead
-            </button>
-          </div>
-        )}
-      />
-      {createOpen && <LeadCreateModal isOpen={createOpen} onClose={() => setCreateOpen(false)} />}
-
-      {/* Renderização Condicional */}
-      {view === 'table' ? (
-        <div className="overflow-x-auto rounded-xl border border-default">
-          <table className="min-w-full divide-y divide-default">
-            <thead className="bg-[var(--color-surface-alt)] border-b border-default">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Nome</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Email</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Origem</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Status</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider">Data</th>
-              </tr>
-            </thead>
-            <tbody className="surface-card divide-y divide-default">
-              {leads.length > 0 ? leads.map((lead) => (
-                <tr key={lead.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">{lead.nome}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{lead.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">{lead.origem}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border border-default bg-[var(--color-surface-alt)] text-primary">
-                      {lead.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
-                    {format(new Date(lead.created_at), 'dd/MM/yyyy')}
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-muted">
-                    Nenhum lead encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+    <div className="p-6 md:p-8 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Gerencie seus leads e oportunidades de vendas
+          </p>
         </div>
-      ) : (
-        <KanbanBoard leads={leads} />
-      )}
+        <Link
+          href="/control/leads/create"
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          <Plus size={18} />
+          Novo Lead
+        </Link>
+      </div>
+
+      {/* KPIs */}
+      <LeadKpis totals={totals} />
+
+      {/* Toolbar */}
+      <div className="surface-card rounded-lg p-4">
+        <div className="flex items-center justify-between gap-4">
+          {/* Search */}
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Buscar por nome, email ou telefone..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* View Toggle */}
+          <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('table')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'table'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+              <List size={16} />
+              Tabela
+            </button>
+            <Link
+              href="/control/leads?view=kanban"
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${viewMode === 'kanban'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+              <LayoutGrid size={16} />
+              Kanban
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <LeadTable leads={filteredLeads} />
     </div>
   );
 }
-
-
-
-

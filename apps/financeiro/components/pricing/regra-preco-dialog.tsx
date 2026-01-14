@@ -1,7 +1,7 @@
 'use client'
 
 import { RegraPreco, TipoRegraPreco, TipoMarkup } from '@/types/pricing'
-import { Button } from '@/components/ui/button'
+import { Button } from '@noro/ui'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@noro/ui'
 import { RegraPrecoPadraoForm } from './regra-preco-padrao-form'
 import { useState } from 'react'
 
@@ -48,8 +48,8 @@ export function RegraPrecoPadraoDialog({
             {regra ? 'Editar Regra de Preço' : 'Nova Regra de Preço'}
           </DialogTitle>
           <DialogDescription>
-            {regra 
-              ? 'Edite os detalhes da regra de preço selecionada.' 
+            {regra
+              ? 'Edite os detalhes da regra de preço selecionada.'
               : 'Configure uma nova regra de preço para o sistema.'}
           </DialogDescription>
         </DialogHeader>

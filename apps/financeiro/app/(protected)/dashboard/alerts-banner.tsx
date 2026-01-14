@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, Clock, TrendingDown } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@noro/ui';
 import Link from 'next/link';
 
 interface Alert {

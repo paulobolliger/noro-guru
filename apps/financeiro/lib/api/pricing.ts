@@ -1,8 +1,8 @@
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/supabase'
-import { MarkupPadrao, RegraPreco, SimulacaoPreco } from '@/types/pricing'
+import { Database } from '@noro-types/supabase'
+import { MarkupPadrao, RegraPreco } from '@/types/pricing'
 
-const supabase = createClientComponentClient<Database>()
+const supabase = createClientComponentClient<any>()
 
 export const pricingApi = {
   // Markups

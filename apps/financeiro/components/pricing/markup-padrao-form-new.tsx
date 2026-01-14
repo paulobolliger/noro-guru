@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Button } from "@noro/ui"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@noro/ui"
+import { Input } from "@noro/ui"
 
 const formSchema = z.object({
   nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
@@ -31,7 +31,7 @@ interface MarkupPadraoFormProps {
 
 export function MarkupPadraoForm({ onSubmit: onSubmitProp }: MarkupPadraoFormProps) {
   const form = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any, // Type assertion to bypass Zod preprocess inference issue
     defaultValues,
   })
 
@@ -68,9 +68,9 @@ export function MarkupPadraoForm({ onSubmit: onSubmitProp }: MarkupPadraoFormPro
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Ex: Markup para produtos padrão" 
-                  {...field} 
+                <Input
+                  placeholder="Ex: Markup para produtos padrão"
+                  {...field}
                   value={field.value || ""}
                 />
               </FormControl>
@@ -85,7 +85,7 @@ export function MarkupPadraoForm({ onSubmit: onSubmitProp }: MarkupPadraoFormPro
             <FormItem>
               <FormLabel>Percentual (%)</FormLabel>
               <FormControl>
-                <Input 
+                <Input
                   type="number"
                   step="0.01"
                   placeholder="Ex: 25.5"

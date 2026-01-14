@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@noro/ui';
 import {
   Dialog,
   DialogContent,
@@ -9,19 +9,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Loader2, Info } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@noro/ui';
 
 interface DuplicataPagarFormModalProps {
   open: boolean;
@@ -42,9 +42,9 @@ export function DuplicataPagarFormModal({
   onSuccess,
   tenantId,
 }: DuplicataPagarFormModalProps) {
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     numero_documento: '',
     descricao: '',
@@ -101,36 +101,52 @@ export function DuplicataPagarFormModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.descricao) {
-      showToast('error', 'Descrição é obrigatória');
+      toast({
+        title: 'Erro',
+        description: 'Descrição é obrigatória',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (!formData.fornecedor_id) {
-      showToast('error', 'Fornecedor é obrigatório');
+      toast({
+        title: 'Erro',
+        description: 'Fornecedor é obrigatório',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (!formData.valor_total || parseFloat(formData.valor_total) <= 0) {
-      showToast('error', 'Valor total deve ser maior que zero');
+      toast({
+        title: 'Erro',
+        description: 'Valor total deve ser maior que zero',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (!formData.data_vencimento) {
-      showToast('error', 'Data de vencimento é obrigatória');
+      toast({
+        title: 'Erro',
+        description: 'Data de vencimento é obrigatória',
+        variant: 'destructive',
+      });
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const url = duplicata
         ? `/api/duplicatas-pagar/${duplicata.id}`
         : '/api/duplicatas-pagar';
-      
+
       const method = duplicata ? 'PUT' : 'POST';
-      
+
       const payload = {
         ...formData,
         valor_total: parseFloat(formData.valor_total),
@@ -154,14 +170,22 @@ export function DuplicataPagarFormModal({
         throw new Error(error.error || 'Erro ao salvar duplicata');
       }
 
-      showToast('success', duplicata
-        ? 'Duplicata atualizada com sucesso'
-        : 'Duplicata criada com sucesso');
+      toast({
+        title: 'Sucesso',
+        description: duplicata
+          ? 'Duplicata atualizada com sucesso'
+          : 'Duplicata criada com sucesso',
+        variant: 'success',
+      });
 
       onSuccess();
     } catch (error: any) {
       console.error('Erro ao salvar:', error);
-      showToast('error', error.message || 'Erro ao salvar duplicata');
+      toast({
+        title: 'Erro ao salvar duplicata',
+        description: error.message || 'Erro desconhecido',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -354,7 +378,7 @@ export function DuplicataPagarFormModal({
                 })}
               </SelectContent>
             </Select>
-            
+
             {adiantamentoSelecionado && (
               <Alert>
                 <Info className="h-4 w-4" />

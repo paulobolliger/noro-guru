@@ -1,11 +1,11 @@
 ﻿// components/admin/TopBar.tsx
 'use client';
 
-import { Search, Bell, ChevronRight } from 'lucide-react';
+import { Search, Bell, ChevronRight, Menu, LogOut, Loader2, User } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/types/supabase';
 
@@ -17,6 +17,7 @@ interface TopBarProps {
   initialNotificacoes: Notificacao[];
   logoUrl?: string;
   topbarColor?: string;
+  onMenuClick?: () => void;
 }
 
 const generateBreadcrumbs = (pathname: string, clienteNome: string | null) => {
@@ -34,38 +35,47 @@ const generateBreadcrumbs = (pathname: string, clienteNome: string | null) => {
 
     if (isLastPart && pathname.includes('/clientes/') && clienteNome) {
       label = clienteNome;
-    } 
+    }
     else if (isLastPart && pathname.includes('/clientes/')) {
-        label = 'Carregando cliente...'
+      label = 'Carregando cliente...'
     }
 
     currentPath += `/${part}`;
-    
-    breadcrumbs.push({ 
-      label, 
-      href: isLastPart ? '' : currentPath 
+
+    breadcrumbs.push({
+      label,
+      href: isLastPart ? '' : currentPath
     });
   });
 
   return breadcrumbs;
 };
 
-export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor }: TopBarProps) {
+export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor, onMenuClick }: TopBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const supabase = createClient();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
   const [clienteNome, setClienteNome] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   useEffect(() => {
     const parts = pathname.split('/');
     if (parts[1] === 'admin' && parts[2] === 'clientes' && parts.length === 4 && parts[3] && parts[3] !== 'novo') {
       const clienteId = parts[3];
-      
+
       const fetchClienteName = async () => {
         setClienteNome('Carregando...');
         const { data, error } = await supabase
@@ -73,7 +83,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
           .select('nome')
           .eq('id', clienteId)
           .single();
-        
+
         if (data?.nome) {
           setClienteNome(data.nome);
         } else {
@@ -86,7 +96,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
       setClienteNome(null);
     }
   }, [pathname, supabase]);
-  
+
   // Foca no input quando a busca é aberta
   useEffect(() => {
     if (isSearchOpen) {
@@ -96,17 +106,24 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
 
   const breadcrumbs = generateBreadcrumbs(pathname, clienteNome);
   const naoLidas = notificacoes.filter(n => !n.lida).length;
-  
+
   const finalLogoUrl = logoUrl || "https://res.cloudinary.com/dhqvjxgue/image/upload/c_crop,ar_4:3/v1744736404/logo_branco_sem_fundo_rucnug.png";
 
   return (
-    <div 
-      className="flex h-16 items-center border-b border-white/10 px-6 sticky top-0 z-20 text-white"
+    <div
+      className="flex h-16 items-center border-b border-white/10 px-4 md:px-6 sticky top-0 z-20 text-white"
       style={{ backgroundColor: topbarColor || '#232452' }}
     >
       <div className="flex items-center justify-between w-full">
         {/* Lado Esquerdo: Logo e Breadcrumbs */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+          <button
+            onClick={onMenuClick}
+            className="md:hidden text-white/70 hover:text-white p-1"
+          >
+            <Menu size={24} />
+          </button>
+
           <Link href="/admin">
             <div className="relative h-14 w-40">
               <Image
@@ -118,7 +135,7 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
               />
             </div>
           </Link>
-          
+
           <div className="hidden md:flex items-center gap-2 text-sm text-gray-300">
             <ChevronRight size={16} />
             {breadcrumbs.map((crumb, index) => (
@@ -155,26 +172,26 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
                 ${isSearchOpen ? 'w-64 pl-10 pr-4 cursor-text' : 'w-10 pl-2 cursor-pointer'}
               `}
             />
-            <Search 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 pointer-events-none" 
-              size={18} 
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 pointer-events-none"
+              size={18}
             />
           </div>
-          
+
           {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="relative p-2 text-yellow-400 hover:text-yellow-200 hover:bg-white/10 rounded-lg transition-colors"
               title="Notificações"
             >
-              <Bell size={20} />
+              <Bell size={20} strokeWidth={3} />
               {naoLidas > 0 && (
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               )}
             </button>
             {showNotifications && (
-               <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 text-gray-900">
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 text-gray-900">
                 <div className="p-4 border-b border-gray-200">
                   <h3 className="font-semibold">Notificações</h3>
                 </div>
@@ -196,6 +213,34 @@ export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor
                 </div>
               </div>
             )}
+          </div>
+
+
+          <div className="h-6 w-px bg-white/20"></div>
+
+          {/* User Profile & Logout */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/20">
+                {user.avatar_url ? (
+                  <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User size={18} className="text-white/70" />
+                )}
+              </div>
+              <div className="hidden md:block text-right">
+                <p className="text-sm font-semibold text-white leading-tight">{user.nome || 'Usuário'}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors ml-1"
+              title="Sair"
+            >
+              {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} strokeWidth={3} />}
+            </button>
           </div>
         </div>
       </div>

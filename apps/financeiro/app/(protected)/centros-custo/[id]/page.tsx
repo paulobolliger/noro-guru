@@ -1,10 +1,10 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { CentroCustoDetalhesClient } from './centro-custo-detalhes-client';
 import { getCurrentTenantId } from '@/lib/tenant';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createClient();
   const tenantId = await getCurrentTenantId();
   const { data: centroCusto } = await supabase
     .from('fin_centros_custo')
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 export default async function CentroCustoDetalhesPage({ params }: { params: { id: string } }) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createClient();
   const tenantId = await getCurrentTenantId();
   const { id } = params;
 

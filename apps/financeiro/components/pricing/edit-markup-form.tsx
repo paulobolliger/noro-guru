@@ -4,29 +4,32 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
+import { Button } from "@noro/ui"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@noro/ui"
+import { Input } from "@noro/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@noro/ui"
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@noro/ui"
 import { MarkupPadrao } from "@/types/pricing"
 
 const formSchema = z.object({
   nome: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
   descricao: z.string().optional(),
   tipo_produto: z.string().min(1, "Selecione o tipo de produto"),
-  tipo_markup: z.enum(["fixo", "percentual"]),
-  valor_markup: z.coerce
-    .number()
-    .min(0, "Valor não pode ser negativo")
-    .max(1000, "Valor muito alto"),
-  ordem: z.coerce.number().int().min(1),
+  tipo_markup: z.enum(["fixo", "percentual", "dinamico", "personalizado"]),
+  valor_markup: z.preprocess(
+    (val) => (typeof val === 'string' ? parseFloat(val) : val),
+    z.number().min(0, "Valor não pode ser negativo").max(1000, "Valor muito alto")
+  ),
+  ordem: z.preprocess(
+    (val) => (typeof val === 'string' ? parseInt(val, 10) : val),
+    z.number().int().min(1)
+  ),
 })
 
 interface EditMarkupFormProps {
@@ -36,19 +39,19 @@ interface EditMarkupFormProps {
   onSubmit?: (data: z.infer<typeof formSchema>) => void
 }
 
-export function EditMarkupForm({ 
+export function EditMarkupForm({
   markup,
   open,
   onOpenChange,
-  onSubmit 
+  onSubmit
 }: EditMarkupFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any, // Type assertion to bypass Zod preprocess inference issue
     defaultValues: {
       nome: markup.nome,
       descricao: markup.descricao,
       tipo_produto: markup.tipo_produto,
-      tipo_markup: markup.tipo_markup,
+      tipo_markup: markup.tipo_markup as any,
       valor_markup: markup.valor_markup,
       ordem: markup.ordem,
     },
@@ -97,9 +100,9 @@ export function EditMarkupForm({
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Ex: Markup para produtos padrão" 
-                      {...field} 
+                    <Input
+                      placeholder="Ex: Markup para produtos padrão"
+                      {...field}
                       value={field.value || ""}
                     />
                   </FormControl>
@@ -114,8 +117,8 @@ export function EditMarkupForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Produto</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -140,8 +143,8 @@ export function EditMarkupForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de Markup</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -165,12 +168,12 @@ export function EditMarkupForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    {form.watch("tipo_markup") === "percentual" 
-                      ? "Percentual (%)" 
+                    {form.watch("tipo_markup") === "percentual"
+                      ? "Percentual (%)"
                       : "Valor (R$)"}
                   </FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       step="0.01"
                       placeholder="Ex: 25.5"
@@ -189,7 +192,7 @@ export function EditMarkupForm({
                 <FormItem>
                   <FormLabel>Ordem</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       {...field}
                     />
@@ -200,8 +203,8 @@ export function EditMarkupForm({
             />
 
             <div className="flex justify-end space-x-4 pt-4">
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >

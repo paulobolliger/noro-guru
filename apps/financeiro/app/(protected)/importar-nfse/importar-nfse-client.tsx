@@ -12,13 +12,13 @@ import {
   Save,
   X,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card'
-import { Button } from '../../../components/ui/button'
-import { Input } from '../../../components/ui/input'
-import { Label } from '../../../components/ui/label'
-import { Badge } from '../../../components/ui/badge'
-import { Alert, AlertDescription } from '../../../components/ui/alert'
-import { useToast } from '../../../components/ui/toast'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
+import { Badge } from '@noro/ui';
+import { Alert, AlertDescription } from '@noro/ui';
+import { useToast } from '@noro/ui';
 
 interface PreviewData {
   fornecedor_id: string
@@ -43,7 +43,7 @@ interface Props {
 
 export default function ImportarNFSeClient({ tenantId }: Props) {
   const router = useRouter()
-  const { showToast } = useToast()
+  const { toast } = useToast()
 
   const [loading, setLoading] = useState(false)
   const [xmlContent, setXmlContent] = useState('')
@@ -101,12 +101,20 @@ export default function ImportarNFSeClient({ tenantId }: Props) {
 
       if (data.mode === 'preview') {
         setPreview(data.preview)
-        showToast('success', 'NFS-e processada!', 'Revise os dados antes de confirmar.')
+        toast({
+          title: 'NFS-e processada!',
+          description: 'Revise os dados antes de confirmar.',
+          variant: 'success',
+        })
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erro desconhecido'
       setError(errorMsg)
-      showToast('error', 'Erro ao processar XML', errorMsg)
+      toast({
+        title: 'Erro ao processar XML',
+        description: errorMsg,
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -137,18 +145,24 @@ export default function ImportarNFSeClient({ tenantId }: Props) {
         throw new Error(data.error || 'Erro ao importar NFS-e')
       }
 
-      showToast('success', 'NFS-e importada com sucesso!', 
-        data.fornecedor_criado 
+      toast({
+        title: 'NFS-e importada com sucesso!',
+        description: data.fornecedor_criado
           ? 'Fornecedor criado e duplicata gerada.'
-          : 'Duplicata gerada com sucesso.'
-      )
+          : 'Duplicata gerada com sucesso.',
+        variant: 'success',
+      })
 
       // Redirecionar para duplicatas a pagar
       router.push('/financeiro/duplicatas-pagar')
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Erro desconhecido'
       setError(errorMsg)
-      showToast('error', 'Erro ao importar NFS-e', errorMsg)
+      toast({
+        title: 'Erro ao importar NFS-e',
+        description: errorMsg,
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }

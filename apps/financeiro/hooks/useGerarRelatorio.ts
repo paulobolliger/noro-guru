@@ -79,7 +79,7 @@ export function useGerarRelatorio(): UseGerarRelatorioReturn {
         { header: 'Markup', key: 'markup', width: 15 },
         { header: 'Margem Lucro', key: 'margem_lucro', width: 15 }
       ]
-      sheetMargens.addRows(dados.margens || [])
+      sheetMargens.addRows((dados as any).margens || [])
     }
 
     // Adiciona planilhas para outros tipos de dados conforme necessário
@@ -120,7 +120,7 @@ export function useGerarRelatorio(): UseGerarRelatorioReturn {
       doc.autoTable({
         startY: yPos,
         head: [['Categoria', 'Produto', 'Custo', 'Preço Venda', 'Markup', 'Margem']],
-        body: (dados.margens || []).map(m => [
+        body: ((dados as any).margens || []).map((m: any) => [
           m.categoria,
           m.produto,
           m.custo.toFixed(2),
@@ -130,7 +130,7 @@ export function useGerarRelatorio(): UseGerarRelatorioReturn {
         ])
       })
 
-      yPos = doc.lastAutoTable.finalY + 10
+      yPos = (doc as any).lastAutoTable.finalY + 10
     }
 
     // Adiciona outras seções conforme necessário

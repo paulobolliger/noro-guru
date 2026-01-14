@@ -3,9 +3,9 @@ import { MarkupPadrao, RegraPreco, SimulacaoPreco } from '@/types/pricing'
 import { pricingApi } from '@/lib/api/pricing'
 import { toast } from 'sonner'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/supabase'
+import { Database } from '@noro-types/supabase'
 
-const supabase = createClientComponentClient<Database>()
+const supabase = createClientComponentClient<any>()
 
 export function usePricing() {
   const [markups, setMarkups] = useState<MarkupPadrao[]>([])
@@ -157,7 +157,7 @@ export function usePricing() {
       
       return {
         metricas: metricasResponse.data,
-        margens: margensDiariasResponse.data.map(m => ({
+        margens: margensDiariasResponse.data.map((m: any) => ({
           data: m.periodo,
           margem_media: m.margem_media,
           markup_medio: m.markup_medio,
@@ -167,7 +167,7 @@ export function usePricing() {
         distribuicaoRegras
       }
     }
-    } catch (error) {
+ catch (error) {
       toast.error('Erro ao carregar métricas')
       console.error(error)
       throw error

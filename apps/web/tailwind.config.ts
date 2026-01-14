@@ -9,14 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'noro-purple': '#5053C4',
-        'noro-blue': '#342CA4',
-        'noro-turquoise': '#1DD3C0',
-        'noro-dark': '#12152C',
-        'noro-dark-2': '#2B2E48',
-        'noro-gray-light': '#F3F5FA',
-        'noro-accent': '#E2E8F0',
-        'noro-gray-future': '#2E2E3A',
+        'noro-purple': 'var(--color-noro-purple-light)',
+        'noro-blue': 'var(--color-noro-primary)',
+        'noro-turquoise': 'var(--color-noro-accent)',
+        'noro-dark': 'var(--color-noro-dark)',
+        'noro-dark-purple': 'var(--color-noro-dark-purple)',
+        'noro-dark-2': 'var(--color-noro-surface-dark)',
+        'noro-gray-light': 'var(--color-noro-light)',
+        'noro-accent': 'var(--color-noro-gray-accent)',
+        'noro-gray-future': 'var(--color-noro-gray-future)',
+        'noro-gold': 'var(--color-noro-gold)',
+        'noro-text-primary': 'var(--color-noro-text-primary)',
+        'noro-text-secondary': 'var(--color-noro-text-secondary)',
+        'noro-text-muted': 'var(--color-noro-text-muted)',
+        'noro-text-body': 'var(--color-noro-text-body)',
       },
       fontFamily: {
         display: ['var(--font-poppins)', 'sans-serif'],

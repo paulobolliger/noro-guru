@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import DashboardClient from './DashboardClient';
 import { AlertsBanner } from './alerts-banner';
-import type { FinKPIs } from '@/types/financeiro';
+import type { FinKPIs } from '@noro/types/financeiro';
 
 export const metadata = {
   title: 'Dashboard Financeiro | NORO',
@@ -229,7 +229,7 @@ export default async function DashboardPage() {
 
   // TODO: MODO DESENVOLVIMENTO - Usar tenant NORO hardcoded
   // Descomentar quando integrar autenticação
-  
+
   // const { data: { user } } = await supabase.auth.getUser();
   // if (!user) {
   //   redirect('/login');
@@ -247,14 +247,14 @@ export default async function DashboardPage() {
   // Tentar buscar no schema cp primeiro, depois sem schema
   let tenant = null;
   let tenantError = null;
-  
+
   // Tentar com schema cp
   const { data: cpTenant, error: cpError } = await supabase
     .from('cp.tenants')
     .select('id')
     .eq('slug', 'noro')
     .single();
-    
+
   if (cpTenant) {
     tenant = cpTenant;
   } else {
@@ -265,7 +265,7 @@ export default async function DashboardPage() {
       .select('id')
       .eq('slug', 'noro')
       .single();
-      
+
     tenant = publicTenant;
     tenantError = publicError;
   }
@@ -277,7 +277,7 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-semibold text-red-800">⚠️ Tenant NORO não encontrado</h2>
           <p className="text-red-600 mt-2">Execute o seguinte SQL no Supabase Studio:</p>
           <pre className="mt-4 bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm">
-{`-- Criar tenant NORO
+            {`-- Criar tenant NORO
 INSERT INTO cp.tenants (id, name, slug, plan, status, billing_email)
 VALUES (
   'f0f0f0f0-f0f0-f0f0-f0f0-f0f0f0f0f0f0',
@@ -323,10 +323,10 @@ VALUES (
       </div>
 
       {/* Alertas financeiros */}
-      <AlertsBanner 
-        receitas={receitas || []} 
-        despesas={despesas || []} 
-        saldoTotal={kpis.saldo_atual} 
+      <AlertsBanner
+        receitas={receitas || []}
+        despesas={despesas || []}
+        saldoTotal={kpis.saldo_atual}
       />
 
       <DashboardClient kpis={kpis} graficos={graficos} />

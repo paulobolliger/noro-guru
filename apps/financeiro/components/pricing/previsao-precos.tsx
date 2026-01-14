@@ -3,22 +3,22 @@
 import { useState } from 'react'
 import { format, addMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { 
-  LineChart, 
+import {
+  LineChart,
   Line,
   AreaChart,
   Area,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   Legend,
   ResponsiveContainer,
   ReferenceLine
 } from 'recharts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Calendar } from '@noro/ui'
 import {
   Select,
   SelectContent,
@@ -27,7 +27,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@noro/ui"
 import {
   Table,
   TableBody,
@@ -35,15 +35,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from '@/components/ui/badge'
+} from "@noro/ui"
+import { Badge } from '@noro/ui'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@noro/ui"
+
 import { cn } from '@/lib/utils'
 
 interface PrevisaoPrecosProps {
@@ -121,7 +121,7 @@ export function PrevisaoPrecos({
         <div className="flex-1 min-w-[200px]">
           <Select
             value={tipoVisualizacao}
-            onValueChange={(value: 'precos' | 'margens' | 'markup') => 
+            onValueChange={(value: 'precos' | 'margens' | 'markup') =>
               setTipoVisualizacao(value)
             }
           >
@@ -297,12 +297,12 @@ export function PrevisaoPrecos({
                     }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="periodo" 
+                    <XAxis
+                      dataKey="periodo"
                       tickFormatter={(value) => format(new Date(value), 'MMM/yy', { locale: ptBR })}
                     />
                     <YAxis />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value: number) => formatarNumero(value)}
                       labelFormatter={(value) => format(new Date(value), 'dd/MM/yyyy', { locale: ptBR })}
                     />
@@ -348,11 +348,11 @@ export function PrevisaoPrecos({
                       />
                     )}
                     <ReferenceLine
-                      y={tipoVisualizacao === 'precos' 
+                      y={tipoVisualizacao === 'precos'
                         ? tendenciasGerais.precos.media
                         : tipoVisualizacao === 'margens'
-                        ? tendenciasGerais.margem.media
-                        : tendenciasGerais.markup.media}
+                          ? tendenciasGerais.margem.media
+                          : tendenciasGerais.markup.media}
                       label="Média"
                       stroke="#ff7300"
                       strokeDasharray="3 3"
@@ -368,7 +368,7 @@ export function PrevisaoPrecos({
               <CardTitle>Tabela de Previsões</CardTitle>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[300px]">
+              <div className="h-[300px] overflow-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -401,7 +401,7 @@ export function PrevisaoPrecos({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -412,7 +412,7 @@ export function PrevisaoPrecos({
               <CardTitle>Tendências por Categoria</CardTitle>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[500px]">
+              <div className="h-[500px] overflow-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -447,7 +447,7 @@ export function PrevisaoPrecos({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -470,8 +470,8 @@ export function PrevisaoPrecos({
                     }}
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="mes" 
+                    <XAxis
+                      dataKey="mes"
                       tickFormatter={getMesNome}
                     />
                     <YAxis />

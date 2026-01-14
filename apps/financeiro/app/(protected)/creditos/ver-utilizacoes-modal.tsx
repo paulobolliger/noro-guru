@@ -7,11 +7,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useToast } from '@/hooks/use-toast'
+} from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Badge } from '@noro/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
+import { useToast } from '@noro/ui'
 import Link from 'next/link'
 
 interface Credito {
@@ -53,7 +53,7 @@ export default function VerUtilizacoesModal({
   credito,
   tenantId,
 }: Props) {
-  const { showToast } = useToast()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [utilizacoes, setUtilizacoes] = useState<Utilizacao[]>([])
 
@@ -75,7 +75,7 @@ export default function VerUtilizacoesModal({
 
       if (res.ok) {
         const duplicatas = await res.json()
-        
+
         // Transformar duplicatas em utilizações
         const utilizacoesData = duplicatas
           .filter((dup: any) => dup.valor_credito_aplicado > 0)
@@ -95,11 +95,17 @@ export default function VerUtilizacoesModal({
 
         setUtilizacoes(utilizacoesData)
       } else {
-        showToast('error', 'Erro ao carregar utilizações')
+        toast({
+          title: 'Erro ao carregar utilizações',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Erro ao carregar utilizações:', error)
-      showToast('error', 'Erro ao carregar utilizações')
+      toast({
+        title: 'Erro ao carregar utilizações',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }

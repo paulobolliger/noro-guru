@@ -42,9 +42,9 @@ const SOURCE_LABELS: Record<string, string> = {
 };
 
 function formatDate(value: string) {
-  return new Date(value).toLocaleDateString('pt-BR', { 
-    day: '2-digit', 
-    month: '2-digit', 
+  return new Date(value).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
@@ -113,7 +113,7 @@ export function SupportTicketTable({ tickets, isLoading }: Props) {
                     {formatDate(ticket.updated_at || ticket.created_at)}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link 
+                    <Link
                       href={`/support/${ticket.id}`}
                       className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-[#4aede5] hover:bg-[#3dcdd5] text-[#1a1625] transition-all hover:scale-105 shadow-sm"
                     >

@@ -1,8 +1,10 @@
+"use client"
+
 import { useEffect, useState } from 'react'
-import { MarkupPadrao } from '../../../types/pricing'
+import { MarkupPadrao } from '@/types/pricing'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@noro/ui'
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -19,7 +21,7 @@ import {
 } from '@noro/ui'
 import { Plus, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { formatarMoeda, formatarPorcentagem } from '../../../lib/pricing'
+import { formatarMoeda, formatarPorcentagem } from '@/lib/pricing'
 import MarkupPadraoForm from './MarkupPadraoForm'
 
 export default function GerenciarMarkups() {
@@ -27,7 +29,7 @@ export default function GerenciarMarkups() {
   const [isLoading, setIsLoading] = useState(false)
   const [editingMarkup, setEditingMarkup] = useState<MarkupPadrao | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  
+
   const supabase = createClientComponentClient()
 
   // Carregar markups
@@ -125,7 +127,7 @@ export default function GerenciarMarkups() {
         <h2 className="text-2xl font-bold text-gray-900">
           Markups Padrão
         </h2>
-        
+
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button>
@@ -175,11 +177,10 @@ export default function GerenciarMarkups() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                    markup.ativo 
-                      ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20' 
-                      : 'bg-gray-50 text-gray-600 ring-1 ring-gray-500/20'
-                  }`}>
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${markup.ativo
+                    ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
+                    : 'bg-gray-50 text-gray-600 ring-1 ring-gray-500/20'
+                    }`}>
                     {markup.ativo ? 'Ativo' : 'Inativo'}
                   </span>
                 </TableCell>

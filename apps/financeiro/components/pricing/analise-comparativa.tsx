@@ -3,26 +3,26 @@
 import { useState } from 'react'
 import { format, subMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   Legend,
   ResponsiveContainer,
   LineChart,
   Line
 } from 'recharts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Calendar } from '@noro/ui'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@noro/ui'
 import { cn } from '@/lib/utils'
 import { CalendarIcon } from 'lucide-react'
 import {
@@ -33,8 +33,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Badge } from '@/components/ui/badge'
+} from "@noro/ui"
+import { Badge } from '@noro/ui'
 
 interface AnaliseComparativaProps {
   periodoAtual: {
@@ -88,7 +88,7 @@ export function AnaliseComparativa({
   onPeriodosChange
 }: AnaliseComparativaProps) {
   const [tipoComparacao, setTipoComparacao] = useState<'margens' | 'custos' | 'precos' | 'efetividade'>('margens')
-  
+
   const calcularVariacao = (atual: number, anterior: number) => {
     const variacao = ((atual - anterior) / anterior) * 100
     return {
@@ -120,7 +120,7 @@ export function AnaliseComparativa({
         <div className="flex-1 min-w-[200px]">
           <Select
             value={tipoComparacao}
-            onValueChange={(value: 'margens' | 'custos' | 'precos' | 'efetividade') => 
+            onValueChange={(value: 'margens' | 'custos' | 'precos' | 'efetividade') =>
               setTipoComparacao(value)
             }
           >
@@ -140,22 +140,22 @@ export function AnaliseComparativa({
         </div>
 
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => selecionarPeriodoPadrao(1)}
           >
             Último Mês
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => selecionarPeriodoPadrao(3)}
           >
             Último Trimestre
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => selecionarPeriodoPadrao(6)}
           >

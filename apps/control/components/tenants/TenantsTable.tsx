@@ -76,14 +76,18 @@ export default function TenantsTable({ searchQuery = "" }: TenantsTableProps) {
           <tbody className="divide-y divide-gray-200 dark:divide-white/10">
             {items.map((t) => (
               <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-                <td className="p-3 font-medium text-gray-900 dark:text-white">{t.name}</td>
+                <td className="p-3 font-medium text-gray-900 dark:text-white">
+                  <Link href={`/tenants/${t.id}`} className="hover:text-[#D4AF37] hover:underline">
+                    {t.name}
+                  </Link>
+                </td>
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.slug}</td>
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.plan || "-"}</td>
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.status || "-"}</td>
                 <td className="p-3 text-gray-700 dark:text-gray-300">{t.created_at ? new Date(t.created_at).toLocaleString() : "-"}</td>
                 <td className="p-3">
-                  <Link href={`/control/orgs/${t.id}`} className="text-[#4aede5] hover:underline font-medium">
-                    Abrir
+                  <Link href={`/tenants/${t.id}`} className="text-[#4aede5] hover:underline font-medium">
+                    Gerenciar
                   </Link>
                 </td>
               </tr>

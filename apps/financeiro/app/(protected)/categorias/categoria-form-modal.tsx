@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog-simple';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@noro/ui';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@noro/ui';
 
 interface CategoriaFormModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface CategoriaFormModalProps {
 }
 
 const ICONES_COMUNS = [
-  '💰', '💵', '💳', '🏦', '📊', '📈', '📉', '💼', '🏢', 
+  '💰', '💵', '💳', '🏦', '📊', '📈', '📉', '💼', '🏢',
   '🏠', '🚗', '✈️', '🍔', '☕', '🎬', '🎮', '📱', '💻',
   '🔧', '⚡', '💡', '📦', '🎓', '🏥', '🛒', '👕', '🎁'
 ];
@@ -33,7 +33,7 @@ export function CategoriaFormModal({
   tenantId,
 }: CategoriaFormModalProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -50,10 +50,10 @@ export function CategoriaFormModal({
     setError(null);
 
     try {
-      const url = categoria 
-        ? `/api/categorias/${categoria.id}` 
+      const url = categoria
+        ? `/api/categorias/${categoria.id}`
         : '/api/categorias';
-      
+
       const method = categoria ? 'PUT' : 'POST';
 
       const dadosParaEnviar = {
@@ -77,18 +77,30 @@ export function CategoriaFormModal({
 
       if (response.ok) {
         console.log('✅ Sucesso:', data);
-        showToast('success', `Categoria ${categoria ? 'atualizada' : 'criada'} com sucesso!`);
+        toast({
+          title: 'Sucesso',
+          description: `Categoria ${categoria ? 'atualizada' : 'criada'} com sucesso!`,
+          variant: 'success',
+        });
         router.refresh();
         onClose();
       } else {
         console.error('❌ Erro na resposta:', data);
         setError(data.error || 'Erro desconhecido ao salvar categoria');
-        showToast('error', 'Erro ao salvar', data.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao salvar',
+          description: data.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('❌ Erro ao salvar categoria:', error);
       setError('Erro ao conectar com o servidor');
-      showToast('error', 'Erro ao salvar categoria', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao salvar categoria',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -149,9 +161,8 @@ export function CategoriaFormModal({
                   key={icone}
                   type="button"
                   onClick={() => setFormData({ ...formData, icone })}
-                  className={`p-2 text-2xl border rounded hover:bg-muted ${
-                    formData.icone === icone ? 'bg-primary/10 border-primary' : ''
-                  }`}
+                  className={`p-2 text-2xl border rounded hover:bg-muted ${formData.icone === icone ? 'bg-primary/10 border-primary' : ''
+                    }`}
                 >
                   {icone}
                 </button>
@@ -176,9 +187,8 @@ export function CategoriaFormModal({
                   key={cor}
                   type="button"
                   onClick={() => setFormData({ ...formData, cor })}
-                  className={`w-10 h-10 rounded border-2 ${
-                    formData.cor === cor ? 'border-primary scale-110' : 'border-gray-300'
-                  }`}
+                  className={`w-10 h-10 rounded border-2 ${formData.cor === cor ? 'border-primary scale-110' : 'border-gray-300'
+                    }`}
                   style={{ backgroundColor: cor }}
                 />
               ))}

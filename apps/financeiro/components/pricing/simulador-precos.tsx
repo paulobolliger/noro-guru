@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui'
 import { formatCurrency } from '@/lib/utils'
 import { SimulacaoPreco } from '@/types/pricing'
 
@@ -60,8 +60,8 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Produto</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
+                    <Select
+                      onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -87,7 +87,7 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                   <FormItem>
                     <FormLabel>Valor de Custo (R$)</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         placeholder="Ex: 100.00"
@@ -106,7 +106,7 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                   <FormItem>
                     <FormLabel>Quantidade</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="number"
                         min="1"
                         placeholder="Ex: 1"
@@ -125,7 +125,7 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                   <FormItem>
                     <FormLabel>Data da Simulação</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="date"
                         {...field}
                       />
@@ -135,8 +135,8 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                 )}
               />
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full"
                 disabled={isLoading}
               >
@@ -160,7 +160,7 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                 <span className="text-muted-foreground">Valor de Custo:</span>
                 <span className="font-medium">{formatCurrency(resultado.valor_custo)}</span>
               </div>
-              
+
               <div className="flex justify-between items-center py-2 border-b">
                 <span className="text-muted-foreground">Markup Total:</span>
                 <span className="font-medium">{formatCurrency(resultado.markup_aplicado || 0)}</span>
@@ -187,7 +187,7 @@ export function SimuladorPrecos({ onSimular, isLoading = false }: SimuladorPreco
                 </h4>
                 <div className="space-y-2">
                   {resultado.regras_aplicadas.map((regra, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="text-sm p-2 rounded-md bg-muted"
                     >

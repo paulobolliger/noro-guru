@@ -1,6 +1,8 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import type { FinRelatorioRentabilidade } from '@/types/financeiro';
+
+const tenantId = '00000000-0000-0000-0000-000000000000'; // TODO: Get from context
+import type { FinRelatorioRentabilidade } from '@noro/types/financeiro';
 
 
 export async function GET(
@@ -8,7 +10,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { id } = params;
 
     console.log('📊 Calculando rentabilidade para centro de custo:', id);

@@ -4,20 +4,20 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { format, subDays, subMonths } from 'date-fns'
 import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui'
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Switch } from '@/components/ui/switch'
+} from '@noro/ui'
+import { Switch } from '@noro/ui'
 
 interface FormValues {
   dataInicial: string
@@ -59,7 +59,7 @@ interface GeradorRelatoriosProps {
   }>
 }
 
-export function GeradorRelatorios({ 
+export function GeradorRelatorios({
   onGerarRelatorio,
   relatoriosRecentes = []
 }: GeradorRelatoriosProps) {
@@ -81,7 +81,7 @@ export function GeradorRelatorios({
   const selecionarPeriodo = (dias?: number, tipo?: string) => {
     const hoje = new Date()
     let dataInicial = hoje
-    
+
     if (tipo === 'mes') {
       dataInicial = subMonths(hoje, 1)
     } else if (tipo === 'trimestre') {
@@ -168,8 +168,8 @@ export function GeradorRelatorios({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo de Relatório</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -195,8 +195,8 @@ export function GeradorRelatorios({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Formato</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -325,8 +325,8 @@ export function GeradorRelatorios({
                       </div>
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => window.open(relatorio.url, '_blank')}
                   >

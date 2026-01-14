@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@noro/ui';
 import {
   Dialog,
   DialogContent,
@@ -9,21 +9,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Loader2, CreditCard, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@noro/ui';
+import { Alert, AlertDescription } from '@noro/ui';
+import { Badge } from '@noro/ui';
 
 interface AplicarCreditoModalProps {
   open: boolean;
@@ -40,9 +40,9 @@ export function AplicarCreditoModal({
   creditos,
   onSuccess,
 }: AplicarCreditoModalProps) {
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     credito_id: '',
     valor_aplicar: '',
@@ -58,20 +58,20 @@ export function AplicarCreditoModal({
       const compativeis = creditos.filter(credito => {
         // Mesmo fornecedor
         if (credito.fornecedor_id !== duplicata.fornecedor_id) return false;
-        
+
         // Mesma moeda
         if (credito.moeda !== duplicata.moeda) return false;
-        
+
         // Status disponível
         if (credito.status !== 'disponivel') return false;
-        
+
         // Tem saldo disponível
         const saldo = credito.valor_total - credito.valor_utilizado;
         if (saldo <= 0) return false;
-        
+
         return true;
       });
-      
+
       setCreditosCompativeis(compativeis);
     }
   }, [duplicata, creditos]);
@@ -80,7 +80,7 @@ export function AplicarCreditoModal({
     if (formData.credito_id) {
       const credito = creditos.find(c => c.id === formData.credito_id);
       setCreditoSelecionado(credito || null);
-      
+
       // Auto-preencher com o valor pendente ou saldo do crédito (o menor)
       if (credito && duplicata) {
         const saldoCredito = credito.valor_total - credito.valor_utilizado;
@@ -94,36 +94,52 @@ export function AplicarCreditoModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!duplicata) return;
 
     if (!formData.credito_id) {
-      showToast('error', 'Selecione um crédito');
+      toast({
+        title: 'Erro',
+        description: 'Selecione um crédito',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (!formData.valor_aplicar || parseFloat(formData.valor_aplicar) <= 0) {
-      showToast('error', 'Valor a aplicar deve ser maior que zero');
+      toast({
+        title: 'Erro',
+        description: 'Valor a aplicar deve ser maior que zero',
+        variant: 'destructive',
+      });
       return;
     }
 
     const valorAplicar = parseFloat(formData.valor_aplicar);
 
     if (valorAplicar > duplicata.valor_pendente) {
-      showToast('error', `Valor não pode ser maior que o pendente (${duplicata.valor_pendente})`);
+      toast({
+        title: 'Erro',
+        description: `Valor não pode ser maior que o pendente (${duplicata.valor_pendente})`,
+        variant: 'destructive',
+      });
       return;
     }
 
     if (creditoSelecionado) {
       const saldoCredito = creditoSelecionado.valor_total - creditoSelecionado.valor_utilizado;
       if (valorAplicar > saldoCredito) {
-        showToast('error', `Valor não pode ser maior que o saldo do crédito (${saldoCredito.toFixed(2)})`);
+        toast({
+          title: 'Erro',
+          description: `Valor não pode ser maior que o saldo do crédito (${saldoCredito.toFixed(2)})`,
+          variant: 'destructive',
+        });
         return;
       }
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch(`/api/duplicatas-pagar/${duplicata.id}/aplicar-credito`, {
         method: 'POST',
@@ -144,12 +160,20 @@ export function AplicarCreditoModal({
 
       const result = await response.json();
 
-      showToast('success', `Crédito aplicado com sucesso! Novo saldo: ${formatCurrency(result.novo_saldo_credito)}`);
+      toast({
+        title: 'Sucesso',
+        description: `Crédito aplicado com sucesso! Novo saldo: ${formatCurrency(result.novo_saldo_credito)}`,
+        variant: 'success',
+      });
 
       onSuccess();
     } catch (error: any) {
       console.error('Erro ao aplicar crédito:', error);
-      showToast('error', error.message || 'Erro ao aplicar crédito');
+      toast({
+        title: 'Erro ao aplicar crédito',
+        description: error.message || 'Erro desconhecido',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -171,7 +195,7 @@ export function AplicarCreditoModal({
       promotional: { label: 'Promocional', variant: 'warning' },
       other: { label: 'Outro', variant: 'secondary' },
     };
-    
+
     const { label, variant } = config[tipo] || config.other;
     return <Badge variant={variant}>{label}</Badge>;
   };
@@ -218,7 +242,7 @@ export function AplicarCreditoModal({
           <Alert variant="warning">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Nenhum crédito compatível encontrado. Os créditos devem ser do mesmo fornecedor, 
+              Nenhum crédito compatível encontrado. Os créditos devem ser do mesmo fornecedor,
               mesma moeda e ter saldo disponível.
             </AlertDescription>
           </Alert>
@@ -324,7 +348,7 @@ export function AplicarCreditoModal({
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>
-                  Após aplicar {formatCurrency(parseFloat(formData.valor_aplicar))}, 
+                  Após aplicar {formatCurrency(parseFloat(formData.valor_aplicar))},
                   o valor pendente será de {formatCurrency(duplicata.valor_pendente - parseFloat(formData.valor_aplicar))}.
                 </AlertDescription>
               </Alert>

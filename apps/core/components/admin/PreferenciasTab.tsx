@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from 'react';
 import { Globe, Clock, Calendar, DollarSign, Moon, Sun, Laptop, Grid, List, Bell, BellOff, Mail, Smartphone, CheckCircle2, AlertTriangle, Loader2, Image as ImageIcon, Palette } from 'lucide-react';
-import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from '@/app/configuracoes/config-actions';
+import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from '@/app/(protected)/configuracoes/config-actions';
 
 interface PreferenciasTabProps {
   configSistema: ConfiguracaoSistema;
@@ -17,8 +17,8 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
   const [isSavingSistema, startSavingSistema] = useTransition();
   const [isSavingUsuario, startSavingUsuario] = useTransition();
-  const [statusSistema, setStatusSistema] = useState<{success: boolean, message: string} | null>(null);
-  const [statusUsuario, setStatusUsuario] = useState<{success: boolean, message: string} | null>(null);
+  const [statusSistema, setStatusSistema] = useState<{ success: boolean, message: string } | null>(null);
+  const [statusUsuario, setStatusUsuario] = useState<{ success: boolean, message: string } | null>(null);
 
   const handleSaveSistema = () => {
     setStatusSistema(null);
@@ -89,7 +89,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </div>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Moeda Padrão */}
           <div>

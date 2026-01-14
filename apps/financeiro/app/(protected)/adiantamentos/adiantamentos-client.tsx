@@ -12,18 +12,18 @@ import {
   Filter,
   Loader2,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Badge } from '@noro/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useToast } from '@/hooks/use-toast'
+} from '@noro/ui'
+import { useToast } from '@noro/ui'
 import AdiantamentoFormModal from './adiantamento-form-modal'
 import VerUtilizacoesModal from './ver-utilizacoes-modal'
 
@@ -73,15 +73,15 @@ export default function AdiantamentosClient({
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { showToast } = useToast()
+  const { toast } = useToast()
 
   // Estados de filtros
-  const [busca, setBusca] = useState(searchParams.get('busca') || '')
-  const [filtroStatus, setFiltroStatus] = useState(searchParams.get('status') || 'todos')
-  const [filtroMarca, setFiltroMarca] = useState(searchParams.get('marca') || 'todas')
-  const [filtroFornecedor, setFiltroFornecedor] = useState(searchParams.get('fornecedor') || 'todos')
-  const [dataInicio, setDataInicio] = useState(searchParams.get('data_inicio') || '')
-  const [dataFim, setDataFim] = useState(searchParams.get('data_fim') || '')
+  const [busca, setBusca] = useState(searchParams?.get('busca') || '')
+  const [filtroStatus, setFiltroStatus] = useState(searchParams?.get('status') || 'todos')
+  const [filtroMarca, setFiltroMarca] = useState(searchParams?.get('marca') || 'todas')
+  const [filtroFornecedor, setFiltroFornecedor] = useState(searchParams?.get('fornecedor') || 'todos')
+  const [dataInicio, setDataInicio] = useState(searchParams?.get('data_inicio') || '')
+  const [dataFim, setDataFim] = useState(searchParams?.get('data_fim') || '')
 
   // Estados de modais
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -170,11 +170,11 @@ export default function AdiantamentosClient({
   // Função para obter badge de status
   const getStatusBadge = (status: string) => {
     const badges = {
-      disponivel: { variant: 'success' as const, label: 'Disponível' },
-      parcialmente_utilizado: { variant: 'warning' as const, label: 'Parcialmente Utilizado' },
-      esgotado: { variant: 'destructive' as const, label: 'Esgotado' },
+      disponivel: { variant: 'outline' as const, label: 'Disponível', className: 'bg-green-100 text-green-800 hover:bg-green-100 border-green-200' },
+      parcialmente_utilizado: { variant: 'outline' as const, label: 'Parcialmente Utilizado', className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200' },
+      esgotado: { variant: 'destructive' as const, label: 'Esgotado', className: '' },
     }
-    return badges[status as keyof typeof badges] || { variant: 'secondary' as const, label: status }
+    return badges[status as keyof typeof badges] || { variant: 'secondary' as const, label: status, className: '' }
   }
 
   // Função para recarregar adiantamentos
@@ -199,7 +199,11 @@ export default function AdiantamentosClient({
     if (!adiantamento) return
 
     if (adiantamento.valor_utilizado > 0) {
-      showToast('error', 'Não é possível deletar', 'Este adiantamento já foi utilizado em duplicatas.')
+      toast({
+        title: 'Não é possível deletar',
+        description: 'Este adiantamento já foi utilizado em duplicatas.',
+        variant: 'destructive',
+      })
       return
     }
 
@@ -214,15 +218,26 @@ export default function AdiantamentosClient({
       })
 
       if (res.ok) {
-        showToast('success', 'Adiantamento deletado com sucesso!')
+        toast({
+          title: 'Sucesso',
+          description: 'Adiantamento deletado com sucesso!',
+          variant: 'success',
+        })
         await recarregarAdiantamentos()
       } else {
         const error = await res.json()
-        showToast('error', 'Erro ao deletar adiantamento', error.error || 'Tente novamente.')
+        toast({
+          title: 'Erro ao deletar adiantamento',
+          description: error.error || 'Tente novamente.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Erro ao deletar adiantamento:', error)
-      showToast('error', 'Erro ao deletar adiantamento')
+      toast({
+        title: 'Erro ao deletar adiantamento',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -445,7 +460,7 @@ export default function AdiantamentosClient({
                           {new Date(adiantamento.data_adiantamento).toLocaleDateString('pt-BR')}
                         </td>
                         <td className="py-3">
-                          <Badge variant={statusBadge.variant}>{statusBadge.label}</Badge>
+                          <Badge variant={statusBadge.variant} className={statusBadge.className}>{statusBadge.label}</Badge>
                         </td>
                         <td className="py-3">
                           <div className="flex justify-end gap-2">

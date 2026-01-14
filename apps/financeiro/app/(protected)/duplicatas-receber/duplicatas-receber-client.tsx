@@ -2,32 +2,32 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@noro/ui';
+import { Input } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Download, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  X, 
+} from '@noro/ui';
+import {
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Edit,
+  Trash2,
+  X,
   DollarSign,
   FileText,
   Clock,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@noro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui';
 import {
   Table,
   TableBody,
@@ -35,11 +35,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { DuplicataReceberFormModal } from './duplicata-form-modal';
 import { BaixarRecebimentoModal } from './baixar-recebimento-modal';
-import type { FinDuplicataReceber } from '@/types/financeiro';
+import type { FinDuplicataReceber } from '@noro/types/financeiro';
 
 interface DuplicatasReceberClientProps {
   duplicatas: any[];
@@ -49,26 +49,26 @@ interface DuplicatasReceberClientProps {
   tenantId: string;
 }
 
-export function DuplicatasReceberClient({ 
-  duplicatas, 
-  clientes, 
-  categorias, 
-  contas, 
-  tenantId 
+export function DuplicatasReceberClient({
+  duplicatas,
+  clientes,
+  categorias,
+  contas,
+  tenantId
 }: DuplicatasReceberClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { showToast } = useToast();
-  
+  const { toast } = useToast();
+
   // Estados de filtros
-  const [busca, setBusca] = useState(searchParams.get('busca') || '');
-  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams.get('status') || 'todos');
-  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams.get('marca') || 'todas');
-  const [filtroCliente, setFiltroCliente] = useState<string>(searchParams.get('cliente') || 'todos');
-  const [dataInicio, setDataInicio] = useState(searchParams.get('dataInicio') || '');
-  const [dataFim, setDataFim] = useState(searchParams.get('dataFim') || '');
-  
+  const [busca, setBusca] = useState(searchParams?.get('busca') || '');
+  const [filtroStatus, setFiltroStatus] = useState<string>(searchParams?.get('status') || 'todos');
+  const [filtroMarca, setFiltroMarca] = useState<string>(searchParams?.get('marca') || 'todas');
+  const [filtroCliente, setFiltroCliente] = useState<string>(searchParams?.get('cliente') || 'todos');
+  const [dataInicio, setDataInicio] = useState(searchParams?.get('dataInicio') || '');
+  const [dataFim, setDataFim] = useState(searchParams?.get('dataFim') || '');
+
   // Estados de modais
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBaixarOpen, setIsBaixarOpen] = useState(false);
@@ -86,7 +86,7 @@ export function DuplicatasReceberClient({
     if (dataFim) params.set('dataFim', dataFim);
 
     const queryString = params.toString();
-    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+    const newUrl = queryString ? `${pathname || ''}?${queryString}` : (pathname || '');
     router.replace(newUrl, { scroll: false });
   }, [busca, filtroStatus, filtroMarca, filtroCliente, dataInicio, dataFim, pathname, router]);
 
@@ -97,11 +97,11 @@ export function DuplicatasReceberClient({
         busca === '' ||
         duplicata.numero_documento?.toLowerCase().includes(busca.toLowerCase()) ||
         duplicata.descricao?.toLowerCase().includes(busca.toLowerCase());
-      
+
       const matchStatus = filtroStatus === 'todos' || duplicata.status === filtroStatus;
       const matchMarca = filtroMarca === 'todas' || duplicata.marca === filtroMarca;
       const matchCliente = filtroCliente === 'todos' || duplicata.cliente_id === filtroCliente;
-      
+
       const dataVencimento = new Date(duplicata.data_vencimento);
       const matchDataInicio = !dataInicio || dataVencimento >= new Date(dataInicio);
       const matchDataFim = !dataFim || dataVencimento <= new Date(dataFim);
@@ -117,16 +117,16 @@ export function DuplicatasReceberClient({
         acc.total += dup.valor_total || 0;
         acc.recebido += dup.valor_recebido || 0;
         acc.pendente += dup.valor_pendente || 0;
-        
+
         if (dup.status === 'recebida') acc.count_recebidas++;
         else if (dup.status === 'vencida') acc.count_vencidas++;
         else if (dup.status === 'pendente') acc.count_pendentes++;
-        
+
         return acc;
       },
-      { 
-        total: 0, 
-        recebido: 0, 
+      {
+        total: 0,
+        recebido: 0,
         pendente: 0,
         count_recebidas: 0,
         count_vencidas: 0,
@@ -163,7 +163,7 @@ export function DuplicatasReceberClient({
 
   const handleDeletar = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar esta duplicata?')) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/duplicatas-receber/${id}`, {
@@ -174,7 +174,7 @@ export function DuplicatasReceberClient({
         throw new Error('Erro ao deletar duplicata');
       }
 
-      showToast({
+      toast({
         title: 'Sucesso',
         description: 'Duplicata deletada com sucesso',
         variant: 'success',
@@ -183,7 +183,7 @@ export function DuplicatasReceberClient({
       router.refresh();
     } catch (error) {
       console.error('Erro ao deletar:', error);
-      showToast({
+      toast({
         title: 'Erro',
         description: 'Erro ao deletar duplicata',
         variant: 'destructive',
@@ -196,7 +196,7 @@ export function DuplicatasReceberClient({
   const handleGerarParcelas = async (duplicata: any) => {
     const numeroParcelas = prompt('Número de parcelas:', '2');
     if (!numeroParcelas) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(`/api/duplicatas-receber/${duplicata.id}/gerar-parcelas`, {
@@ -212,7 +212,7 @@ export function DuplicatasReceberClient({
         throw new Error('Erro ao gerar parcelas');
       }
 
-      showToast({
+      toast({
         title: 'Sucesso',
         description: 'Parcelas geradas com sucesso',
         variant: 'success',
@@ -221,7 +221,7 @@ export function DuplicatasReceberClient({
       router.refresh();
     } catch (error) {
       console.error('Erro ao gerar parcelas:', error);
-      showToast({
+      toast({
         title: 'Erro',
         description: 'Erro ao gerar parcelas',
         variant: 'destructive',

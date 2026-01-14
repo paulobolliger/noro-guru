@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from '@noro/ui';
 import {
   ArrowLeft,
   Edit,
@@ -43,7 +43,7 @@ export function CentroCustoDetalhesClient({
   tenantId,
 }: CentroCustoDetalhesClientProps) {
   const router = useRouter();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [showAlocacaoModal, setShowAlocacaoModal] = useState(false);
 
   const formatarMoeda = (valor: number) => {
@@ -66,7 +66,7 @@ export function CentroCustoDetalhesClient({
   // Composição de custos por categoria
   const composicaoCustos = useMemo(() => {
     const custosPorCategoria = new Map<string, number>();
-    
+
     alocacoesDespesas.forEach((aloc: any) => {
       const catNome = aloc.categoria?.nome || 'Sem categoria';
       custosPorCategoria.set(catNome, (custosPorCategoria.get(catNome) || 0) + aloc.valor_alocado);
@@ -95,15 +95,27 @@ export function CentroCustoDetalhesClient({
       });
 
       if (response.ok) {
-        showToast('success', 'Centro de custo deletado com sucesso!');
+        toast({
+          title: 'Sucesso',
+          description: 'Centro de custo deletado com sucesso!',
+          variant: 'success',
+        });
         router.push('/centros-custo');
       } else {
         const error = await response.json();
-        showToast('error', 'Erro ao deletar', error.error || 'Erro desconhecido');
+        toast({
+          title: 'Erro ao deletar',
+          description: error.error || 'Erro desconhecido',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Erro ao deletar centro de custo:', error);
-      showToast('error', 'Erro ao deletar centro de custo', 'Verifique o console para mais detalhes');
+      toast({
+        title: 'Erro ao deletar centro de custo',
+        description: 'Verifique o console para mais detalhes',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -123,9 +135,9 @@ export function CentroCustoDetalhesClient({
             <h1 className="text-3xl font-bold">{centroCusto.nome}</h1>
             <Badge className={
               centroCusto.status === 'ativo' ? 'bg-green-100 text-green-800' :
-              centroCusto.status === 'concluido' ? 'bg-gray-100 text-gray-800' :
-              centroCusto.status === 'planejamento' ? 'bg-blue-100 text-blue-800' :
-              'bg-red-100 text-red-800'
+                centroCusto.status === 'concluido' ? 'bg-gray-100 text-gray-800' :
+                  centroCusto.status === 'planejamento' ? 'bg-blue-100 text-blue-800' :
+                    'bg-red-100 text-red-800'
             }>
               {centroCusto.status}
             </Badge>
@@ -259,13 +271,12 @@ export function CentroCustoDetalhesClient({
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className={`h-3 rounded-full ${
-                  (rentabilidade?.percentual_orcamento_utilizado || 0) > 100
+                className={`h-3 rounded-full ${(rentabilidade?.percentual_orcamento_utilizado || 0) > 100
                     ? 'bg-red-500'
                     : (rentabilidade?.percentual_orcamento_utilizado || 0) > 80
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
-                }`}
+                      ? 'bg-yellow-500'
+                      : 'bg-green-500'
+                  }`}
                 style={{ width: `${Math.min(rentabilidade?.percentual_orcamento_utilizado || 0, 100)}%` }}
               />
             </div>

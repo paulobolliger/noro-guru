@@ -8,18 +8,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@noro/ui'
+import { Button } from '@noro/ui'
+import { Input } from '@noro/ui'
+import { Label } from '@noro/ui'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useToast } from '@/hooks/use-toast'
+} from '@noro/ui'
+import { useToast } from '@noro/ui'
 
 interface Credito {
   id: string
@@ -58,7 +58,7 @@ export default function CreditoFormModal({
   tenantId,
   onSuccess,
 }: Props) {
-  const { showToast } = useToast()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -112,23 +112,39 @@ export default function CreditoFormModal({
 
     // Validações
     if (!formData.descricao.trim()) {
-      showToast('error', 'Descrição é obrigatória')
+      toast({
+        title: 'Erro',
+        description: 'Descrição é obrigatória',
+        variant: 'destructive',
+      })
       return
     }
 
     if (!formData.fornecedor_id) {
-      showToast('error', 'Fornecedor é obrigatório')
+      toast({
+        title: 'Erro',
+        description: 'Fornecedor é obrigatório',
+        variant: 'destructive',
+      })
       return
     }
 
     const valorTotal = parseFloat(formData.valor_total)
     if (isNaN(valorTotal) || valorTotal <= 0) {
-      showToast('error', 'Valor total deve ser maior que zero')
+      toast({
+        title: 'Erro',
+        description: 'Valor total deve ser maior que zero',
+        variant: 'destructive',
+      })
       return
     }
 
     if (!formData.data_credito) {
-      showToast('error', 'Data do crédito é obrigatória')
+      toast({
+        title: 'Erro',
+        description: 'Data do crédito é obrigatória',
+        variant: 'destructive',
+      })
       return
     }
 
@@ -137,7 +153,11 @@ export default function CreditoFormModal({
       const dataValidade = new Date(formData.data_validade)
       const dataCredito = new Date(formData.data_credito)
       if (dataValidade < dataCredito) {
-        showToast('error', 'Data de validade não pode ser anterior à data do crédito')
+        toast({
+          title: 'Erro',
+          description: 'Data de validade não pode ser anterior à data do crédito',
+          variant: 'destructive',
+        })
         return
       }
     }
@@ -166,19 +186,26 @@ export default function CreditoFormModal({
       })
 
       if (res.ok) {
-        showToast(
-          'success',
-          credito ? 'Crédito atualizado!' : 'Crédito criado com sucesso!'
-        )
+        toast({
+          title: credito ? 'Crédito atualizado!' : 'Crédito criado com sucesso!',
+          variant: 'success',
+        })
         onSuccess()
         onClose()
       } else {
         const error = await res.json()
-        showToast('error', 'Erro ao salvar crédito', error.error || 'Tente novamente.')
+        toast({
+          title: 'Erro ao salvar crédito',
+          description: error.error || 'Tente novamente.',
+          variant: 'destructive',
+        })
       }
     } catch (error) {
       console.error('Erro ao salvar crédito:', error)
-      showToast('error', 'Erro ao salvar crédito')
+      toast({
+        title: 'Erro ao salvar crédito',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(false)
     }
@@ -203,7 +230,7 @@ export default function CreditoFormModal({
                   onValueChange={(value) =>
                     setFormData({ ...formData, fornecedor_id: value })
                   }
-                  disabled={credito && credito.valor_utilizado > 0}
+                  disabled={!!(credito && credito.valor_utilizado > 0)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o fornecedor" />
@@ -230,7 +257,7 @@ export default function CreditoFormModal({
                   onValueChange={(value: any) =>
                     setFormData({ ...formData, tipo_credito: value })
                   }
-                  disabled={credito && credito.valor_utilizado > 0}
+                  disabled={!!(credito && credito.valor_utilizado > 0)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -281,7 +308,7 @@ export default function CreditoFormModal({
                     setFormData({ ...formData, valor_total: e.target.value })
                   }
                   placeholder="0.00"
-                  disabled={credito && credito.valor_utilizado > 0}
+                  disabled={!!(credito && credito.valor_utilizado > 0)}
                 />
                 {credito && credito.valor_utilizado > 0 && (
                   <p className="text-xs text-muted-foreground">
@@ -295,7 +322,7 @@ export default function CreditoFormModal({
                 <Select
                   value={formData.moeda}
                   onValueChange={(value) => setFormData({ ...formData, moeda: value })}
-                  disabled={credito && credito.valor_utilizado > 0}
+                  disabled={!!(credito && credito.valor_utilizado > 0)}
                 >
                   <SelectTrigger>
                     <SelectValue />

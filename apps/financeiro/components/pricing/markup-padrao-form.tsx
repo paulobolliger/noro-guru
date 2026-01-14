@@ -2,9 +2,9 @@
 
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Button } from "@noro/ui"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@noro/ui"
+import { Input } from "@noro/ui"
 
 
 
@@ -29,9 +29,9 @@ interface MarkupPadraoFormProps {
   isSubmitting?: boolean
 }
 
-export function MarkupPadraoForm({ 
+export function MarkupPadraoForm({
   onSubmit: onSubmitProp,
-  isSubmitting = false 
+  isSubmitting = false
 }: MarkupPadraoFormProps) {
   const form = useForm<FormValues>({
     defaultValues,
@@ -83,7 +83,7 @@ export function MarkupPadraoForm({
             <FormItem>
               <FormLabel>Tipo de Markup</FormLabel>
               <FormControl>
-                <select 
+                <select
                   className="w-full px-3 py-2 border rounded-md"
                   {...field}
                 >
@@ -104,20 +104,20 @@ export function MarkupPadraoForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                {form.watch("tipo_markup") === "percentual" 
-                  ? "Percentual (%)" 
+                {form.watch("tipo_markup") === "percentual"
+                  ? "Percentual (%)"
                   : "Valor (R$)"}
               </FormLabel>
               <FormControl>
-                <Input 
-                  type="number" 
+                <Input
+                  type="number"
                   step="0.01"
                   placeholder={
                     form.watch("tipo_markup") === "percentual"
                       ? "Ex: 25.5"
                       : "Ex: 100.00"
                   }
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />

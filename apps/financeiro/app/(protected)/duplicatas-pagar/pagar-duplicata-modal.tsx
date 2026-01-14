@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@noro/ui';
 import {
   Dialog,
   DialogContent,
@@ -9,20 +9,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@noro/ui';
+import { Input } from '@noro/ui';
+import { Label } from '@noro/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/components/ui/toast';
+} from '@noro/ui';
+import { Checkbox } from '@noro/ui';
+import { useToast } from '@noro/ui';
 import { Loader2, DollarSign } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@noro/ui';
 
 interface PagarDuplicataModalProps {
   open: boolean;
@@ -39,9 +39,9 @@ export function PagarDuplicataModal({
   contas,
   onSuccess,
 }: PagarDuplicataModalProps) {
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     valor_pago: '',
     data_pagamento: new Date().toISOString().split('T')[0],
@@ -53,21 +53,29 @@ export function PagarDuplicataModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!duplicata) return;
 
     if (!formData.valor_pago || parseFloat(formData.valor_pago) <= 0) {
-      showToast('error', 'Valor pago deve ser maior que zero');
+      toast({
+        title: 'Erro',
+        description: 'Valor pago deve ser maior que zero',
+        variant: 'destructive',
+      });
       return;
     }
 
     if (parseFloat(formData.valor_pago) > duplicata.valor_pendente) {
-      showToast('error', `Valor pago não pode ser maior que o pendente (${duplicata.valor_pendente})`);
+      toast({
+        title: 'Erro',
+        description: `Valor pago não pode ser maior que o pendente (${duplicata.valor_pendente})`,
+        variant: 'destructive',
+      });
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch(`/api/duplicatas-pagar/${duplicata.id}/pagar`, {
         method: 'POST',
@@ -91,12 +99,20 @@ export function PagarDuplicataModal({
 
       const result = await response.json();
 
-      showToast('success', `Pagamento registrado com sucesso. ${result.despesa ? 'Despesa criada.' : ''}`);
+      toast({
+        title: 'Sucesso',
+        description: `Pagamento registrado com sucesso. ${result.despesa ? 'Despesa criada.' : ''}`,
+        variant: 'success',
+      });
 
       onSuccess();
     } catch (error: any) {
       console.error('Erro ao registrar pagamento:', error);
-      showToast('error', error.message || 'Erro ao registrar pagamento');
+      toast({
+        title: 'Erro ao registrar pagamento',
+        description: error.message || 'Erro desconhecido',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import PageContainer from "@/components/layout/PageContainer";
 import WebhooksTableClient from './WebhooksTableClient';
 import { Webhook, Search, Activity, Settings, CheckCircle, XCircle, Clock, TrendingUp } from 'lucide-react';
 
@@ -28,7 +27,6 @@ export default function WebhooksPageClient({ data, initialQuery = "" }: Webhooks
   const router = useRouter();
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [searchExpanded, setSearchExpanded] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const activeTab = pathname === '/webhooks/endpoints' ? 'endpoints' : 'eventos';
@@ -40,7 +38,7 @@ export default function WebhooksPageClient({ data, initialQuery = "" }: Webhooks
 
     const total = data.length;
     const last24hData = data.filter(log => new Date(log.created_at) >= last24h);
-    
+
     const success = data.filter(log => {
       const status = (log.status || log.delivery_status || '').toLowerCase();
       return status === 'success' || status === 'delivered';
@@ -112,162 +110,144 @@ export default function WebhooksPageClient({ data, initialQuery = "" }: Webhooks
   ];
 
   return (
-    <PageContainer>
-      {/* Header com Tabs integradas */}
-      <div className="sticky top-0 z-30 mb-6">
-        <div
-          className="max-w-[1200px] mx-auto rounded-xl shadow-md overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, rgba(59, 44, 164, 0.94), rgba(35, 33, 79, 0.92))' }}
-        >
-          {/* Título e Busca */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 px-4 md:px-6 py-4">
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <Webhook size={28} className="text-[#D4AF37]" />
-              <div>
-                <h1 className="text-xl md:text-2xl font-bold text-[#D4AF37] tracking-tight">Webhooks</h1>
-                <p className="text-sm text-gray-300 mt-1">Gerencie eventos e endpoints de webhooks.</p>
-              </div>
-            </div>
-
-            {/* Search */}
-            <div className="flex items-center gap-2">
-              {!searchExpanded && (
-                <button
-                  onClick={() => setSearchExpanded(true)}
-                  className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                  aria-label="Expandir busca"
-                >
-                  <Search size={20} className="text-[#D4AF37]" />
-                </button>
-              )}
-              {searchExpanded && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar por source ou event..."
-                    className="px-3 py-2 rounded-lg border-2 border-[#D4AF37] dark:border-[#4aede5] bg-white/10 backdrop-blur-sm text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] dark:focus:ring-[#4aede5] w-64"
-                    autoFocus
-                  />
-                  <button
-                    onClick={() => {
-                      setSearchExpanded(false);
-                      setSearchQuery("");
-                    }}
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex gap-1 px-4 md:px-6 border-t border-white/10">
-            {tabs.map((tab) => {
-              const isActive = tab.id === activeTab;
-              const Icon = tab.icon;
-
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => router.push(tab.href)}
-                  className={`
-                    flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all
-                    ${isActive
-                      ? 'border-[#4aede5] text-[#4aede5]'
-                      : 'border-transparent text-gray-400 hover:text-white hover:border-gray-400'
-                    }
-                  `}
-                >
-                  <Icon size={18} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-heading flex items-center gap-2">
+            <Webhook className="text-primary" size={24} />
+            Webhooks
+          </h2>
+          <p className="text-sm text-secondary mt-1">Gerencie eventos e endpoints de webhooks.</p>
         </div>
       </div>
 
-      {/* Cards de Métricas */}
-      <div className="mb-6">
+      {/* Metrics Metrics */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-bold text-heading uppercase tracking-wide">Monitoramento (24h)</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Webhooks */}
-          <div className="bg-gray-50 dark:bg-[#1a1625] rounded-xl p-4 border-2 border-cyan-400 dark:border-[#4aede5] hover:scale-105 transition-transform shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs uppercase font-semibold text-gray-600 dark:text-gray-400">Total Eventos</span>
-              <Activity size={20} className="text-cyan-500 dark:text-[#4aede5]" />
+          <div className="bg-surface-card rounded-xl p-5 border border-default shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-secondary uppercase tracking-wider">Eventos Totais</span>
+              <Activity size={18} className="text-primary" />
             </div>
-            <div className="text-3xl font-bold text-cyan-600 dark:text-[#4aede5]">{metrics.total}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              {metrics.last24h} nas últimas 24h
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-heading">{metrics.total}</span>
+              <span className="text-xs text-secondary">{metrics.last24h} hoje</span>
             </div>
           </div>
 
           {/* Success */}
-          <div className="bg-gray-50 dark:bg-[#1a1625] rounded-xl p-4 border-2 border-emerald-400 dark:border-emerald-500 hover:scale-105 transition-transform shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs uppercase font-semibold text-gray-600 dark:text-gray-400">Sucesso</span>
-              <CheckCircle size={20} className="text-emerald-500" />
+          <div className="bg-surface-card rounded-xl p-5 border border-default shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-secondary uppercase tracking-wider">Sucesso</span>
+              <CheckCircle size={18} className="text-emerald-500" />
             </div>
-            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{metrics.success}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Taxa: {metrics.successRate}%
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-heading">{metrics.success}</span>
+              <span className="text-xs text-emerald-600 font-medium">{metrics.successRate}% taxa</span>
             </div>
           </div>
 
           {/* Failed */}
-          <div className="bg-gray-50 dark:bg-[#1a1625] rounded-xl p-4 border-2 border-red-400 dark:border-red-500 hover:scale-105 transition-transform shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs uppercase font-semibold text-gray-600 dark:text-gray-400">Falhas</span>
-              <XCircle size={20} className="text-red-500" />
+          <div className="bg-surface-card rounded-xl p-5 border border-default shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-secondary uppercase tracking-wider">Falhas</span>
+              <XCircle size={18} className="text-red-500" />
             </div>
-            <div className="text-3xl font-bold text-red-600 dark:text-red-400">{metrics.failed}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Erros de entrega
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-heading">{metrics.failed}</span>
+              <span className="text-xs text-secondary">erros</span>
             </div>
           </div>
 
           {/* Pending */}
-          <div className="bg-gray-50 dark:bg-[#1a1625] rounded-xl p-4 border-2 border-amber-400 dark:border-amber-500 hover:scale-105 transition-transform shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs uppercase font-semibold text-gray-600 dark:text-gray-400">Pendentes</span>
-              <Clock size={20} className="text-amber-500" />
+          <div className="bg-surface-card rounded-xl p-5 border border-default shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-secondary uppercase tracking-wider">Pendentes</span>
+              <Clock size={18} className="text-amber-500" />
             </div>
-            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">{metrics.pending}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-              Em processamento
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-heading">{metrics.pending}</span>
+              <span className="text-xs text-secondary">fila</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filtros por Status */}
-      <div className="mb-6 flex gap-2">
-        {[
-          { value: 'all', label: 'Todos', color: 'gray' },
-          { value: 'success', label: 'Sucesso', color: 'emerald' },
-          { value: 'failed', label: 'Falhas', color: 'red' },
-          { value: 'pending', label: 'Pendentes', color: 'amber' },
-        ].map((filter) => (
-          <button
-            key={filter.value}
-            onClick={() => setStatusFilter(filter.value)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-              statusFilter === filter.value
-                ? `bg-${filter.color}-500 text-white shadow-lg scale-105`
-                : `bg-gray-100 dark:bg-[#1a1625] text-gray-600 dark:text-gray-400 border-2 border-gray-300 dark:border-gray-600 hover:border-${filter.color}-400`
-            }`}
-          >
-            {filter.label}
-          </button>
-        ))}
+      {/* Tabs Navigation */}
+      <div className="border-b border-default overflow-x-auto">
+        <div className="flex gap-6">
+          {tabs.map((tab) => {
+            const isActive = tab.id === activeTab;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => router.push(tab.href)}
+                className={`
+                    flex items-center gap-2 pb-3 text-sm font-medium transition-all border-b-2 whitespace-nowrap
+                    ${isActive
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-secondary hover:text-heading hover:border-default'
+                  }
+                  `}
+              >
+                <Icon size={16} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Tabela */}
-      <WebhooksTableClient data={filteredData} />
-    </PageContainer>
+      {/* Toolbar & Filter */}
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row gap-4 justify-between md:items-center bg-surface-card p-4 rounded-xl border border-default shadow-sm">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-2.5 text-tertiary" size={18} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por source ou event..."
+              className="w-full pl-10 pr-4 py-2 bg-surface-base border border-default rounded-lg text-heading text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-tertiary"
+            />
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
+            {[
+              { value: 'all', label: 'Todos' },
+              { value: 'success', label: 'Sucesso' },
+              { value: 'failed', label: 'Falhas' },
+              { value: 'pending', label: 'Pendentes' },
+            ].map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => setStatusFilter(filter.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${statusFilter === filter.value
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'bg-surface-base text-secondary border border-default hover:bg-surface-base/80'
+                  }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="bg-surface-card border border-default rounded-xl overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-default flex justify-between items-center">
+            <h3 className="text-sm font-bold text-heading uppercase tracking-wide">Log de Eventos</h3>
+            <span className="text-xs font-medium text-tertiary bg-surface-base px-2 py-1 rounded-full border border-default">
+              {filteredData.length} registros
+            </span>
+          </div>
+          <WebhooksTableClient data={filteredData} />
+        </div>
+      </div>
+    </div>
   );
 }

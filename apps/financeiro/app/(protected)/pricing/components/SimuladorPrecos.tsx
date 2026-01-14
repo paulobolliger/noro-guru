@@ -1,11 +1,13 @@
+"use client"
+
 import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SimulacaoPreco } from '../../../types/pricing'
+
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@noro/ui'
-import { 
+import {
   Form,
   FormControl,
   FormField,
@@ -28,8 +30,9 @@ import {
   SelectValue,
 } from '@noro/ui'
 import { Input } from '@noro/ui'
+import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
-import { formatarMoeda, formatarPorcentagem } from '../../../lib/pricing'
+import { formatarMoeda, formatarPorcentagem } from '@/lib/pricing'
 
 // Schema de validação
 const formSchema = z.object({
@@ -59,7 +62,7 @@ interface ResultadoSimulacao {
 export default function SimuladorPrecos() {
   const [isLoading, setIsLoading] = useState(false)
   const [resultado, setResultado] = useState<ResultadoSimulacao | null>(null)
-  
+
   const supabase = createClientComponentClient()
 
   // Form initialization
@@ -140,7 +143,7 @@ export default function SimuladorPrecos() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de Produto</FormLabel>
-                    <Select 
+                    <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={isLoading}
@@ -172,7 +175,7 @@ export default function SimuladorPrecos() {
                     <FormItem>
                       <FormLabel>Valor de Custo</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="number"
                           step="0.01"
                           {...field}

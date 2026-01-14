@@ -2,19 +2,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Plug, Users, SlidersHorizontal, CreditCard } from 'lucide-react';
+import { Plug, Users, SlidersHorizontal, CreditCard, Settings } from 'lucide-react';
 import InviteUserModal from './InviteUserModal';
 import EditUserModal from './EditUserModal';
 import DeleteUserModal from './DeleteUserModal';
 import PreferenciasTab from './PreferenciasTab';
 import UtilizadoresTab from './UtilizadoresTab';
 import IntegracoesTab from './IntegracoesTab';
-import PageContainer from './layout/PageContainer';
-import SectionHeader from './layout/SectionHeader';
 import type { ConfiguracaoSistema, ConfiguracaoUsuario } from "@/app/(protected)/configuracoes/config-actions";
 import type { NoroUser } from "@/../../packages/types/noro-users";
+import Link from 'next/link';
 
-type Tab = 'utilizadores' | 'preferencias' | 'integracoes' | 'planos';
+type Tab = 'utilizadores' | 'preferencias' | 'integracoes';
 
 interface EnvVariable {
   key: string;
@@ -33,64 +32,70 @@ interface ConfiguracoesClientProps {
 }
 
 export default function ConfiguracoesClient({ serverUsers, configSistema, configUsuario, currentUserId, envVariables }: ConfiguracoesClientProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('utilizadores'); // Define 'utilizadores' como aba inicial
-  
+  const [activeTab, setActiveTab] = useState<Tab>('utilizadores');
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<NoroUser | null>(null);
 
-  // ... (funções handleOpenEditModal, handleOpenDeleteModal, handleSaveSecret permanecem as mesmas)
-
   return (
-    <>
+    <div className="max-w-6xl mx-auto space-y-8">
       <InviteUserModal isOpen={isInviteModalOpen} onClose={() => setIsInviteModalOpen(false)} />
       <EditUserModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={selectedUser} />
       <DeleteUserModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} user={selectedUser} />
 
-      <PageContainer>
-        <SectionHeader
-          title="Configurações"
-          subtitle="Gira as integrações, utilizadores e preferências do sistema."
-        />
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-bold text-heading flex items-center gap-2">
+          <Settings className="text-primary" size={24} />
+          Configurações
+        </h2>
+        <p className="text-sm text-secondary mt-1">Gerencie utilizadores, integrações e preferências do sistema.</p>
+      </div>
 
-        <div className="flex border-b-2 border-[#4aede5]/20 mb-8">
-          <button onClick={() => window.location.href = '/configuracoes/planos'} className="flex items-center gap-2 px-4 py-3 font-semibold transition-colors text-secondary hover:text-primary hover:border-b-2 hover:border-[#4aede5] -mb-[2px]">
-            <CreditCard size={18} /> Planos
-          </button>
-          <button 
-            onClick={() => setActiveTab('utilizadores')} 
-            className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors -mb-[2px] ${
-              activeTab === 'utilizadores' 
-                ? 'border-b-2 border-[#D4AF37] text-primary' 
-                : 'text-secondary hover:text-primary hover:border-b-2 hover:border-[#4aede5]'
-            }`}
+      {/* Modern Tabs */}
+      <div>
+        <div className="flex border-b border-default overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('utilizadores')}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === 'utilizadores'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-secondary hover:text-heading hover:border-default'
+              }`}
           >
-            <Users size={18} /> Utilizadores
+            <Users size={18} />
+            Utilizadores
           </button>
-          <button 
-            onClick={() => setActiveTab('preferencias')} 
-            className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors -mb-[2px] ${
-              activeTab === 'preferencias' 
-                ? 'border-b-2 border-[#D4AF37] text-primary' 
-                : 'text-secondary hover:text-primary hover:border-b-2 hover:border-[#4aede5]'
-            }`}
+          <button
+            onClick={() => setActiveTab('preferencias')}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === 'preferencias'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-secondary hover:text-heading hover:border-default'
+              }`}
           >
-            <SlidersHorizontal size={18} /> Preferências
+            <SlidersHorizontal size={18} />
+            Preferências
           </button>
-          <button 
-            onClick={() => setActiveTab('integracoes')} 
-            className={`flex items-center gap-2 px-4 py-3 font-semibold transition-colors -mb-[2px] ${
-              activeTab === 'integracoes' 
-                ? 'border-b-2 border-[#D4AF37] text-primary' 
-                : 'text-secondary hover:text-primary hover:border-b-2 hover:border-[#4aede5]'
-            }`}
+          <button
+            onClick={() => setActiveTab('integracoes')}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${activeTab === 'integracoes'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-secondary hover:text-heading hover:border-default'
+              }`}
           >
-            <Plug size={18} /> Integrações
+            <Plug size={18} />
+            Integrações
           </button>
+          <Link
+            href="/configuracoes/planos"
+            className="flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 border-transparent text-secondary hover:text-heading hover:border-default whitespace-nowrap ml-auto"
+          >
+            <CreditCard size={18} />
+            Planos
+          </Link>
         </div>
 
-        <div>
+        <div className="py-6">
           {activeTab === 'utilizadores' && (
             <UtilizadoresTab
               users={serverUsers}
@@ -102,7 +107,7 @@ export default function ConfiguracoesClient({ serverUsers, configSistema, config
           )}
 
           {activeTab === 'preferencias' && (
-            <PreferenciasTab 
+            <PreferenciasTab
               configSistema={configSistema}
               configUsuario={configUsuario}
               userId={currentUserId}
@@ -113,8 +118,8 @@ export default function ConfiguracoesClient({ serverUsers, configSistema, config
             <IntegracoesTab envVariables={envVariables} />
           )}
         </div>
-      </PageContainer>
-    </>
+      </div>
+    </div>
   );
 }
 

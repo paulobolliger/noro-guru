@@ -1,8 +1,8 @@
 'use client';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog-simple';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@noro/ui';
+import { Badge } from '@noro/ui';
+import { Separator } from '@noro/ui';
 
 interface DespesaDetalhesModalProps {
   isOpen: boolean;
