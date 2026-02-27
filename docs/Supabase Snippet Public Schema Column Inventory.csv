@@ -1,0 +1,1790 @@
+table_name,column_name,data_type,is_nullable
+chatbot_auto_responses,id,uuid,NO
+chatbot_auto_responses,tenant_id,uuid,NO
+chatbot_auto_responses,trigger,text,NO
+chatbot_auto_responses,trigger_type,text,YES
+chatbot_auto_responses,response,text,NO
+chatbot_auto_responses,enabled,boolean,YES
+chatbot_auto_responses,priority,integer,YES
+chatbot_auto_responses,usage_count,integer,YES
+chatbot_auto_responses,last_used_at,timestamp with time zone,YES
+chatbot_auto_responses,created_at,timestamp with time zone,YES
+chatbot_auto_responses,updated_at,timestamp with time zone,YES
+chatbot_configs,id,uuid,NO
+chatbot_configs,tenant_id,uuid,NO
+chatbot_configs,bot_enabled,boolean,YES
+chatbot_configs,bot_name,text,YES
+chatbot_configs,welcome_message,text,YES
+chatbot_configs,transfer_to_human,boolean,YES
+chatbot_configs,transfer_message,text,YES
+chatbot_configs,auto_close_inactive,boolean,YES
+chatbot_configs,auto_close_minutes,integer,YES
+chatbot_configs,business_hours,jsonb,YES
+chatbot_configs,offline_message,text,YES
+chatbot_configs,created_at,timestamp with time zone,YES
+chatbot_configs,updated_at,timestamp with time zone,YES
+clientes,id,uuid,NO
+clientes,tenant_id,uuid,NO
+clientes,nome,character varying,NO
+clientes,tipo,character varying,YES
+clientes,cnpj_cpf,character varying,YES
+clientes,email,character varying,YES
+clientes,telefone,character varying,YES
+clientes,telefone_secundario,character varying,YES
+clientes,endereco_logradouro,character varying,YES
+clientes,endereco_numero,character varying,YES
+clientes,endereco_complemento,character varying,YES
+clientes,endereco_bairro,character varying,YES
+clientes,endereco_cidade,character varying,YES
+clientes,endereco_estado,character varying,YES
+clientes,endereco_cep,character varying,YES
+clientes,endereco_pais,character varying,YES
+clientes,limite_credito,numeric,YES
+clientes,dias_prazo_pagamento,integer,YES
+clientes,ativo,boolean,YES
+clientes,observacoes,text,YES
+clientes,tags,ARRAY,YES
+clientes,dados_adicionais,jsonb,YES
+clientes,created_at,timestamp with time zone,YES
+clientes,updated_at,timestamp with time zone,YES
+conversations,id,uuid,NO
+conversations,tenant_id,uuid,NO
+conversations,client_name,text,NO
+conversations,client_email,text,NO
+conversations,client_phone,text,YES
+conversations,client_metadata,jsonb,YES
+conversations,status,text,NO
+conversations,priority,text,YES
+conversations,assigned_to,uuid,YES
+conversations,assigned_at,timestamp with time zone,YES
+conversations,last_message,text,YES
+conversations,last_message_at,timestamp with time zone,YES
+conversations,last_message_sender,text,YES
+conversations,unread_count,integer,YES
+conversations,message_count,integer,YES
+conversations,tags,ARRAY,YES
+conversations,category,text,YES
+conversations,first_response_at,timestamp with time zone,YES
+conversations,first_response_time_seconds,integer,YES
+conversations,resolution_time_seconds,integer,YES
+conversations,rating,integer,YES
+conversations,feedback,text,YES
+conversations,created_at,timestamp with time zone,YES
+conversations,updated_at,timestamp with time zone,YES
+conversations,closed_at,timestamp with time zone,YES
+fin_adiantamentos,id,uuid,NO
+fin_adiantamentos,tenant_id,uuid,NO
+fin_adiantamentos,marca,USER-DEFINED,NO
+fin_adiantamentos,numero_adiantamento,character varying,NO
+fin_adiantamentos,tipo,USER-DEFINED,NO
+fin_adiantamentos,fornecedor_id,uuid,NO
+fin_adiantamentos,fornecedor_nome,character varying,YES
+fin_adiantamentos,reserva_id,uuid,YES
+fin_adiantamentos,valor_original,numeric,NO
+fin_adiantamentos,valor_utilizado,numeric,YES
+fin_adiantamentos,valor_disponivel,numeric,NO
+fin_adiantamentos,moeda,USER-DEFINED,YES
+fin_adiantamentos,taxa_cambio,numeric,YES
+fin_adiantamentos,data_pagamento,date,NO
+fin_adiantamentos,data_expiracao,date,YES
+fin_adiantamentos,status,USER-DEFINED,YES
+fin_adiantamentos,forma_pagamento,USER-DEFINED,YES
+fin_adiantamentos,conta_bancaria_id,uuid,YES
+fin_adiantamentos,comprovante_pagamento_url,text,YES
+fin_adiantamentos,observacoes,text,YES
+fin_adiantamentos,condicoes_uso,text,YES
+fin_adiantamentos,created_by,uuid,YES
+fin_adiantamentos,created_at,timestamp with time zone,YES
+fin_adiantamentos,updated_at,timestamp with time zone,YES
+fin_alocacoes,id,uuid,NO
+fin_alocacoes,tenant_id,uuid,NO
+fin_alocacoes,centro_custo_id,uuid,NO
+fin_alocacoes,receita_id,uuid,YES
+fin_alocacoes,despesa_id,uuid,YES
+fin_alocacoes,tipo_rateio,character varying,NO
+fin_alocacoes,percentual_alocacao,numeric,YES
+fin_alocacoes,valor_alocado,numeric,NO
+fin_alocacoes,observacoes,text,YES
+fin_alocacoes,data_alocacao,date,NO
+fin_alocacoes,created_at,timestamp with time zone,NO
+fin_alocacoes,updated_at,timestamp with time zone,NO
+fin_alocacoes,created_by,uuid,YES
+fin_categorias,id,uuid,NO
+fin_categorias,tenant_id,uuid,YES
+fin_categorias,nome,text,NO
+fin_categorias,tipo,text,NO
+fin_categorias,categoria_pai_id,uuid,YES
+fin_categorias,cor,text,YES
+fin_categorias,icone,text,YES
+fin_categorias,ordem,integer,YES
+fin_categorias,ativo,boolean,YES
+fin_categorias,created_at,timestamp with time zone,YES
+fin_centros_custo,id,uuid,NO
+fin_centros_custo,tenant_id,uuid,NO
+fin_centros_custo,codigo,character varying,NO
+fin_centros_custo,nome,character varying,NO
+fin_centros_custo,descricao,text,YES
+fin_centros_custo,tipo,character varying,NO
+fin_centros_custo,marca,USER-DEFINED,YES
+fin_centros_custo,data_inicio,date,NO
+fin_centros_custo,data_fim,date,YES
+fin_centros_custo,orcamento_previsto,numeric,YES
+fin_centros_custo,moeda,USER-DEFINED,YES
+fin_centros_custo,meta_margem_percentual,numeric,YES
+fin_centros_custo,meta_receita,numeric,YES
+fin_centros_custo,status,character varying,NO
+fin_centros_custo,responsavel_id,uuid,YES
+fin_centros_custo,equipe,jsonb,YES
+fin_centros_custo,tags,ARRAY,YES
+fin_centros_custo,metadata,jsonb,YES
+fin_centros_custo,created_at,timestamp with time zone,NO
+fin_centros_custo,updated_at,timestamp with time zone,NO
+fin_centros_custo,created_by,uuid,YES
+fin_comissoes,id,uuid,NO
+fin_comissoes,tenant_id,uuid,YES
+fin_comissoes,receita_id,uuid,YES
+fin_comissoes,fornecedor_id,uuid,YES
+fin_comissoes,percentual,numeric,NO
+fin_comissoes,valor_comissao,numeric,NO
+fin_comissoes,moeda,text,NO
+fin_comissoes,status,text,NO
+fin_comissoes,data_vencimento,date,YES
+fin_comissoes,data_pagamento,date,YES
+fin_comissoes,observacoes,text,YES
+fin_comissoes,created_at,timestamp with time zone,YES
+fin_comissoes,updated_at,timestamp with time zone,YES
+fin_comissoes_lotes,id,uuid,NO
+fin_comissoes_lotes,tenant_id,uuid,NO
+fin_comissoes_lotes,periodo_inicio,date,NO
+fin_comissoes_lotes,periodo_fim,date,NO
+fin_comissoes_lotes,status,text,NO
+fin_comissoes_lotes,total_vendas,integer,YES
+fin_comissoes_lotes,total_comissoes,numeric,YES
+fin_comissoes_lotes,metadata,jsonb,YES
+fin_comissoes_lotes,error_log,jsonb,YES
+fin_comissoes_lotes,processado_at,timestamp with time zone,YES
+fin_comissoes_lotes,created_by,uuid,YES
+fin_comissoes_lotes,created_at,timestamp with time zone,YES
+fin_comissoes_recebidas,id,uuid,NO
+fin_comissoes_recebidas,tenant_id,uuid,NO
+fin_comissoes_recebidas,tipo,USER-DEFINED,NO
+fin_comissoes_recebidas,fornecedor_id,uuid,YES
+fin_comissoes_recebidas,produto_id,uuid,YES
+fin_comissoes_recebidas,valor_bruto,numeric,NO
+fin_comissoes_recebidas,percentual,numeric,YES
+fin_comissoes_recebidas,valor_comissao,numeric,NO
+fin_comissoes_recebidas,moeda,USER-DEFINED,YES
+fin_comissoes_recebidas,data_prevista,date,YES
+fin_comissoes_recebidas,data_recebida,date,YES
+fin_comissoes_recebidas,status,USER-DEFINED,YES
+fin_comissoes_recebidas,origem,text,YES
+fin_comissoes_recebidas,comprovante_url,text,YES
+fin_comissoes_recebidas,observacoes,text,YES
+fin_comissoes_recebidas,created_at,timestamp with time zone,YES
+fin_comissoes_recebidas,updated_at,timestamp with time zone,YES
+fin_comissoes_split,id,uuid,NO
+fin_comissoes_split,comissao_id,uuid,NO
+fin_comissoes_split,tipo_repassado,USER-DEFINED,NO
+fin_comissoes_split,usuario_id,uuid,YES
+fin_comissoes_split,percentual,numeric,YES
+fin_comissoes_split,valor_repassado,numeric,YES
+fin_comissoes_split,status,USER-DEFINED,YES
+fin_comissoes_split,data_repassada,date,YES
+fin_comissoes_split,metodo_pagamento,text,YES
+fin_comissoes_split,observacoes,text,YES
+fin_comissoes_split,created_at,timestamp with time zone,YES
+fin_comissoes_split,updated_at,timestamp with time zone,YES
+fin_condicoes_pagamento,id,uuid,NO
+fin_condicoes_pagamento,tenant_id,uuid,NO
+fin_condicoes_pagamento,nome,character varying,NO
+fin_condicoes_pagamento,codigo,character varying,YES
+fin_condicoes_pagamento,tipo,USER-DEFINED,NO
+fin_condicoes_pagamento,dias_vencimento,integer,YES
+fin_condicoes_pagamento,referencia_data,USER-DEFINED,YES
+fin_condicoes_pagamento,numero_parcelas,integer,YES
+fin_condicoes_pagamento,intervalo_parcelas,integer,YES
+fin_condicoes_pagamento,percentual_desconto_antecipacao,numeric,YES
+fin_condicoes_pagamento,percentual_juros_atraso,numeric,YES
+fin_condicoes_pagamento,descricao,text,YES
+fin_condicoes_pagamento,ativo,boolean,YES
+fin_condicoes_pagamento,created_at,timestamp with time zone,YES
+fin_condicoes_pagamento,updated_at,timestamp with time zone,YES
+fin_contas_bancarias,id,uuid,NO
+fin_contas_bancarias,tenant_id,uuid,YES
+fin_contas_bancarias,marca,text,NO
+fin_contas_bancarias,nome,text,NO
+fin_contas_bancarias,tipo,text,NO
+fin_contas_bancarias,banco,text,NO
+fin_contas_bancarias,agencia,text,YES
+fin_contas_bancarias,conta,text,YES
+fin_contas_bancarias,moeda,text,NO
+fin_contas_bancarias,saldo_inicial,numeric,YES
+fin_contas_bancarias,saldo_atual,numeric,YES
+fin_contas_bancarias,ativo,boolean,YES
+fin_contas_bancarias,metadata,jsonb,YES
+fin_contas_bancarias,created_at,timestamp with time zone,YES
+fin_contas_bancarias,updated_at,timestamp with time zone,YES
+fin_creditos,id,uuid,NO
+fin_creditos,tenant_id,uuid,NO
+fin_creditos,marca,USER-DEFINED,NO
+fin_creditos,numero_credito,character varying,NO
+fin_creditos,tipo_credito,USER-DEFINED,NO
+fin_creditos,fornecedor_id,uuid,NO
+fin_creditos,fornecedor_nome,character varying,YES
+fin_creditos,duplicata_origem_id,uuid,YES
+fin_creditos,reserva_id,uuid,YES
+fin_creditos,valor_original,numeric,NO
+fin_creditos,valor_utilizado,numeric,YES
+fin_creditos,valor_disponivel,numeric,NO
+fin_creditos,moeda,USER-DEFINED,YES
+fin_creditos,taxa_cambio,numeric,YES
+fin_creditos,data_recebimento,date,NO
+fin_creditos,data_expiracao,date,YES
+fin_creditos,status,USER-DEFINED,YES
+fin_creditos,motivo,text,NO
+fin_creditos,documento_referencia,character varying,YES
+fin_creditos,comprovante_url,text,YES
+fin_creditos,observacoes,text,YES
+fin_creditos,created_by,uuid,YES
+fin_creditos,created_at,timestamp with time zone,YES
+fin_creditos,updated_at,timestamp with time zone,YES
+fin_despesas,id,uuid,NO
+fin_despesas,tenant_id,uuid,YES
+fin_despesas,marca,text,NO
+fin_despesas,descricao,text,NO
+fin_despesas,categoria_id,uuid,YES
+fin_despesas,valor,numeric,NO
+fin_despesas,moeda,text,NO
+fin_despesas,taxa_cambio,numeric,YES
+fin_despesas,valor_brl,numeric,YES
+fin_despesas,tipo_despesa,text,NO
+fin_despesas,fornecedor_id,uuid,YES
+fin_despesas,pedido_id,uuid,YES
+fin_despesas,status,text,NO
+fin_despesas,data_vencimento,date,NO
+fin_despesas,data_pagamento,date,YES
+fin_despesas,data_competencia,date,NO
+fin_despesas,forma_pagamento,text,YES
+fin_despesas,conta_bancaria_id,uuid,YES
+fin_despesas,centro_custo,text,YES
+fin_despesas,projeto_associado,text,YES
+fin_despesas,recorrente,boolean,YES
+fin_despesas,frequencia_recorrencia,text,YES
+fin_despesas,proximo_vencimento,date,YES
+fin_despesas,nota_fiscal,text,YES
+fin_despesas,comprovante_url,text,YES
+fin_despesas,observacoes,text,YES
+fin_despesas,created_by,uuid,YES
+fin_despesas,updated_by,uuid,YES
+fin_despesas,created_at,timestamp with time zone,YES
+fin_despesas,updated_at,timestamp with time zone,YES
+fin_duplicatas_pagar,id,uuid,NO
+fin_duplicatas_pagar,tenant_id,uuid,NO
+fin_duplicatas_pagar,marca,USER-DEFINED,NO
+fin_duplicatas_pagar,numero_duplicata,character varying,NO
+fin_duplicatas_pagar,numero_nota_fiscal,character varying,YES
+fin_duplicatas_pagar,serie_nota_fiscal,character varying,YES
+fin_duplicatas_pagar,chave_acesso_nfe,character varying,YES
+fin_duplicatas_pagar,fornecedor_id,uuid,NO
+fin_duplicatas_pagar,reserva_id,uuid,YES
+fin_duplicatas_pagar,pedido_id,uuid,YES
+fin_duplicatas_pagar,condicao_pagamento_id,uuid,YES
+fin_duplicatas_pagar,adiantamento_id,uuid,YES
+fin_duplicatas_pagar,valor_original,numeric,NO
+fin_duplicatas_pagar,valor_desconto,numeric,YES
+fin_duplicatas_pagar,valor_juros,numeric,YES
+fin_duplicatas_pagar,valor_total,numeric,NO
+fin_duplicatas_pagar,valor_pago,numeric,YES
+fin_duplicatas_pagar,valor_pendente,numeric,NO
+fin_duplicatas_pagar,valor_credito_aplicado,numeric,YES
+fin_duplicatas_pagar,moeda,USER-DEFINED,YES
+fin_duplicatas_pagar,taxa_cambio,numeric,YES
+fin_duplicatas_pagar,valor_brl,numeric,YES
+fin_duplicatas_pagar,data_emissao,date,NO
+fin_duplicatas_pagar,data_vencimento,date,NO
+fin_duplicatas_pagar,data_pagamento,date,YES
+fin_duplicatas_pagar,data_referencia,date,YES
+fin_duplicatas_pagar,status,USER-DEFINED,YES
+fin_duplicatas_pagar,fornecedor_nome,character varying,YES
+fin_duplicatas_pagar,fornecedor_documento,character varying,YES
+fin_duplicatas_pagar,fornecedor_email,character varying,YES
+fin_duplicatas_pagar,fornecedor_telefone,character varying,YES
+fin_duplicatas_pagar,forma_pagamento,USER-DEFINED,YES
+fin_duplicatas_pagar,conta_bancaria_id,uuid,YES
+fin_duplicatas_pagar,comprovante_pagamento_url,text,YES
+fin_duplicatas_pagar,observacoes,text,YES
+fin_duplicatas_pagar,condicao_pagamento_texto,text,YES
+fin_duplicatas_pagar,documento_url,text,YES
+fin_duplicatas_pagar,xml_nfe_url,text,YES
+fin_duplicatas_pagar,created_by,uuid,YES
+fin_duplicatas_pagar,updated_by,uuid,YES
+fin_duplicatas_pagar,created_at,timestamp with time zone,YES
+fin_duplicatas_pagar,updated_at,timestamp with time zone,YES
+fin_duplicatas_receber,id,uuid,NO
+fin_duplicatas_receber,tenant_id,uuid,NO
+fin_duplicatas_receber,marca,USER-DEFINED,NO
+fin_duplicatas_receber,numero_duplicata,character varying,NO
+fin_duplicatas_receber,numero_nota_fiscal,character varying,YES
+fin_duplicatas_receber,serie_nota_fiscal,character varying,YES
+fin_duplicatas_receber,chave_acesso_nfe,character varying,YES
+fin_duplicatas_receber,cliente_id,uuid,YES
+fin_duplicatas_receber,fornecedor_intermediario_id,uuid,YES
+fin_duplicatas_receber,reserva_id,uuid,YES
+fin_duplicatas_receber,pedido_id,uuid,YES
+fin_duplicatas_receber,orcamento_id,uuid,YES
+fin_duplicatas_receber,condicao_pagamento_id,uuid,YES
+fin_duplicatas_receber,valor_original,numeric,NO
+fin_duplicatas_receber,valor_desconto,numeric,YES
+fin_duplicatas_receber,valor_juros,numeric,YES
+fin_duplicatas_receber,valor_total,numeric,NO
+fin_duplicatas_receber,valor_recebido,numeric,YES
+fin_duplicatas_receber,valor_pendente,numeric,NO
+fin_duplicatas_receber,moeda,USER-DEFINED,YES
+fin_duplicatas_receber,taxa_cambio,numeric,YES
+fin_duplicatas_receber,valor_brl,numeric,YES
+fin_duplicatas_receber,data_emissao,date,NO
+fin_duplicatas_receber,data_vencimento,date,NO
+fin_duplicatas_receber,data_recebimento,date,YES
+fin_duplicatas_receber,data_referencia,date,YES
+fin_duplicatas_receber,status,USER-DEFINED,YES
+fin_duplicatas_receber,cliente_nome,character varying,YES
+fin_duplicatas_receber,cliente_documento,character varying,YES
+fin_duplicatas_receber,cliente_email,character varying,YES
+fin_duplicatas_receber,cliente_telefone,character varying,YES
+fin_duplicatas_receber,observacoes,text,YES
+fin_duplicatas_receber,condicao_pagamento_texto,text,YES
+fin_duplicatas_receber,documento_url,text,YES
+fin_duplicatas_receber,xml_nfe_url,text,YES
+fin_duplicatas_receber,created_by,uuid,YES
+fin_duplicatas_receber,updated_by,uuid,YES
+fin_duplicatas_receber,created_at,timestamp with time zone,YES
+fin_duplicatas_receber,updated_at,timestamp with time zone,YES
+fin_duplicatas_recorrentes,id,uuid,NO
+fin_duplicatas_recorrentes,tenant_id,uuid,NO
+fin_duplicatas_recorrentes,tipo_duplicata,text,NO
+fin_duplicatas_recorrentes,descricao,text,NO
+fin_duplicatas_recorrentes,valor,numeric,NO
+fin_duplicatas_recorrentes,moeda,text,YES
+fin_duplicatas_recorrentes,frequencia,USER-DEFINED,NO
+fin_duplicatas_recorrentes,dia_vencimento,integer,NO
+fin_duplicatas_recorrentes,data_inicio,date,NO
+fin_duplicatas_recorrentes,data_fim,date,YES
+fin_duplicatas_recorrentes,fornecedor_id,uuid,YES
+fin_duplicatas_recorrentes,cliente_id,uuid,YES
+fin_duplicatas_recorrentes,categoria_id,uuid,YES
+fin_duplicatas_recorrentes,centro_custo_id,uuid,YES
+fin_duplicatas_recorrentes,condicao_pagamento_id,uuid,YES
+fin_duplicatas_recorrentes,ultima_geracao,date,YES
+fin_duplicatas_recorrentes,proxima_geracao,date,YES
+fin_duplicatas_recorrentes,is_ativo,boolean,YES
+fin_duplicatas_recorrentes,observacoes,text,YES
+fin_duplicatas_recorrentes,metadata,jsonb,YES
+fin_duplicatas_recorrentes,created_by,uuid,YES
+fin_duplicatas_recorrentes,created_at,timestamp with time zone,YES
+fin_duplicatas_recorrentes,updated_at,timestamp with time zone,YES
+fin_extrato_movimentacoes,id,uuid,NO
+fin_extrato_movimentacoes,tenant_id,uuid,NO
+fin_extrato_movimentacoes,extrato_id,uuid,NO
+fin_extrato_movimentacoes,data_movimento,date,NO
+fin_extrato_movimentacoes,tipo_movimento,text,NO
+fin_extrato_movimentacoes,descricao,text,YES
+fin_extrato_movimentacoes,valor,numeric,NO
+fin_extrato_movimentacoes,saldo,numeric,YES
+fin_extrato_movimentacoes,documento,text,YES
+fin_extrato_movimentacoes,status_conciliacao,USER-DEFINED,YES
+fin_extrato_movimentacoes,receita_id,uuid,YES
+fin_extrato_movimentacoes,despesa_id,uuid,YES
+fin_extrato_movimentacoes,duplicata_receber_id,uuid,YES
+fin_extrato_movimentacoes,duplicata_pagar_id,uuid,YES
+fin_extrato_movimentacoes,regra_conciliacao_id,uuid,YES
+fin_extrato_movimentacoes,observacoes,text,YES
+fin_extrato_movimentacoes,created_at,timestamp with time zone,YES
+fin_extrato_movimentacoes,conciliado_at,timestamp with time zone,YES
+fin_extrato_movimentacoes,conciliado_by,uuid,YES
+fin_extratos_bancarios,id,uuid,NO
+fin_extratos_bancarios,tenant_id,uuid,NO
+fin_extratos_bancarios,conta_bancaria_id,uuid,NO
+fin_extratos_bancarios,data_importacao,timestamp with time zone,YES
+fin_extratos_bancarios,data_inicio,date,NO
+fin_extratos_bancarios,data_fim,date,NO
+fin_extratos_bancarios,arquivo_original_url,text,YES
+fin_extratos_bancarios,status,text,NO
+fin_extratos_bancarios,total_registros,integer,YES
+fin_extratos_bancarios,total_processados,integer,YES
+fin_extratos_bancarios,total_conciliados,integer,YES
+fin_extratos_bancarios,error_log,jsonb,YES
+fin_extratos_bancarios,created_by,uuid,YES
+fin_extratos_bancarios,created_at,timestamp with time zone,YES
+fin_fornecedores,id,uuid,NO
+fin_fornecedores,tenant_id,uuid,NO
+fin_fornecedores,nome,character varying,NO
+fin_fornecedores,razao_social,character varying,YES
+fin_fornecedores,cnpj_cpf,character varying,YES
+fin_fornecedores,email,character varying,YES
+fin_fornecedores,telefone,character varying,YES
+fin_fornecedores,contato_nome,character varying,YES
+fin_fornecedores,endereco_logradouro,character varying,YES
+fin_fornecedores,endereco_numero,character varying,YES
+fin_fornecedores,endereco_complemento,character varying,YES
+fin_fornecedores,endereco_bairro,character varying,YES
+fin_fornecedores,endereco_cidade,character varying,YES
+fin_fornecedores,endereco_estado,character varying,YES
+fin_fornecedores,endereco_cep,character varying,YES
+fin_fornecedores,endereco_pais,character varying,YES
+fin_fornecedores,banco_codigo,character varying,YES
+fin_fornecedores,banco_nome,character varying,YES
+fin_fornecedores,agencia,character varying,YES
+fin_fornecedores,conta,character varying,YES
+fin_fornecedores,tipo_conta,character varying,YES
+fin_fornecedores,pix_chave,character varying,YES
+fin_fornecedores,pix_tipo,character varying,YES
+fin_fornecedores,prazo_pagamento_padrao,integer,YES
+fin_fornecedores,desconto_padrao,numeric,YES
+fin_fornecedores,tipo_servico,character varying,YES
+fin_fornecedores,categoria,character varying,YES
+fin_fornecedores,tags,ARRAY,YES
+fin_fornecedores,ativo,boolean,YES
+fin_fornecedores,observacoes,text,YES
+fin_fornecedores,dados_adicionais,jsonb,YES
+fin_fornecedores,created_at,timestamp with time zone,YES
+fin_fornecedores,updated_at,timestamp with time zone,YES
+fin_gateway_transacoes,id,uuid,NO
+fin_gateway_transacoes,tenant_id,uuid,NO
+fin_gateway_transacoes,gateway_id,uuid,NO
+fin_gateway_transacoes,gateway_ref,text,YES
+fin_gateway_transacoes,duplicata_receber_id,uuid,YES
+fin_gateway_transacoes,status,USER-DEFINED,NO
+fin_gateway_transacoes,valor,numeric,NO
+fin_gateway_transacoes,moeda,text,YES
+fin_gateway_transacoes,taxa_gateway,numeric,YES
+fin_gateway_transacoes,forma_pagamento,text,YES
+fin_gateway_transacoes,parcelas,integer,YES
+fin_gateway_transacoes,cliente_id,uuid,YES
+fin_gateway_transacoes,cliente_email,text,YES
+fin_gateway_transacoes,metadata,jsonb,YES
+fin_gateway_transacoes,response_data,jsonb,YES
+fin_gateway_transacoes,error_data,jsonb,YES
+fin_gateway_transacoes,created_at,timestamp with time zone,YES
+fin_gateway_transacoes,updated_at,timestamp with time zone,YES
+fin_gateway_transacoes,processed_at,timestamp with time zone,YES
+fin_gateway_webhooks,id,uuid,NO
+fin_gateway_webhooks,tenant_id,uuid,NO
+fin_gateway_webhooks,gateway_id,uuid,NO
+fin_gateway_webhooks,transacao_id,uuid,YES
+fin_gateway_webhooks,evento,text,NO
+fin_gateway_webhooks,payload,jsonb,NO
+fin_gateway_webhooks,processado,boolean,YES
+fin_gateway_webhooks,error_message,text,YES
+fin_gateway_webhooks,created_at,timestamp with time zone,YES
+fin_gateway_webhooks,processed_at,timestamp with time zone,YES
+fin_gateways_config,id,uuid,NO
+fin_gateways_config,tenant_id,uuid,NO
+fin_gateways_config,gateway,USER-DEFINED,NO
+fin_gateways_config,nome,text,NO
+fin_gateways_config,is_producao,boolean,YES
+fin_gateways_config,is_ativo,boolean,YES
+fin_gateways_config,credenciais,jsonb,NO
+fin_gateways_config,configuracoes,jsonb,YES
+fin_gateways_config,webhooks_config,jsonb,YES
+fin_gateways_config,created_at,timestamp with time zone,YES
+fin_gateways_config,updated_at,timestamp with time zone,YES
+fin_gateways_config,created_by,uuid,YES
+fin_lembretes,id,uuid,NO
+fin_lembretes,tenant_id,uuid,NO
+fin_lembretes,duplicata_receber_id,uuid,YES
+fin_lembretes,duplicata_pagar_id,uuid,YES
+fin_lembretes,tipo_lembrete,USER-DEFINED,NO
+fin_lembretes,dias_antecedencia,integer,YES
+fin_lembretes,canais,ARRAY,YES
+fin_lembretes,destinatario_nome,character varying,YES
+fin_lembretes,destinatario_email,character varying,YES
+fin_lembretes,destinatario_telefone,character varying,YES
+fin_lembretes,programado_para,timestamp with time zone,NO
+fin_lembretes,enviado_em,timestamp with time zone,YES
+fin_lembretes,status,character varying,YES
+fin_lembretes,erro_mensagem,text,YES
+fin_lembretes,assunto,text,YES
+fin_lembretes,mensagem,text,YES
+fin_lembretes,created_at,timestamp with time zone,YES
+fin_nf_config,id,uuid,NO
+fin_nf_config,tenant_id,uuid,NO
+fin_nf_config,provedor,text,NO
+fin_nf_config,ambiente,text,NO
+fin_nf_config,credenciais,jsonb,NO
+fin_nf_config,configuracoes,jsonb,YES
+fin_nf_config,created_at,timestamp with time zone,YES
+fin_nf_config,updated_at,timestamp with time zone,YES
+fin_notas_fiscais,id,uuid,NO
+fin_notas_fiscais,tenant_id,uuid,NO
+fin_notas_fiscais,config_id,uuid,NO
+fin_notas_fiscais,duplicata_receber_id,uuid,YES
+fin_notas_fiscais,numero,text,YES
+fin_notas_fiscais,serie,text,YES
+fin_notas_fiscais,tipo,text,NO
+fin_notas_fiscais,status,USER-DEFINED,NO
+fin_notas_fiscais,data_emissao,timestamp with time zone,YES
+fin_notas_fiscais,valor_servicos,numeric,NO
+fin_notas_fiscais,valor_deducoes,numeric,YES
+fin_notas_fiscais,valor_iss,numeric,YES
+fin_notas_fiscais,aliquota_iss,numeric,YES
+fin_notas_fiscais,base_calculo,numeric,YES
+fin_notas_fiscais,discriminacao,text,YES
+fin_notas_fiscais,tomador_id,uuid,YES
+fin_notas_fiscais,tomador_dados,jsonb,NO
+fin_notas_fiscais,items,jsonb,NO
+fin_notas_fiscais,response_data,jsonb,YES
+fin_notas_fiscais,error_data,jsonb,YES
+fin_notas_fiscais,xml_nota,text,YES
+fin_notas_fiscais,pdf_url,text,YES
+fin_notas_fiscais,created_at,timestamp with time zone,YES
+fin_notas_fiscais,updated_at,timestamp with time zone,YES
+fin_notas_fiscais,canceled_at,timestamp with time zone,YES
+fin_notas_fiscais,created_by,uuid,YES
+fin_parcelas,id,uuid,NO
+fin_parcelas,tenant_id,uuid,NO
+fin_parcelas,duplicata_receber_id,uuid,YES
+fin_parcelas,duplicata_pagar_id,uuid,YES
+fin_parcelas,numero_parcela,integer,NO
+fin_parcelas,valor,numeric,NO
+fin_parcelas,valor_pago,numeric,YES
+fin_parcelas,data_vencimento,date,NO
+fin_parcelas,data_pagamento,date,YES
+fin_parcelas,status,USER-DEFINED,YES
+fin_parcelas,observacoes,text,YES
+fin_parcelas,created_at,timestamp with time zone,YES
+fin_parcelas,updated_at,timestamp with time zone,YES
+fin_plano_contas,id,uuid,NO
+fin_plano_contas,tenant_id,uuid,YES
+fin_plano_contas,codigo,text,NO
+fin_plano_contas,nome,text,NO
+fin_plano_contas,tipo,text,NO
+fin_plano_contas,nivel,integer,NO
+fin_plano_contas,conta_pai_id,uuid,YES
+fin_plano_contas,aceita_lancamento,boolean,YES
+fin_plano_contas,ativo,boolean,YES
+fin_plano_contas,created_at,timestamp with time zone,YES
+fin_projecoes,id,uuid,NO
+fin_projecoes,tenant_id,uuid,YES
+fin_projecoes,marca,text,NO
+fin_projecoes,mes_referencia,date,NO
+fin_projecoes,receita_prevista,numeric,YES
+fin_projecoes,despesa_prevista,numeric,YES
+fin_projecoes,saldo_previsto,numeric,YES
+fin_projecoes,receita_realizada,numeric,YES
+fin_projecoes,despesa_realizada,numeric,YES
+fin_projecoes,saldo_realizado,numeric,YES
+fin_projecoes,cenario,text,YES
+fin_projecoes,observacoes,text,YES
+fin_projecoes,metadata,jsonb,YES
+fin_projecoes,created_at,timestamp with time zone,YES
+fin_projecoes,updated_at,timestamp with time zone,YES
+fin_receitas,id,uuid,NO
+fin_receitas,tenant_id,uuid,YES
+fin_receitas,marca,text,NO
+fin_receitas,descricao,text,NO
+fin_receitas,categoria_id,uuid,YES
+fin_receitas,valor,numeric,NO
+fin_receitas,moeda,text,NO
+fin_receitas,taxa_cambio,numeric,YES
+fin_receitas,valor_brl,numeric,YES
+fin_receitas,tipo_receita,text,NO
+fin_receitas,cliente_id,uuid,YES
+fin_receitas,orcamento_id,uuid,YES
+fin_receitas,pedido_id,uuid,YES
+fin_receitas,status,text,NO
+fin_receitas,data_vencimento,date,NO
+fin_receitas,data_pagamento,date,YES
+fin_receitas,data_competencia,date,NO
+fin_receitas,forma_pagamento,text,YES
+fin_receitas,gateway_pagamento,text,YES
+fin_receitas,transaction_id,text,YES
+fin_receitas,conta_bancaria_id,uuid,YES
+fin_receitas,possui_comissao,boolean,YES
+fin_receitas,valor_comissao,numeric,YES
+fin_receitas,percentual_comissao,numeric,YES
+fin_receitas,fornecedor_comissao_id,uuid,YES
+fin_receitas,recorrente,boolean,YES
+fin_receitas,frequencia_recorrencia,text,YES
+fin_receitas,proximo_vencimento,date,YES
+fin_receitas,nota_fiscal,text,YES
+fin_receitas,recibo_url,text,YES
+fin_receitas,observacoes,text,YES
+fin_receitas,created_by,uuid,YES
+fin_receitas,updated_by,uuid,YES
+fin_receitas,created_at,timestamp with time zone,YES
+fin_receitas,updated_at,timestamp with time zone,YES
+fin_regras_comissao,id,uuid,NO
+fin_regras_comissao,tenant_id,uuid,NO
+fin_regras_comissao,tipo,USER-DEFINED,NO
+fin_regras_comissao,produto_id,uuid,YES
+fin_regras_comissao,fornecedor_id,uuid,YES
+fin_regras_comissao,percentual,numeric,YES
+fin_regras_comissao,valor_fixo,numeric,YES
+fin_regras_comissao,faixa_inicial,numeric,YES
+fin_regras_comissao,faixa_final,numeric,YES
+fin_regras_comissao,ativo,boolean,YES
+fin_regras_comissao,observacoes,text,YES
+fin_regras_comissao,created_at,timestamp with time zone,YES
+fin_regras_comissao,updated_at,timestamp with time zone,YES
+fin_regras_conciliacao,id,uuid,NO
+fin_regras_conciliacao,tenant_id,uuid,NO
+fin_regras_conciliacao,nome,text,NO
+fin_regras_conciliacao,descricao,text,YES
+fin_regras_conciliacao,tipo_movimento,text,NO
+fin_regras_conciliacao,padrao_descricao,text,YES
+fin_regras_conciliacao,categoria_id,uuid,YES
+fin_regras_conciliacao,fornecedor_id,uuid,YES
+fin_regras_conciliacao,centro_custo_id,uuid,YES
+fin_regras_conciliacao,is_ativo,boolean,YES
+fin_regras_conciliacao,created_by,uuid,YES
+fin_regras_conciliacao,created_at,timestamp with time zone,YES
+fin_regras_conciliacao,updated_at,timestamp with time zone,YES
+fin_relatorios_config,id,uuid,NO
+fin_relatorios_config,tenant_id,uuid,NO
+fin_relatorios_config,tipo_relatorio,text,NO
+fin_relatorios_config,periodicidade,USER-DEFINED,NO
+fin_relatorios_config,categorias_receita,ARRAY,YES
+fin_relatorios_config,categorias_despesa,ARRAY,YES
+fin_relatorios_config,centro_custo_ids,ARRAY,YES
+fin_relatorios_config,is_ativo,boolean,YES
+fin_relatorios_config,metadata,jsonb,YES
+fin_relatorios_config,created_at,timestamp with time zone,YES
+fin_relatorios_config,created_by,uuid,YES
+fin_repasses_automacao,id,uuid,NO
+fin_repasses_automacao,split_id,uuid,NO
+fin_repasses_automacao,status,USER-DEFINED,YES
+fin_repasses_automacao,data_agendada,date,YES
+fin_repasses_automacao,data_executada,date,YES
+fin_repasses_automacao,comprovante_url,text,YES
+fin_repasses_automacao,observacoes,text,YES
+fin_repasses_automacao,created_at,timestamp with time zone,YES
+fin_repasses_automacao,updated_at,timestamp with time zone,YES
+fin_transacoes,id,uuid,NO
+fin_transacoes,tenant_id,uuid,YES
+fin_transacoes,marca,text,NO
+fin_transacoes,tipo,text,NO
+fin_transacoes,descricao,text,NO
+fin_transacoes,valor,numeric,NO
+fin_transacoes,moeda,text,NO
+fin_transacoes,conta_origem_id,uuid,YES
+fin_transacoes,conta_destino_id,uuid,YES
+fin_transacoes,receita_id,uuid,YES
+fin_transacoes,despesa_id,uuid,YES
+fin_transacoes,categoria_id,uuid,YES
+fin_transacoes,data_transacao,date,NO
+fin_transacoes,data_competencia,date,NO
+fin_transacoes,status,text,NO
+fin_transacoes,observacoes,text,YES
+fin_transacoes,metadata,jsonb,YES
+fin_transacoes,created_by,uuid,YES
+fin_transacoes,created_at,timestamp with time zone,YES
+fin_utilizacoes,id,uuid,NO
+fin_utilizacoes,tenant_id,uuid,NO
+fin_utilizacoes,adiantamento_id,uuid,YES
+fin_utilizacoes,credito_id,uuid,YES
+fin_utilizacoes,duplicata_pagar_id,uuid,YES
+fin_utilizacoes,valor_utilizado,numeric,NO
+fin_utilizacoes,data_utilizacao,date,NO
+fin_utilizacoes,observacoes,text,YES
+fin_utilizacoes,created_by,uuid,YES
+fin_utilizacoes,created_at,timestamp with time zone,YES
+knowledge_base_articles,id,uuid,NO
+knowledge_base_articles,tenant_id,uuid,NO
+knowledge_base_articles,title,text,NO
+knowledge_base_articles,slug,text,NO
+knowledge_base_articles,content,text,NO
+knowledge_base_articles,excerpt,text,YES
+knowledge_base_articles,category,text,NO
+knowledge_base_articles,subcategory,text,YES
+knowledge_base_articles,tags,ARRAY,YES
+knowledge_base_articles,icon,text,YES
+knowledge_base_articles,color,text,YES
+knowledge_base_articles,meta_description,text,YES
+knowledge_base_articles,meta_keywords,ARRAY,YES
+knowledge_base_articles,display_order,integer,YES
+knowledge_base_articles,published,boolean,YES
+knowledge_base_articles,featured,boolean,YES
+knowledge_base_articles,view_count,integer,YES
+knowledge_base_articles,helpful_count,integer,YES
+knowledge_base_articles,not_helpful_count,integer,YES
+knowledge_base_articles,read_time_minutes,integer,YES
+knowledge_base_articles,related_articles,ARRAY,YES
+knowledge_base_articles,author_id,uuid,YES
+knowledge_base_articles,created_at,timestamp with time zone,YES
+knowledge_base_articles,updated_at,timestamp with time zone,YES
+knowledge_base_articles,published_at,timestamp with time zone,YES
+leads,id,uuid,NO
+leads,name,text,NO
+leads,email,text,NO
+leads,phone,text,YES
+leads,company,text,YES
+leads,interest,text,YES
+leads,message,text,YES
+leads,source,text,YES
+leads,status,text,YES
+leads,tenant_id,uuid,YES
+leads,assigned_to,uuid,YES
+leads,last_contact_at,timestamp with time zone,YES
+leads,converted_at,timestamp with time zone,YES
+leads,notes,text,YES
+leads,metadata,jsonb,YES
+leads,created_at,timestamp with time zone,YES
+leads,updated_at,timestamp with time zone,YES
+markups,id,uuid,NO
+markups,tenant_id,uuid,NO
+markups,tipo_produto,character varying,NO
+markups,nome,character varying,NO
+markups,descricao,text,YES
+markups,tipo_markup,USER-DEFINED,NO
+markups,valor_markup,numeric,NO
+markups,moeda,USER-DEFINED,NO
+markups,ativo,boolean,NO
+markups,ordem,integer,NO
+markups,metadados,jsonb,YES
+markups,created_by,uuid,NO
+markups,created_at,timestamp with time zone,NO
+markups,updated_at,timestamp with time zone,NO
+messages,id,uuid,NO
+messages,conversation_id,uuid,NO
+messages,sender,text,NO
+messages,sender_id,uuid,YES
+messages,sender_name,text,YES
+messages,message,text,NO
+messages,message_type,text,YES
+messages,attachments,jsonb,YES
+messages,metadata,jsonb,YES
+messages,read,boolean,YES
+messages,read_at,timestamp with time zone,YES
+messages,created_at,timestamp with time zone,YES
+messages,updated_at,timestamp with time zone,YES
+noro_ai_artigos,id,uuid,NO
+noro_ai_artigos,tenant_id,uuid,NO
+noro_ai_artigos,titulo,text,NO
+noro_ai_artigos,categoria,text,YES
+noro_ai_artigos,tom_voz,text,YES
+noro_ai_artigos,tamanho,text,YES
+noro_ai_artigos,conteudo,text,NO
+noro_ai_artigos,status,text,YES
+noro_ai_artigos,created_at,timestamp with time zone,YES
+noro_ai_artigos,updated_at,timestamp with time zone,YES
+noro_ai_roteiros,id,uuid,NO
+noro_ai_roteiros,tenant_id,uuid,NO
+noro_ai_roteiros,titulo,text,NO
+noro_ai_roteiros,destino,text,YES
+noro_ai_roteiros,tipo,text,YES
+noro_ai_roteiros,dificuldade,text,YES
+noro_ai_roteiros,conteudo,jsonb,NO
+noro_ai_roteiros,status,text,YES
+noro_ai_roteiros,created_at,timestamp with time zone,YES
+noro_ai_roteiros,updated_at,timestamp with time zone,YES
+noro_audit_log,id,uuid,NO
+noro_audit_log,user_id,uuid,YES
+noro_audit_log,acao,character varying,NO
+noro_audit_log,entidade,character varying,NO
+noro_audit_log,entidade_id,uuid,YES
+noro_audit_log,descricao,text,YES
+noro_audit_log,ip_address,inet,YES
+noro_audit_log,user_agent,text,YES
+noro_audit_log,dados_anteriores,jsonb,YES
+noro_audit_log,dados_novos,jsonb,YES
+noro_audit_log,created_at,timestamp without time zone,YES
+noro_campanhas,id,uuid,NO
+noro_campanhas,nome,character varying,NO
+noro_campanhas,assunto,character varying,NO
+noro_campanhas,conteudo_html,text,NO
+noro_campanhas,status,character varying,YES
+noro_campanhas,segmento,jsonb,YES
+noro_campanhas,total_destinatarios,integer,YES
+noro_campanhas,total_enviados,integer,YES
+noro_campanhas,total_abertos,integer,YES
+noro_campanhas,total_cliques,integer,YES
+noro_campanhas,agendado_para,timestamp without time zone,YES
+noro_campanhas,enviado_em,timestamp without time zone,YES
+noro_campanhas,created_by,uuid,YES
+noro_campanhas,created_at,timestamp without time zone,YES
+noro_clientes,id,uuid,NO
+noro_clientes,nome,character varying,NO
+noro_clientes,email,character varying,YES
+noro_clientes,telefone,character varying,YES
+noro_clientes,whatsapp,character varying,YES
+noro_clientes,cpf,character varying,YES
+noro_clientes,passaporte,character varying,YES
+noro_clientes,data_nascimento,date,YES
+noro_clientes,nacionalidade,character varying,YES
+noro_clientes,profissao,character varying,YES
+noro_clientes,status,character varying,YES
+noro_clientes,tipo,character varying,YES
+noro_clientes,segmento,character varying,YES
+noro_clientes,nivel,character varying,YES
+noro_clientes,origem_lead_id,uuid,YES
+noro_clientes,agente_responsavel_id,uuid,YES
+noro_clientes,total_viagens,integer,YES
+noro_clientes,total_gasto,numeric,YES
+noro_clientes,ticket_medio,numeric,YES
+noro_clientes,nps_score,integer,YES
+noro_clientes,data_primeiro_contato,timestamp with time zone,YES
+noro_clientes,data_ultima_viagem,timestamp with time zone,YES
+noro_clientes,data_proxima_viagem,timestamp with time zone,YES
+noro_clientes,data_ultimo_contato,timestamp with time zone,YES
+noro_clientes,idioma_preferido,character varying,YES
+noro_clientes,moeda_preferida,character varying,YES
+noro_clientes,tags,ARRAY,YES
+noro_clientes,metadata,jsonb,YES
+noro_clientes,observacoes,text,YES
+noro_clientes,created_at,timestamp with time zone,YES
+noro_clientes,updated_at,timestamp with time zone,YES
+noro_clientes,deleted_at,timestamp with time zone,YES
+noro_clientes,razao_social,character varying,YES
+noro_clientes,nome_fantasia,character varying,YES
+noro_clientes,cnpj,character varying,YES
+noro_clientes,inscricao_estadual,character varying,YES
+noro_clientes,inscricao_municipal,character varying,YES
+noro_clientes,responsavel_nome,character varying,YES
+noro_clientes,responsavel_cargo,character varying,YES
+noro_clientes,responsavel_email,character varying,YES
+noro_clientes,responsavel_telefone,character varying,YES
+noro_clientes,tenant_id,uuid,NO
+noro_clientes_contatos_emergencia,id,uuid,NO
+noro_clientes_contatos_emergencia,cliente_id,uuid,NO
+noro_clientes_contatos_emergencia,nome,character varying,NO
+noro_clientes_contatos_emergencia,parentesco,character varying,YES
+noro_clientes_contatos_emergencia,telefone,character varying,NO
+noro_clientes_contatos_emergencia,email,character varying,YES
+noro_clientes_contatos_emergencia,observacoes,text,YES
+noro_clientes_contatos_emergencia,created_at,timestamp with time zone,YES
+noro_clientes_contatos_emergencia,tenant_id,uuid,NO
+noro_clientes_documentos,id,uuid,NO
+noro_clientes_documentos,cliente_id,uuid,NO
+noro_clientes_documentos,tipo,character varying,NO
+noro_clientes_documentos,numero,character varying,YES
+noro_clientes_documentos,pais_emissor,character varying,YES
+noro_clientes_documentos,orgao_emissor,character varying,YES
+noro_clientes_documentos,data_emissao,date,YES
+noro_clientes_documentos,data_validade,date,YES
+noro_clientes_documentos,status,character varying,YES
+noro_clientes_documentos,arquivo_url,text,YES
+noro_clientes_documentos,arquivo_public_id,character varying,YES
+noro_clientes_documentos,arquivo_nome,character varying,YES
+noro_clientes_documentos,arquivo_tamanho,integer,YES
+noro_clientes_documentos,observacoes,text,YES
+noro_clientes_documentos,created_at,timestamp with time zone,YES
+noro_clientes_documentos,updated_at,timestamp with time zone,YES
+noro_clientes_documentos,tenant_id,uuid,NO
+noro_clientes_enderecos,id,uuid,NO
+noro_clientes_enderecos,cliente_id,uuid,NO
+noro_clientes_enderecos,tipo,character varying,NO
+noro_clientes_enderecos,principal,boolean,YES
+noro_clientes_enderecos,logradouro,character varying,NO
+noro_clientes_enderecos,numero,character varying,YES
+noro_clientes_enderecos,complemento,character varying,YES
+noro_clientes_enderecos,bairro,character varying,YES
+noro_clientes_enderecos,cidade,character varying,NO
+noro_clientes_enderecos,estado,character varying,YES
+noro_clientes_enderecos,cep,character varying,YES
+noro_clientes_enderecos,pais,character varying,NO
+noro_clientes_enderecos,created_at,timestamp with time zone,YES
+noro_clientes_enderecos,updated_at,timestamp with time zone,YES
+noro_clientes_enderecos,tenant_id,uuid,NO
+noro_clientes_milhas,id,uuid,NO
+noro_clientes_milhas,cliente_id,uuid,NO
+noro_clientes_milhas,companhia,character varying,NO
+noro_clientes_milhas,numero_programa,character varying,NO
+noro_clientes_milhas,categoria,character varying,YES
+noro_clientes_milhas,saldo_estimado,integer,YES
+noro_clientes_milhas,data_validade,date,YES
+noro_clientes_milhas,observacoes,text,YES
+noro_clientes_milhas,created_at,timestamp with time zone,YES
+noro_clientes_milhas,updated_at,timestamp with time zone,YES
+noro_clientes_milhas,tenant_id,uuid,NO
+noro_clientes_preferencias,id,uuid,NO
+noro_clientes_preferencias,cliente_id,uuid,NO
+noro_clientes_preferencias,frequencia_viagem,character varying,YES
+noro_clientes_preferencias,orcamento_medio,character varying,YES
+noro_clientes_preferencias,estilo_viagem,ARRAY,YES
+noro_clientes_preferencias,destinos_favoritos,ARRAY,YES
+noro_clientes_preferencias,destinos_desejados,ARRAY,YES
+noro_clientes_preferencias,assento_preferido,character varying,YES
+noro_clientes_preferencias,classe_preferida,character varying,YES
+noro_clientes_preferencias,cia_aerea_preferida,ARRAY,YES
+noro_clientes_preferencias,programas_fidelidade,jsonb,YES
+noro_clientes_preferencias,tipo_hospedagem,ARRAY,YES
+noro_clientes_preferencias,preferencias_quarto,character varying,YES
+noro_clientes_preferencias,categoria_hotel,character varying,YES
+noro_clientes_preferencias,restricoes_alimentares,ARRAY,YES
+noro_clientes_preferencias,refeicao_preferida,character varying,YES
+noro_clientes_preferencias,necessidades_especiais,text,YES
+noro_clientes_preferencias,mobilidade_reduzida,boolean,YES
+noro_clientes_preferencias,viaja_com_criancas,boolean,YES
+noro_clientes_preferencias,idade_criancas,ARRAY,YES
+noro_clientes_preferencias,viaja_com_pets,boolean,YES
+noro_clientes_preferencias,seguro_preferido,character varying,YES
+noro_clientes_preferencias,cobertura_minima,numeric,YES
+noro_clientes_preferencias,cobertura_covid,boolean,YES
+noro_clientes_preferencias,aluguel_carro,boolean,YES
+noro_clientes_preferencias,categoria_carro,character varying,YES
+noro_clientes_preferencias,tours_guiados,boolean,YES
+noro_clientes_preferencias,transfers,boolean,YES
+noro_clientes_preferencias,observacoes,text,YES
+noro_clientes_preferencias,created_at,timestamp with time zone,YES
+noro_clientes_preferencias,updated_at,timestamp with time zone,YES
+noro_clientes_preferencias,tenant_id,uuid,NO
+noro_comissoes,id,uuid,NO
+noro_comissoes,pedido_id,uuid,NO
+noro_comissoes,agente_id,uuid,NO
+noro_comissoes,transacao_id,uuid,YES
+noro_comissoes,tipo,character varying,YES
+noro_comissoes,descricao,text,YES
+noro_comissoes,valor_base,numeric,NO
+noro_comissoes,percentual,numeric,NO
+noro_comissoes,valor_comissao,numeric,NO
+noro_comissoes,moeda,character varying,YES
+noro_comissoes,status,character varying,YES
+noro_comissoes,data_aprovacao,date,YES
+noro_comissoes,aprovado_por,uuid,YES
+noro_comissoes,data_pagamento,date,YES
+noro_comissoes,pago_por,uuid,YES
+noro_comissoes,metodo_pagamento,character varying,YES
+noro_comissoes,comprovante_url,text,YES
+noro_comissoes,observacoes,text,YES
+noro_comissoes,created_at,timestamp with time zone,YES
+noro_comissoes,updated_at,timestamp with time zone,YES
+noro_comunicacao_templates,id,uuid,NO
+noro_comunicacao_templates,tipo,character varying,NO
+noro_comunicacao_templates,nome,character varying,NO
+noro_comunicacao_templates,codigo,character varying,YES
+noro_comunicacao_templates,descricao,text,YES
+noro_comunicacao_templates,assunto_template,text,YES
+noro_comunicacao_templates,conteudo_template,text,NO
+noro_comunicacao_templates,variaveis,ARRAY,YES
+noro_comunicacao_templates,exemplo_preview,text,YES
+noro_comunicacao_templates,categoria,character varying,YES
+noro_comunicacao_templates,trigger_automatico,character varying,YES
+noro_comunicacao_templates,ativo,boolean,YES
+noro_comunicacao_templates,permite_edicao,boolean,YES
+noro_comunicacao_templates,cor_primaria,character varying,YES
+noro_comunicacao_templates,assinatura_email,text,YES
+noro_comunicacao_templates,rodape_template,text,YES
+noro_comunicacao_templates,vezes_usado,integer,YES
+noro_comunicacao_templates,taxa_abertura,numeric,YES
+noro_comunicacao_templates,taxa_resposta,numeric,YES
+noro_comunicacao_templates,tags,ARRAY,YES
+noro_comunicacao_templates,metadata,jsonb,YES
+noro_comunicacao_templates,created_by,uuid,YES
+noro_comunicacao_templates,updated_by,uuid,YES
+noro_comunicacao_templates,created_at,timestamp with time zone,YES
+noro_comunicacao_templates,updated_at,timestamp with time zone,YES
+noro_configuracoes,id,uuid,NO
+noro_configuracoes,user_id,uuid,YES
+noro_configuracoes,tipo,text,NO
+noro_configuracoes,chave,text,NO
+noro_configuracoes,valor,jsonb,NO
+noro_configuracoes,created_at,timestamp with time zone,YES
+noro_configuracoes,updated_at,timestamp with time zone,YES
+noro_configuracoes,tenant_id,uuid,NO
+noro_domains,id,uuid,NO
+noro_domains,tenant_id,uuid,NO
+noro_domains,domain,text,NO
+noro_domains,status,text,NO
+noro_domains,verified,boolean,YES
+noro_domains,created_at,timestamp with time zone,YES
+noro_domains,updated_at,timestamp with time zone,YES
+noro_empresa,id,uuid,NO
+noro_empresa,nome_empresa,text,YES
+noro_empresa,documento,text,YES
+noro_empresa,endereco,jsonb,YES
+noro_empresa,telefone_comercial,text,YES
+noro_empresa,email_principal,text,YES
+noro_empresa,website,text,YES
+noro_empresa,logo_url,text,YES
+noro_empresa,data_fundacao,date,YES
+noro_empresa,contato_principal,jsonb,YES
+noro_empresa,dados_bancarios,jsonb,YES
+noro_empresa,moeda_padrao,character varying,YES
+noro_empresa,informacoes_fiscais,jsonb,YES
+noro_empresa,redes_sociais,jsonb,YES
+noro_empresa,horario_funcionamento,text,YES
+noro_empresa,idiomas_falados,ARRAY,YES
+noro_empresa,integracoes,jsonb,YES
+noro_empresa,documentos,jsonb,YES
+noro_empresa,branding,jsonb,YES
+noro_empresa,created_at,timestamp with time zone,YES
+noro_empresa,updated_at,timestamp with time zone,YES
+noro_empresa,tenant_id,uuid,NO
+noro_empresa,razao_social,text,YES
+noro_empresa,inscricao_estadual,text,YES
+noro_empresa,inscricao_municipal,text,YES
+noro_empresa,endereco_sede,jsonb,YES
+noro_empresa,endereco_cobranca,jsonb,YES
+noro_empresa,representante_legal,jsonb,YES
+noro_empresa,contatos,jsonb,YES
+noro_fornecedores,id,uuid,NO
+noro_fornecedores,nome,character varying,NO
+noro_fornecedores,nome_fantasia,character varying,YES
+noro_fornecedores,tipo,character varying,YES
+noro_fornecedores,email,character varying,YES
+noro_fornecedores,telefone,character varying,YES
+noro_fornecedores,whatsapp,character varying,YES
+noro_fornecedores,website,character varying,YES
+noro_fornecedores,contato_nome,character varying,YES
+noro_fornecedores,contato_cargo,character varying,YES
+noro_fornecedores,cnpj_nif,character varying,YES
+noro_fornecedores,inscricao_estadual,character varying,YES
+noro_fornecedores,endereco,text,YES
+noro_fornecedores,cidade,character varying,YES
+noro_fornecedores,estado,character varying,YES
+noro_fornecedores,pais,character varying,YES
+noro_fornecedores,cep,character varying,YES
+noro_fornecedores,banco,character varying,YES
+noro_fornecedores,agencia,character varying,YES
+noro_fornecedores,conta,character varying,YES
+noro_fornecedores,pix,character varying,YES
+noro_fornecedores,swift,character varying,YES
+noro_fornecedores,iban,character varying,YES
+noro_fornecedores,condicoes_pagamento,text,YES
+noro_fornecedores,prazo_pagamento_dias,integer,YES
+noro_fornecedores,percentual_comissao,numeric,YES
+noro_fornecedores,desconto_padrao,numeric,YES
+noro_fornecedores,rating,numeric,YES
+noro_fornecedores,total_avaliacoes,integer,YES
+noro_fornecedores,status,character varying,YES
+noro_fornecedores,motivo_bloqueio,text,YES
+noro_fornecedores,categorias,ARRAY,YES
+noro_fornecedores,tags,ARRAY,YES
+noro_fornecedores,observacoes,text,YES
+noro_fornecedores,metadata,jsonb,YES
+noro_fornecedores,created_at,timestamp with time zone,YES
+noro_fornecedores,updated_at,timestamp with time zone,YES
+noro_fornecedores,deleted_at,timestamp with time zone,YES
+noro_fornecedores,tenant_id,uuid,NO
+noro_funil_vendas,status,character varying,YES
+noro_funil_vendas,quantidade,bigint,YES
+noro_funil_vendas,valor_total,numeric,YES
+noro_funil_vendas,probabilidade_media,numeric,YES
+noro_interacoes,id,uuid,NO
+noro_interacoes,cliente_id,uuid,YES
+noro_interacoes,lead_id,uuid,YES
+noro_interacoes,pedido_id,uuid,YES
+noro_interacoes,orcamento_id,uuid,YES
+noro_interacoes,tipo,character varying,NO
+noro_interacoes,canal,character varying,YES
+noro_interacoes,sentido,character varying,YES
+noro_interacoes,assunto,character varying,YES
+noro_interacoes,conteudo,text,YES
+noro_interacoes,resumo,text,YES
+noro_interacoes,anexos,jsonb,YES
+noro_interacoes,lido,boolean,YES
+noro_interacoes,lido_em,timestamp with time zone,YES
+noro_interacoes,respondido,boolean,YES
+noro_interacoes,respondido_em,timestamp with time zone,YES
+noro_interacoes,sentimento,character varying,YES
+noro_interacoes,sentimento_score,numeric,YES
+noro_interacoes,intencao,character varying,YES
+noro_interacoes,prioridade,character varying,YES
+noro_interacoes,agendada_para,timestamp with time zone,YES
+noro_interacoes,tags,ARRAY,YES
+noro_interacoes,metadata,jsonb,YES
+noro_interacoes,agente_id,uuid,YES
+noro_interacoes,created_at,timestamp with time zone,YES
+noro_interacoes,updated_at,timestamp with time zone,YES
+noro_interacoes,tenant_id,uuid,NO
+noro_leads,id,uuid,NO
+noro_leads,nome,character varying,NO
+noro_leads,email,character varying,YES
+noro_leads,telefone,character varying,YES
+noro_leads,whatsapp,character varying,YES
+noro_leads,origem,character varying,YES
+noro_leads,canal_preferencial,character varying,YES
+noro_leads,status,character varying,YES
+noro_leads,valor_estimado,numeric,YES
+noro_leads,probabilidade,integer,YES
+noro_leads,destino_interesse,text,YES
+noro_leads,periodo_viagem,text,YES
+noro_leads,num_pessoas,integer,YES
+noro_leads,observacoes,text,YES
+noro_leads,proxima_acao,text,YES
+noro_leads,data_proxima_acao,timestamp without time zone,YES
+noro_leads,responsavel,character varying,YES
+noro_leads,tags,ARRAY,YES
+noro_leads,metadata,jsonb,YES
+noro_leads,perdido_motivo,text,YES
+noro_leads,created_at,timestamp without time zone,YES
+noro_leads,updated_at,timestamp without time zone,YES
+noro_leads,tenant_id,uuid,NO
+noro_marketing_email_campaigns,id,uuid,NO
+noro_marketing_email_campaigns,tenant_id,uuid,NO
+noro_marketing_email_campaigns,name,character varying,NO
+noro_marketing_email_campaigns,subject,character varying,YES
+noro_marketing_email_campaigns,content_html,text,YES
+noro_marketing_email_campaigns,content_text,text,YES
+noro_marketing_email_campaigns,target_list_id,uuid,YES
+noro_marketing_email_campaigns,status,character varying,YES
+noro_marketing_email_campaigns,scheduled_at,timestamp with time zone,YES
+noro_marketing_email_campaigns,sent_at,timestamp with time zone,YES
+noro_marketing_email_campaigns,stats,jsonb,YES
+noro_marketing_email_campaigns,ai_generated,boolean,YES
+noro_marketing_email_campaigns,created_at,timestamp with time zone,YES
+noro_marketing_email_campaigns,updated_at,timestamp with time zone,YES
+noro_marketing_email_contacts,id,uuid,NO
+noro_marketing_email_contacts,tenant_id,uuid,NO
+noro_marketing_email_contacts,list_id,uuid,YES
+noro_marketing_email_contacts,email,character varying,NO
+noro_marketing_email_contacts,first_name,character varying,YES
+noro_marketing_email_contacts,last_name,character varying,YES
+noro_marketing_email_contacts,status,character varying,YES
+noro_marketing_email_contacts,metadata,jsonb,YES
+noro_marketing_email_contacts,created_at,timestamp with time zone,YES
+noro_marketing_email_lists,id,uuid,NO
+noro_marketing_email_lists,tenant_id,uuid,NO
+noro_marketing_email_lists,name,character varying,NO
+noro_marketing_email_lists,description,text,YES
+noro_marketing_email_lists,created_at,timestamp with time zone,YES
+noro_marketing_email_lists,updated_at,timestamp with time zone,YES
+noro_marketing_social_accounts,id,uuid,NO
+noro_marketing_social_accounts,tenant_id,uuid,NO
+noro_marketing_social_accounts,platform,character varying,NO
+noro_marketing_social_accounts,username,character varying,YES
+noro_marketing_social_accounts,access_token,text,YES
+noro_marketing_social_accounts,refresh_token,text,YES
+noro_marketing_social_accounts,token_expires_at,timestamp with time zone,YES
+noro_marketing_social_accounts,metadata,jsonb,YES
+noro_marketing_social_accounts,created_at,timestamp with time zone,YES
+noro_marketing_social_accounts,updated_at,timestamp with time zone,YES
+noro_marketing_social_posts,id,uuid,NO
+noro_marketing_social_posts,tenant_id,uuid,NO
+noro_marketing_social_posts,content,text,NO
+noro_marketing_social_posts,media_urls,ARRAY,YES
+noro_marketing_social_posts,platforms,ARRAY,NO
+noro_marketing_social_posts,status,character varying,YES
+noro_marketing_social_posts,scheduled_at,timestamp with time zone,YES
+noro_marketing_social_posts,published_at,timestamp with time zone,YES
+noro_marketing_social_posts,ai_generated,boolean,YES
+noro_marketing_social_posts,ai_prompt,text,YES
+noro_marketing_social_posts,metadata,jsonb,YES
+noro_marketing_social_posts,created_at,timestamp with time zone,YES
+noro_marketing_social_posts,updated_at,timestamp with time zone,YES
+noro_newsletter,id,uuid,NO
+noro_newsletter,email,character varying,NO
+noro_newsletter,nome,character varying,YES
+noro_newsletter,status,character varying,YES
+noro_newsletter,origem,character varying,YES
+noro_newsletter,tags,ARRAY,YES
+noro_newsletter,interesses,ARRAY,YES
+noro_newsletter,metadata,jsonb,YES
+noro_newsletter,confirmado_em,timestamp without time zone,YES
+noro_newsletter,descadastrado_em,timestamp without time zone,YES
+noro_newsletter,created_at,timestamp without time zone,YES
+noro_newsletter,tenant_id,uuid,NO
+noro_notificacoes,id,uuid,NO
+noro_notificacoes,user_id,uuid,YES
+noro_notificacoes,tipo,character varying,NO
+noro_notificacoes,titulo,character varying,NO
+noro_notificacoes,mensagem,text,YES
+noro_notificacoes,link,text,YES
+noro_notificacoes,lida,boolean,YES
+noro_notificacoes,lida_em,timestamp without time zone,YES
+noro_notificacoes,created_at,timestamp without time zone,YES
+noro_notificacoes,tenant_id,uuid,NO
+noro_orcamentos,id,uuid,NO
+noro_orcamentos,numero_orcamento,character varying,NO
+noro_orcamentos,cliente_id,uuid,YES
+noro_orcamentos,lead_id,uuid,YES
+noro_orcamentos,titulo,character varying,NO
+noro_orcamentos,descricao,text,YES
+noro_orcamentos,destinos,ARRAY,NO
+noro_orcamentos,data_viagem_inicio,date,YES
+noro_orcamentos,data_viagem_fim,date,YES
+noro_orcamentos,num_dias,integer,YES
+noro_orcamentos,num_pessoas,integer,YES
+noro_orcamentos,num_adultos,integer,YES
+noro_orcamentos,num_criancas,integer,YES
+noro_orcamentos,num_bebes,integer,YES
+noro_orcamentos,valor_total,numeric,NO
+noro_orcamentos,valor_custo,numeric,YES
+noro_orcamentos,margem_lucro,numeric,YES
+noro_orcamentos,margem_percentual,numeric,YES
+noro_orcamentos,valor_sinal,numeric,YES
+noro_orcamentos,moeda,character varying,YES
+noro_orcamentos,status,character varying,YES
+noro_orcamentos,validade_ate,date,YES
+noro_orcamentos,prioridade,character varying,YES
+noro_orcamentos,enviado_em,timestamp with time zone,YES
+noro_orcamentos,enviado_para,character varying,YES
+noro_orcamentos,visualizado_em,timestamp with time zone,YES
+noro_orcamentos,visualizado_contador,integer,YES
+noro_orcamentos,respondido_em,timestamp with time zone,YES
+noro_orcamentos,aprovado_em,timestamp with time zone,YES
+noro_orcamentos,recusado_em,timestamp with time zone,YES
+noro_orcamentos,recusado_motivo,text,YES
+noro_orcamentos,roteiro,jsonb,YES
+noro_orcamentos,condicoes_pagamento,text,YES
+noro_orcamentos,politica_cancelamento,text,YES
+noro_orcamentos,observacoes_internas,text,YES
+noro_orcamentos,observacoes_cliente,text,YES
+noro_orcamentos,pdf_url,text,YES
+noro_orcamentos,pdf_public_id,character varying,YES
+noro_orcamentos,pdf_gerado_em,timestamp with time zone,YES
+noro_orcamentos,pdf_versao,integer,YES
+noro_orcamentos,template_usado,character varying,YES
+noro_orcamentos,personalizacao,jsonb,YES
+noro_orcamentos,tags,ARRAY,YES
+noro_orcamentos,metadata,jsonb,YES
+noro_orcamentos,created_by,uuid,YES
+noro_orcamentos,updated_by,uuid,YES
+noro_orcamentos,created_at,timestamp with time zone,YES
+noro_orcamentos,updated_at,timestamp with time zone,YES
+noro_orcamentos,deleted_at,timestamp with time zone,YES
+noro_orcamentos,tenant_id,uuid,NO
+noro_orcamentos_itens,id,uuid,NO
+noro_orcamentos_itens,orcamento_id,uuid,NO
+noro_orcamentos_itens,tipo,character varying,NO
+noro_orcamentos_itens,categoria,character varying,YES
+noro_orcamentos_itens,fornecedor,character varying,YES
+noro_orcamentos_itens,fornecedor_id,uuid,YES
+noro_orcamentos_itens,produto,character varying,NO
+noro_orcamentos_itens,descricao,text,YES
+noro_orcamentos_itens,data_servico,date,YES
+noro_orcamentos_itens,data_fim,date,YES
+noro_orcamentos_itens,hora_inicio,time without time zone,YES
+noro_orcamentos_itens,hora_fim,time without time zone,YES
+noro_orcamentos_itens,localizador,character varying,YES
+noro_orcamentos_itens,quantidade,integer,YES
+noro_orcamentos_itens,unidade,character varying,YES
+noro_orcamentos_itens,valor_unitario_custo,numeric,YES
+noro_orcamentos_itens,valor_unitario_venda,numeric,NO
+noro_orcamentos_itens,valor_total,numeric,NO
+noro_orcamentos_itens,margem,numeric,YES
+noro_orcamentos_itens,margem_percentual,numeric,YES
+noro_orcamentos_itens,detalhes,jsonb,YES
+noro_orcamentos_itens,incluido,boolean,YES
+noro_orcamentos_itens,opcional,boolean,YES
+noro_orcamentos_itens,ordem,integer,YES
+noro_orcamentos_itens,observacoes,text,YES
+noro_orcamentos_itens,created_at,timestamp with time zone,YES
+noro_orcamentos_itens,updated_at,timestamp with time zone,YES
+noro_orcamentos_itens,tenant_id,uuid,NO
+noro_pedidos,id,uuid,NO
+noro_pedidos,numero_pedido,character varying,NO
+noro_pedidos,orcamento_id,uuid,YES
+noro_pedidos,cliente_id,uuid,NO
+noro_pedidos,titulo,character varying,NO
+noro_pedidos,destinos,ARRAY,NO
+noro_pedidos,data_viagem_inicio,date,NO
+noro_pedidos,data_viagem_fim,date,NO
+noro_pedidos,num_dias,integer,NO
+noro_pedidos,num_pessoas,integer,YES
+noro_pedidos,valor_total,numeric,NO
+noro_pedidos,valor_pago,numeric,YES
+noro_pedidos,valor_pendente,numeric,YES
+noro_pedidos,moeda,character varying,YES
+noro_pedidos,status_pagamento,character varying,YES
+noro_pedidos,metodo_pagamento,character varying,YES
+noro_pedidos,condicoes_pagamento,text,YES
+noro_pedidos,num_parcelas,integer,YES
+noro_pedidos,valor_parcela,numeric,YES
+noro_pedidos,status,character varying,YES
+noro_pedidos,urgente,boolean,YES
+noro_pedidos,cancelado_em,timestamp with time zone,YES
+noro_pedidos,cancelado_por,uuid,YES
+noro_pedidos,cancelado_motivo,text,YES
+noro_pedidos,valor_reembolso,numeric,YES
+noro_pedidos,passageiros,jsonb,YES
+noro_pedidos,vouchers,jsonb,YES
+noro_pedidos,contratos,jsonb,YES
+noro_pedidos,documentos,jsonb,YES
+noro_pedidos,ultima_comunicacao,timestamp with time zone,YES
+noro_pedidos,proxima_acao,text,YES
+noro_pedidos,proxima_acao_data,date,YES
+noro_pedidos,observacoes,text,YES
+noro_pedidos,observacoes_internas,text,YES
+noro_pedidos,tags,ARRAY,YES
+noro_pedidos,metadata,jsonb,YES
+noro_pedidos,created_by,uuid,YES
+noro_pedidos,updated_by,uuid,YES
+noro_pedidos,created_at,timestamp with time zone,YES
+noro_pedidos,updated_at,timestamp with time zone,YES
+noro_pedidos,deleted_at,timestamp with time zone,YES
+noro_pedidos,tenant_id,uuid,NO
+noro_pedidos_itens,id,uuid,NO
+noro_pedidos_itens,pedido_id,uuid,NO
+noro_pedidos_itens,tipo,character varying,NO
+noro_pedidos_itens,categoria,character varying,YES
+noro_pedidos_itens,fornecedor,character varying,YES
+noro_pedidos_itens,fornecedor_id,uuid,YES
+noro_pedidos_itens,fornecedor_contato,character varying,YES
+noro_pedidos_itens,produto,character varying,NO
+noro_pedidos_itens,descricao,text,YES
+noro_pedidos_itens,data_servico,date,YES
+noro_pedidos_itens,data_fim,date,YES
+noro_pedidos_itens,hora_inicio,time without time zone,YES
+noro_pedidos_itens,hora_fim,time without time zone,YES
+noro_pedidos_itens,localizador,character varying,YES
+noro_pedidos_itens,status_confirmacao,character varying,YES
+noro_pedidos_itens,confirmado_em,timestamp with time zone,YES
+noro_pedidos_itens,confirmado_por,uuid,YES
+noro_pedidos_itens,quantidade,integer,YES
+noro_pedidos_itens,valor_unitario,numeric,NO
+noro_pedidos_itens,valor_total,numeric,NO
+noro_pedidos_itens,valor_custo,numeric,YES
+noro_pedidos_itens,comissao,numeric,YES
+noro_pedidos_itens,comissao_percentual,numeric,YES
+noro_pedidos_itens,detalhes,jsonb,YES
+noro_pedidos_itens,voucher_url,text,YES
+noro_pedidos_itens,voucher_public_id,character varying,YES
+noro_pedidos_itens,voucher_emitido_em,timestamp with time zone,YES
+noro_pedidos_itens,observacoes,text,YES
+noro_pedidos_itens,observacoes_internas,text,YES
+noro_pedidos_itens,created_at,timestamp with time zone,YES
+noro_pedidos_itens,updated_at,timestamp with time zone,YES
+noro_pedidos_itens,tenant_id,uuid,NO
+noro_pedidos_timeline,id,uuid,NO
+noro_pedidos_timeline,pedido_id,uuid,NO
+noro_pedidos_timeline,evento,character varying,NO
+noro_pedidos_timeline,titulo,character varying,YES
+noro_pedidos_timeline,descricao,text,YES
+noro_pedidos_timeline,tipo,character varying,YES
+noro_pedidos_timeline,icone,character varying,YES
+noro_pedidos_timeline,cor,character varying,YES
+noro_pedidos_timeline,item_id,uuid,YES
+noro_pedidos_timeline,valor,numeric,YES
+noro_pedidos_timeline,metadata,jsonb,YES
+noro_pedidos_timeline,created_by,uuid,YES
+noro_pedidos_timeline,created_at,timestamp with time zone,YES
+noro_pedidos_timeline,tenant_id,uuid,NO
+noro_tarefas,id,uuid,NO
+noro_tarefas,lead_id,uuid,YES
+noro_tarefas,pedido_id,uuid,YES
+noro_tarefas,titulo,text,NO
+noro_tarefas,descricao,text,YES
+noro_tarefas,prioridade,character varying,YES
+noro_tarefas,status,character varying,YES
+noro_tarefas,responsavel,uuid,YES
+noro_tarefas,data_vencimento,timestamp without time zone,YES
+noro_tarefas,concluido_em,timestamp without time zone,YES
+noro_tarefas,tags,ARRAY,YES
+noro_tarefas,created_by,uuid,YES
+noro_tarefas,created_at,timestamp without time zone,YES
+noro_tarefas,updated_at,timestamp without time zone,YES
+noro_tarefas,tenant_id,uuid,NO
+noro_transacoes,id,uuid,NO
+noro_transacoes,tipo,character varying,NO
+noro_transacoes,categoria,character varying,NO
+noro_transacoes,subcategoria,character varying,YES
+noro_transacoes,pedido_id,uuid,YES
+noro_transacoes,cliente_id,uuid,YES
+noro_transacoes,fornecedor_id,uuid,YES
+noro_transacoes,fornecedor_nome,character varying,YES
+noro_transacoes,descricao,text,NO
+noro_transacoes,numero_documento,character varying,YES
+noro_transacoes,valor,numeric,NO
+noro_transacoes,moeda,character varying,YES
+noro_transacoes,valor_convertido_brl,numeric,YES
+noro_transacoes,taxa_conversao,numeric,YES
+noro_transacoes,data_transacao,date,NO
+noro_transacoes,data_vencimento,date,YES
+noro_transacoes,data_pagamento,date,YES
+noro_transacoes,data_competencia,date,YES
+noro_transacoes,status,character varying,YES
+noro_transacoes,dias_atraso,integer,YES
+noro_transacoes,metodo_pagamento,character varying,YES
+noro_transacoes,conta_bancaria,character varying,YES
+noro_transacoes,comprovante_url,text,YES
+noro_transacoes,comprovante_public_id,character varying,YES
+noro_transacoes,nota_fiscal_numero,character varying,YES
+noro_transacoes,nota_fiscal_url,text,YES
+noro_transacoes,nota_fiscal_public_id,character varying,YES
+noro_transacoes,nota_fiscal_emitida,boolean,YES
+noro_transacoes,parcela_numero,integer,YES
+noro_transacoes,parcela_total,integer,YES
+noro_transacoes,transacao_origem_id,uuid,YES
+noro_transacoes,centro_custo,character varying,YES
+noro_transacoes,conta_contabil,character varying,YES
+noro_transacoes,plano_contas,character varying,YES
+noro_transacoes,reconciliado,boolean,YES
+noro_transacoes,reconciliado_em,timestamp with time zone,YES
+noro_transacoes,reconciliado_por,uuid,YES
+noro_transacoes,tags,ARRAY,YES
+noro_transacoes,observacoes,text,YES
+noro_transacoes,metadata,jsonb,YES
+noro_transacoes,created_by,uuid,YES
+noro_transacoes,updated_by,uuid,YES
+noro_transacoes,created_at,timestamp with time zone,YES
+noro_transacoes,updated_at,timestamp with time zone,YES
+noro_transacoes,deleted_at,timestamp with time zone,YES
+noro_update_tokens,token,uuid,NO
+noro_update_tokens,cliente_id,uuid,NO
+noro_update_tokens,expires_at,timestamp with time zone,NO
+noro_update_tokens,used_at,timestamp with time zone,YES
+noro_users,id,uuid,NO
+noro_users,email,character varying,NO
+noro_users,nome,character varying,YES
+noro_users,role,character varying,YES
+noro_users,avatar_url,text,YES
+noro_users,telefone,character varying,YES
+noro_users,whatsapp,character varying,YES
+noro_users,created_at,timestamp without time zone,YES
+noro_users,updated_at,timestamp without time zone,YES
+notifications,id,uuid,NO
+notifications,user_id,uuid,NO
+notifications,title,text,NO
+notifications,message,text,NO
+notifications,type,text,YES
+notifications,read,boolean,YES
+notifications,metadata,jsonb,YES
+notifications,created_at,timestamp with time zone,YES
+notifications,read_at,timestamp with time zone,YES
+produtos,id,uuid,NO
+produtos,tenant_id,uuid,NO
+produtos,codigo,character varying,NO
+produtos,nome,character varying,NO
+produtos,descricao,text,YES
+produtos,categoria_id,uuid,YES
+produtos,tipo_produto,character varying,NO
+produtos,fornecedor_id,uuid,YES
+produtos,codigo_fornecedor,character varying,YES
+produtos,preco_custo,numeric,YES
+produtos,moeda_custo,character varying,YES
+produtos,preco_venda,numeric,YES
+produtos,moeda_venda,character varying,YES
+produtos,markup_id,uuid,YES
+produtos,comissao_padrao,numeric,YES
+produtos,disponibilidade_inicio,date,YES
+produtos,disponibilidade_fim,date,YES
+produtos,destino,character varying,YES
+produtos,duracao,integer,YES
+produtos,capacidade_min,integer,YES
+produtos,capacidade_max,integer,YES
+produtos,restricoes,jsonb,YES
+produtos,tags,ARRAY,YES
+produtos,metadata,jsonb,YES
+produtos,is_ativo,boolean,YES
+produtos,created_by,uuid,YES
+produtos,updated_by,uuid,YES
+produtos,created_at,timestamp with time zone,YES
+produtos,updated_at,timestamp with time zone,YES
+produtos_categorias,id,uuid,NO
+produtos_categorias,tenant_id,uuid,NO
+produtos_categorias,nome,character varying,NO
+produtos_categorias,descricao,text,YES
+produtos_categorias,parent_id,uuid,YES
+produtos_categorias,ordem,integer,YES
+produtos_categorias,is_ativo,boolean,YES
+produtos_categorias,metadata,jsonb,YES
+produtos_categorias,created_at,timestamp with time zone,YES
+produtos_categorias,updated_at,timestamp with time zone,YES
+produtos_precos_historico,id,uuid,NO
+produtos_precos_historico,produto_id,uuid,NO
+produtos_precos_historico,variacao_id,uuid,YES
+produtos_precos_historico,tipo_preco,character varying,NO
+produtos_precos_historico,preco,numeric,NO
+produtos_precos_historico,moeda,character varying,NO
+produtos_precos_historico,vigencia_inicio,timestamp with time zone,NO
+produtos_precos_historico,vigencia_fim,timestamp with time zone,YES
+produtos_precos_historico,motivo_alteracao,text,YES
+produtos_precos_historico,created_by,uuid,YES
+produtos_precos_historico,created_at,timestamp with time zone,YES
+produtos_variacoes,id,uuid,NO
+produtos_variacoes,produto_id,uuid,NO
+produtos_variacoes,codigo,character varying,NO
+produtos_variacoes,nome,character varying,NO
+produtos_variacoes,descricao,text,YES
+produtos_variacoes,diferencial_preco,numeric,YES
+produtos_variacoes,metadata,jsonb,YES
+produtos_variacoes,is_ativo,boolean,YES
+produtos_variacoes,created_at,timestamp with time zone,YES
+produtos_variacoes,updated_at,timestamp with time zone,YES
+regras_preco,id,uuid,NO
+regras_preco,tenant_id,uuid,NO
+regras_preco,nome,character varying,NO
+regras_preco,tipo,USER-DEFINED,NO
+regras_preco,descricao,text,YES
+regras_preco,valor_minimo,numeric,YES
+regras_preco,valor_maximo,numeric,YES
+regras_preco,data_inicio,date,YES
+regras_preco,data_fim,date,YES
+regras_preco,tipo_markup,USER-DEFINED,NO
+regras_preco,valor_markup,numeric,NO
+regras_preco,moeda,USER-DEFINED,NO
+regras_preco,prioridade,integer,NO
+regras_preco,sobrepor_regras,boolean,NO
+regras_preco,ativo,boolean,NO
+regras_preco,metadados,jsonb,YES
+regras_preco,created_by,uuid,NO
+regras_preco,created_at,timestamp with time zone,NO
+regras_preco,updated_at,timestamp with time zone,NO
+subscription_plans,id,uuid,YES
+subscription_plans,name,text,YES
+subscription_plans,slug,text,YES
+subscription_plans,description,text,YES
+subscription_plans,is_public,boolean,YES
+subscription_plans,is_custom,boolean,YES
+subscription_plans,sort_order,integer,YES
+subscription_plans,monthly_price,numeric,YES
+subscription_plans,quarterly_price,numeric,YES
+subscription_plans,yearly_price,numeric,YES
+subscription_plans,setup_fee,numeric,YES
+subscription_plans,trial_days,integer,YES
+subscription_plans,features,jsonb,YES
+subscription_plans,modules,jsonb,YES
+subscription_plans,metadata,jsonb,YES
+subscription_plans,created_at,timestamp with time zone,YES
+subscription_plans,updated_at,timestamp with time zone,YES
+tenants,id,uuid,NO
+tenants,nome,character varying,NO
+tenants,slug,character varying,NO
+tenants,marca,character varying,YES
+tenants,ativo,boolean,YES
+tenants,plano,character varying,YES
+tenants,max_usuarios,integer,YES
+tenants,max_leads,integer,YES
+tenants,max_processos,integer,YES
+tenants,cnpj,character varying,YES
+tenants,razao_social,character varying,YES
+tenants,email_contato,character varying,YES
+tenants,telefone,character varying,YES
+tenants,endereco_logradouro,character varying,YES
+tenants,endereco_numero,character varying,YES
+tenants,endereco_complemento,character varying,YES
+tenants,endereco_bairro,character varying,YES
+tenants,endereco_cidade,character varying,YES
+tenants,endereco_estado,character varying,YES
+tenants,endereco_cep,character varying,YES
+tenants,endereco_pais,character varying,YES
+tenants,configuracoes,jsonb,YES
+tenants,data_expiracao,date,YES
+tenants,ultima_atividade,timestamp with time zone,YES
+tenants,created_at,timestamp with time zone,YES
+tenants,updated_at,timestamp with time zone,YES
+user_tenants,id,uuid,NO
+user_tenants,user_id,uuid,NO
+user_tenants,tenant_id,uuid,NO
+user_tenants,role,character varying,NO
+user_tenants,ativo,boolean,YES
+user_tenants,permissoes,jsonb,YES
+user_tenants,data_convite,timestamp with time zone,YES
+user_tenants,convite_aceito,boolean,YES
+user_tenants,convidado_por,uuid,YES
+user_tenants,created_at,timestamp with time zone,YES
+user_tenants,updated_at,timestamp with time zone,YES
+users,id,uuid,NO
+users,auth_user_id,uuid,YES
+users,nome,character varying,NO
+users,email,character varying,NO
+users,telefone,character varying,YES
+users,cpf,character varying,YES
+users,avatar_url,text,YES
+users,bio,text,YES
+users,cargo,character varying,YES
+users,ativo,boolean,YES
+users,email_verificado,boolean,YES
+users,preferencias,jsonb,YES
+users,ultimo_login,timestamp with time zone,YES
+users,ultimo_ip,character varying,YES
+users,tentativas_login_falhas,integer,YES
+users,bloqueado_ate,timestamp with time zone,YES
+users,created_at,timestamp with time zone,YES
+users,updated_at,timestamp with time zone,YES
+v_fin_contas_pagar,id,uuid,YES
+v_fin_contas_pagar,marca,text,YES
+v_fin_contas_pagar,descricao,text,YES
+v_fin_contas_pagar,valor,numeric,YES
+v_fin_contas_pagar,data_vencimento,date,YES
+v_fin_contas_pagar,status_real,text,YES
+v_fin_contas_pagar,dias_atraso,integer,YES
+v_fin_contas_pagar,fornecedor_id,uuid,YES
+v_fin_contas_pagar,forma_pagamento,text,YES
+v_fin_contas_receber,id,uuid,YES
+v_fin_contas_receber,marca,text,YES
+v_fin_contas_receber,descricao,text,YES
+v_fin_contas_receber,valor,numeric,YES
+v_fin_contas_receber,data_vencimento,date,YES
+v_fin_contas_receber,status_real,text,YES
+v_fin_contas_receber,dias_atraso,integer,YES
+v_fin_contas_receber,cliente_id,uuid,YES
+v_fin_contas_receber,forma_pagamento,text,YES
+v_fin_resumo_marca,marca,text,YES
+v_fin_resumo_marca,mes,timestamp with time zone,YES
+v_fin_resumo_marca,receita_realizada,numeric,YES
+v_fin_resumo_marca,despesa_realizada,numeric,YES
+v_fin_resumo_marca,lucro,numeric,YES
+v_visa_info_basic,country,text,YES
+v_visa_info_basic,country_code,text,YES
+v_visa_info_basic,flag_emoji,text,YES
+v_visa_info_basic,general_info_text,text,YES
+v_visa_info_basic,updated_at,timestamp with time zone,YES
+v_visa_info_basic,region,text,YES
+v_visa_info_basic,official_visa_link,text,YES
+v_visa_info_basic,visa_types,jsonb,YES
+v_visa_info_basic,required_documents,jsonb,YES
+v_visa_info_basic,process_steps,jsonb,YES
+v_visa_info_basic,approval_tips,jsonb,YES
+v_visa_info_basic,health_info,jsonb,YES
+v_visa_info_basic,security_info,jsonb,YES
+visa_countries,id,uuid,NO
+visa_countries,iso2,text,YES
+visa_countries,iso3,text,YES
+visa_countries,country,text,NO
+visa_countries,region,text,YES
+visa_countries,created_at,timestamp with time zone,NO
+visa_countries,updated_at,timestamp with time zone,NO
+visa_overrides,id,uuid,NO
+visa_overrides,tenant_id,uuid,NO
+visa_overrides,country_from,text,NO
+visa_overrides,country_to,text,NO
+visa_overrides,purpose,text,YES
+visa_overrides,duration,text,YES
+visa_overrides,override,jsonb,NO
+visa_overrides,notes,text,YES
+visa_overrides,created_at,timestamp with time zone,NO
+visa_overrides,updated_at,timestamp with time zone,NO
+visa_requirements,id,uuid,NO
+visa_requirements,country_from,text,NO
+visa_requirements,country_to,text,NO
+visa_requirements,purpose,text,YES
+visa_requirements,duration,text,YES
+visa_requirements,requirement,jsonb,YES
+visa_requirements,last_checked_at,timestamp with time zone,YES
+visa_requirements,sources,ARRAY,YES
+visa_requirements,created_at,timestamp with time zone,NO
+visa_requirements,updated_at,timestamp with time zone,NO
+visa_sources,id,uuid,NO
+visa_sources,name,text,NO
+visa_sources,url,text,YES
+visa_sources,method,text,YES
+visa_sources,reliability,text,YES
+visa_sources,created_at,timestamp with time zone,NO
+visa_updates,id,uuid,NO
+visa_updates,job_id,text,YES
+visa_updates,source_id,uuid,YES
+visa_updates,status,text,YES
+visa_updates,diff,jsonb,YES
+visa_updates,started_at,timestamp with time zone,YES
+visa_updates,finished_at,timestamp with time zone,YES
+vw_fin_duplicatas_pagar,id,uuid,YES
+vw_fin_duplicatas_pagar,tenant_id,uuid,YES
+vw_fin_duplicatas_pagar,marca,USER-DEFINED,YES
+vw_fin_duplicatas_pagar,numero_duplicata,character varying,YES
+vw_fin_duplicatas_pagar,numero_nota_fiscal,character varying,YES
+vw_fin_duplicatas_pagar,serie_nota_fiscal,character varying,YES
+vw_fin_duplicatas_pagar,chave_acesso_nfe,character varying,YES
+vw_fin_duplicatas_pagar,fornecedor_id,uuid,YES
+vw_fin_duplicatas_pagar,reserva_id,uuid,YES
+vw_fin_duplicatas_pagar,pedido_id,uuid,YES
+vw_fin_duplicatas_pagar,condicao_pagamento_id,uuid,YES
+vw_fin_duplicatas_pagar,adiantamento_id,uuid,YES
+vw_fin_duplicatas_pagar,valor_original,numeric,YES
+vw_fin_duplicatas_pagar,valor_desconto,numeric,YES
+vw_fin_duplicatas_pagar,valor_juros,numeric,YES
+vw_fin_duplicatas_pagar,valor_total,numeric,YES
+vw_fin_duplicatas_pagar,valor_pago,numeric,YES
+vw_fin_duplicatas_pagar,valor_pendente,numeric,YES
+vw_fin_duplicatas_pagar,valor_credito_aplicado,numeric,YES
+vw_fin_duplicatas_pagar,moeda,USER-DEFINED,YES
+vw_fin_duplicatas_pagar,taxa_cambio,numeric,YES
+vw_fin_duplicatas_pagar,valor_brl,numeric,YES
+vw_fin_duplicatas_pagar,data_emissao,date,YES
+vw_fin_duplicatas_pagar,data_vencimento,date,YES
+vw_fin_duplicatas_pagar,data_pagamento,date,YES
+vw_fin_duplicatas_pagar,data_referencia,date,YES
+vw_fin_duplicatas_pagar,status,USER-DEFINED,YES
+vw_fin_duplicatas_pagar,fornecedor_nome,character varying,YES
+vw_fin_duplicatas_pagar,fornecedor_documento,character varying,YES
+vw_fin_duplicatas_pagar,fornecedor_email,character varying,YES
+vw_fin_duplicatas_pagar,fornecedor_telefone,character varying,YES
+vw_fin_duplicatas_pagar,forma_pagamento,USER-DEFINED,YES
+vw_fin_duplicatas_pagar,conta_bancaria_id,uuid,YES
+vw_fin_duplicatas_pagar,comprovante_pagamento_url,text,YES
+vw_fin_duplicatas_pagar,observacoes,text,YES
+vw_fin_duplicatas_pagar,condicao_pagamento_texto,text,YES
+vw_fin_duplicatas_pagar,documento_url,text,YES
+vw_fin_duplicatas_pagar,xml_nfe_url,text,YES
+vw_fin_duplicatas_pagar,created_by,uuid,YES
+vw_fin_duplicatas_pagar,updated_by,uuid,YES
+vw_fin_duplicatas_pagar,created_at,timestamp with time zone,YES
+vw_fin_duplicatas_pagar,updated_at,timestamp with time zone,YES
+vw_fin_duplicatas_pagar,dias_vencimento,integer,YES
+vw_fin_duplicatas_receber,id,uuid,YES
+vw_fin_duplicatas_receber,tenant_id,uuid,YES
+vw_fin_duplicatas_receber,marca,USER-DEFINED,YES
+vw_fin_duplicatas_receber,numero_duplicata,character varying,YES
+vw_fin_duplicatas_receber,numero_nota_fiscal,character varying,YES
+vw_fin_duplicatas_receber,serie_nota_fiscal,character varying,YES
+vw_fin_duplicatas_receber,chave_acesso_nfe,character varying,YES
+vw_fin_duplicatas_receber,cliente_id,uuid,YES
+vw_fin_duplicatas_receber,fornecedor_intermediario_id,uuid,YES
+vw_fin_duplicatas_receber,reserva_id,uuid,YES
+vw_fin_duplicatas_receber,pedido_id,uuid,YES
+vw_fin_duplicatas_receber,orcamento_id,uuid,YES
+vw_fin_duplicatas_receber,condicao_pagamento_id,uuid,YES
+vw_fin_duplicatas_receber,valor_original,numeric,YES
+vw_fin_duplicatas_receber,valor_desconto,numeric,YES
+vw_fin_duplicatas_receber,valor_juros,numeric,YES
+vw_fin_duplicatas_receber,valor_total,numeric,YES
+vw_fin_duplicatas_receber,valor_recebido,numeric,YES
+vw_fin_duplicatas_receber,valor_pendente,numeric,YES
+vw_fin_duplicatas_receber,moeda,USER-DEFINED,YES
+vw_fin_duplicatas_receber,taxa_cambio,numeric,YES
+vw_fin_duplicatas_receber,valor_brl,numeric,YES
+vw_fin_duplicatas_receber,data_emissao,date,YES
+vw_fin_duplicatas_receber,data_vencimento,date,YES
+vw_fin_duplicatas_receber,data_recebimento,date,YES
+vw_fin_duplicatas_receber,data_referencia,date,YES
+vw_fin_duplicatas_receber,status,USER-DEFINED,YES
+vw_fin_duplicatas_receber,cliente_nome,character varying,YES
+vw_fin_duplicatas_receber,cliente_documento,character varying,YES
+vw_fin_duplicatas_receber,cliente_email,character varying,YES
+vw_fin_duplicatas_receber,cliente_telefone,character varying,YES
+vw_fin_duplicatas_receber,observacoes,text,YES
+vw_fin_duplicatas_receber,condicao_pagamento_texto,text,YES
+vw_fin_duplicatas_receber,documento_url,text,YES
+vw_fin_duplicatas_receber,xml_nfe_url,text,YES
+vw_fin_duplicatas_receber,created_by,uuid,YES
+vw_fin_duplicatas_receber,updated_by,uuid,YES
+vw_fin_duplicatas_receber,created_at,timestamp with time zone,YES
+vw_fin_duplicatas_receber,updated_at,timestamp with time zone,YES
+vw_fin_duplicatas_receber,dias_atraso,integer,YES
+vw_previsao_comissoes_futuras,tenant_id,uuid,YES
+vw_previsao_comissoes_futuras,tipo,USER-DEFINED,YES
+vw_previsao_comissoes_futuras,fornecedor_id,uuid,YES
+vw_previsao_comissoes_futuras,produto_id,uuid,YES
+vw_previsao_comissoes_futuras,data_prevista,date,YES
+vw_previsao_comissoes_futuras,total_previsto,numeric,YES
+vw_previsao_comissoes_futuras,qtd_prevista,bigint,YES
+vw_rentabilidade_centros_custo,id,uuid,YES
+vw_rentabilidade_centros_custo,tenant_id,uuid,YES
+vw_rentabilidade_centros_custo,codigo,character varying,YES
+vw_rentabilidade_centros_custo,nome,character varying,YES
+vw_rentabilidade_centros_custo,tipo,character varying,YES
+vw_rentabilidade_centros_custo,marca,USER-DEFINED,YES
+vw_rentabilidade_centros_custo,status,character varying,YES
+vw_rentabilidade_centros_custo,data_inicio,date,YES
+vw_rentabilidade_centros_custo,data_fim,date,YES
+vw_rentabilidade_centros_custo,orcamento_previsto,numeric,YES
+vw_rentabilidade_centros_custo,meta_margem_percentual,numeric,YES
+vw_rentabilidade_centros_custo,meta_receita,numeric,YES
+vw_rentabilidade_centros_custo,receitas_total,numeric,YES
+vw_rentabilidade_centros_custo,despesas_total,numeric,YES
+vw_rentabilidade_centros_custo,margem_liquida,numeric,YES
+vw_rentabilidade_centros_custo,margem_percentual,numeric,YES
+vw_rentabilidade_centros_custo,saldo_orcamento,numeric,YES
+vw_rentabilidade_centros_custo,percentual_orcamento_utilizado,numeric,YES
+vw_rentabilidade_centros_custo,qtd_receitas,bigint,YES
+vw_rentabilidade_centros_custo,qtd_despesas,bigint,YES
+vw_rentabilidade_centros_custo,created_at,timestamp with time zone,YES
+vw_rentabilidade_centros_custo,updated_at,timestamp with time zone,YES
+vw_saldo_adiantamentos,tenant_id,uuid,YES
+vw_saldo_adiantamentos,fornecedor_id,uuid,YES
+vw_saldo_adiantamentos,fornecedor_nome,character varying,YES
+vw_saldo_adiantamentos,total_adiantamentos,bigint,YES
+vw_saldo_adiantamentos,valor_total_adiantado,numeric,YES
+vw_saldo_adiantamentos,valor_total_utilizado,numeric,YES
+vw_saldo_adiantamentos,saldo_disponivel,numeric,YES
+vw_saldo_adiantamentos,adiantamentos_ativos,bigint,YES
+vw_saldo_creditos,tenant_id,uuid,YES
+vw_saldo_creditos,fornecedor_id,uuid,YES
+vw_saldo_creditos,fornecedor_nome,character varying,YES
+vw_saldo_creditos,total_creditos,bigint,YES
+vw_saldo_creditos,valor_total_creditos,numeric,YES
+vw_saldo_creditos,valor_total_utilizado,numeric,YES
+vw_saldo_creditos,saldo_disponivel,numeric,YES
+vw_saldo_creditos,total_refunds,bigint,YES
+vw_saldo_creditos,total_overpayments,bigint,YES

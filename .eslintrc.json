@@ -1,0 +1,5 @@
+{
+  "root": true,
+  "extends": ["./packages/eslint-config/next.js"],
+  "ignorePatterns": [".next", "node_modules", "dist"]
+}

@@ -8,8 +8,9 @@ type Payload = {
 };
 
 export function registerAutoClose(taskList: TaskList) {
-  taskList[TICKET_AUTO_CLOSE_TASK] = async (payload: Payload, helpers) => {
-    helpers.logger.info(`auto-close placeholder for ticket ${payload.ticketId}`);
+  taskList[TICKET_AUTO_CLOSE_TASK] = async (payload: unknown, helpers) => {
+    const p = payload as Payload;
+    helpers.logger.info(`auto-close placeholder for ticket ${p.ticketId}` as any);
     // TODO: implement auto-close logic and follow up jobs
   };
 }

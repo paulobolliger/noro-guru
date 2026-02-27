@@ -10,8 +10,9 @@ type Payload = {
 };
 
 export function registerNotifyEmail(taskList: TaskList) {
-  taskList[NOTIFY_EMAIL_TASK] = async (payload: Payload, helpers) => {
-    helpers.logger.info(`notify-email placeholder for ticket ${payload.ticketId}`);
+  taskList[NOTIFY_EMAIL_TASK] = async (payload: unknown, helpers) => {
+    const p = payload as Payload;
+    helpers.logger.info(`notify-email placeholder for ticket ${p.ticketId}` as any);
     // TODO: implement email delivery via SES or Resend
   };
 }

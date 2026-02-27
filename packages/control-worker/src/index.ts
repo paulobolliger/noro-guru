@@ -15,7 +15,7 @@ async function main() {
     schema: process.env.WORKER_SCHEMA || "graphile_worker",
     noHandleSignals: false,
     pollInterval: 1000,
-    taskList: await import("./tasks/registry"),
+    taskList: (await import("./tasks/registry")).default,
   });
 }
 

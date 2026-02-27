@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@noro/types', '@noro/renderer'],
   images: {
     remotePatterns: [
       {

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@lib/*": ["packages/lib/*"],
+      "@ui/*": ["packages/ui/*"],
+      "@noro-types/*": ["packages/types/*"]
+    }
+  }
+}
