@@ -5,6 +5,13 @@
     "types": "./src/index.ts",
     "exports": {
         ".": "./src/index.ts",
-        "./blueprint": "./src/blueprint/index.ts"
+        "./blueprint": "./src/blueprint/index.ts",
+        "./financeiro": "./financeiro.ts",
+        "./supabase": "./supabase.ts",
+        "./admin": "./admin.ts",
+        "./clientes": "./clientes.ts",
+        "./control-plane": "./control-plane.ts",
+        "./control-plane-users": "./control-plane-users.ts",
+        "./noro-users": "./noro-users.ts"
     }
 }
