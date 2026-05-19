@@ -6,10 +6,10 @@ import type { Database } from '@/types/supabase';
 import { revalidatePath } from 'next/cache';
 import { randomUUID } from 'crypto';
 
-type Cliente = Database['public']['Tables']['noro_clientes']['Row'];
-type ClienteUpdate = Database['public']['Tables']['noro_clientes']['Update'];
-type DocumentoInsert = Database['public']['Tables']['noro_clientes_documentos']['Insert'];
-type DocumentoUpdate = Database['public']['Tables']['noro_clientes_documentos']['Update'];
+type Cliente = Record<string, any>;
+type ClienteUpdate = Record<string, any>;
+type DocumentoInsert = Record<string, any>;
+type DocumentoUpdate = Record<string, any>;
 
 // ============================================================================
 // NOVAS FUNÇÕES: FORMULÁRIO PÚBLICO

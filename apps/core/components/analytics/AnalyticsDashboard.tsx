@@ -1,11 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
     PieChart, Pie, Cell
 } from 'recharts';
-import { Badge } from '@noro/ui/badge';
 import { DollarSign, Users, CheckSquare } from 'lucide-react';
 
 // Cores para os gráficos

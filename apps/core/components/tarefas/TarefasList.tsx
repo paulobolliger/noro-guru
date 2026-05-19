@@ -1,11 +1,11 @@
 'use client';
 
 import { Tarefa, deleteTarefa } from '@/app/(protected)/tarefas/tarefas-actions';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@noro/ui/table';
-import { Badge } from '@noro/ui/badge';
-import { Button } from '@noro/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { useToast } from '@noro/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function TarefasList({ tarefas }: { tarefas: Tarefa[] }) {
     const { toast } = useToast();
@@ -14,7 +14,7 @@ export default function TarefasList({ tarefas }: { tarefas: Tarefa[] }) {
         if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
         try {
             await deleteTarefa(id);
-            toast({ title: 'Deletado', description: 'Tarefa removida.' });
+            toast({ title: 'Deletado', description: 'Tarefa removida.', variant: 'success' });
         } catch (e) {
             toast({ title: 'Erro', variant: 'destructive', description: "Não foi possível excluir a tarefa." });
         }
@@ -37,7 +37,7 @@ export default function TarefasList({ tarefas }: { tarefas: Tarefa[] }) {
                         <TableRow key={tarefa.id}>
                             <TableCell className="font-medium">{tarefa.titulo}</TableCell>
                             <TableCell>
-                                <Badge variant="outline" className={
+                                <Badge className={
                                     tarefa.status === 'concluida' ? 'bg-green-50 text-green-700 border-green-200' :
                                         tarefa.status === 'em_andamento' ? 'bg-blue-50 text-blue-700 border-blue-200' : ''
                                 }>
@@ -48,9 +48,12 @@ export default function TarefasList({ tarefas }: { tarefas: Tarefa[] }) {
                                 </Badge>
                             </TableCell>
                             <TableCell>
-                                <Badge variant={
-                                    tarefa.prioridade === 'alta' || tarefa.prioridade === 'urgente' ? 'destructive' :
-                                        tarefa.prioridade === 'media' ? 'default' : 'secondary'
+                                <Badge className={
+                                    tarefa.prioridade === 'alta' || tarefa.prioridade === 'urgente'
+                                        ? 'bg-red-100 text-red-700 border-red-200'
+                                        : tarefa.prioridade === 'media'
+                                            ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                            : 'bg-gray-100 text-gray-700 border-gray-200'
                                 }>
                                     {tarefa.prioridade}
                                 </Badge>

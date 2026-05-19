@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui/card';
-import { Button } from '@noro/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@noro/ui/tabs';
-import { Mail, Users, CreditCard, Plus, FileText, Send, MoreHorizontal, Search, Upload } from 'lucide-react';
-import { useToast } from '@noro/ui/use-toast';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Mail, Users, CreditCard, Plus, FileText, Send, MoreHorizontal, Search, Upload, AlertTriangle } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function EmailMarketingPage() {
     const { toast } = useToast();
@@ -17,6 +17,10 @@ export default function EmailMarketingPage() {
 
     return (
         <div className="p-6 space-y-8">
+            <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span><strong>Em Desenvolvimento</strong> — As estatísticas e campanhas exibidas são dados fictícios. A integração real com AWS SES ainda não foi implementada.</span>
+            </div>
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -190,13 +194,13 @@ export default function EmailMarketingPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Configurações de Envio</CardTitle>
-                            <CardDescription>Gerencie remetentes e configurações AWS SES.</CardDescription>
+                            <CardDescription>Gerencie remetentes e configurações de envio de e-mail.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                <div className="p-4 bg-green-50 text-green-800 rounded border border-green-200 text-sm">
-                                    <p className="font-bold mb-1">Status AWS SES: Ativo</p>
-                                    <p>Seus e-mails estão sendo enviados através da infraestrutura de alta entregabilidade.</p>
+                                <div className="p-4 bg-amber-50 text-amber-800 rounded border border-amber-200 text-sm">
+                                    <p className="font-bold mb-1">Status AWS SES: Aguardando aprovação</p>
+                                    <p>A conta AWS SES ainda está em processo de aprovação para envio em produção. O envio de e-mails reais não está disponível no momento.</p>
                                 </div>
                             </div>
                         </CardContent>

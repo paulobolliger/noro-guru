@@ -48,7 +48,6 @@
       try {
         // Teste 1: A função RPC
         metrics = await getDashboardMetrics(30);
-        console.log('✅ getDashboardMetrics funcionou.');
 
         // Teste 2: A tabela de Leads
         // leadsRecentes = await getLeads({ limit: 5 });

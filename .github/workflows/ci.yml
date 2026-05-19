@@ -1,37 +1,4 @@
 name: CI
-on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Build
-        run: npm run build
-
-      - name: Test (if present)
-        run: npm run test --if-present
-
-      - name: Audit (allowed to fail)
-        run: npm audit --audit-level=high || true
-name: CI
 
 on:
   push:
@@ -69,3 +36,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Test (if present)
+        run: npm run test --if-present
+
+      - name: Audit (allowed to fail)
+        run: npm audit --audit-level=high || true

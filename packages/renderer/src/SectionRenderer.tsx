@@ -25,7 +25,7 @@ export function SectionRenderer({ section, primaryColor }: SectionRendererProps)
             return <FeaturesSection config={section.config} primaryColor={primaryColor} />;
 
         case SectionType.CONTENT:
-            return <ContentSection config={section.config} />;
+            return <ContentSection config={section.config} primaryColor={primaryColor} />;
 
         case SectionType.CTA:
             return <CtaSection config={section.config} primaryColor={primaryColor} />;

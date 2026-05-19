@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@noro/ui/button';
-import { Textarea } from '@noro/ui/textarea';
-import { Label } from '@noro/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, Sparkles } from 'lucide-react';
-import { useToast } from '@noro/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface OptionConfig {
     label: string;
@@ -78,7 +78,7 @@ export default function BulkGenerateForm({ type, onGenerate, placeholder, option
                             {optionsConfig.map((opt) => (
                                 <div key={opt.name} className="space-y-2">
                                     <Label htmlFor={opt.name}>{opt.label}</Label>
-                                    <Select name={opt.name}>
+                                    <Select>
                                         <SelectTrigger>
                                             <SelectValue placeholder={`Selecione ${opt.label.toLowerCase()}`} />
                                         </SelectTrigger>

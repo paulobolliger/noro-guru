@@ -23,6 +23,7 @@ export async function getAnalyticsData() {
       tasksByStatus: [],
       totalPotentialRevenue: 0,
       totalLeads: 0,
+      totalTasks: 0,
     };
   }
 

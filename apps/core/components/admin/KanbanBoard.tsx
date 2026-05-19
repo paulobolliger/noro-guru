@@ -25,6 +25,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+const DndContextCompat: any = DndContext;
+const DragOverlayCompat: any = DragOverlay;
+const SortableContextCompat: any = SortableContext;
+
 type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
 interface KanbanBoardProps {
@@ -163,7 +167,7 @@ function DroppableColumn({ id, title, color, leads, onLeadClick, isUpdating }: D
           isOver ? 'bg-blue-50 border-2 border-blue-300 border-dashed' : ''
         } ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}
       >
-        <SortableContext items={leads.map((lead) => lead.id)} strategy={verticalListSortingStrategy}>
+        <SortableContextCompat items={leads.map((lead) => lead.id)} strategy={verticalListSortingStrategy}>
           {leads.map((lead) => (
             <LeadCard key={lead.id} lead={lead} onLeadClick={onLeadClick} />
           ))}
@@ -172,7 +176,7 @@ function DroppableColumn({ id, title, color, leads, onLeadClick, isUpdating }: D
               {isOver ? 'Solte aqui' : 'Arraste leads para cá'}
             </div>
           )}
-        </SortableContext>
+        </SortableContextCompat>
       </div>
     </div>
   );
@@ -263,7 +267,6 @@ export default function KanbanBoard({ leads, onLeadClick }: KanbanBoardProps) {
           throw new Error('Erro ao atualizar status');
         }
 
-        console.log(`✅ Lead ${activeId} movido para ${newStatus}`);
       } catch (error) {
         console.error('❌ Erro ao atualizar lead:', error);
         // Reverter mudança
@@ -280,7 +283,7 @@ export default function KanbanBoard({ leads, onLeadClick }: KanbanBoardProps) {
   const activeLead = activeId ? localLeads.find((lead) => lead.id === activeId) : null;
 
   return (
-    <DndContext
+    <DndContextCompat
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
@@ -302,9 +305,9 @@ export default function KanbanBoard({ leads, onLeadClick }: KanbanBoardProps) {
       </div>
 
       {/* Drag Overlay */}
-      <DragOverlay>
+      <DragOverlayCompat>
         {activeLead ? <LeadCard lead={activeLead} isDragging /> : null}
-      </DragOverlay>
-    </DndContext>
+      </DragOverlayCompat>
+    </DndContextCompat>
   );
 }

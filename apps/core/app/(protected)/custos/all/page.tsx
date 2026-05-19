@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2, Sparkles, DollarSign, FileText, TrendingUp, Wallet, Plus, CreditCard, Image as LucideImage } from 'lucide-react';
-import { Button } from '@noro/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@noro/ui/dialog';
-import { Input } from '@noro/ui/input';
-import { Label } from '@noro/ui/label';
-import { useToast } from '@noro/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
 import { COST_PERIODS } from '@/lib/constants';
 import { formatCost } from '@/lib/utils/cost-calculator';
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -81,7 +81,7 @@ export default function CustosAllPage() {
       });
 
       if (response.ok) {
-        toast({ title: "Sucesso!", description: "Créditos adicionados com sucesso." });
+        toast({ title: "Sucesso!", description: "Créditos adicionados com sucesso.", variant: "success" });
         setPurchaseOpen(false);
         fetchData(); // Refresh data
       } else {
@@ -155,7 +155,7 @@ export default function CustosAllPage() {
                   </div>
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800 flex gap-2">
                     <CreditCard size={16} className="mt-0.5" />
-                    <p>Em produção, isso redirecionaria para o checkout do Stripe/Pagar.me.</p>
+                    <p>Em produção, o pagamento será processado via e.Rede (PIX, Crédito ou Débito).</p>
                   </div>
                 </div>
                 <DialogFooter>

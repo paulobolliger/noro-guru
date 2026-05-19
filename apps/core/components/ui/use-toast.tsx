@@ -27,7 +27,7 @@ type Toast = {
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastAction;
-  variant: 'default' | 'destructive' | 'success' | 'info';
+  variant?: 'default' | 'destructive' | 'success' | 'info';
   duration?: number;
 };
 
@@ -129,28 +129,28 @@ export function useToast() {
 //    (Permite renderizar os toasts e utiliza o hook acima)
 // =======================================================================
 
-const iconMap: Record<Toast['variant'], React.ReactNode> = {
+const iconMap: Record<NonNullable<Toast['variant']>, React.ReactNode> = {
     default: <Info size={18} />,
     destructive: <AlertCircle size={18} />,
     success: <CheckCircle2 size={18} />,
     info: <Info size={18} />,
 };
 
-const variantClasses: Record<Toast['variant'], string> = {
+const variantClasses: Record<NonNullable<Toast['variant']>, string> = {
     default: 'border-gray-200 bg-white text-gray-900',
     destructive: 'border-red-500 bg-red-600 text-white',
     success: 'border-green-500 bg-green-600 text-white',
     info: 'border-blue-500 bg-blue-600 text-white',
 };
 
-const titleClasses: Record<Toast['variant'], string> = {
+const titleClasses: Record<NonNullable<Toast['variant']>, string> = {
     default: 'text-gray-900',
     destructive: 'text-white',
     success: 'text-white',
     info: 'text-white',
 };
 
-const descriptionClasses: Record<Toast['variant'], string> = {
+const descriptionClasses: Record<NonNullable<Toast['variant']>, string> = {
     default: 'text-gray-600',
     destructive: 'text-white/80',
     success: 'text-white/80',

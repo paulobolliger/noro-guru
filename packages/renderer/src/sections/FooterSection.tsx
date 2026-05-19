@@ -17,110 +17,69 @@ export function FooterSection({ config, primaryColor }: FooterSectionProps) {
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: config.columns && config.columns.length > 0
-                        ? `repeat(${config.columns.length + 1}, 1fr)`
-                        : '2fr 1fr 1fr 1fr',
+                    gridTemplateColumns: '2fr 1fr',
                     gap: '3rem',
                     marginBottom: '3rem',
                 }}>
-                    {/* Logo/Brand Column */}
+                    {/* Brand column */}
                     <div>
                         {config.logo && (
                             <img
                                 src={config.logo.url}
                                 alt={config.logo.alt}
-                                style={{
-                                    height: '40px',
-                                    marginBottom: '1rem',
-                                }}
+                                style={{ height: '40px', marginBottom: '1rem' }}
                             />
                         )}
-
-                        {config.description && (
-                            <p style={{
-                                fontSize: '0.95rem',
-                                lineHeight: '1.7',
-                                color: '#9CA3AF',
-                                marginBottom: '1.5rem',
-                            }}>
-                                {config.description}
+                        {config.companyName && !config.logo && (
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', marginBottom: '1rem', color: '#fff' }}>
+                                {config.companyName}
+                            </h2>
+                        )}
+                        {config.tagline && (
+                            <p style={{ fontSize: '0.95rem', lineHeight: '1.7', color: '#9CA3AF', marginBottom: '1.5rem', maxWidth: '360px' }}>
+                                {config.tagline}
                             </p>
                         )}
-
-                        {config.social && config.social.length > 0 && (
+                        {config.socialLinks && config.socialLinks.length > 0 && (
                             <div style={{ display: 'flex', gap: '1rem' }}>
-                                {config.social.map((social, index) => (
+                                {config.socialLinks.map((social, index) => (
                                     <a
                                         key={index}
                                         href={social.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{
-                                            width: '40px',
-                                            height: '40px',
+                                            width: '36px', height: '36px',
                                             borderRadius: '50%',
                                             backgroundColor: `${primaryColor}20`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: primaryColor,
-                                            textDecoration: 'none',
-                                            transition: 'all 0.3s ease',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = primaryColor;
-                                            e.currentTarget.style.color = '#FFFFFF';
-                                            e.currentTarget.style.transform = 'translateY(-3px)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = `${primaryColor}20`;
-                                            e.currentTarget.style.color = primaryColor;
-                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            color: primaryColor, textDecoration: 'none', fontSize: '0.8rem', fontWeight: '700',
                                         }}
                                     >
-                                        {social.icon || social.platform.charAt(0).toUpperCase()}
+                                        {social.platform.charAt(0).toUpperCase()}
                                     </a>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* Link Columns */}
-                    {config.columns && config.columns.map((column, colIndex) => (
-                        <div key={colIndex}>
-                            <h3 style={{
-                                fontSize: '1.125rem',
-                                fontWeight: '700',
-                                marginBottom: '1.5rem',
-                                color: '#FFFFFF',
-                            }}>
-                                {column.title}
+                    {/* Links column */}
+                    {config.links && config.links.length > 0 && (
+                        <div>
+                            <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1.5rem', color: '#fff' }}>
+                                Links
                             </h3>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                {column.links.map((link, linkIndex) => (
-                                    <li key={linkIndex} style={{ marginBottom: '0.75rem' }}>
-                                        <a
-                                            href={link.url}
-                                            style={{
-                                                color: '#9CA3AF',
-                                                textDecoration: 'none',
-                                                fontSize: '0.95rem',
-                                                transition: 'color 0.2s ease',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = primaryColor;
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.color = '#9CA3AF';
-                                            }}
-                                        >
+                                {config.links.map((link, i) => (
+                                    <li key={i} style={{ marginBottom: '0.75rem' }}>
+                                        <a href={link.url} style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: '0.95rem' }}>
                                             {link.text}
                                         </a>
                                     </li>
                                 ))}
                             </ul>
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 {/* Bottom Bar */}
@@ -133,38 +92,9 @@ export function FooterSection({ config, primaryColor }: FooterSectionProps) {
                     flexWrap: 'wrap',
                     gap: '1rem',
                 }}>
-                    <p style={{
-                        fontSize: '0.875rem',
-                        color: '#9CA3AF',
-                        margin: 0,
-                    }}>
-                        {config.copyright || `© ${new Date().getFullYear()} Todos os direitos reservados`}
+                    <p style={{ fontSize: '0.875rem', color: '#9CA3AF', margin: 0 }}>
+                        {config.copyright || `© ${new Date().getFullYear()} ${config.companyName || 'Todos os direitos reservados'}`}
                     </p>
-
-                    {config.legalLinks && config.legalLinks.length > 0 && (
-                        <div style={{ display: 'flex', gap: '2rem' }}>
-                            {config.legalLinks.map((link, index) => (
-                                <a
-                                    key={index}
-                                    href={link.url}
-                                    style={{
-                                        fontSize: '0.875rem',
-                                        color: '#9CA3AF',
-                                        textDecoration: 'none',
-                                        transition: 'color 0.2s ease',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = primaryColor;
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.color = '#9CA3AF';
-                                    }}
-                                >
-                                    {link.text}
-                                </a>
-                            ))}
-                        </div>
-                    )}
                 </div>
             </div>
         </footer>

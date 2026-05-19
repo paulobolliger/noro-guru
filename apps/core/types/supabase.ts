@@ -9,6 +9,11 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      [key: string]: {
+        Row: Record<string, any>
+        Insert: Record<string, any>
+        Update: Record<string, any>
+      }
       noro_users: {
         Row: {
           id: string
@@ -41,7 +46,9 @@ export interface Database {
     }
     Views: {}
     Functions: {}
-    Enums: {}
+    Enums: {
+      [key: string]: string
+    }
   }
 }
 

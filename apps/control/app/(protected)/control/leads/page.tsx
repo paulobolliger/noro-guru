@@ -18,8 +18,6 @@ export default async function ControlLeadsPage({ searchParams }: { searchParams?
     const groups = await listLeadsByStage();
     const stages = await listStages();
 
-    console.log('🔍 DEBUG:', { view, stagesCount: stages.length, groupsKeys: Object.keys(groups) });
-
     return (
       <div className="p-6 md:p-8 space-y-6">
         {/* Header */}

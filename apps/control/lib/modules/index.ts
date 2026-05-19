@@ -6,28 +6,19 @@ export const registeredModules: ModuleRegistration[] = [
   {
     module: financeiroModule,
     async initialize() {
-      console.log('Inicializando módulo financeiro...');
-      // Aqui podemos adicionar lógica de inicialização
-      // como carregar configurações, verificar permissões, etc.
+      // TODO: carregar configurações, verificar permissões
     },
     async cleanup() {
-      console.log('Limpando recursos do módulo financeiro...');
-      // Aqui podemos adicionar lógica de limpeza
-      // como fechar conexões, limpar cache, etc.
+      // TODO: fechar conexões, limpar cache
     }
   },
   {
     module: billingModule,
     async initialize() {
-      console.log('Inicializando módulo de billing...');
-      // Verificar configurações do Stripe
-      // Validar webhooks
-      // Sincronizar produtos e preços
+      // TODO: verificar configurações do Stripe, validar webhooks, sincronizar produtos
     },
     async cleanup() {
-      console.log('Limpando recursos do módulo de billing...');
-      // Limpar cache de sessões
-      // Fechar conexões com Stripe
+      // TODO: limpar cache de sessões, fechar conexões com Stripe
     }
   }
 ];

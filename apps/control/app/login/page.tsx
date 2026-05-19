@@ -26,11 +26,8 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
-    console.log('🚀 Autenticação iniciada:', { email, isSignUp });
-
     try {
       if (isSignUp) {
-        console.log('🧾 Tentando criar conta...');
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -41,13 +38,8 @@ export default function AdminLoginPage() {
 
         if (signUpError) {
           if (signUpError.message.includes('User already registered')) {
-            console.log('⚠️ Usuário já existe — efetuando login direto...');
-            const { error: loginError } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            });
+            const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
             if (loginError) throw loginError;
-            console.log('✅ Login automático bem-sucedido');
             router.push(redirectTo);
             router.refresh();
             return;
@@ -55,21 +47,13 @@ export default function AdminLoginPage() {
           throw signUpError;
         }
 
-        console.log('✅ Conta criada com sucesso:', data);
         alert('Conta criada! Verifique seu e-mail para confirmar antes de fazer login.');
         setIsSignUp(false);
         setPassword('');
       } else {
-        console.log('🔑 Efetuando login...');
-        const { data, error: loginError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
+        const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
         if (loginError) throw loginError;
         if (!data.session) throw new Error('Sessão não criada.');
-
-        console.log('🎉 Login OK — redirecionando...');
         router.push(redirectTo);
         router.refresh();
       }
@@ -87,7 +71,6 @@ export default function AdminLoginPage() {
   const handleGoogleLogin = async () => {
     setError('');
     setLoading(true);
-    console.log('🔵 Login com Google...');
 
     try {
       const { error } = await supabase.auth.signInWithOAuth({

@@ -10,6 +10,7 @@
     "lint": "turbo lint",
     "build:web": "next build apps/control",
     "start:web": "next start apps/control",
+    "generate:types": "npx supabase gen types typescript --project-id gjffoongddkorxnnzmzc > packages/types/supabase.ts",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish"

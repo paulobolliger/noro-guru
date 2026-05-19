@@ -66,7 +66,7 @@ export function BlueprintRenderer({ blueprint }: BlueprintRendererProps) {
                         ) : (
                             // Fallback if no logo
                             <h2 style={{ fontSize: '1.5rem', fontWeight: '800' }}>
-                                {blueprint.seo.title?.split(' ')[0] || 'Site'}
+                                {blueprint.seo?.title?.split(' ')[0] || 'Site'}
                             </h2>
                         )}
 

@@ -66,7 +66,7 @@ export function FeaturesSection({ config, primaryColor }: FeaturesSectionProps) 
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                         gap: '1.5rem',
-                        autoRows: 'minmax(250px, auto)',
+                        gridAutoRows: 'minmax(250px, auto)',
                     }}>
                         {config.items.map((item, index) => {
                             // Make some items span 2 columns/rows for "Bento" feel based on index

@@ -76,9 +76,8 @@ export function EnhancedToast({ type, title, description, duration = 5000, onClo
 
 // Hook para usar o toast
 export function useEnhancedToast() {
-  const show = (props: Omit<ToastProps, 'onClose'>) => {
-    // Implementação simplificada - você pode integrar com zustand ou context
-    console.log('Toast:', props);
+  const show = (_props: Omit<ToastProps, 'onClose'>) => {
+    // TODO: integrar com zustand ou context para exibir toasts reais
   };
 
   return {

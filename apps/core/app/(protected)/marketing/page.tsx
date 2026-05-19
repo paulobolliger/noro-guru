@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui/card';
-import { Button } from '@noro/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Instagram, Mail, LayoutTemplate, Share2, Megaphone, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 

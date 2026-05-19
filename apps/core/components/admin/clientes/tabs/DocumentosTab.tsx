@@ -173,7 +173,7 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       await loadDocumentos();
       router.refresh();
     } else {
-      alert('Erro ao salvar: ' + (result.error || result.message));
+      alert('Erro ao salvar: ' + (result.error || 'Falha ao salvar documento.'));
     }
 
     setIsSaving(false);

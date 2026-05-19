@@ -35,8 +35,9 @@ async function getCurrentTenantId(userId: string): Promise<string> {
      .limit(1)
      .maybeSingle(); // Use maybeSingle to avoid 406/PGRST116 errors immediately
 
-   if (data) {
-     return data.tenant_id;
+   const tenantRow = data as { tenant_id?: string } | null;
+   if (tenantRow?.tenant_id) {
+     return tenantRow.tenant_id;
    }
 
    console.warn(`Usuário ${userId} sem tenant vinculado. Tentando fallback para tenant padrão...`);
@@ -49,8 +50,9 @@ async function getCurrentTenantId(userId: string): Promise<string> {
      .limit(1)
      .single();
 
-   if (defaultTenant) {
-     return defaultTenant.id;
+   const defaultTenantRow = defaultTenant as { id?: string } | null;
+   if (defaultTenantRow?.id) {
+     return defaultTenantRow.id;
    }
 
    console.error("Erro fatal: Nenhum tenant encontrado no sistema.", fallbackError);
@@ -93,7 +95,8 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
 
     // Agregar
     const config: any = { ...defaultConfig };
-    data.forEach(item => {
+    const configRows = (data ?? []) as Array<{ chave: string; valor: unknown }>;
+    configRows.forEach(item => {
       config[item.chave] = item.valor;
     });
 
@@ -129,7 +132,7 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
     }));
 
     for (const item of configs) {
-      const { error } = await supabaseAdmin
+      const { error } = await (supabaseAdmin as any)
         .from('noro_configuracoes')
         .upsert({
           tenant_id: tenantId, // Usa o ID real do tenant
@@ -181,7 +184,8 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
     if (!data || data.length === 0) return defaultConfig;
 
     const config: any = { ...defaultConfig };
-    data.forEach(item => {
+    const configRows = (data ?? []) as Array<{ chave: string; valor: unknown }>;
+    configRows.forEach(item => {
       config[item.chave] = item.valor;
     });
 
@@ -212,7 +216,7 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
     }));
 
     for (const item of configs) {
-      const { error } = await supabaseAdmin
+      const { error } = await (supabaseAdmin as any)
         .from('noro_configuracoes')
         .upsert({
           tenant_id: tenantId, // Usa o ID real do tenant

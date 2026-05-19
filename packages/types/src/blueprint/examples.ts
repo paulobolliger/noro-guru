@@ -4,14 +4,17 @@
  * Valid and invalid blueprint examples for testing validation.
  */
 
-import { Blueprint } from './schema';
-import { SectionType, ButtonVariant, AlignmentType, ColorScheme, FontFamily } from './enums';
+import { BlueprintSchema } from './schema';
+import type { z } from 'zod';
+import { SectionType, ButtonVariant, AlignmentType, ColorScheme, FontFamily, SiteVibe, HeroVariant, FeaturesVariant } from './enums';
+
+type BlueprintInput = z.input<typeof BlueprintSchema>;
 
 // ===========================
 // VALID EXAMPLE
 // ===========================
 
-export const validBlueprint: Blueprint = {
+export const validBlueprint: BlueprintInput = {
   version: '1.0',
   theme: {
     primaryColor: '#3B82F6',
@@ -20,6 +23,7 @@ export const validBlueprint: Blueprint = {
     textColor: '#1F2937',
     fontFamily: FontFamily.INTER,
     colorScheme: ColorScheme.LIGHT,
+    vibe: SiteVibe.MODERN,
   },
   navigation: {
     logo: {

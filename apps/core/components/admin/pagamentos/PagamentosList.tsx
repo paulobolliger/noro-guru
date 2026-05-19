@@ -5,10 +5,22 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
-import { PedidoParaPagamento } from '@/app/pagamentos/page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Eye } from 'lucide-react';
+
+type PedidoParaPagamento = {
+  id: string;
+  valor_total: number | null;
+  status: string | null;
+  created_at: string | null;
+  cliente_id: string | null;
+  clientes: {
+    nome?: string | null;
+    nome_completo?: string | null;
+    email?: string | null;
+  } | null;
+};
 
 interface PagamentosListProps {
   pedidos: PedidoParaPagamento[];
@@ -57,18 +69,18 @@ export function PagamentosList({ pedidos }: PagamentosListProps) {
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {pedido.clientes?.nome || `ID: ${pedido.cliente_id.slice(0, 8)}...`}
+                {pedido.clientes?.nome || pedido.clientes?.nome_completo || `ID: ${pedido.cliente_id?.slice(0, 8) || 'N/A'}...`}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
                 {formatCurrency(pedido.valor_total || 0)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm">
-                <Badge className={statusMap[pedido.status] || 'bg-gray-100 text-gray-800'}>
-                  {pedido.status.replace('_', ' ')}
+                <Badge className={statusMap[pedido.status || ''] || 'bg-gray-100 text-gray-800'}>
+                  {(pedido.status || 'SEM_STATUS').replace('_', ' ')}
                 </Badge>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {format(new Date(pedido.created_at), 'dd/MM/yyyy')}
+                {pedido.created_at ? format(new Date(pedido.created_at), 'dd/MM/yyyy') : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <Link href={`/admin/pedidos/${pedido.id}`}>

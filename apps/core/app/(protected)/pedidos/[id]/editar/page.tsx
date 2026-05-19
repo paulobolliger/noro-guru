@@ -1,8 +1,7 @@
 // app/admin/(protected)/pedidos/[id]/editar/page.tsx
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import { Database } from '@/types/supabase';
-import { PedidoComRelacionamentos } from '@/app/admin/(protected)/pedidos/[id]/page'; // Reutilizando a tipagem
+import { PedidoComRelacionamentos } from '@/types/pedidos';
 import EditPedidoForm from '@/components/admin/pedidos/EditPedidoForm';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -26,12 +25,12 @@ async function fetchPedidoDetalhesParaEdicao(id: string): Promise<PedidoComRelac
 
   // Garante que todos os dados necessários para o formulário sejam buscados
   const { data: pedido, error } = await supabase
-    .from('pedidos')
+    .from('noro_pedidos')
     .select(
       `
         *,
-        pedido_itens(*),
-        clientes(*)
+        noro_pedidos_itens(*),
+        clientes:noro_clientes(*)
       `
     )
     .eq('id', id)

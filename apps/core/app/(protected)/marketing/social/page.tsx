@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent } from '@noro/ui/card';
-import { Button } from '@noro/ui/button';
-import { Calendar, Plus, Instagram, Facebook, Linkedin, AlertCircle, CheckCircle2, Video, Pin, Youtube } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@noro/ui/dialog';
-import { useToast } from '@noro/ui/use-toast';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Calendar, Plus, Instagram, Facebook, Linkedin, AlertCircle, CheckCircle2, Video, Pin, Youtube, AlertTriangle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/components/ui/use-toast';
 
 interface SocialAccount {
     id: string;
@@ -37,6 +37,7 @@ export default function SocialMediaPage() {
         toast({
             title: "Conectando...",
             description: `Iniciando conexão com ${platform}. Aguarde...`,
+            variant: "info",
         });
 
         setTimeout(() => {
@@ -46,6 +47,7 @@ export default function SocialMediaPage() {
             toast({
                 title: "Sucesso!",
                 description: `Conta do ${platform} conectada com sucesso.`,
+                variant: "success",
             });
             setConnectOpen(false);
         }, 1500);
@@ -55,6 +57,10 @@ export default function SocialMediaPage() {
 
     return (
         <div className="p-6 space-y-6">
+            <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span><strong>Em Desenvolvimento</strong> — A conexão com redes sociais é simulada. Nenhuma conta real é conectada e os posts não são publicados.</span>
+            </div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-gray-900">Gestão de Redes Sociais</h1>

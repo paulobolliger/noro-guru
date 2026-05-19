@@ -22,7 +22,6 @@ export default function GlobalSearch() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      console.log('Searching for:', query);
       // TODO: Implement search functionality
     }
   };

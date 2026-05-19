@@ -1,6 +1,7 @@
 'use server';
 
 import { getSupabaseServer } from '@/lib/supabaseServer';
+import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { notFound } from 'next/navigation';
 
 // ... previous imports
@@ -83,7 +84,6 @@ export async function inviteTenantUser(tenantId: string, email: string, role: st
     // We will return a success message but maybe trigger a "Pending Invites" table if we had one.
     
     // Simulating:
-    console.log(`Convite enviado para ${email} (${role}) no tenant ${tenantId}`);
     
     return { success: true, message: 'Convite enviado (Simulado)' };
 }
@@ -291,15 +291,28 @@ export async function updateTenantCompany(tenantId: string, formData: FormData) 
         comprovante_bancario: getDocData('comprovante_bancario', formData.get('comprovante_bancario') as File),
     };
     
-    // Logo processing (mock)
+    // Logo upload para Supabase Storage
     const logoFile = formData.get('logo_file') as File;
-    let logo_url = existingRecord?.logo_url; // Keep existing if not changed
+    let logo_url = existingRecord?.logo_url;
     if (logoFile && logoFile.size > 0) {
-        // Mock upload url
-        // logo_url = await uploadLogo(logoFile); 
-        console.log('Logo file received:', logoFile.name);
+        try {
+            const admin = createAdminSupabaseClient();
+            const ext = logoFile.name.split('.').pop() || 'png';
+            const path = `${tenantId}/logo-${Date.now()}.${ext}`;
+            const buffer = await logoFile.arrayBuffer();
+            const { error: uploadError } = await admin.storage
+                .from('tenant-logos')
+                .upload(path, buffer, { contentType: logoFile.type, upsert: true });
+            if (uploadError) {
+                console.error('Erro ao fazer upload do logo:', uploadError);
+            } else {
+                const { data: urlData } = admin.storage.from('tenant-logos').getPublicUrl(path);
+                logo_url = urlData.publicUrl;
+            }
+        } catch (err) {
+            console.error('Erro inesperado no upload do logo:', err);
+        }
     }
-    // Note: If using a real URL input or existing one, we might want to capture it too.
 
     const data = {
         nome_empresa: formData.get('nome_empresa'),
@@ -315,8 +328,8 @@ export async function updateTenantCompany(tenantId: string, formData: FormData) 
         representante_legal,
         contatos,
         dados_bancarios,
-        documentos
-        // logo_url // We aren't really saving a new URL yet without bucket logic
+        documentos,
+        logo_url,
     };
 
     if (existingRecord) {

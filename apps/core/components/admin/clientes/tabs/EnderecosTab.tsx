@@ -31,7 +31,7 @@ interface EnderecosTabProps {
 // --- FUNÇÃO DE BUSCA POR CEP REAL (ViaCEP) ---
 async function fetchCEP(cep: string): Promise<{
     success: boolean;
-    data: { logradouro: string; bairro: string; localidade: string; uf: string; } | null;
+  data: { logradouro: string; bairro: string; cidade: string; estado: string; } | null;
 }> {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length !== 8) return { success: false, data: null };

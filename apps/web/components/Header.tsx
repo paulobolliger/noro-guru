@@ -1,247 +1,235 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useModal } from './providers/modal-provider';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { ChevronDownIcon } from './icons/ChevronDownIcon';
-import Button from './ui/Button';
 
-const ecosystemLinks = [
-  { href: '/ecosystem/vistos-guru', name: 'Inteligência de Dados para Vistos' },
-  { href: '/ecosystem/intelligent-websites', name: 'Criação de Sites Inteligentes' },
-  { href: '/ecosystem/intelligent-crm-erp', name: 'CRM/ERP Inteligente' },
-  { href: '/ecosystem/ittd', name: 'Travel & Tourism Database' },
+const NAV_LINKS = [
+  { label: 'Produto', href: '/#features' },
+  { label: 'Preços', href: '/pricing' },
+  { label: 'Ecossistema', href: '/ecosystem' },
+  { label: 'Suporte', href: '/suporte' },
 ];
 
-const Header: React.FC = () => {
-  const { openModal } = useModal();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsDropdownOpen(true);
-    }, 150); // Delay de 150ms para evitar abertura acidental
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsDropdownOpen(false);
-    }, 200);
-  };
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 py-4 px-6 md:px-12 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm" role="banner">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center" aria-label="NORO - Página inicial">
-          <Image
-            src="https://res.cloudinary.com/dhqvjxgue/image/upload/v1760969739/edited-photo_4_txwuti.png"
-            alt="NORO Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      background: scrolled ? 'rgba(255,255,255,0.96)' : '#fff',
+      borderBottom: '1px solid #eceef3',
+      backdropFilter: scrolled ? 'blur(12px)' : 'none',
+      transition: 'background .2s, box-shadow .2s',
+      boxShadow: scrolled ? '0 1px 12px rgba(35,36,82,.06)' : 'none',
+    }}>
+      <div style={{
+        maxWidth: 1152,
+        margin: '0 auto',
+        padding: '0 24px',
+        height: 60,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 32,
+      }}>
+
+        {/* Logo */}
+        <Link
+          href="/"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            textDecoration: 'none', flexShrink: 0,
+          }}
+        >
+          <div style={{
+            width: 34, height: 34, borderRadius: 9,
+            background: '#232452',
+            color: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 800, fontSize: 15, letterSpacing: '.02em',
+            fontFamily: 'var(--font-sans)',
+          }}>
+            N
+          </div>
+          <div>
+            <div style={{
+              fontWeight: 700,
+              fontSize: 14.5,
+              letterSpacing: '-.012em',
+              color: '#1f2433',
+              lineHeight: 1.1,
+            }}>NORO Guru</div>
+            <div style={{
+              fontSize: 9.5,
+              color: 'rgba(31,36,51,0.45)',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '.04em',
+            }}>para agências de viagem</div>
+          </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm font-display font-medium tracking-wide" role="navigation" aria-label="Navegação principal">
-          <Link
-            href="/about"
-            className="text-noro-blue hover:text-noro-turquoise transition-colors focus-visible:outline-noro-turquoise"
-          >
-            Sobre
-          </Link>
-
-          <div
-            className="relative"
-            ref={dropdownRef}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1 text-noro-blue hover:text-noro-turquoise transition-colors focus-visible:outline-noro-turquoise"
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
+        {/* Desktop nav */}
+        <nav style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          marginLeft: 8,
+          flex: 1,
+        }}>
+          {NAV_LINKS.map((l) => (
+            <Link
+              key={l.label}
+              href={l.href}
+              style={{
+                fontSize: 13.5,
+                fontWeight: 600,
+                color: 'rgba(31,36,51,0.65)',
+                textDecoration: 'none',
+                padding: '6px 12px',
+                borderRadius: 8,
+                transition: 'color .12s, background .12s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#232452';
+                (e.currentTarget as HTMLAnchorElement).style.background = '#f6f7fb';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(31,36,51,0.65)';
+                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+              }}
             >
-              Ecossistema
-              <ChevronDownIcon className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {isDropdownOpen && (
-              <div
-                className="absolute top-full mt-3 w-64 bg-white border border-gray-200 rounded-lg shadow-xl py-2 animate-fade-in"
-                role="menu"
-                aria-label="Submenu do ecossistema"
-              >
-                {ecosystemLinks.map(link => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="block px-4 py-3 text-noro-blue hover:bg-noro-light hover:text-noro-turquoise transition-all rounded-md mx-2 font-display font-medium text-sm"
-                    role="menuitem"
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <Link
-            href="/#features"
-            className="text-noro-blue hover:text-noro-turquoise transition-colors scroll-smooth"
-          >
-            Recursos
-          </Link>
-
-          <Link
-            href="/pricing"
-            className="text-noro-blue hover:text-noro-turquoise transition-colors"
-          >
-            Preços
-          </Link>
-
-          <Link
-            href="/suporte"
-            className="text-noro-blue hover:text-noro-turquoise transition-colors"
-          >
-            Suporte
-          </Link>
-
-          <button
-            onClick={openModal}
-            className="text-noro-blue hover:text-noro-turquoise transition-colors"
-          >
-            Contato
-          </button>
+              {l.label}
+            </Link>
+          ))}
         </nav>
 
-        <Button variant="primary" className="hidden md:inline-flex shadow-[0_0_10px_#D4AF37]">
-          Acessar Plataforma
-        </Button>
+        {/* CTAs */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <Link
+            href="https://app.noro.guru/login"
+            style={{
+              fontSize: 13.5,
+              fontWeight: 600,
+              color: 'rgba(31,36,51,0.7)',
+              textDecoration: 'none',
+              padding: '7px 14px',
+              borderRadius: 8,
+            }}
+          >
+            Entrar
+          </Link>
+          <Link
+            href="https://app.noro.guru"
+            style={{
+              fontSize: 13.5,
+              fontWeight: 700,
+              color: '#fff',
+              background: '#232452',
+              textDecoration: 'none',
+              padding: '8px 18px',
+              borderRadius: 9,
+              letterSpacing: '-.01em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            Começar grátis
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden text-noro-blue p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {isMobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{
+              background: 'transparent',
+              border: 0,
+              cursor: 'pointer',
+              padding: 8,
+              display: 'none', // hidden on desktop via CSS below
+            }}
+            aria-label="Menu"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2433" strokeWidth="2" strokeLinecap="round">
+              {mobileOpen ? (
+                <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+              ) : (
+                <><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></>
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden mt-4 py-4 border-t border-gray-200 bg-white shadow-lg">
-          <nav className="flex flex-col gap-4">
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div style={{
+          background: '#fff',
+          borderTop: '1px solid #eceef3',
+          padding: '16px 24px 24px',
+        }}>
+          {NAV_LINKS.map((l) => (
             <Link
-              href="/about"
-              className="text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium px-4 py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sobre
-            </Link>
-
-            <div className="px-4">
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1 text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium w-full py-2"
-              >
-                Ecossistema
-                <ChevronDownIcon className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {isDropdownOpen && (
-                <div className="mt-2 ml-4 space-y-2">
-                  {ecosystemLinks.map(link => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="block text-noro-blue/80 hover:text-noro-turquoise transition-colors py-2 font-display font-medium"
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <Link
-              href="/#features"
-              className="text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium px-4 py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Recursos
-            </Link>
-
-            <Link
-              href="/pricing"
-              className="text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium px-4 py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Preços
-            </Link>
-
-            <Link
-              href="/suporte"
-              className="text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium px-4 py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Suporte
-            </Link>
-
-            <button
-              onClick={() => {
-                openModal();
-                setIsMobileMenuOpen(false);
+              key={l.label}
+              href={l.href}
+              onClick={() => setMobileOpen(false)}
+              style={{
+                display: 'block',
+                padding: '12px 0',
+                fontSize: 15,
+                fontWeight: 600,
+                color: '#1f2433',
+                textDecoration: 'none',
+                borderBottom: '1px solid #f6f7fb',
               }}
-              className="text-noro-blue hover:text-noro-turquoise transition-colors font-display font-medium text-left px-4 py-2"
             >
-              Contato
-            </button>
-
-            <Button variant="primary" className="mx-4 mt-2 shadow-[0_0_10px_#D4AF37]" fullWidth>
-              Acessar Plataforma
-            </Button>
-          </nav>
+              {l.label}
+            </Link>
+          ))}
+          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Link
+              href="https://app.noro.guru/login"
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                padding: '11px',
+                fontSize: 14, fontWeight: 600,
+                color: '#232452',
+                border: '1px solid #dfe2ea',
+                borderRadius: 9,
+                textDecoration: 'none',
+              }}
+            >
+              Entrar
+            </Link>
+            <Link
+              href="https://app.noro.guru"
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                padding: '11px',
+                fontSize: 14, fontWeight: 700,
+                color: '#fff',
+                background: '#232452',
+                borderRadius: 9,
+                textDecoration: 'none',
+              }}
+            >
+              Começar grátis
+            </Link>
+          </div>
         </div>
       )}
     </header>
   );
-};
-
-export default Header;
+}

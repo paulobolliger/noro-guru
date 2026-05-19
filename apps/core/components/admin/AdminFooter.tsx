@@ -1,5 +1,4 @@
 ﻿// components/admin/AdminFooter.tsx
-import packageJson from '@/../package.json';
 import Link from 'next/link';
 
 interface AdminFooterProps {
@@ -7,8 +6,7 @@ interface AdminFooterProps {
 }
 
 export default function AdminFooter({ footerColor }: AdminFooterProps) {
-  // Lê a versão do build do Vercel, ou usa a versão do package.json como fallback
-  const version = process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version;
+  const version = process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0';
   const currentYear = new Date().getFullYear();
 
   return (

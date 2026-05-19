@@ -1,54 +1,97 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
-import { createClient } from "@/lib/supabase/middleware";
+import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
+
+async function updateSession(request: NextRequest): Promise<NextResponse> {
+  let supabaseResponse = NextResponse.next({ request });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  // Refresh session — do not remove
+  await supabase.auth.getUser();
+
+  return supabaseResponse;
+}
+
+function createDomainLookupClient(request: NextRequest, response: NextResponse) {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+}
+
+const SYSTEM_DOMAINS = [
+  'localhost',
+  'noro-guru.vercel.app',
+  'noro.guru',
+  'core.noro.guru',
+  'control.noro.guru',
+];
 
 export async function middleware(request: NextRequest) {
   // 1. Auth & Session Management
-  let response = await updateSession(request);
-  if (!response) {
-      response = NextResponse.next();
-  }
+  const response = await updateSession(request);
 
-  // 2. Custom Domain & Subdomain Routing
   const url = request.nextUrl;
-  const hostname = request.headers.get("host")!; // e.g. "app.cliente.com" or "localhost:3000"
+  const hostname = request.headers.get('host') ?? '';
 
-  // Define allowed domains (system domains) that shouldn't be rewritten
-  // Add your Vercel domains or production domains here
-  const allowedDomains = ["localhost:3000", "noro-guru.vercel.app", "noro.guru"];
-  
-  // Check if it's a verification request or API or static file
+  // Skip rewrites for static files and API routes
   const isPublicFile = url.pathname.includes('.') || url.pathname.startsWith('/_next');
   const isApi = url.pathname.startsWith('/api');
 
   if (isPublicFile || isApi) {
-      return response;
+    return response;
   }
 
-  // If hostname is NOT a system domain, treat it as a potential Custom Domain
-  const isCustomDomain = !allowedDomains.some(d => hostname.includes(d));
+  // 2. Custom Domain Routing
+  const isCustomDomain = !SYSTEM_DOMAINS.some((d) => hostname.includes(d));
 
   if (isCustomDomain) {
-      // Lookup tenant associated with this domain
-      const supabase = createClient(request, response);
-      
-      const { data: domainRecord } = await supabase
-          .from('noro_domains')
-          .select('tenant_id, verified, tenants(slug)')
-          .eq('domain', hostname)
-          .eq('status', 'active')
-          .single();
+    const supabase = createDomainLookupClient(request, response);
 
-      if (domainRecord && domainRecord.tenants) {
-          // It's a valid custom domain! Rewrite to the tenant's site
-          // We rewrite to /site/[slug] so the app knows which tenant context to load
-          const slug = (domainRecord.tenants as any).slug;
-          
-          // Rewrite the URL to the custom site dynamic route
-          // Keep the original path (e.g. /login, /dashboard)
-          url.pathname = `/site/${slug}${url.pathname}`;
-          return NextResponse.rewrite(url);
-      }
+    const { data: domainRecord } = await supabase
+      .from('noro_domains')
+      .select('tenant_id, verified, tenants(slug)')
+      .eq('domain', hostname)
+      .eq('status', 'active')
+      .single();
+
+    if (domainRecord?.tenants) {
+      const slug = (domainRecord.tenants as unknown as { slug: string }).slug;
+      url.pathname = `/site/${slug}${url.pathname}`;
+      return NextResponse.rewrite(url);
+    }
   }
 
   return response;
@@ -56,6 +99,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

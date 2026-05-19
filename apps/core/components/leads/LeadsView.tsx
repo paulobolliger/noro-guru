@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import LeadsTable from '@/components/leads/LeadsTable'
 import LeadsKanban from '@/components/leads/LeadsKanban'
 import { LayoutGrid, Table as TableIcon } from 'lucide-react'
+import { updateLeadStageAction } from '@/app/(protected)/leads/actions'
 
 interface Lead {
   id: string
@@ -23,10 +24,12 @@ interface LeadsViewProps {
 
 export default function LeadsView({ leads }: LeadsViewProps) {
   const [view, setView] = useState<'kanban' | 'table'>('kanban')
+  const [isPending, startTransition] = useTransition()
 
   const handleLeadMove = (leadId: string, newStatus: Lead['status']) => {
-    console.log(`Lead ${leadId} movido para ${newStatus}`)
-    // Aqui você pode fazer a chamada para o Supabase para atualizar o status
+    startTransition(async () => {
+      await updateLeadStageAction(leadId, newStatus)
+    })
   }
 
   return (

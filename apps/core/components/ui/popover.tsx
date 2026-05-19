@@ -2,33 +2,106 @@
 "use client"
 
 import * as React from "react"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
 
-const Popover = PopoverPrimitive.Root
-const PopoverTrigger = PopoverPrimitive.Trigger
+type PopoverContextType = {
+  open: boolean
+  setOpen: (open: boolean) => void
+}
 
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 w-auto rounded-md border shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        // CORREÇÃO CRÍTICA: Define explicitamente o fundo como branco
-        // e o texto como cinza escuro para anular qualquer herança de tema escuro.
-        "bg-white text-gray-900", 
-        className
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-))
-PopoverContent.displayName = PopoverPrimitive.Content.displayName
+const PopoverContext = React.createContext<PopoverContextType | null>(null)
+
+function usePopoverContext() {
+  const ctx = React.useContext(PopoverContext)
+  if (!ctx) {
+    throw new Error("Popover components must be used within <Popover>.")
+  }
+  return ctx
+}
+
+type PopoverProps = {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
+}
+
+function Popover({ open, onOpenChange, children }: PopoverProps) {
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const isControlled = typeof open === "boolean"
+  const isOpen = isControlled ? (open as boolean) : internalOpen
+
+  const setOpen = React.useCallback(
+    (nextOpen: boolean) => {
+      if (!isControlled) {
+        setInternalOpen(nextOpen)
+      }
+      onOpenChange?.(nextOpen)
+    },
+    [isControlled, onOpenChange]
+  )
+
+  return <PopoverContext.Provider value={{ open: isOpen, setOpen }}>{children}</PopoverContext.Provider>
+}
+
+type PopoverTriggerProps = {
+  asChild?: boolean
+  children: React.ReactNode
+  className?: string
+}
+
+function PopoverTrigger({ asChild = false, children, className }: PopoverTriggerProps) {
+  const { setOpen } = usePopoverContext()
+
+  if (asChild && React.isValidElement(children)) {
+    const originalOnClick = (children.props as { onClick?: (event: React.MouseEvent) => void }).onClick
+    return React.cloneElement(children, {
+      onClick: (event: React.MouseEvent) => {
+        originalOnClick?.(event)
+        setOpen(true)
+      },
+    })
+  }
+
+  return (
+    <button type="button" className={className} onClick={() => setOpen(true)}>
+      {children}
+    </button>
+  )
+}
+
+type PopoverContentProps = React.HTMLAttributes<HTMLDivElement> & {
+  align?: "start" | "center" | "end"
+  sideOffset?: number
+}
+
+const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
+  ({ className, align = "center", sideOffset = 4, children, ...props }, ref) => {
+    const { open, setOpen } = usePopoverContext()
+    if (!open) return null
+
+    const alignClass =
+      align === "start" ? "left-0" : align === "end" ? "right-0" : "left-1/2 -translate-x-1/2"
+
+    return (
+      <div className="fixed inset-0 z-50" onClick={() => setOpen(false)}>
+        <div
+          ref={ref}
+          className={cn(
+            "absolute mt-2 w-auto rounded-md border shadow-md outline-none bg-white text-gray-900",
+            alignClass,
+            className
+          )}
+          style={{ top: sideOffset + 44 }}
+          onClick={(e) => e.stopPropagation()}
+          {...props}
+        >
+          {children}
+        </div>
+      </div>
+    )
+  }
+)
+PopoverContent.displayName = "PopoverContent"
 
 export { Popover, PopoverTrigger, PopoverContent }

@@ -1,9 +1,8 @@
 import { Info, ArrowLeft, BrainCircuit, Zap, ShieldCheck, Heart } from 'lucide-react';
-import packageJson from '@/../package.json';
 import Link from 'next/link';
 
 export default function SobreNoroPage() {
-  const version = packageJson.version;
+  const version = process.env.NEXT_PUBLIC_APP_VERSION || '0.1.0';
   const currentYear = new Date().getFullYear();
 
   return (

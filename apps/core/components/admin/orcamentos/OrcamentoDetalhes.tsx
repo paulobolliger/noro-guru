@@ -24,7 +24,7 @@ import type { Database } from '@/types/supabase';
 // Tipo local para evitar importações cruzadas
 type OrcamentoComItens = Database['public']['Tables']['noro_orcamentos']['Row'] & {
     orcamento_itens: Database['public']['Tables']['noro_orcamentos_itens']['Row'][];
-    lead?: { id: string; nome: string } | null;
+  lead?: { id: string; nome: string; email?: string | null } | null;
 };
 
 interface OrcamentoDetalhesProps {
@@ -48,7 +48,7 @@ export function OrcamentoDetalhes({ orcamento }: OrcamentoDetalhesProps) {
     try {
       const result = await convertToPedido(orcamento.id);
       if (result.success) {
-        toast({ title: 'Sucesso!', description: result.message });
+        toast({ title: 'Sucesso!', description: result.message, variant: 'success' });
         if (result.data?.pedidoId) {
             router.push(`/admin/pedidos/${result.data.pedidoId}`);
         } else {

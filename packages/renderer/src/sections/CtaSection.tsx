@@ -1,6 +1,6 @@
 'use client';
 
-import type { CtaConfig } from '@noro/types/blueprint';
+import type { CTAConfig as CtaConfig } from '@noro/types/blueprint';
 import { ButtonVariant } from '@noro/types/blueprint';
 
 interface CtaSectionProps {

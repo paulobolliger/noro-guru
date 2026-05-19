@@ -1,12 +1,12 @@
 'use client';
 
 import { Tarefa, updateTarefaStatus } from '@/app/(protected)/tarefas/tarefas-actions';
-import { Card, CardContent, CardHeader, CardTitle } from '@noro/ui/card';
-import { Badge } from '@noro/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTransition } from 'react';
-import { useToast } from '@noro/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface KanbanProps {
     tarefas: Tarefa[];
@@ -38,7 +38,7 @@ export default function TarefasKanban({ tarefas }: KanbanProps) {
         startTransition(async () => {
             try {
                 await updateTarefaStatus(taskId, status);
-                toast({ title: "Tarefa atualizada", description: `Movida para ${status}` });
+                toast({ title: "Tarefa atualizada", description: `Movida para ${status}`, variant: "success" });
             } catch (error) {
                 toast({ title: "Erro", description: "Não foi possível mover a tarefa", variant: "destructive" });
             }
@@ -63,7 +63,7 @@ export default function TarefasKanban({ tarefas }: KanbanProps) {
                     >
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-700">{col.title}</h3>
-                            <Badge variant="secondary" className="bg-white">{colTarefas.length}</Badge>
+                            <Badge className="bg-white text-gray-700 border-gray-200">{colTarefas.length}</Badge>
                         </div>
 
                         <div className="flex-1 overflow-y-auto space-y-3">
@@ -80,10 +80,13 @@ export default function TarefasKanban({ tarefas }: KanbanProps) {
                                                 <CardTitle className="text-sm font-medium leading-tight">
                                                     {tarefa.titulo}
                                                 </CardTitle>
-                                                <Badge variant={
-                                                    tarefa.prioridade === 'alta' || tarefa.prioridade === 'urgente' ? 'destructive' :
-                                                        tarefa.prioridade === 'media' ? 'default' : 'secondary'
-                                                } className="text-[10px] px-1 py-0 h-5">
+                                                <Badge className={
+                                                    tarefa.prioridade === 'alta' || tarefa.prioridade === 'urgente'
+                                                        ? 'text-[10px] px-1 py-0 h-5 bg-red-100 text-red-700 border-red-200'
+                                                        : tarefa.prioridade === 'media'
+                                                            ? 'text-[10px] px-1 py-0 h-5 bg-blue-100 text-blue-700 border-blue-200'
+                                                            : 'text-[10px] px-1 py-0 h-5 bg-gray-100 text-gray-700 border-gray-200'
+                                                }>
                                                     {tarefa.prioridade}
                                                 </Badge>
                                             </div>

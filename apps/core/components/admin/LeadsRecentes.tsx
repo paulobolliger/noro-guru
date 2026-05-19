@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Lead } from '@/types/admin';
 
 interface LeadsRecentesProps {
-  leads: Lead[];
+  leads: Array<Lead | Record<string, any>>;
 }
 
 export default function LeadsRecentes({ leads }: LeadsRecentesProps) {

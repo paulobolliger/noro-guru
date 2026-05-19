@@ -31,15 +31,10 @@ export default function TestPublishCard() {
   const loadProfiles = async () => {
     setIsLoadingProfiles(true);
     try {
-      console.log('📋 Loading connected profiles...');
       const response = await fetch('/api/admin/social/profiles');
       const data = await response.json();
 
-      console.log('📋 Profiles data:', data);
-
       if (data.success && data.profiles) {
-        console.log('📋 Profiles array:', data.profiles);
-        console.log('📋 First profile:', data.profiles[0]);
         setProfiles(data.profiles);
         // Auto-select first profile if available
         if (data.profiles.length > 0 && data.profiles[0]?.id) {
@@ -76,11 +71,6 @@ export default function TestPublishCard() {
     setResult(null);
 
     try {
-      console.log('🚀 Publishing test post...', {
-        content,
-        profiles: selectedProfiles,
-      });
-
       const response = await fetch('/api/admin/social/test-publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,8 +83,6 @@ export default function TestPublishCard() {
       });
 
       const data = await response.json();
-      console.log('📡 Publish response:', data);
-
       setResult({
         success: data.success,
         message: data.message,

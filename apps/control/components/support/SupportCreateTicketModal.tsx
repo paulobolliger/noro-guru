@@ -40,8 +40,6 @@ export function SupportCreateTicketModal({ isOpen, onClose, tenants, defaultTena
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log('Modal render - isOpen:', isOpen, 'tenants:', tenants.length);
-
   if (!isOpen) return null;
 
   const canSubmit = subject.trim().length > 0 && tenantId;
@@ -52,7 +50,6 @@ export function SupportCreateTicketModal({ isOpen, onClose, tenants, defaultTena
     setIsSubmitting(true);
     setError(null);
     try {
-      console.log('Creating ticket with data:', { subject, summary, tenant_id: tenantId, priority, source });
       const res = await fetch("/api/support/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

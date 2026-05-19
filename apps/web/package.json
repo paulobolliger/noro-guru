@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.6",
     "@noro/renderer": "file:../../packages/renderer",
     "@noro/types": "file:../../packages/types",
     "@supabase/supabase-js": "^2.39.0",
     "canvas": "^3.2.1",
-    "lucide-react": "^0.263.1",
+    "lucide-react": "^0.446.0",
     "next": "14.2.4",
     "node-vibrant": "^4.0.3",
     "openai": "^4.20.1",

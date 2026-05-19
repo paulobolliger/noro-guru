@@ -10,7 +10,7 @@ export default async function ConfiguracoesPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect('/admin/login');
+    return redirect('/login');
   }
 
   // Busca todos os dados em paralelo

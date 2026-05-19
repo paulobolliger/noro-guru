@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@noro/ui/dialog';
-import { Button } from '@noro/ui/button';
-import { Input } from '@noro/ui/input';
-import { Label } from '@noro/ui/label';
-import { Textarea } from '@noro/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@noro/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createTarefa } from '@/app/(protected)/tarefas/tarefas-actions';
-import { useToast } from '@noro/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { Plus, Loader2 } from 'lucide-react';
 
 export default function TarefaDialog() {
@@ -24,7 +24,7 @@ export default function TarefaDialog() {
 
         try {
             await createTarefa(formData);
-            toast({ title: "Sucesso", description: "Tarefa criada com sucesso!" });
+            toast({ title: "Sucesso", description: "Tarefa criada com sucesso!", variant: "success" });
             setOpen(false);
         } catch (error) {
             toast({ title: "Erro", description: "Falha ao criar tarefa.", variant: "destructive" });
@@ -59,7 +59,7 @@ export default function TarefaDialog() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="prioridade">Prioridade</Label>
-                            <Select name="prioridade" defaultValue="media">
+                            <Select defaultValue="media">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione" />
                                 </SelectTrigger>
@@ -73,7 +73,7 @@ export default function TarefaDialog() {
 
                         <div className="grid gap-2">
                             <Label htmlFor="status">Status Inicial</Label>
-                            <Select name="status" defaultValue="pendente">
+                            <Select defaultValue="pendente">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione" />
                                 </SelectTrigger>

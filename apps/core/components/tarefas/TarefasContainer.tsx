@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@noro/ui/button';
+import { Button } from '@/components/ui/button';
 import { List, Kanban } from 'lucide-react';
 import TarefasKanban from './TarefasKanban';
 import TarefasList from './TarefasList';

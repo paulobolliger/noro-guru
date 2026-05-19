@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Plus_Jakarta_Sans, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./global.css";
 import "../styles/theme.css";
 import Header from "@/components/Header";
@@ -12,15 +12,25 @@ import CookieConsent from "@/components/CookieConsent";
 import StructuredData from "@/components/StructuredData";
 import { getOrganizationSchema, getWebsiteSchema } from "@/lib/schema";
 
-const inter = Inter({
+const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: '--font-inter',
+  variable: '--font-sans',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
-const poppins = Poppins({
+const fontDisplay = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: '--font-poppins',
+  variable: '--font-display',
+  display: 'swap',
+  axes: ['opsz', 'WONK'],
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: '--font-mono',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -39,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`dark ${inter.variable} ${poppins.variable}`}>
+    <html lang="pt-BR" className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}>
       <head>
         <Suspense fallback={null}>
           <Analytics />
@@ -51,16 +61,10 @@ export default function RootLayout({
           ]}
         />
       </head>
-      <body className="bg-[#0B1220] font-sans text-[#D1D5F0] min-h-screen overflow-x-hidden antialiased">
+      <body className="bg-white font-sans text-[#1f2433] min-h-screen overflow-x-hidden antialiased" style={{ fontFamily: 'var(--font-sans, system-ui)' }}>
         <ToastProvider>
           <ModalProvider>
-            {/* Background gradients */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-              <div className="absolute top-[-20%] left-[-20%] w-[60vw] h-[60vw] bg-[#3B2CA4]/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
-              <div className="absolute bottom-[-20%] right-[-20%] w-[50vw] h-[50vw] bg-[#1DD3C0]/10 rounded-full filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
-            </div>
-
-            <div className="relative z-10 flex flex-col min-h-screen">
+            <div className="relative flex flex-col min-h-screen">
               <Header />
               <main className="flex-grow">
                 {children}

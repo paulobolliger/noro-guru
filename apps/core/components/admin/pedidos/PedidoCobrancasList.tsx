@@ -42,18 +42,17 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
     // Extrai o link de pagamento ou linha digitável do provider_data
     const getPaymentDetail = (cobranca: Cobranca) => {
         const data = cobranca.provider_data as any;
-        if (!data) return { link: null, detail: null, isCopiable: false };
+        if (!data) return { link: null, detail: null, copyValue: null };
 
-        if (data.checkoutUrl) { // Stripe e Link de Pagamento BTG/Cielo (se implementado)
-            return { link: data.checkoutUrl, detail: 'Link de Checkout', isCopiable: true };
+            // e.Rede PIX — copia e cola (EMV)
+        if (data.qrCode) {
+            return { link: null, detail: 'PIX (copia e cola)', copyValue: data.qrCode };
         }
-        if (data.digitableLine) { // BTG Boleto
-             return { link: null, detail: data.digitableLine, isCopiable: true };
+        // e.Rede Cartão — TID/NSU
+        if (data.tid) {
+            return { link: null, detail: `TID: ${data.tid} | NSU: ${data.nsu || '—'}`, copyValue: data.tid };
         }
-        if (data.emv) { // BTG PIX
-            return { link: null, detail: 'PIX Copia e Cola', isCopiable: true };
-        }
-        return { link: null, detail: cobranca.transaction_id || 'N/A', isCopiable: false };
+        return { link: null, detail: cobranca.transaction_id || 'N/A', copyValue: null };
     };
 
     const handleCopy = (text: string, provider: string) => {
@@ -61,6 +60,7 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
         toast({
             title: 'Copiado!',
             description: `${provider} copiado para a área de transferência.`,
+            variant: 'success',
         });
     };
 
@@ -84,7 +84,7 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {cobrancas.map((cobranca) => {
-                                const { link, detail, isCopiable } = getPaymentDetail(cobranca);
+                                const { link, detail, copyValue } = getPaymentDetail(cobranca);
                                 const isPaid = cobranca.status === 'PAGO';
 
                                 return (
@@ -119,12 +119,12 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
                                                     </a>
                                                 )}
 
-                                                {isCopiable && detail && (
-                                                     <Button 
-                                                        variant="ghost" 
-                                                        size="sm" 
+                                                {copyValue && (
+                                                     <Button
+                                                        variant="ghost"
+                                                        size="sm"
                                                         className="p-1 h-auto text-gray-600 hover:bg-gray-100"
-                                                        onClick={() => handleCopy(link || detail, cobranca.provider)}
+                                                        onClick={() => handleCopy(copyValue, cobranca.provider)}
                                                      >
                                                         <Copy className="h-4 w-4" />
                                                     </Button>

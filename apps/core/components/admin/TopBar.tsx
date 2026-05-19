@@ -1,12 +1,10 @@
-﻿// components/admin/TopBar.tsx
+// components/admin/TopBar.tsx
 'use client';
 
-import { Search, Bell, ChevronRight, Menu, LogOut, Loader2, User } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Search, Bell, Menu } from 'lucide-react';
+import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { usePathname } from 'next/navigation';
 import type { Database } from '@/types/supabase';
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
@@ -20,230 +18,178 @@ interface TopBarProps {
   onMenuClick?: () => void;
 }
 
-const generateBreadcrumbs = (pathname: string, clienteNome: string | null) => {
-  if (pathname === '/admin') {
-    return [{ label: 'Dashboard', href: '/admin' }];
-  }
-
-  const parts = pathname.replace('/admin', '').split('/').filter(Boolean);
-  const breadcrumbs = [{ label: 'Dashboard', href: '/admin' }];
-
-  let currentPath = '/admin';
-  parts.forEach((part, index) => {
-    const isLastPart = index === parts.length - 1;
-    let label = part.charAt(0).toUpperCase() + part.slice(1);
-
-    if (isLastPart && pathname.includes('/clientes/') && clienteNome) {
-      label = clienteNome;
-    }
-    else if (isLastPart && pathname.includes('/clientes/')) {
-      label = 'Carregando cliente...'
-    }
-
-    currentPath += `/${part}`;
-
-    breadcrumbs.push({
-      label,
-      href: isLastPart ? '' : currentPath
-    });
-  });
-
-  return breadcrumbs;
+// Route → title + subtitle map (matches wireframe copy)
+const ROUTE_MAP: Record<string, { title: string; subtitle: string }> = {
+  '/':              { title: 'Dashboard',     subtitle: 'Visão geral do seu negócio' },
+  '/leads':         { title: 'Leads',         subtitle: 'Funil de captação e qualificação' },
+  '/clientes':      { title: 'Clientes',      subtitle: 'Base de clientes da agência' },
+  '/comunicacao':   { title: 'Comunicação',   subtitle: 'Inbox unificada — WhatsApp, e-mail, Instagram' },
+  '/tarefas':       { title: 'Tarefas',       subtitle: 'Atividades, follow-ups e prazos' },
+  '/orcamentos':    { title: 'Orçamentos',    subtitle: 'Propostas em andamento' },
+  '/pedidos':       { title: 'Pedidos',       subtitle: 'Gestão de vendas e contratos' },
+  '/financeiro':    { title: 'Financeiro',    subtitle: 'Cobranças, recebíveis e fluxo de caixa' },
+  '/conteudo':      { title: 'Conteúdo IA',   subtitle: 'Roteiros e artigos gerados por IA' },
+  '/marketing':     { title: 'Marketing',     subtitle: 'Campanhas e automações' },
+  '/social':        { title: 'Social Media',  subtitle: 'Calendário editorial' },
+  '/custos':        { title: 'Custos',        subtitle: 'Análise de custos e fornecedores' },
+  '/relatorios':    { title: 'Relatórios',    subtitle: 'Performance comercial e financeira' },
+  '/site':          { title: 'Meu Site',      subtitle: 'Editor visual · domínio próprio · publicação 1-clique' },
+  '/configuracoes': { title: 'Configurações', subtitle: 'Perfil, integrações e preferências' },
 };
 
-export default function TopBar({ user, initialNotificacoes, logoUrl, topbarColor, onMenuClick }: TopBarProps) {
+function getRouteInfo(pathname: string) {
+  // Exact match
+  if (ROUTE_MAP[pathname]) return ROUTE_MAP[pathname];
+  // Prefix match (e.g. /clientes/123)
+  const match = Object.entries(ROUTE_MAP).find(
+    ([key]) => key !== '/' && pathname.startsWith(key + '/')
+  );
+  return match?.[1] ?? { title: 'Portal', subtitle: '' };
+}
+
+export default function TopBar({ initialNotificacoes, onMenuClick }: TopBarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [clienteNome, setClienteNome] = useState<string | null>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [notificacoes] = useState<Notificacao[]>(initialNotificacoes);
 
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
-  };
-
-  useEffect(() => {
-    const parts = pathname.split('/');
-    if (parts[1] === 'admin' && parts[2] === 'clientes' && parts.length === 4 && parts[3] && parts[3] !== 'novo') {
-      const clienteId = parts[3];
-
-      const fetchClienteName = async () => {
-        setClienteNome('Carregando...');
-        const { data, error } = await supabase
-          .from('noro_clientes')
-          .select('nome')
-          .eq('id', clienteId)
-          .single();
-
-        if (data?.nome) {
-          setClienteNome(data.nome);
-        } else {
-          setClienteNome(clienteId.substring(0, 8) + '...');
-        }
-      };
-
-      fetchClienteName();
-    } else {
-      setClienteNome(null);
-    }
-  }, [pathname, supabase]);
-
-  // Foca no input quando a busca é aberta
-  useEffect(() => {
-    if (isSearchOpen) {
-      searchInputRef.current?.focus();
-    }
-  }, [isSearchOpen]);
-
-  const breadcrumbs = generateBreadcrumbs(pathname, clienteNome);
-  const naoLidas = notificacoes.filter(n => !n.lida).length;
-
-  const finalLogoUrl = logoUrl || "https://res.cloudinary.com/dhqvjxgue/image/upload/c_crop,ar_4:3/v1744736404/logo_branco_sem_fundo_rucnug.png";
+  const routeInfo = getRouteInfo(pathname);
+  const naoLidas = notificacoes.filter((n) => !n.lida).length;
 
   return (
-    <div
-      className="flex h-16 items-center border-b border-white/10 px-4 md:px-6 sticky top-0 z-20 text-white"
-      style={{ backgroundColor: topbarColor || '#232452' }}
+    <header
+      className="flex items-center gap-4 flex-shrink-0 sticky top-0 z-20"
+      style={{
+        height: 60,
+        padding: '0 24px',
+        background: '#ffffff',
+        borderBottom: '1px solid #eceef3',
+      }}
     >
-      <div className="flex items-center justify-between w-full">
-        {/* Lado Esquerdo: Logo e Breadcrumbs */}
-        <div className="flex items-center gap-2 md:gap-4">
-          <button
-            onClick={onMenuClick}
-            className="md:hidden text-white/70 hover:text-white p-1"
+      {/* Mobile hamburger */}
+      <button
+        onClick={onMenuClick}
+        className="md:hidden flex items-center justify-center rounded-lg w-8 h-8 transition-colors"
+        style={{ color: 'rgba(31,36,51,0.6)' }}
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Page title + subtitle */}
+      <div className="flex-1 min-w-0">
+        <div
+          className="font-bold leading-none truncate"
+          style={{ fontSize: 16, letterSpacing: '-0.012em', color: '#1f2433' }}
+        >
+          {routeInfo.title}
+        </div>
+        {routeInfo.subtitle && (
+          <div
+            className="mt-0.5 truncate"
+            style={{ fontSize: 11.5, color: 'rgba(31,36,51,0.55)' }}
           >
-            <Menu size={24} />
-          </button>
-
-          <Link href="/admin">
-            <div className="relative h-14 w-40">
-              <Image
-                src={finalLogoUrl}
-                alt="Logo do Painel"
-                fill
-                priority
-                style={{ objectFit: 'contain' }}
-              />
-            </div>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-2 text-sm text-gray-300">
-            <ChevronRight size={16} />
-            {breadcrumbs.map((crumb, index) => (
-              <div key={index} className="flex items-center gap-2">
-                {crumb.href ? (
-                  <Link href={crumb.href} className="hover:text-white">
-                    {crumb.label}
-                  </Link>
-                ) : (
-                  <span className="font-semibold text-white">{crumb.label}</span>
-                )}
-                {index < breadcrumbs.length - 1 && <ChevronRight size={16} />}
-              </div>
-            ))}
+            {routeInfo.subtitle}
           </div>
-        </div>
-
-        {/* Lado Direito: Ações */}
-        <div className="flex items-center gap-4">
-          {/* Search Bar Interativa */}
-          <div className="relative flex items-center justify-end">
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchOpen(true)}
-              onBlur={() => setIsSearchOpen(false)}
-              placeholder={isSearchOpen ? 'Buscar...' : ''}
-              className={`
-                transition-all duration-300 ease-in-out
-                h-10 rounded-lg bg-white/10 border border-white/20 text-white
-                focus:outline-none focus:ring-2 focus:ring-white/50
-                ${isSearchOpen ? 'w-64 pl-10 pr-4 cursor-text' : 'w-10 pl-2 cursor-pointer'}
-              `}
-            />
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 pointer-events-none"
-              size={18}
-            />
-          </div>
-
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-yellow-400 hover:text-yellow-200 hover:bg-white/10 rounded-lg transition-colors"
-              title="Notificações"
-            >
-              <Bell size={20} strokeWidth={3} />
-              {naoLidas > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              )}
-            </button>
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 text-gray-900">
-                <div className="p-4 border-b border-gray-200">
-                  <h3 className="font-semibold">Notificações</h3>
-                </div>
-                <div className="max-h-96 overflow-y-auto">
-                  {notificacoes.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">Nenhuma notificação</div>
-                  ) : (
-                    notificacoes.map((notif) => (
-                      <Link key={notif.id} href={notif.link || '/admin'} onClick={() => setShowNotifications(false)} className={`block p-4 hover:bg-gray-50 transition-colors border-b border-gray-100 ${!notif.lida ? 'bg-blue-50' : ''}`}>
-                        <p className="font-medium text-sm">{notif.titulo}</p>
-                        {notif.mensagem && (<p className="text-sm text-gray-600 mt-1">{notif.mensagem}</p>)}
-                        <p className="text-xs text-gray-400 mt-2">{new Date(notif.created_at).toLocaleString('pt-BR')}</p>
-                      </Link>
-                    ))
-                  )}
-                </div>
-                <div className="p-4 border-t border-gray-200 text-center">
-                  <Link href="/notificacoes" className="text-sm text-blue-600 hover:text-blue-700 font-medium" onClick={() => setShowNotifications(false)}>Ver todas</Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-
-          <div className="h-6 w-px bg-white/20"></div>
-
-          {/* User Profile & Logout */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/20">
-                {user.avatar_url ? (
-                  <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <User size={18} className="text-white/70" />
-                )}
-              </div>
-              <div className="hidden md:block text-right">
-                <p className="text-sm font-semibold text-white leading-tight">{user.nome || 'Usuário'}</p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleLogout}
-              disabled={loggingOut}
-              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors ml-1"
-              title="Sair"
-            >
-              {loggingOut ? <Loader2 className="animate-spin" size={20} /> : <LogOut size={20} strokeWidth={3} />}
-            </button>
-          </div>
-        </div>
+        )}
       </div>
-    </div>
+
+      {/* Search pill */}
+      <div
+        className="hidden md:flex items-center gap-2 rounded-lg cursor-pointer transition-colors"
+        style={{
+          width: 280,
+          padding: '6px 10px',
+          background: '#f6f7fb',
+          color: 'rgba(31,36,51,0.55)',
+          fontSize: 12.5,
+          border: '1px solid #eceef3',
+        }}
+      >
+        <Search size={15} className="flex-shrink-0" />
+        <span className="flex-1">Buscar clientes, pedidos, destinos…</span>
+        <span className="font-mono opacity-70" style={{ fontSize: 10.5 }}>⌘ K</span>
+      </div>
+
+      {/* Bell */}
+      <div className="relative flex-shrink-0">
+        <button
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="flex items-center justify-center rounded-lg transition-colors"
+          style={{
+            width: 34,
+            height: 34,
+            color: '#1f2433',
+          }}
+        >
+          <Bell size={17} />
+          {naoLidas > 0 && (
+            <span
+              className="absolute rounded-full bg-red-500 border-2 border-white"
+              style={{ width: 7, height: 7, top: 6, right: 6 }}
+            />
+          )}
+        </button>
+
+        {/* Notifications dropdown */}
+        {showNotifications && (
+          <div
+            className="absolute right-0 mt-2 bg-white rounded-xl shadow-lg overflow-hidden z-50"
+            style={{ width: 320, border: '1px solid #eceef3' }}
+          >
+            <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid #eceef3' }}>
+              <h3 className="font-semibold text-sm" style={{ color: '#1f2433' }}>Notificações</h3>
+              {naoLidas > 0 && (
+                <span
+                  className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: '#e0eaff', color: '#1f3da8' }}
+                >
+                  {naoLidas} nova{naoLidas > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+
+            <div className="overflow-y-auto" style={{ maxHeight: 320 }}>
+              {notificacoes.length === 0 ? (
+                <div className="p-6 text-center text-sm" style={{ color: 'rgba(31,36,51,0.5)' }}>
+                  Nenhuma notificação
+                </div>
+              ) : (
+                notificacoes.map((notif) => (
+                  <Link
+                    key={notif.id}
+                    href={notif.link || '/'}
+                    onClick={() => setShowNotifications(false)}
+                    className="block transition-colors"
+                    style={{
+                      padding: '12px 16px',
+                      borderBottom: '1px solid #eceef3',
+                      background: !notif.lida ? '#f0f4ff' : 'transparent',
+                    }}
+                  >
+                    <p className="font-medium text-sm" style={{ color: '#1f2433' }}>{notif.titulo}</p>
+                    {notif.mensagem && (
+                      <p className="text-xs mt-0.5" style={{ color: 'rgba(31,36,51,0.55)' }}>{notif.mensagem}</p>
+                    )}
+                    <p className="text-xs mt-1.5" style={{ color: 'rgba(31,36,51,0.4)' }}>
+                      {new Date(notif.created_at).toLocaleString('pt-BR')}
+                    </p>
+                  </Link>
+                ))
+              )}
+            </div>
+
+            <div className="p-3 text-center" style={{ borderTop: '1px solid #eceef3' }}>
+              <Link
+                href="/notificacoes"
+                className="text-xs font-semibold hover:opacity-70 transition-opacity"
+                style={{ color: '#232452' }}
+                onClick={() => setShowNotifications(false)}
+              >
+                Ver todas
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
   );
 }

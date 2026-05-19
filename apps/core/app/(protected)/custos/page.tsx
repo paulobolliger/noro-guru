@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getCurrentTenantId } from '@/lib/tenant-helper';
-import { Coins, Mail, CreditCard, ShoppingCart, Plus } from 'lucide-react';
+import { Coins, Mail, CreditCard, ShoppingCart, Plus, AlertTriangle } from 'lucide-react';
 import { purchaseCredits } from './actions';
 import { redirect } from 'next/navigation';
 
@@ -32,6 +32,10 @@ export default async function CustosPage() {
 
   return (
     <div className="space-y-8">
+      <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <AlertTriangle className="h-4 w-4 shrink-0" />
+        <span><strong>Pagamento em Desenvolvimento</strong> — A compra de créditos ainda não está integrada a um gateway de pagamento. Os créditos são adicionados diretamente sem cobrança real.</span>
+      </div>
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Meus Créditos e Assinatura</h1>
         <p className="text-slate-500">Gerencie seu saldo de IA e cotas de envio de email.</p>

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Tarefa } from '@/types/admin';
 
 interface TarefasListProps {
-  tarefas: (Tarefa & { noro_leads?: { nome: string } | null })[];
+  tarefas: Array<(Tarefa & { noro_leads?: { nome: string } | null }) | Record<string, any>>;
 }
 
 export default function TarefasList({ tarefas }: TarefasListProps) {

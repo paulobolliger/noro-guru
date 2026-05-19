@@ -1,17 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { SimpleBlueprintSchema, adaptSimpleBlueprint, BlueprintSchema } from '@noro/types/blueprint';
 
-// Use service role key for backend operations (bypasses RLS)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+export const dynamic = 'force-dynamic';
 
 function slugify(text: string): string {
   return text
@@ -23,23 +15,23 @@ function slugify(text: string): string {
     .substring(0, 50);
 }
 
-async function generateUniqueSlug(base: string): Promise<string> {
+async function generateUniqueSlug(base: string, supabase: SupabaseClient): Promise<string> {
   let slug = slugify(base);
   let counter = 1;
-  
+
   while (true) {
     const { data } = await supabase
       .from('sites')
       .select('id')
       .eq('slug', slug)
       .single();
-    
+
     if (!data) break;
-    
+
     slug = `${slugify(base)}-${counter}`;
     counter++;
   }
-  
+
   return slug;
 }
 
@@ -172,6 +164,13 @@ Return ONLY the JSON. NO markdown, NO explanations, NO code blocks.`;
 }
 
 export async function POST(req: Request) {
+  // Create clients inside handler so env vars are read at request time
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+
   try {
     const body = await req.json();
     const { 
@@ -247,7 +246,7 @@ export async function POST(req: Request) {
     console.log('[GENERATE] Custom theme:', customTheme);
 
     // Generate slug from agency name
-    const slug = await generateUniqueSlug(agencyName);
+    const slug = await generateUniqueSlug(agencyName, supabase);
 
     // Save to Supabase
     // TODO: Get real tenant_id from auth context when implementing multi-tenant auth

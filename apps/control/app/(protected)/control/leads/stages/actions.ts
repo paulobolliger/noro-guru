@@ -18,11 +18,9 @@ export async function listStages() {
     .order("ord", { ascending: true });
   
   if (error) {
-    console.error("❌ Erro ao buscar stages:", error);
+    console.error('Erro ao buscar stages:', error);
   }
-  
-  console.log("📊 Stages encontradas no banco:", data?.length || 0);
-  
+
   // Se não tiver nenhuma stage, criar as padrão
   if (!data || data.length === 0) {
     const defaultStages = [
@@ -37,38 +35,32 @@ export async function listStages() {
     
     const stagesToInsert = defaultStages.map(s => ({ ...s, tenant_id: CONTROL_PLANE_TENANT_ID }));
     
-    console.log("🔧 Tentando criar stages padrão...");
-    
     try {
       const { data: newStages, error: insertError } = await admin
         .schema("cp")
         .from("lead_stages")
         .insert(stagesToInsert)
         .select();
-      
+
       if (insertError) {
-        console.error("❌ Erro ao inserir stages:", insertError);
+        console.error('Erro ao inserir stages padrão:', insertError);
         throw insertError;
       }
-      
-      console.log("✅ Stages criadas com sucesso:", newStages?.length);
-      return newStages || defaultStages.map((s, i) => ({ 
-        id: `default-${i}`, 
-        ...s, 
+
+      return newStages || defaultStages.map((s, i) => ({
+        id: `default-${i}`,
+        ...s,
         tenant_id: null,
         created_at: new Date().toISOString()
       }));
     } catch (insertError) {
-      console.error("❌ FALHA ao criar stages padrão:", insertError);
-      // Retornar stages em memória se falhar
-      const fallbackStages = defaultStages.map((s, i) => ({ 
-        id: `fallback-${i}`, 
-        ...s, 
+      console.error('Falha ao criar stages padrão — usando fallback em memória:', insertError);
+      return defaultStages.map((s, i) => ({
+        id: `fallback-${i}`,
+        ...s,
         tenant_id: null,
         created_at: new Date().toISOString()
       }));
-      console.log("⚠️ Retornando stages em memória:", fallbackStages.length);
-      return fallbackStages;
     }
   }
   

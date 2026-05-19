@@ -5,7 +5,7 @@ import PedidoDetalhesCard from '@/components/admin/pedidos/PedidoDetalhesCard';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PedidoComRelacionamentos } from '@/types/admin'; // CORRIGIDO: Importa do ficheiro de tipos
+import { PedidoComRelacionamentos } from '@/types/pedidos';
 
 interface PedidoDetalhesPageProps {
   params: {

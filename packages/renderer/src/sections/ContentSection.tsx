@@ -8,7 +8,7 @@ interface ContentSectionProps {
 }
 
 export function ContentSection({ config, primaryColor }: ContentSectionProps) {
-    const isReversed = config.layout === 'image-text';
+    const isReversed = config.imagePosition === 'left';
 
     return (
         <section style={{
@@ -53,37 +53,6 @@ export function ContentSection({ config, primaryColor }: ContentSectionProps) {
                         )}
                     </div>
 
-                    {config.bullets && config.bullets.length > 0 && (
-                        <ul style={{
-                            listStyle: 'none',
-                            padding: 0,
-                            marginTop: '2rem',
-                        }}>
-                            {config.bullets.map((bullet, index) => (
-                                <li
-                                    key={index}
-                                    style={{
-                                        marginBottom: '1rem',
-                                        paddingLeft: '2rem',
-                                        position: 'relative',
-                                        fontSize: '1.125rem',
-                                        color: '#374151',
-                                    }}
-                                >
-                                    <span style={{
-                                        position: 'absolute',
-                                        left: 0,
-                                        color: primaryColor,
-                                        fontWeight: '700',
-                                        fontSize: '1.5rem',
-                                    }}>
-                                        ✓
-                                    </span>
-                                    {bullet}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
                 </div>
 
                 {config.image && (

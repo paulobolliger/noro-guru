@@ -16,11 +16,9 @@ export default function TopBar({ user }: TopBarProps) {
   const supabase = createClient()
 
   const handleLogout = async () => {
-    // TEMPORÁRIO: Desabilitado para desenvolvimento
-    console.log('Logout desabilitado em desenvolvimento')
-    // await supabase.auth.signOut()
-    // router.push('/login')
-    // router.refresh()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
   }
 
   return (

@@ -4,8 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
-import { Pedido } from '@/app/pedidos/page';
 import { Badge } from '@/components/ui/badge';
+
+type Pedido = {
+  id: string;
+  cliente_id: string | null;
+  valor_total: number | null;
+  status: string | null;
+  created_at: string | null;
+};
 
 interface PedidosListProps {
   pedidos: Pedido[];
@@ -55,18 +62,18 @@ export function PedidosList({ pedidos }: PedidosListProps) {
               </td>
               {/* O nome do cliente viria de um JOIN, mas por enquanto, usamos o ID */}
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                Cliente ID: {pedido.cliente_id.slice(0, 8)}
+                Cliente ID: {pedido.cliente_id?.slice(0, 8) || 'N/A'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {formatCurrency(pedido.valor_total || 0)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm">
-                <Badge className={statusMap[pedido.status] || 'bg-gray-100 text-gray-800'}>
-                  {pedido.status.replace(/_/g, ' ')}
+                <Badge className={statusMap[pedido.status || ''] || 'bg-gray-100 text-gray-800'}>
+                  {(pedido.status || 'SEM_STATUS').replace(/_/g, ' ')}
                 </Badge>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {format(new Date(pedido.created_at), 'dd/MM/yyyy')}
+                {pedido.created_at ? format(new Date(pedido.created_at), 'dd/MM/yyyy') : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <Link href={`/admin/pedidos/${pedido.id}`} className="text-indigo-600 hover:text-indigo-900">

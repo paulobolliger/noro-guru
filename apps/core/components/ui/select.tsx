@@ -45,12 +45,13 @@ function collectItems(children: React.ReactNode, items: Array<{ value: string; l
   React.Children.forEach(children as any, (child: any) => {
     if (!child) return;
     if (React.isValidElement(child)) {
+      const childAny = child as any;
       if (child.type && (child.type as any).displayName === "SelectItem") {
-        const value = child.props.value as string;
-        const label = typeof child.props.children === "string" ? child.props.children : String(value);
+        const value = childAny.props.value as string;
+        const label = typeof childAny.props.children === "string" ? childAny.props.children : String(value);
         items.push({ value, label });
       }
-      if (child.props && child.props.children) collectItems(child.props.children, items);
+      if (childAny.props && childAny.props.children) collectItems(childAny.props.children, items);
     }
   });
   return items;
@@ -61,10 +62,11 @@ function findPlaceholder(children: React.ReactNode): string | undefined {
   React.Children.forEach(children as any, (child: any) => {
     if (placeholder) return;
     if (React.isValidElement(child)) {
+      const childAny = child as any;
       if (child.type && (child.type as any).displayName === "SelectValue") {
-        placeholder = child.props.placeholder;
-      } else if (child.props && child.props.children) {
-        const inner = findPlaceholder(child.props.children);
+        placeholder = childAny.props.placeholder;
+      } else if (childAny.props && childAny.props.children) {
+        const inner = findPlaceholder(childAny.props.children);
         if (inner) placeholder = inner;
       }
     }

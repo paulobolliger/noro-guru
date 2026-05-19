@@ -38,12 +38,6 @@ export default function UploadPostConfigCard({
     setTestResult(null);
 
     try {
-      console.log('🔍 Testing Upload-Post connection:', {
-        userProfile,
-        apiKeyLength: apiKey.length,
-        apiKeyPrefix: apiKey.substring(0, 30) + '...',
-      });
-
       const response = await fetch('/api/admin/social/config/upload-post/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,8 +45,6 @@ export default function UploadPostConfigCard({
       });
 
       const result = await response.json();
-      console.log('📡 Upload-Post test response:', result);
-
       setTestResult({
         success: result.success,
         message: result.error ? `${result.message} - ${result.error}` : result.message,
@@ -88,8 +80,6 @@ export default function UploadPostConfigCard({
     setIsSaving(true);
 
     try {
-      console.log('💾 Saving Upload-Post config...');
-
       // First test connection
       const testResponse = await fetch('/api/admin/social/config/upload-post/test', {
         method: 'POST',
@@ -98,8 +88,6 @@ export default function UploadPostConfigCard({
       });
 
       const testResult = await testResponse.json();
-      console.log('💾 Test result:', testResult);
-
       if (!testResult.success) {
         setTestResult({
           success: false,
@@ -111,7 +99,6 @@ export default function UploadPostConfigCard({
       }
 
       // Then save
-      console.log('💾 Test passed, now saving to database...');
       const saveResponse = await fetch('/api/admin/social/config/upload-post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,8 +106,6 @@ export default function UploadPostConfigCard({
       });
 
       const saveResult = await saveResponse.json();
-      console.log('💾 Save result:', saveResult);
-
       if (saveResult.success) {
         setTestResult({
           success: true,
@@ -128,7 +113,6 @@ export default function UploadPostConfigCard({
         });
         setStatus('connected');
         setIsExpanded(false);
-        console.log('✅ Config saved successfully, reloading page...');
         onConfigUpdate();
       } else {
         setTestResult({

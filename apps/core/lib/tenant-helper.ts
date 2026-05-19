@@ -1,34 +1,27 @@
-// lib/tenant-helper.ts
-import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 
 export async function getCurrentTenantId(userId: string): Promise<string> {
   const supabaseAdmin = getSupabaseAdmin();
-  
-  // 1. Tenta buscar o tenant do usuário
+
   const { data, error } = await supabaseAdmin
     .from('user_tenants')
     .select('tenant_id')
     .eq('user_id', userId)
     .limit(1)
-    .maybeSingle(); 
+    .maybeSingle();
 
-  if (data) {
-    return data.tenant_id;
+  if (error) {
+    console.error(`Erro ao buscar tenant do usuário ${userId}:`, error);
+    throw new Error('Falha ao resolver tenant do usuário.');
   }
 
-  console.warn(`Usuário ${userId} sem tenant vinculado. Tentando fallback para tenant padrão...`);
-
-  // 2. Fallback: Busca o primeiro tenant disponível
-  const { data: defaultTenant, error: fallbackError } = await supabaseAdmin
-    .from('tenants')
-    .select('id')
-    .limit(1)
-    .single();
-
-  if (defaultTenant) {
-    return defaultTenant.id;
+  const tenantRow = data as { tenant_id?: string } | null;
+  if (tenantRow?.tenant_id) {
+    return tenantRow.tenant_id;
   }
 
-  console.error("Erro fatal: Nenhum tenant encontrado no sistema.", fallbackError);
-  throw new Error("Erro de configuração: Sistema sem tenants cadastrados.");
+  // Usuário sem tenant vinculado — não fazer fallback silencioso para evitar cross-tenant leak
+  throw new Error(
+    `Usuário ${userId} não possui tenant vinculado. Configure a associação em user_tenants.`
+  );
 }

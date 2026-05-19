@@ -94,7 +94,6 @@ export async function POST(req: NextRequest) {
 
     // Se não encontrou nenhum usuário, apenas loga
     if (targetUserIds.length === 0) {
-      console.log('Nenhum usuário encontrado para notificar:', { title, message });
       return NextResponse.json(
         {
           success: true,

@@ -1,58 +1,143 @@
 import React from 'react';
-import { BrainIcon } from './icons/BrainIcon';
-import { CircuitIcon } from './icons/CircuitIcon';
-import { ConnectIcon } from './icons/ConnectIcon';
-import { SparklesIcon } from './icons/SparklesIcon';
 
-const features = [
+const MODULES = [
   {
-    icon: <ConnectIcon className="w-12 h-12" />,
-    title: 'Tudo integrado em um só lugar',
-    description: 'Centralize CRM, vendas, financeiro e operações em uma plataforma única. Elimine planilhas e sistemas dispersos.',
+    icon: '👥',
+    title: 'CRM & Vendas',
+    copy: 'Funil de leads, pedidos, propostas e cobranças num só lugar. Esqueça a planilha.',
+    featured: false,
   },
   {
-    icon: <CircuitIcon className="w-12 h-12" />,
-    title: 'Automação que economiza tempo',
-    description: 'Reduza em 80% as tarefas repetitivas. Workflows inteligentes que se adaptam ao seu processo de trabalho.',
+    icon: '🌐',
+    title: 'Meu Site',
+    copy: 'Construa, publique e gerencie o site da agência sem código. Domínio próprio incluso.',
+    featured: true,
   },
   {
-    icon: <BrainIcon className="w-12 h-12" />,
-    title: 'Decisões baseadas em dados reais',
-    description: 'Dashboards com métricas em tempo real, previsões de vendas e alertas automáticos para oportunidades.',
+    icon: '💰',
+    title: 'Financeiro',
+    copy: 'Recebíveis, fluxo de caixa, comissões e fechamento — tudo conciliado automaticamente.',
+    featured: false,
   },
   {
-    icon: <SparklesIcon className="w-12 h-12" />,
-    title: 'IA que realmente ajuda seu negócio',
-    description: 'Sugestões inteligentes, análise preditiva e assistente virtual que entende suas necessidades.',
+    icon: '✨',
+    title: 'Conteúdo IA',
+    copy: 'Roteiros, descrições e artigos prontos em segundos. Estilo da sua agência, sempre.',
+    featured: false,
+  },
+  {
+    icon: '💬',
+    title: 'Comunicação',
+    copy: 'WhatsApp, email e Instagram numa caixa só. Histórico do cliente em cada conversa.',
+    featured: false,
+  },
+  {
+    icon: '📣',
+    title: 'Marketing',
+    copy: 'Campanhas, social media e relatórios de performance — sem terceirizar para 3 ferramentas.',
+    featured: false,
   },
 ];
 
-const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string; }> = ({ icon, title, description }) => (
-  <div className="card-noro bg-[#0B1220]/80 backdrop-blur-sm p-8 group">
-    <div className="mb-6 text-[#1DD3C0] group-hover:scale-110 transition-transform duration-300">
-      {icon}
-    </div>
-    <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
-    <p className="text-[#D1D5F0] leading-relaxed font-medium">{description}</p>
-  </div>
-);
-
 const Features: React.FC = () => {
   return (
-    <section id="features" className="container mx-auto px-6 py-20 md:py-28">
-      <div className="text-center mb-16">
-        <h2 className="font-extrabold text-4xl md:text-5xl text-white tracking-wide">
-          Gestão empresarial simplificada com tecnologia de ponta
-        </h2>
-        <p className="mt-6 max-w-2xl mx-auto text-lg text-[#E0E3FF] font-medium">
-          Pare de perder tempo com sistemas complicados. NORO é a solução completa que 
-          cresce junto com seu negócio — simples de usar, poderosa nos resultados.
-        </p>
+    <section style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 56px' }}>
+      {/* Section header */}
+      <div style={{
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        gap: 24, marginBottom: 48, flexWrap: 'wrap',
+      }}>
+        <div>
+          <div style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
+            color: '#232452', marginBottom: 14,
+          }}>
+            Tudo em um portal
+          </div>
+          <h2 style={{
+            fontFamily: 'var(--font-display, Georgia)', fontWeight: 500,
+            fontSize: 'clamp(36px, 4.5vw, 52px)', lineHeight: 1.06, letterSpacing: '-0.022em',
+            margin: 0, color: '#1f2433', maxWidth: 640,
+          }}>
+            6 módulos que substituem<br/>10 ferramentas avulsas.
+          </h2>
+        </div>
+        <a
+          href="/funcionalidades"
+          style={{
+            fontSize: 14, fontWeight: 600, color: '#232452',
+            display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none',
+          }}
+        >
+          Ver todos os recursos →
+        </a>
       </div>
-      
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {features.map((feature) => (
-          <FeatureCard key={feature.title} {...feature} />
+
+      {/* Module cards grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: 18,
+      }}>
+        {MODULES.map((m) => (
+          <div
+            key={m.title}
+            style={{
+              background: m.featured ? '#232452' : '#fff',
+              color: m.featured ? '#fff' : '#1f2433',
+              border: m.featured ? 'none' : '1px solid #eceef3',
+              borderRadius: 18,
+              padding: '32px 30px',
+              display: 'flex', flexDirection: 'column', gap: 14,
+              position: 'relative',
+              minHeight: 240,
+            }}
+          >
+            {m.featured && (
+              <div style={{
+                position: 'absolute', top: 24, right: 24,
+                fontFamily: 'monospace', fontSize: 10, fontWeight: 700,
+                background: '#19b8a8', color: '#232452',
+                padding: '3px 8px', borderRadius: 999, letterSpacing: '.08em',
+              }}>
+                DIFERENCIAL
+              </div>
+            )}
+            <div style={{
+              width: 44, height: 44, borderRadius: 12,
+              background: m.featured ? 'rgba(255,255,255,0.10)' : 'rgba(35,36,82,0.07)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 22,
+            }}>
+              {m.icon}
+            </div>
+            <h3 style={{
+              fontFamily: 'var(--font-display, Georgia)', fontWeight: 500,
+              fontSize: 26, letterSpacing: '-0.02em', lineHeight: 1.1,
+              margin: 0,
+            }}>
+              {m.title}
+            </h3>
+            <p style={{
+              fontSize: 14, lineHeight: 1.55, margin: 0,
+              color: m.featured ? 'rgba(255,255,255,0.75)' : 'rgba(31,36,51,0.65)',
+              maxWidth: 320,
+            }}>
+              {m.copy}
+            </p>
+            <div style={{ flex: 1 }}/>
+            <a
+              href="#"
+              style={{
+                fontSize: 13, fontWeight: 600,
+                color: m.featured ? '#19b8a8' : '#232452',
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                textDecoration: 'none',
+              }}
+            >
+              Saiba mais →
+            </a>
+          </div>
         ))}
       </div>
     </section>

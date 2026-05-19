@@ -1,11 +1,10 @@
 // components/admin/content/StatusBadge.tsx
 'use client';
 
-import { ValidationStatus } from '@/lib/types';
 import { getStatusColor, getStatusEmoji } from '@/lib/utils/field-validator';
 
 interface StatusBadgeProps {
-  status: ValidationStatus;
+  status: any;
   label: string;
   missingFields?: string[];
   showTooltip?: boolean;

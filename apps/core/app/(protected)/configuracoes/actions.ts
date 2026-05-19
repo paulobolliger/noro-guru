@@ -76,7 +76,7 @@ export async function saveSecretAction(secretName: string, secretValue: string) 
     
     // CORREÇÃO: Chamando a função 'upsert_secret' que agora está no schema 'public'.
     // Como 'public' está no search_path padrão, não precisamos especificar 'public.upsert_secret'.
-    const { error } = await supabaseAdmin.rpc('upsert_secret', {
+    const { error } = await (supabaseAdmin as any).rpc('upsert_secret', {
       p_name: secretName,
       p_secret: secretValue,
     });

@@ -9,18 +9,16 @@ type Lead = Database['public']['Tables']['noro_leads']['Row'];
 async function fetchLeads(): Promise<Lead[]> {
     const supabaseAdmin = getSupabaseAdmin();
     try {
-        console.log("--- A tentar buscar TODOS os leads na página de Leads ---");
         const { data, error } = await supabaseAdmin
             .from('noro_leads')
             .select('*')
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error("🔴 ERRO REAL DO SUPABASE:", error);
+            console.error('Erro ao buscar leads:', error);
             throw error;
         }
-        
-        console.log(`✅ Leads encontrados: ${data?.length || 0}`);
+
         return data || [];
     } catch (err) {
         // Retorna um array vazio em caso de erro para não quebrar a página

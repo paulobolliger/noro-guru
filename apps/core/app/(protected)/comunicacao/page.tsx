@@ -1,16 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@noro/ui/card';
-import { Button } from '@noro/ui/button';
-import { Input } from '@noro/ui/input';
-import { Badge } from '@noro/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@noro/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@noro/ui';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   MessageSquare, Send, Phone, Search, MoreVertical,
   Paperclip, Smile, Settings, User, Check, CheckCheck,
-  MessageCircle, Globe
+  MessageCircle, Globe, AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assumindo que você tem utils padrão no shadcn/ui
 
@@ -94,7 +91,12 @@ export default function CommunicationPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.20))] flex flex-col md:flex-row gap-0 md:gap-4 p-4 md:p-6 bg-slate-50">
+    <div className="flex flex-col gap-4 p-4 md:p-6">
+      <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <AlertTriangle className="h-4 w-4 shrink-0" />
+        <span><strong>Em Desenvolvimento</strong> — Este módulo está em construção. Os dados exibidos são simulados e o envio de mensagens não funciona ainda.</span>
+      </div>
+    <div className="h-[calc(100vh-theme(spacing.20))] flex flex-col md:flex-row gap-0 md:gap-4 bg-slate-50">
       {/* LEFT SIDEBAR - LISTA DE CONVERSAS */}
       <div className="w-full md:w-80 flex flex-col bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-[600px] md:h-full">
         <div className="p-4 border-b border-slate-100">
@@ -110,9 +112,27 @@ export default function CommunicationPage() {
 
         {/* Filters */}
         <div className="flex gap-1 p-2 bg-slate-50 border-b border-slate-200 overflow-x-auto">
-          <Badge variant={activeTab === 'inbox' ? 'default' : 'outline'} className="cursor-pointer" onClick={() => setActiveTab('inbox')}>Tudo</Badge>
-          <Badge variant={activeTab === 'whatsapp' ? 'default' : 'outline'} className="cursor-pointer bg-green-100 text-green-700 hover:bg-green-200 border-transparent">WhatsApp</Badge>
-          <Badge variant={activeTab === 'telegram' ? 'default' : 'outline'} className="cursor-pointer bg-blue-100 text-blue-700 hover:bg-blue-200 border-transparent">Telegram</Badge>
+          <button
+            type="button"
+            onClick={() => setActiveTab('inbox')}
+            className={`px-2.5 py-1 rounded-full text-xs border ${activeTab === 'inbox' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-300'}`}
+          >
+            Tudo
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('whatsapp')}
+            className={`px-2.5 py-1 rounded-full text-xs border ${activeTab === 'whatsapp' ? 'bg-green-600 text-white border-green-600' : 'bg-green-100 text-green-700 border-transparent'}`}
+          >
+            WhatsApp
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('telegram')}
+            className={`px-2.5 py-1 rounded-full text-xs border ${activeTab === 'telegram' ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-100 text-blue-700 border-transparent'}`}
+          >
+            Telegram
+          </button>
         </div>
 
         {/* Contacts List */}
@@ -142,9 +162,9 @@ export default function CommunicationPage() {
                 <p className="text-xs text-slate-500 truncate">{contact.lastMessage}</p>
               </div>
               {contact.unread > 0 && (
-                <Badge className="bg-blue-600 h-5 w-5 text-[10px] flex items-center justify-center rounded-full p-0 hover:bg-blue-600">
+                <span className="bg-blue-600 text-white h-5 w-5 text-[10px] flex items-center justify-center rounded-full p-0">
                   {contact.unread}
-                </Badge>
+                </span>
               )}
             </div>
           ))}
@@ -245,8 +265,8 @@ export default function CommunicationPage() {
           <div>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Etiquetas</span>
             <div className="flex gap-2 flex-wrap mt-2">
-              <Badge variant="secondary" className="bg-purple-100 text-purple-700 pointer-events-none">Lead Quente</Badge>
-              <Badge variant="secondary" className="bg-orange-100 text-orange-700 pointer-events-none">Visto D7</Badge>
+              <span className="px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-700 pointer-events-none">Lead Quente</span>
+              <span className="px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-700 pointer-events-none">Visto D7</span>
             </div>
           </div>
 
@@ -258,6 +278,7 @@ export default function CommunicationPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

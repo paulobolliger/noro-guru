@@ -187,7 +187,7 @@ export default function ContentListTable({ contentType, status }: ContentListTab
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
-                      {item.categoria || '-'}
+                      {'categoria' in item ? item.categoria : '-'}
                     </td>
                     {status === 'draft' && item.validation && (
                       <>

@@ -3,10 +3,34 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
+
+const inputStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  border: '1px solid #dfe2ea',
+  borderRadius: 8,
+  padding: '9px 11px',
+  background: '#fff',
+  width: '100%',
+  boxSizing: 'border-box' as const,
+}
+
+const inputFieldStyle = {
+  flex: 1,
+  border: 'none',
+  outline: 'none',
+  fontSize: 13,
+  color: '#1f2433',
+  background: 'transparent',
+  fontFamily: 'inherit',
+}
 
 export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -18,14 +42,9 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-
-      router.push(redirectTo || '/dashboard')
+      router.push(redirectTo || '/')
       router.refresh()
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login')
@@ -35,18 +54,38 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
   }
 
   return (
-    <form onSubmit={handleLogin} className="mt-8 space-y-6">
+    <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
+        <div
+          style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: 8,
+            padding: '10px 14px',
+            fontSize: 13,
+            color: '#dc2626',
+          }}
+        >
+          {error}
         </div>
       )}
-      
-      <div className="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label htmlFor="email" className="sr-only">
-            Email
-          </label>
+
+      {/* Email */}
+      <div>
+        <label
+          htmlFor="email"
+          style={{
+            fontSize: 11.5,
+            fontWeight: 600,
+            color: 'rgba(31,36,51,0.6)',
+            display: 'block',
+            marginBottom: 5,
+          }}
+        >
+          Email
+        </label>
+        <div style={inputStyle}>
+          <Mail size={14} color="rgba(31,36,51,0.45)" />
           <input
             id="email"
             name="email"
@@ -55,37 +94,99 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Email"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="sr-only">
-            Senha
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Senha"
+            placeholder="voce@agencia.com.br"
+            style={inputFieldStyle}
           />
         </div>
       </div>
 
+      {/* Senha */}
       <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Entrando...' : 'Entrar'}
-        </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
+          <label
+            htmlFor="password"
+            style={{ fontSize: 11.5, fontWeight: 600, color: 'rgba(31,36,51,0.6)' }}
+          >
+            Senha
+          </label>
+          <a
+            href="#"
+            style={{ fontSize: 11, color: '#232452', fontWeight: 600, textDecoration: 'none' }}
+          >
+            Esqueci a senha
+          </a>
+        </div>
+        <div style={inputStyle}>
+          <Lock size={14} color="rgba(31,36,51,0.45)" />
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            style={inputFieldStyle}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              color: 'rgba(31,36,51,0.45)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        </div>
       </div>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={loading}
+        style={{
+          marginTop: 4,
+          width: '100%',
+          padding: '11px 14px',
+          borderRadius: 9,
+          border: 'none',
+          background: loading ? 'rgba(35,36,82,0.6)' : '#232452',
+          color: '#fff',
+          fontSize: 13.5,
+          fontWeight: 700,
+          cursor: loading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          fontFamily: 'inherit',
+          transition: 'background .15s',
+        }}
+      >
+        {loading && <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} />}
+        {loading ? 'Entrando...' : 'Entrar'}
+      </button>
+
+      <p
+        style={{
+          textAlign: 'center',
+          fontSize: 12.5,
+          color: 'rgba(31,36,51,0.55)',
+          marginTop: 10,
+        }}
+      >
+        Ainda não tem conta?{' '}
+        <a href="#" style={{ color: '#232452', fontWeight: 600, textDecoration: 'none' }}>
+          Criar conta grátis
+        </a>
+      </p>
     </form>
   )
 }

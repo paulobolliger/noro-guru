@@ -99,18 +99,20 @@ export async function updateEmpresaDados(formData: FormData) {
         .eq('tenant_id', tenantId)
         .maybeSingle();
 
+    const existingRow = existing as { id?: string } | null;
+
     let error;
     
-    if (existing) {
+    if (existingRow?.id) {
         // Atualiza
-        const { error: updateError } = await supabaseAdmin
+      const { error: updateError } = await (supabaseAdmin as any)
             .from('noro_empresa')
             .update(updates)
-            .eq('id', existing.id);
+        .eq('id', existingRow.id);
         error = updateError;
     } else {
         // Insere
-        const { error: insertError } = await supabaseAdmin
+      const { error: insertError } = await (supabaseAdmin as any)
             .from('noro_empresa')
             .insert(updates);
         error = insertError;
