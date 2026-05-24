@@ -53,6 +53,13 @@ As fontes são configuradas via CSS Variables nativas do `next/font`.
 
 ### 1.3 Bordas e Sombras (Borders & Shadows)
 
+**Espaçamento (Spacing Scale / Tailwind Defaults)**
+- Valores numéricos seguem a escala base de `0.25rem` (4px) do Tailwind.
+- `p-2` / `m-2`: `0.5rem` (8px)
+- `p-4` / `m-4`: `1rem` (16px) - Usado em containers pequenos.
+- `p-6` / `m-6`: `1.5rem` (24px) - Utilizado como padding base padrão em cards e containers maiores.
+- Content main padding: `24px 28px` (Hardcoded em `AdminLayoutClient`).
+
 **Border Radius (`border-radius`)**
 - `sm`: `6px`
 - `md`: `8px`
@@ -149,3 +156,32 @@ Os componentes base estão no pacote `@noro/ui` implementados utilizando Shadcn 
 - **Contraste de Cores:** Textos utilizam cores calculadas para padrões WCAG (ex: `--color-noro-text-muted` alterado para `#B8C1E0` e `--color-noro-text-body` para `#D1D5F0` com ratios acima de 7:1).
 - **Acessibilidade de Componentes (ARIA):** Componentes Radix UI (Shadcn) injetam nativamente controles de teclado corretos, `aria-expanded`, e focus trapping (ex: `Dialog`, `Popover`, `Select`). Os `Forms` vinculam os labels aos campos usando `htmlFor` e descrevem os erros com `aria-describedby` e `aria-invalid`.
 - **Animações (UX):** Interações incluem feedback visual através de scale/bounce sutil no clique do botão (`active:scale-[0.98]`), e animações fluídas em carregamento de páginas (`.animate-fade-in`). Recomenda-se adicionar um fallback `prefers-reduced-motion` no CSS para desabilitar animações (`animate-*`) caso requerido pelo usuário no sistema operacional.
+## 6. Plano de Páginas e Subpáginas (apps/web)
+
+**Core de conversão**
+- Home: `/`
+- Pricing: `/pricing`
+- Contact: `/contact`
+- Lead: `/lead`
+- Wizard: `/wizard`
+
+**Institucional**
+- About: `/about`
+- Case Studies: `/case-studies`
+- Blog index: `/blog`
+- Blog detalhe: `/blog/[slug]`
+
+**Ecossistema**
+- Hub: `/ecosystem`
+- Dados de Vistos: `/ecosystem/dados-de-vistos`
+- Intelligent Websites: `/ecosystem/intelligent-websites`
+- Intelligent CRM/ERP: `/ecosystem/intelligent-crm-erp`
+- ITTD: `/ecosystem/ittd`
+
+**Suporte e confiança**
+- Suporte: `/suporte`
+- Política de Privacidade: `/privacy-policy`
+- Termos: `/terms-of-service`
+
+**Rota funcional interna**
+- Preview de site: `/dashboard/sites/[id]/preview`
