@@ -1,147 +1,349 @@
-import React from 'react';
+'use client';
 
-const MODULES = [
+import React, { useState } from 'react';
+import Link from 'next/link';
+
+// ─── Pilares data ─────────────────────────────────────────────────────────────
+
+const PILARES = [
   {
-    icon: '👥',
-    title: 'CRM & Vendas',
-    copy: 'Funil de leads, pedidos, propostas e cobranças num só lugar. Esqueça a planilha.',
-    featured: false,
+    id: 'crm',
+    icon: '🎯',
+    label: 'CRM & Pipeline',
+    title: 'Gerencie leads do primeiro contato ao fechamento',
+    desc: 'Funil visual, automações de follow-up, histórico completo do cliente e propostas personalizadas — tudo integrado.',
+    bullets: [
+      'Kanban de leads com drag & drop',
+      'Automações de WhatsApp e email',
+      'Histórico e timeline do cliente',
+    ],
+    color: '#342CA4',
   },
   {
-    icon: '🌐',
-    title: 'Meu Site',
-    copy: 'Construa, publique e gerencie o site da agência sem código. Domínio próprio incluso.',
-    featured: true,
-  },
-  {
+    id: 'financeiro',
     icon: '💰',
-    title: 'Financeiro',
-    copy: 'Recebíveis, fluxo de caixa, comissões e fechamento — tudo conciliado automaticamente.',
-    featured: false,
+    label: 'Financeiro',
+    title: 'Controle financeiro sem planilhas',
+    desc: 'Cobranças, recebíveis, comissões e fluxo de caixa em tempo real. Conciliação automática com PIX e cartão.',
+    bullets: [
+      'Cobrança por PIX, boleto e cartão',
+      'Comissões automáticas por consultor',
+      'Relatórios e DRE em um clique',
+    ],
+    color: '#D4AF37',
   },
   {
-    icon: '✨',
-    title: 'Conteúdo IA',
-    copy: 'Roteiros, descrições e artigos prontos em segundos. Estilo da sua agência, sempre.',
-    featured: false,
-  },
-  {
+    id: 'atendimento',
     icon: '💬',
-    title: 'Comunicação',
-    copy: 'WhatsApp, email e Instagram numa caixa só. Histórico do cliente em cada conversa.',
-    featured: false,
+    label: 'Atendimento',
+    title: 'Omnichannel integrado na plataforma',
+    desc: 'WhatsApp, Instagram, email e chat em uma única caixa de entrada. Com histórico do cliente em cada conversa.',
+    bullets: [
+      'Caixa unificada (WhatsApp + IG + email)',
+      'Chatbot com IA para triagem',
+      'SLA e filas por departamento',
+    ],
+    color: '#1DD3C0',
   },
   {
-    icon: '📣',
-    title: 'Marketing',
-    copy: 'Campanhas, social media e relatórios de performance — sem terceirizar para 3 ferramentas.',
-    featured: false,
+    id: 'sites',
+    icon: '🌐',
+    label: 'Sites & Marketing',
+    title: 'Site da sua agência sem programação',
+    desc: 'Crie, publique e gerencie o site da sua agência em minutos. Domínio próprio, SEO e blog inclusos.',
+    bullets: [
+      'Builder visual sem código',
+      'Blog, landing pages e formulários',
+      'SEO automático e domínio próprio',
+    ],
+    color: '#342CA4',
+  },
+  {
+    id: 'ia',
+    icon: '🤖',
+    label: 'IA Operacional',
+    title: 'IA que trabalha para sua agência',
+    desc: 'Gere roteiros, propostas e conteúdo em segundos. Automatize tarefas repetitivas e foque no que importa.',
+    bullets: [
+      'Roteiros e propostas em segundos',
+      'Conteúdo para redes sociais com IA',
+      'Automações inteligentes de processo',
+    ],
+    color: '#1DD3C0',
   },
 ];
 
-const Features: React.FC = () => {
-  return (
-    <section style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 56px' }}>
-      {/* Section header */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-        gap: 24, marginBottom: 48, flexWrap: 'wrap',
-      }}>
-        <div>
-          <div style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
-            color: '#232452', marginBottom: 14,
-          }}>
-            Tudo em um portal
-          </div>
-          <h2 style={{
-            fontFamily: 'var(--font-display, Georgia)', fontWeight: 500,
-            fontSize: 'clamp(36px, 4.5vw, 52px)', lineHeight: 1.06, letterSpacing: '-0.022em',
-            margin: 0, color: '#1f2433', maxWidth: 640,
-          }}>
-            6 módulos que substituem<br/>10 ferramentas avulsas.
-          </h2>
-        </div>
-        <a
-          href="/funcionalidades"
-          style={{
-            fontSize: 14, fontWeight: 600, color: '#232452',
-            display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none',
-          }}
-        >
-          Ver todos os recursos →
-        </a>
-      </div>
+// ─── Component ────────────────────────────────────────────────────────────────
 
-      {/* Module cards grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: 18,
-      }}>
-        {MODULES.map((m) => (
+const Features: React.FC = () => {
+  const [active, setActive] = useState(0);
+  const pilar = PILARES[active];
+
+  return (
+    <section
+      style={{
+        background: '#0B1220',
+        padding: '96px 0',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: '0 auto',
+          padding: '0 80px',
+        }}
+        className="px-6 md:px-20"
+      >
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <div
-            key={m.title}
             style={{
-              background: m.featured ? '#232452' : '#fff',
-              color: m.featured ? '#fff' : '#1f2433',
-              border: m.featured ? 'none' : '1px solid #eceef3',
-              borderRadius: 18,
-              padding: '32px 30px',
-              display: 'flex', flexDirection: 'column', gap: 14,
-              position: 'relative',
-              minHeight: 240,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: '#1DD3C0',
+              marginBottom: 16,
             }}
           >
-            {m.featured && (
-              <div style={{
-                position: 'absolute', top: 24, right: 24,
-                fontFamily: 'monospace', fontSize: 10, fontWeight: 700,
-                background: '#19b8a8', color: '#232452',
-                padding: '3px 8px', borderRadius: 999, letterSpacing: '.08em',
-              }}>
-                DIFERENCIAL
-              </div>
-            )}
-            <div style={{
-              width: 44, height: 44, borderRadius: 12,
-              background: m.featured ? 'rgba(255,255,255,0.10)' : 'rgba(35,36,82,0.07)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 22,
-            }}>
-              {m.icon}
-            </div>
-            <h3 style={{
-              fontFamily: 'var(--font-display, Georgia)', fontWeight: 500,
-              fontSize: 26, letterSpacing: '-0.02em', lineHeight: 1.1,
-              margin: 0,
-            }}>
-              {m.title}
-            </h3>
-            <p style={{
-              fontSize: 14, lineHeight: 1.55, margin: 0,
-              color: m.featured ? 'rgba(255,255,255,0.75)' : 'rgba(31,36,51,0.65)',
-              maxWidth: 320,
-            }}>
-              {m.copy}
-            </p>
-            <div style={{ flex: 1 }}/>
-            <a
-              href="#"
+            A plataforma completa
+          </div>
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(32px, 4vw, 48px)',
+              fontWeight: 700,
+              color: '#fff',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+              margin: '0 auto',
+              maxWidth: 640,
+            }}
+          >
+            Tudo que sua agência precisa.
+          </h2>
+        </div>
+
+        {/* Tabs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 4,
+            justifyContent: 'center',
+            marginBottom: 48,
+            flexWrap: 'wrap',
+          }}
+        >
+          {PILARES.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => setActive(i)}
               style={{
-                fontSize: 13, fontWeight: 600,
-                color: m.featured ? '#19b8a8' : '#232452',
-                display: 'inline-flex', alignItems: 'center', gap: 6,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '10px 20px',
+                borderRadius: 10,
+                border: '1px solid',
+                borderColor: active === i ? p.color : 'rgba(255,255,255,0.08)',
+                background: active === i ? `rgba(${hexToRgb(p.color)},0.12)` : 'transparent',
+                color: active === i ? '#fff' : '#B8C1E0',
+                fontSize: 14,
+                fontWeight: active === i ? 700 : 500,
+                cursor: 'pointer',
+                transition: 'all .2s',
+                fontFamily: 'var(--font-sans)',
+              }}
+            >
+              <span>{p.icon}</span>
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab content */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 64,
+            alignItems: 'center',
+          }}
+          key={active}
+        >
+          {/* Left — text */}
+          <div style={{ animation: 'fade-in .3s ease-out forwards' }}>
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                background: `rgba(${hexToRgb(pilar.color)},0.15)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 24,
+                marginBottom: 24,
+              }}
+            >
+              {pilar.icon}
+            </div>
+            <h3
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 28,
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.2,
+                margin: '0 0 16px',
+              }}
+            >
+              {pilar.title}
+            </h3>
+            <p
+              style={{
+                fontSize: 16,
+                color: '#B8C1E0',
+                lineHeight: 1.6,
+                margin: '0 0 28px',
+              }}
+            >
+              {pilar.desc}
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {pilar.bullets.map((b) => (
+                <li key={b} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: '#D1D5F0' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={pilar.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {b}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={`/#${pilar.id}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 14,
+                fontWeight: 600,
+                color: pilar.color,
                 textDecoration: 'none',
               }}
             >
-              Saiba mais →
-            </a>
+              Ver mais →
+            </Link>
           </div>
-        ))}
+
+          {/* Right — screenshot mock */}
+          <div style={{ animation: 'fade-in .3s ease-out forwards' }}>
+            <div
+              style={{
+                background: '#12152C',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 16,
+                overflow: 'hidden',
+                boxShadow: `0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)`,
+                minHeight: 320,
+                position: 'relative',
+              }}
+            >
+              {/* Colored accent bar */}
+              <div
+                style={{
+                  height: 3,
+                  background: `linear-gradient(90deg, ${pilar.color}, transparent)`,
+                }}
+              />
+
+              {/* Mock UI content */}
+              <div style={{ padding: 24 }}>
+                {/* Top row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginBottom: 20,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 16,
+                      width: 36,
+                      height: 36,
+                      borderRadius: 9,
+                      background: `rgba(${hexToRgb(pilar.color)},0.15)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {pilar.icon}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{pilar.label}</div>
+                    <div style={{ fontSize: 11, color: '#B8C1E0' }}>app.noro.guru</div>
+                  </div>
+                </div>
+
+                {/* Skeleton rows */}
+                {[100, 80, 65, 90, 55].map((w, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      height: i === 0 ? 40 : 28,
+                      background: i === 0
+                        ? `rgba(${hexToRgb(pilar.color)},0.12)`
+                        : 'rgba(255,255,255,0.04)',
+                      borderRadius: 8,
+                      marginBottom: 10,
+                      width: `${w}%`,
+                      border: i === 0
+                        ? `1px solid rgba(${hexToRgb(pilar.color)},0.2)`
+                        : '1px solid rgba(255,255,255,0.04)',
+                    }}
+                  />
+                ))}
+
+                {/* Colored badge */}
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: `rgba(${hexToRgb(pilar.color)},0.1)`,
+                    border: `1px solid rgba(${hexToRgb(pilar.color)},0.25)`,
+                    borderRadius: 999,
+                    padding: '4px 12px',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: pilar.color,
+                    marginTop: 8,
+                  }}
+                >
+                  ✦ IA ativa
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 };
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return '255,255,255';
+  return `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`;
+}
 
 export default Features;

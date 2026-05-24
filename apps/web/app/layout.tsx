@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Fraunces, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Manrope, JetBrains_Mono } from "next/font/google";
 import "./global.css";
 import "../styles/theme.css";
 import Header from "@/components/Header";
@@ -19,11 +19,11 @@ const fontSans = Plus_Jakarta_Sans({
   weight: ['400', '500', '600', '700', '800'],
 });
 
-const fontDisplay = Fraunces({
+const fontDisplay = Manrope({
   subsets: ["latin"],
   variable: '--font-display',
   display: 'swap',
-  axes: ['opsz', 'WONK'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 const fontMono = JetBrains_Mono({
@@ -34,11 +34,11 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NORO – Gestão Empresarial Completa com IA",
-  description: "CRM, ERP, Financeiro e Automação em uma única plataforma. Aumente produtividade, reduza custos e escale seu negócio com inteligência artificial.",
+  title: "Noro Guru – O sistema operacional da agência moderna",
+  description: "CRM, financeiro, atendimento, sites e IA em uma plataforma. Do lead ao cliente fidelizado. Para agências de viagem brasileiras.",
   openGraph: {
-    title: "NORO – Gestão Empresarial Completa com IA",
-    description: "A plataforma que une CRM, ERP e Automação com IA para transformar sua gestão.",
+    title: "Noro Guru – O sistema operacional da agência moderna",
+    description: "CRM, financeiro, atendimento, sites e IA em uma plataforma. Do lead ao cliente fidelizado.",
     images: ["/og-noro.jpg"],
   },
 };
@@ -61,7 +61,14 @@ export default function RootLayout({
           ]}
         />
       </head>
-      <body className="bg-white font-sans text-[#1f2433] min-h-screen overflow-x-hidden antialiased" style={{ fontFamily: 'var(--font-sans, system-ui)' }}>
+      <body
+        className="min-h-screen overflow-x-hidden antialiased"
+        style={{
+          background: '#0B1220',
+          color: '#E0E3FF',
+          fontFamily: 'var(--font-sans, system-ui)',
+        }}
+      >
         <ToastProvider>
           <ModalProvider>
             <div className="relative flex flex-col min-h-screen">

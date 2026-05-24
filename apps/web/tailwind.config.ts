@@ -25,8 +25,9 @@ const config: Config = {
         'noro-text-body': 'var(--color-noro-text-body)',
       },
       fontFamily: {
-        display: ['var(--font-poppins)', 'sans-serif'],
-        sans: ['var(--font-inter)', 'sans-serif'],
+        display: ['var(--font-display)', 'Manrope', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Plus Jakarta Sans', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

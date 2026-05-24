@@ -3,30 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Noro Guru Design Tokens */
+  --noro-primary: #342CA4;
+  --noro-primary-hover: #3B2CA4;
+  --noro-accent: #1DD3C0;
+  --noro-gold: #D4AF37;
+
+  /* Backgrounds */
+  --noro-bg: #0B1220;
+  --noro-surface: #12152C;
+  --noro-surface-2: #1a1d35;
+  --noro-border: rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --noro-text: #FFFFFF;
+  --noro-text-secondary: #E0E3FF;
+  --noro-text-muted: #B8C1E0;
+  --noro-text-body: #D1D5F0;
+
+  /* Shadows */
+  --noro-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --noro-shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --noro-shadow-dark: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --noro-glow-primary: 0 0 40px rgba(52, 44, 164, 0.4);
+  --noro-glow-accent: 0 0 20px rgba(29, 211, 192, 0.3);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-/* For custom scrollbar styling */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -37,4 +40,109 @@ body {
   background-color: #2B2E48;
   border-radius: 10px;
   border: 2px solid #12152C;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* Base body */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--noro-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =========== UTILITY CLASSES =========== */
+
+/* Text gradient */
+.text-gradient-noro {
+  background: linear-gradient(90deg, #342CA4 0%, #1DD3C0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Grid overlay */
+.bg-grid-noro {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Orb glows */
+.orb-primary {
+  background: radial-gradient(circle, rgba(52, 44, 164, 0.35) 0%, transparent 70%);
+}
+.orb-accent {
+  background: radial-gradient(circle, rgba(29, 211, 192, 0.2) 0%, transparent 70%);
+}
+
+/* =========== ANIMATIONS =========== */
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+}
+
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 40px rgba(52, 44, 164, 0.4);
+}
+.glow-accent {
+  box-shadow: 0 0 20px rgba(29, 211, 192, 0.3);
 }

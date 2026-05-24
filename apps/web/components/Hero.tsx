@@ -1,231 +1,400 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 
-// Social-proof logos
+// Social-proof logos (agency names)
 const LOGOS = ['Wanderlust', 'Voa Brasil', 'Honda Viagens', 'Topázio Tours', 'Atlas & Co.', 'Mirante'];
-
-// Stats
-const STATS = [
-  { v: '+2.400', l: 'agências ativas' },
-  { v: 'R$ 18M', l: 'em pedidos/mês' },
-  { v: '14 dias', l: 'de teste grátis' },
-];
 
 const Hero: React.FC = () => {
   return (
-    <>
-      {/* ── Hero Section ─────────────────────────────────────────── */}
-      <section style={{
-        maxWidth: 1320, margin: '0 auto',
-        padding: '80px 56px 56px',
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.05fr)',
-        gap: 64, alignItems: 'center',
-      }}>
-        {/* Left — copy */}
-        <div>
-          {/* Eyebrow */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(35,36,82,0.07)', border: '1px solid rgba(35,36,82,0.12)',
-            borderRadius: 999, padding: '6px 14px',
-            fontSize: 12, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
-            color: '#232452',
-          }}>
-            SaaS para agências de viagem · Brasil
-          </div>
+    <section
+      style={{
+        position: 'relative',
+        minHeight: '92vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        background: '#0B1220',
+        paddingTop: 80,
+        paddingBottom: 80,
+      }}
+    >
+      {/* Background: radial gradient + grid */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `
+            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(18,21,44,0.95) 0%, #0B1220 100%)
+          `,
+        }}
+      />
 
-          {/* Headline */}
-          <h1 style={{
-            marginTop: 22,
-            fontFamily: 'var(--font-display, Georgia)',
-            fontSize: 'clamp(40px, 5vw, 62px)',
+      {/* Grid overlay */}
+      <div
+        className="bg-grid-noro"
+        style={{ position: 'absolute', inset: 0, opacity: 1 }}
+      />
+
+      {/* Orb — primary (purple, top-left) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: -120,
+          left: -120,
+          width: 600,
+          height: 600,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(52,44,164,0.35) 0%, transparent 65%)',
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Orb — accent (teal, bottom-right) */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -80,
+          right: -80,
+          width: 480,
+          height: 480,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(29,211,192,0.18) 0%, transparent 65%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          maxWidth: 800,
+          margin: '0 auto',
+          textAlign: 'center',
+          padding: '0 24px',
+        }}
+      >
+        {/* Badge pill */}
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: 'rgba(29,211,192,0.1)',
+            border: '1px solid rgba(29,211,192,0.3)',
+            borderRadius: 999,
+            padding: '6px 16px',
+            fontSize: 13,
             fontWeight: 600,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.06,
-            color: '#1f2433',
-          }}>
-            Sua agência<br/>no{' '}
-            <em style={{ fontStyle: 'italic', color: '#232452', fontWeight: 500 }}>próximo nível</em>.
-          </h1>
+            color: '#1DD3C0',
+            marginBottom: 32,
+          }}
+        >
+          <span>✦ Novo: IA Operacional v2 —</span>
+          <Link
+            href="/changelog"
+            style={{
+              color: '#1DD3C0',
+              textDecoration: 'underline',
+              textDecorationColor: 'rgba(29,211,192,0.5)',
+              textUnderlineOffset: 3,
+            }}
+          >
+            Ver novidades →
+          </Link>
+        </div>
 
-          <p style={{
-            marginTop: 22,
-            fontSize: 18.5, lineHeight: 1.5,
-            color: 'rgba(31,36,51,0.65)',
-            maxWidth: 520,
-          }}>
-            CRM, financeiro, marketing e o site da sua agência — tudo num só portal,
-            feito para o jeito brasileiro de vender viagem.
+        {/* H1 */}
+        <h1
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(44px, 7vw, 64px)',
+            fontWeight: 800,
+            lineHeight: 1.1,
+            letterSpacing: '-0.03em',
+            color: '#fff',
+            margin: '0 0 24px',
+          }}
+        >
+          O sistema operacional{' '}
+          <span
+            style={{
+              background: 'linear-gradient(90deg, #342CA4 0%, #1DD3C0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            da agência moderna.
+          </span>
+        </h1>
+
+        {/* Subtitle */}
+        <p
+          style={{
+            fontSize: 18,
+            color: '#B8C1E0',
+            lineHeight: 1.6,
+            maxWidth: 600,
+            margin: '0 auto 40px',
+            fontFamily: 'var(--font-sans)',
+          }}
+        >
+          CRM, financeiro, atendimento, sites e IA em uma plataforma.
+          Do lead ao cliente fidelizado.
+        </p>
+
+        {/* CTAs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 16,
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginBottom: 56,
+          }}
+        >
+          <Link
+            href="https://app.noro.guru"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#342CA4',
+              color: '#fff',
+              borderRadius: 10,
+              padding: '14px 28px',
+              fontSize: 15,
+              fontWeight: 700,
+              textDecoration: 'none',
+              letterSpacing: '-0.01em',
+              boxShadow: '0 4px 24px rgba(52,44,164,0.5)',
+              transition: 'background .15s, box-shadow .15s',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = '#3B2CA4';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = '#342CA4';
+            }}
+          >
+            Começar gratuitamente
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
+          <Link
+            href="/demo"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: 'transparent',
+              color: '#fff',
+              borderRadius: 10,
+              padding: '14px 28px',
+              fontSize: 15,
+              fontWeight: 600,
+              textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.3)',
+              transition: 'border-color .15s, background .15s',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.5)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+              (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.3)';
+            }}
+          >
+            Ver demonstração
+          </Link>
+        </div>
+
+        {/* Social proof */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+          <p style={{ fontSize: 13, color: '#B8C1E0', margin: 0 }}>
+            Mais de <strong style={{ color: '#fff' }}>800 agências</strong> já operam com o Noro
           </p>
 
-          {/* CTAs */}
-          <div style={{ display: 'flex', gap: 12, marginTop: 32, alignItems: 'center', flexWrap: 'wrap' }}>
-            <Link
-              href="/register"
-              style={{
-                padding: '13px 24px', borderRadius: 10,
-                background: '#232452', color: '#fff',
-                fontSize: 15, fontWeight: 700, textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                boxShadow: '0 4px 16px rgba(35,36,82,0.35)',
-              }}
-            >
-              Começar grátis por 14 dias
-            </Link>
-            <Link
-              href="/demo"
-              style={{
-                padding: '13px 24px', borderRadius: 10,
-                border: '1.5px solid #dfe2ea', background: '#fff',
-                color: '#1f2433', fontSize: 15, fontWeight: 600,
-                textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-              }}
-            >
-              Ver demonstração (2 min)
-            </Link>
-          </div>
-
-          {/* Trust bullets */}
-          <div style={{
-            marginTop: 32, display: 'flex', alignItems: 'center', gap: 20,
-            fontSize: 12.5, color: 'rgba(31,36,51,0.55)', flexWrap: 'wrap',
-          }}>
-            {['Sem cartão de crédito', 'Migração em 48h', 'Suporte humano em PT-BR'].map((t) => (
-              <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <span style={{ color: '#19b8a8', fontSize: 14 }}>✓</span>
-                {t}
-              </div>
+          {/* Agency logo row */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 28,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
+            {LOGOS.map((name) => (
+              <span
+                key={name}
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: 'rgba(255,255,255,0.25)',
+                  letterSpacing: '-0.01em',
+                  fontStyle: 'italic',
+                }}
+              >
+                {name}
+              </span>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Right — portal mockup */}
-        <div style={{ position: 'relative', height: 480 }}>
-          {/* Background card */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: 'linear-gradient(135deg, #232452 0%, #161637 100%)',
-            borderRadius: 24,
+      {/* Hero dashboard visual */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          marginTop: 64,
+          maxWidth: 960,
+          width: '100%',
+          padding: '0 24px',
+        }}
+      >
+        {/* Glow under card */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: -40,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '70%',
+            height: 80,
+            background: 'rgba(52,44,164,0.5)',
+            filter: 'blur(40px)',
+            borderRadius: '50%',
+          }}
+        />
+
+        {/* Browser frame card */}
+        <div
+          style={{
+            background: '#12152C',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 16,
             overflow: 'hidden',
-          }}>
-            {/* Decorative circles */}
-            <div style={{ position: 'absolute', right: -80, top: -80, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(25,184,168,0.2), transparent 65%)' }}/>
-            <div style={{ position: 'absolute', left: -60, bottom: -60, width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(circle, rgba(25,184,168,0.1), transparent 65%)' }}/>
+            boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+            transform: 'perspective(1200px) rotateX(4deg)',
+          }}
+        >
+          {/* Browser top bar */}
+          <div
+            style={{
+              background: '#1a1d35',
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <div style={{ display: 'flex', gap: 6 }}>
+              {['#ff5f57', '#febc2e', '#28c840'].map((c, i) => (
+                <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+              ))}
+            </div>
+            <div
+              style={{
+                flex: 1,
+                background: 'rgba(255,255,255,0.05)',
+                borderRadius: 6,
+                padding: '4px 12px',
+                fontSize: 11,
+                color: 'rgba(255,255,255,0.35)',
+                fontFamily: 'var(--font-mono)',
+                textAlign: 'center',
+              }}
+            >
+              app.noro.guru
+            </div>
+          </div>
 
-            {/* Fake portal UI */}
-            <div style={{ position: 'absolute', inset: 0, padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* Topbar mock */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: '#19b8a8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#232452' }}>N</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '-.01em' }}>NORO Guru</div>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                  {['#fff', '#fff', '#fff'].map((c, i) => (
-                    <div key={i} style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(255,255,255,0.1)' }}/>
+          {/* Dashboard mock content */}
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 20, minHeight: 340 }}>
+            {/* Stats row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+              {[
+                { label: 'Receita do mês', value: 'R$ 142k', delta: '+18%', color: '#1DD3C0' },
+                { label: 'Leads ativos', value: '38', delta: '+12 hoje', color: '#342CA4' },
+                { label: 'A receber', value: 'R$ 38k', delta: '3 cobr.', color: '#D4AF37' },
+                { label: 'NPS da semana', value: '4.8★', delta: '↑ 0.2', color: '#1DD3C0' },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: 10,
+                    padding: '14px 16px',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: '#B8C1E0', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>{stat.value}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: stat.color, marginTop: 4 }}>{stat.delta}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Chart + list row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              {/* Bar chart */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: 10, color: '#B8C1E0', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 16 }}>Receita por mês</div>
+                <div style={{ display: 'flex', gap: 5, alignItems: 'flex-end', height: 80 }}>
+                  {[30, 45, 28, 60, 50, 75, 65, 90, 78, 102, 88, 120].map((h, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        flex: 1,
+                        height: `${(h / 120) * 100}%`,
+                        borderRadius: '3px 3px 2px 2px',
+                        background: i === 11 ? '#342CA4' : i === 10 ? 'rgba(52,44,164,0.5)' : 'rgba(255,255,255,0.1)',
+                      }}
+                    />
                   ))}
                 </div>
               </div>
 
-              {/* Stats row */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+              {/* Pipeline */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: 10, color: '#B8C1E0', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 12 }}>Pipeline — leads</div>
                 {[
-                  { label: 'Receita do mês', value: 'R$ 142k', delta: '+18%', c: 'rgba(255,255,255,0.08)' },
-                  { label: 'Leads ativos', value: '38', delta: '+12', c: 'rgba(25,184,168,0.15)' },
-                  { label: 'A receber', value: 'R$ 38k', delta: '3 cobr.', c: 'rgba(255,255,255,0.06)' },
-                ].map((s) => (
-                  <div key={s.label} style={{ background: s.c, borderRadius: 10, padding: '12px 14px' }}>
-                    <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.5)', fontWeight: 600, letterSpacing: '.05em', textTransform: 'uppercase' }}>{s.label}</div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginTop: 4, letterSpacing: '-.01em' }}>{s.value}</div>
-                    <div style={{ fontSize: 10, color: '#19b8a8', fontWeight: 700, marginTop: 2 }}>{s.delta}</div>
+                  { stage: 'Novo contato', count: 12, w: 85, c: '#342CA4' },
+                  { stage: 'Proposta enviada', count: 8, w: 60, c: '#1DD3C0' },
+                  { stage: 'Negociando', count: 5, w: 40, c: '#D4AF37' },
+                  { stage: 'Fechado ✓', count: 3, w: 25, c: '#22c55e' },
+                ].map((row) => (
+                  <div key={row.stage} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <div style={{ fontSize: 10, color: '#B8C1E0', width: 100, flexShrink: 0 }}>{row.stage}</div>
+                    <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 3 }}>
+                      <div style={{ width: `${row.w}%`, height: '100%', background: row.c, borderRadius: 3 }} />
+                    </div>
+                    <div style={{ fontSize: 10, color: '#fff', fontWeight: 700, width: 18, textAlign: 'right' }}>{row.count}</div>
                   </div>
                 ))}
               </div>
-
-              {/* Bar chart */}
-              <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: '14px', flex: 1 }}>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, marginBottom: 12 }}>RECEITA POR MÊS</div>
-                <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', height: 80 }}>
-                  {[30, 45, 28, 60, 50, 75, 65, 90, 78, 102, 88, 120].map((h, i) => (
-                    <div key={i} style={{ flex: 1, height: `${(h/120)*100}%`, borderRadius: '3px 3px 1px 1px', background: i === 11 ? '#19b8a8' : 'rgba(255,255,255,0.15)' }}/>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Floating badge — AI response */}
-          <div style={{
-            position: 'absolute', right: -32, bottom: 56,
-            background: '#232452', color: '#fff', borderRadius: 14,
-            padding: '14px 18px',
-            boxShadow: '0 20px 40px -16px rgba(15,16,32,.55)',
-            maxWidth: 230, border: '1px solid rgba(255,255,255,0.08)',
-          }}>
-            <div style={{ fontFamily: 'monospace', fontSize: 9.5, color: '#19b8a8', letterSpacing: '.1em', fontWeight: 600 }}>NORO IA · AGORA</div>
-            <div style={{ fontSize: 12.5, marginTop: 6, lineHeight: 1.45, color: 'rgba(255,255,255,0.9)' }}>
-              "Maria fechou as Maldivas. Envio a confirmação e roteiro pelo WhatsApp?"
-            </div>
-          </div>
-
-          {/* Floating badge — growth */}
-          <div style={{
-            position: 'absolute', left: -32, top: 60,
-            background: '#fff', borderRadius: 14,
-            padding: '14px 18px',
-            boxShadow: '0 20px 40px -16px rgba(15,20,40,.25)',
-            display: 'flex', alignItems: 'center', gap: 12,
-            border: '1px solid #eceef3',
-          }}>
-            <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(25,184,168,0.12)', color: '#19b8a8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700 }}>↗</div>
-            <div>
-              <div style={{ fontSize: 11, color: 'rgba(31,36,51,0.5)', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 600 }}>Vendas no mês</div>
-              <div style={{ fontFamily: 'var(--font-display, Georgia)', fontSize: 22, fontWeight: 600, letterSpacing: '-0.01em', color: '#1f2433' }}>+ 38%</div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* ── Logos band ───────────────────────────────────────────── */}
-      <section style={{
-        maxWidth: 1320, margin: '0 auto',
-        padding: '32px 56px',
-        borderTop: '1px solid #eceef3',
-        borderBottom: '1px solid #eceef3',
-      }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 24, flexWrap: 'wrap',
-        }}>
-          <div style={{ fontSize: 11.5, color: 'rgba(31,36,51,0.45)', textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 600 }}>
-            + 480 agências em 23 estados
-          </div>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'center', flexWrap: 'wrap' }}>
-            {LOGOS.map((n) => (
-              <span key={n} style={{
-                fontFamily: 'var(--font-display, Georgia)',
-                fontSize: 18, fontWeight: 500, fontStyle: 'italic',
-                color: 'rgba(31,36,51,0.35)', letterSpacing: '-0.01em',
-              }}>{n}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats band ───────────────────────────────────────────── */}
-      <section style={{
-        maxWidth: 1320, margin: '0 auto',
-        padding: '48px 56px',
-        display: 'flex', gap: 48, justifyContent: 'center', flexWrap: 'wrap',
-      }}>
-        {STATS.map((s) => (
-          <div key={s.l} style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-display, Georgia)', fontSize: 42, fontWeight: 600, letterSpacing: '-0.02em', color: '#232452' }}>{s.v}</div>
-            <div style={{ fontSize: 13, color: 'rgba(31,36,51,0.5)', marginTop: 4, fontWeight: 500 }}>{s.l}</div>
-          </div>
-        ))}
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

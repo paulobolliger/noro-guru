@@ -1,213 +1,332 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { ChevronDown, X, Menu } from 'lucide-react';
 
-const NAV_LINKS = [
-  { label: 'Produto', href: '/#features' },
-  { label: 'Preços', href: '/pricing' },
-  { label: 'Ecossistema', href: '/ecosystem' },
-  { label: 'Suporte', href: '/suporte' },
+// ─── Dropdown data ───────────────────────────────────────────────────────────
+
+const PRODUTO_ITEMS = [
+  { icon: '📊', label: 'Visão Geral', desc: 'A plataforma completa', href: '/#features' },
+  { icon: '🎯', label: 'CRM & Pipeline', desc: 'Gerencie leads e oportunidades', href: '/#crm' },
+  { icon: '💰', label: 'Financeiro', desc: 'Faturamento e controle financeiro', href: '/#financeiro' },
+  { icon: '🤖', label: 'IA Operacional', desc: 'Automação inteligente', href: '/#ia' },
+  { icon: '🌐', label: 'Sites & Marketing', desc: 'Sites para sua agência', href: '/#sites' },
+  { icon: '💬', label: 'Atendimento', desc: 'Omnichannel integrado', href: '/#atendimento' },
 ];
+
+const ECOSSISTEMA_ITEMS = [
+  { icon: '🌍', label: 'Web', desc: 'noro.guru — site institucional', href: '/' },
+  { icon: '⚙️', label: 'Core', desc: 'app.noro.guru — plataforma principal', href: 'https://app.noro.guru' },
+  { icon: '🎛️', label: 'Control', desc: 'control.noro.guru — admin Noro', href: 'https://control.noro.guru' },
+  { icon: '🏗️', label: 'Sites', desc: 'sites.noro.guru — builder de sites', href: 'https://sites.noro.guru' },
+  { icon: '🛂', label: 'Visa API', desc: 'Dados de vistos para agências', href: '/ecosystem/dados-de-vistos' },
+  { icon: '📡', label: 'API Docs', desc: 'Documentação para devs', href: 'https://api.noro.guru' },
+];
+
+// ─── Dropdown component ───────────────────────────────────────────────────────
+
+function NavDropdown({
+  label,
+  items,
+}: {
+  label: string;
+  items: { icon: string; label: string; desc: string; href: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          fontSize: 15,
+          fontWeight: 500,
+          color: '#E0E3FF',
+          background: 'transparent',
+          border: 0,
+          cursor: 'pointer',
+          padding: '6px 12px',
+          borderRadius: 8,
+          fontFamily: 'var(--font-sans)',
+          transition: 'color .15s, background .15s',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+        }}
+      >
+        {label}
+        <ChevronDown
+          size={14}
+          style={{
+            transition: 'transform .2s',
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        />
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 8px)',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#12152C',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 12,
+            boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
+            padding: '8px',
+            minWidth: 280,
+            zIndex: 100,
+            animation: 'fade-in .15s ease-out forwards',
+          }}
+        >
+          {items.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '10px 12px',
+                borderRadius: 8,
+                textDecoration: 'none',
+                transition: 'background .12s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+              }}
+            >
+              <span style={{ fontSize: 20, flexShrink: 0 }}>{item.icon}</span>
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: '#E0E3FF', marginBottom: 2 }}>
+                  {item.label}
+                </div>
+                <div style={{ fontSize: 12, color: '#B8C1E0' }}>{item.desc}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   return (
-    <header style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      background: scrolled ? 'rgba(255,255,255,0.96)' : '#fff',
-      borderBottom: '1px solid #eceef3',
-      backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      transition: 'background .2s, box-shadow .2s',
-      boxShadow: scrolled ? '0 1px 12px rgba(35,36,82,.06)' : 'none',
-    }}>
-      <div style={{
-        maxWidth: 1152,
-        margin: '0 auto',
-        padding: '0 24px',
-        height: 60,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 32,
-      }}>
-
-        {/* Logo */}
-        <Link
-          href="/"
+    <>
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          height: 64,
+          background: scrolled
+            ? '#0B1220'
+            : 'rgba(11,18,32,0.7)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: scrolled
+            ? '1px solid rgba(255,255,255,0.08)'
+            : '1px solid transparent',
+          boxShadow: scrolled ? '0 1px 24px rgba(0,0,0,0.4)' : 'none',
+          transition: 'background .25s, border-color .25s, box-shadow .25s',
+        }}
+      >
+        <div
           style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            textDecoration: 'none', flexShrink: 0,
+            maxWidth: 1200,
+            margin: '0 auto',
+            padding: '0 80px',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 32,
           }}
+          className="px-6 md:px-20"
         >
-          <div style={{
-            width: 34, height: 34, borderRadius: 9,
-            background: '#232452',
-            color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: 15, letterSpacing: '.02em',
-            fontFamily: 'var(--font-sans)',
-          }}>
-            N
-          </div>
-          <div>
-            <div style={{
-              fontWeight: 700,
-              fontSize: 14.5,
-              letterSpacing: '-.012em',
-              color: '#1f2433',
-              lineHeight: 1.1,
-            }}>NORO Guru</div>
-            <div style={{
-              fontSize: 9.5,
-              color: 'rgba(31,36,51,0.45)',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '.04em',
-            }}>para agências de viagem</div>
-          </div>
-        </Link>
-
-        {/* Desktop nav */}
-        <nav style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          marginLeft: 8,
-          flex: 1,
-        }}>
-          {NAV_LINKS.map((l) => (
-            <Link
-              key={l.label}
-              href={l.href}
+          {/* Logo */}
+          <Link
+            href="/"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              textDecoration: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <img
+              src="https://res.cloudinary.com/dhqvjxgue/image/upload/v1760969739/edited-photo_4_txwuti.png"
+              alt="Noro Guru"
               style={{
-                fontSize: 13.5,
-                fontWeight: 600,
-                color: 'rgba(31,36,51,0.65)',
+                height: 28,
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'brightness(0) invert(1)',
+              }}
+              onError={(e) => {
+                // Fallback text logo
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: 18,
+                color: '#fff',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Noro Guru
+            </span>
+          </Link>
+
+          {/* Desktop nav — hidden on mobile */}
+          <nav
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              flex: 1,
+              justifyContent: 'center',
+            }}
+            className="hidden md:flex"
+          >
+            <NavDropdown label="Produto" items={PRODUTO_ITEMS} />
+
+            <Link
+              href="/pricing"
+              style={{
+                fontSize: 15,
+                fontWeight: 500,
+                color: '#E0E3FF',
                 textDecoration: 'none',
                 padding: '6px 12px',
                 borderRadius: 8,
-                transition: 'color .12s, background .12s',
+                transition: 'background .12s',
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#232452';
-                (e.currentTarget as HTMLAnchorElement).style.background = '#f6f7fb';
+                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(31,36,51,0.65)';
                 (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
               }}
             >
-              {l.label}
+              Preços
             </Link>
-          ))}
-        </nav>
 
-        {/* CTAs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <Link
-            href="https://app.noro.guru/login"
-            style={{
-              fontSize: 13.5,
-              fontWeight: 600,
-              color: 'rgba(31,36,51,0.7)',
-              textDecoration: 'none',
-              padding: '7px 14px',
-              borderRadius: 8,
-            }}
-          >
-            Entrar
-          </Link>
-          <Link
-            href="https://app.noro.guru"
-            style={{
-              fontSize: 13.5,
-              fontWeight: 700,
-              color: '#fff',
-              background: '#232452',
-              textDecoration: 'none',
-              padding: '8px 18px',
-              borderRadius: 9,
-              letterSpacing: '-.01em',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-          >
-            Começar grátis
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </Link>
+            <NavDropdown label="Ecossistema" items={ECOSSISTEMA_ITEMS} />
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{
-              background: 'transparent',
-              border: 0,
-              cursor: 'pointer',
-              padding: 8,
-              display: 'none', // hidden on desktop via CSS below
-            }}
-            aria-label="Menu"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2433" strokeWidth="2" strokeLinecap="round">
-              {mobileOpen ? (
-                <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
-              ) : (
-                <><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></>
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div style={{
-          background: '#fff',
-          borderTop: '1px solid #eceef3',
-          padding: '16px 24px 24px',
-        }}>
-          {NAV_LINKS.map((l) => (
             <Link
-              key={l.label}
-              href={l.href}
-              onClick={() => setMobileOpen(false)}
+              href="/about"
               style={{
-                display: 'block',
-                padding: '12px 0',
                 fontSize: 15,
-                fontWeight: 600,
-                color: '#1f2433',
+                fontWeight: 500,
+                color: '#E0E3FF',
                 textDecoration: 'none',
-                borderBottom: '1px solid #f6f7fb',
+                padding: '6px 12px',
+                borderRadius: 8,
+                transition: 'background .12s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
               }}
             >
-              {l.label}
+              Sobre
             </Link>
-          ))}
-          <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+            <Link
+              href="/blog"
+              style={{
+                fontSize: 15,
+                fontWeight: 500,
+                color: '#E0E3FF',
+                textDecoration: 'none',
+                padding: '6px 12px',
+                borderRadius: 8,
+                transition: 'background .12s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+              }}
+            >
+              Blog
+            </Link>
+          </nav>
+
+          {/* Desktop CTAs */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              flexShrink: 0,
+            }}
+            className="hidden md:flex"
+          >
             <Link
               href="https://app.noro.guru/login"
               style={{
-                display: 'block',
-                textAlign: 'center',
-                padding: '11px',
-                fontSize: 14, fontWeight: 600,
-                color: '#232452',
-                border: '1px solid #dfe2ea',
-                borderRadius: 9,
+                fontSize: 14,
+                fontWeight: 500,
+                color: '#E0E3FF',
                 textDecoration: 'none',
+                padding: '8px 16px',
               }}
             >
               Entrar
@@ -215,21 +334,131 @@ export default function Header() {
             <Link
               href="https://app.noro.guru"
               style={{
-                display: 'block',
-                textAlign: 'center',
-                padding: '11px',
-                fontSize: 14, fontWeight: 700,
+                fontSize: 14,
+                fontWeight: 700,
                 color: '#fff',
-                background: '#232452',
-                borderRadius: 9,
+                background: '#342CA4',
                 textDecoration: 'none',
+                padding: '10px 20px',
+                borderRadius: 8,
+                transition: 'background .15s',
+                letterSpacing: '-0.01em',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = '#3B2CA4';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = '#342CA4';
               }}
             >
               Começar grátis
             </Link>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileOpen((v) => !v)}
+            style={{
+              background: 'transparent',
+              border: 0,
+              cursor: 'pointer',
+              padding: 8,
+              color: '#E0E3FF',
+              marginLeft: 'auto',
+            }}
+            className="flex md:hidden"
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+      {mobileOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 49,
+            background: '#0B1220',
+            paddingTop: 64,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'auto',
+          }}
+          className="md:hidden"
+        >
+          <div style={{ padding: '24px 24px 32px', flex: 1 }}>
+            {/* Mobile nav links */}
+            {[
+              { label: 'Produto', href: '/#features' },
+              { label: 'Preços', href: '/pricing' },
+              { label: 'Ecossistema', href: '/ecosystem' },
+              { label: 'Sobre', href: '/about' },
+              { label: 'Blog', href: '/blog' },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: 'block',
+                  padding: '16px 0',
+                  fontSize: 18,
+                  fontWeight: 600,
+                  color: '#E0E3FF',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                  fontFamily: 'var(--font-display)',
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <Link
+                href="https://app.noro.guru/login"
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  padding: '14px',
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: '#E0E3FF',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: 10,
+                  textDecoration: 'none',
+                }}
+              >
+                Entrar
+              </Link>
+              <Link
+                href="https://app.noro.guru"
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  padding: '14px',
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: '#fff',
+                  background: '#342CA4',
+                  borderRadius: 10,
+                  textDecoration: 'none',
+                }}
+              >
+                Começar grátis
+              </Link>
+            </div>
+          </div>
         </div>
       )}
-    </header>
+
+      {/* Spacer for fixed header */}
+      <div style={{ height: 64 }} />
+    </>
   );
 }

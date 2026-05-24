@@ -1,193 +1,454 @@
-import { Metadata } from 'next';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import StructuredData from '@/components/StructuredData';
-import { getWebPageSchema, getSoftwareApplicationSchema } from '@/lib/schema';
-import NoroPricingCards from '@/components/NoroPricingCards';
 
-export const metadata: Metadata = {
-  title: 'Planos e Preços | NORO Guru',
-  description: 'Escolha o plano ideal para sua agência de turismo. Preços simples, sem pegadinhas. Trial de 14 dias sem cartão.',
-  openGraph: {
-    title: 'Planos e Preços | NORO Guru',
-    description: 'Escolha o plano ideal para sua agência.',
-  },
-};
+// ─── Plans data ───────────────────────────────────────────────────────────────
 
-const FAQS = [
+const PLANS = [
   {
-    q: 'Posso trocar de plano a qualquer momento?',
-    a: 'Sim! Upgrade ou downgrade a qualquer momento. O valor é ajustado proporcionalmente no próximo ciclo de cobrança.',
+    name: 'Starter',
+    desc: 'Para agências que estão começando a se organizar.',
+    priceMonthly: 197,
+    priceAnnual: 157,
+    popular: false,
+    enterprise: false,
+    features: [
+      'Até 500 leads ativos',
+      'CRM e pipeline kanban',
+      'Pedidos e propostas',
+      'Cobrança PIX e cartão',
+      'Inbox WhatsApp + email',
+      '2 usuários',
+      'Suporte por chat',
+    ],
+    cta: 'Começar grátis',
+    ctaHref: 'https://app.noro.guru',
   },
   {
-    q: 'O que acontece após os 14 dias de teste?',
-    a: 'Você escolhe o plano que faz sentido ou volta para o gratuito. Sem cobrança automática sem aviso.',
+    name: 'Profissional',
+    desc: 'Para agências em crescimento que precisam de mais poder.',
+    priceMonthly: 397,
+    priceAnnual: 317,
+    popular: true,
+    enterprise: false,
+    features: [
+      'Leads ilimitados',
+      'Tudo do Starter',
+      'Automações de funil',
+      'Conteúdo IA (200/mês)',
+      'Site próprio com domínio',
+      'Inbox + Instagram',
+      'Conciliação automática',
+      'Até 8 usuários',
+      'Suporte prioritário',
+    ],
+    cta: 'Começar grátis',
+    ctaHref: 'https://app.noro.guru',
   },
   {
-    q: 'Quais formas de pagamento são aceitas?',
-    a: 'PIX, cartão de crédito (Visa, Master, Amex) via e.Rede. Pagamento anual com 20% de desconto.',
+    name: 'Agência',
+    desc: 'Para operações maduras com múltiplas marcas.',
+    priceMonthly: 697,
+    priceAnnual: 557,
+    popular: false,
+    enterprise: false,
+    features: [
+      'Tudo do Profissional',
+      'Multi-empresa',
+      'Sites ilimitados',
+      'Conteúdo IA ilimitado',
+      'API pública',
+      'Inbox + FB + Instagram',
+      'Usuários ilimitados',
+      'Gerente de conta dedicado',
+    ],
+    cta: 'Começar grátis',
+    ctaHref: 'https://app.noro.guru',
   },
   {
-    q: 'O módulo "Meu Site" precisa de conhecimento técnico?',
-    a: 'Não. É um editor visual sem código. Você escolhe o template, personaliza e publica em minutos.',
-  },
-  {
-    q: 'Como funciona a migração de dados?',
-    a: 'Nossa equipe faz a migração em até 48h a partir de planilhas ou outros CRMs. Incluído em todos os planos pagos.',
+    name: 'Enterprise',
+    desc: 'Para grandes redes e franquias com necessidades específicas.',
+    priceMonthly: null,
+    priceAnnual: null,
+    popular: false,
+    enterprise: true,
+    features: [
+      'Tudo do Agência',
+      'SLA personalizado',
+      'Onboarding dedicado',
+      'Integrações customizadas',
+      'Treinamento da equipe',
+      'Contrato personalizado',
+    ],
+    cta: 'Falar com especialista',
+    ctaHref: '/demo',
   },
 ];
 
+const FAQS = [
+  { q: 'Posso trocar de plano a qualquer momento?', a: 'Sim! Upgrade ou downgrade a qualquer momento. O valor é ajustado proporcionalmente no próximo ciclo.' },
+  { q: 'O que acontece após os 14 dias de teste?', a: 'Você escolhe o plano ou volta ao gratuito. Sem cobrança automática sem aviso prévio.' },
+  { q: 'Quais formas de pagamento são aceitas?', a: 'PIX, cartão de crédito (Visa, Master, Amex). Pagamento anual com 20% de desconto.' },
+  { q: 'Como funciona a migração de dados?', a: 'Nossa equipe migra em até 48h a partir de planilhas ou outros CRMs. Incluído em todos os planos pagos.' },
+  { q: 'Preciso de conhecimento técnico para usar o módulo de Site?', a: 'Não. É um editor visual sem código. Você escolhe o template, personaliza e publica em minutos.' },
+  { q: 'Como funciona o suporte?', a: 'Todos os planos têm suporte em português. Pro tem resposta prioritária. Agência+ tem gerente de conta dedicado.' },
+];
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function PricingPage() {
+  const [annual, setAnnual] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
-    <>
-      <StructuredData
-        data={[
-          getWebPageSchema({
-            url: 'https://noro.guru/precos',
-            title: 'Planos e Preços | NORO Guru',
-            description: 'Planos simples para agências de turismo. Trial de 14 dias, sem cartão de crédito.',
-          }),
-          getSoftwareApplicationSchema(),
-        ]}
-      />
-
-      {/* ── Header ─────────────────────────────────────────────── */}
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '88px 56px 40px', textAlign: 'center' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center',
-          background: 'rgba(35,36,82,0.07)', border: '1px solid rgba(35,36,82,0.12)',
-          borderRadius: 999, padding: '6px 14px',
-          fontSize: 11.5, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
-          color: '#232452', marginBottom: 20,
-        }}>
-          Preços simples · sem pegadinha
-        </div>
-        <h1 style={{
-          fontFamily: 'var(--font-display, Georgia)', fontWeight: 500,
-          fontSize: 'clamp(44px, 5.6vw, 68px)', lineHeight: 1.05, letterSpacing: '-0.025em',
-          margin: '0 0 18px', color: '#1f2433',
-        }}>
-          Um plano para cada<br/>tamanho de{' '}
-          <em style={{ fontStyle: 'italic', color: '#232452' }}>agência</em>.
+    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+      {/* Hero */}
+      <section
+        style={{
+          textAlign: 'center',
+          padding: '80px 24px 56px',
+          maxWidth: 800,
+          margin: '0 auto',
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            fontWeight: 700,
+            color: '#fff',
+            letterSpacing: '-0.03em',
+            lineHeight: 1.1,
+            margin: '0 0 20px',
+          }}
+        >
+          Planos Noro Guru
         </h1>
-        <p style={{ fontSize: 18, color: 'rgba(31,36,51,0.6)', margin: '0 auto 32px', maxWidth: 580, lineHeight: 1.5 }}>
-          Trial de 14 dias · sem cartão de crédito · migração gratuita em 48h.
+        <p style={{ fontSize: 18, color: '#B8C1E0', margin: '0 0 36px' }}>
+          Preços simples, sem pegadinhas. Trial de 14 dias sem cartão de crédito.
         </p>
+
+        {/* Billing toggle */}
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 999,
+            padding: '6px 8px',
+          }}
+        >
+          <button
+            onClick={() => setAnnual(false)}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 999,
+              border: 0,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              background: !annual ? '#fff' : 'transparent',
+              color: !annual ? '#0B1220' : '#B8C1E0',
+              transition: 'all .2s',
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            Mensal
+          </button>
+          <button
+            onClick={() => setAnnual(true)}
+            style={{
+              padding: '8px 20px',
+              borderRadius: 999,
+              border: 0,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              background: annual ? '#fff' : 'transparent',
+              color: annual ? '#0B1220' : '#B8C1E0',
+              transition: 'all .2s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            Anual
+            <span
+              style={{
+                background: annual ? '#342CA4' : 'rgba(52,44,164,0.6)',
+                color: '#fff',
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: 999,
+              }}
+            >
+              -20%
+            </span>
+          </button>
+        </div>
       </section>
 
-      {/* ── Plan cards (client component with billing toggle) ──── */}
-      <NoroPricingCards />
+      {/* Plan cards */}
+      <section
+        style={{
+          maxWidth: 1200,
+          margin: '0 auto',
+          padding: '0 80px 80px',
+        }}
+        className="px-6 md:px-20"
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 16,
+          }}
+          className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
+        >
+          {PLANS.map((plan) => (
+            <div
+              key={plan.name}
+              style={{
+                background: plan.popular ? 'rgba(52,44,164,0.12)' : '#12152C',
+                border: plan.popular ? '2px solid #342CA4' : '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 16,
+                padding: 28,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 20,
+                position: 'relative',
+              }}
+            >
+              {/* Popular badge */}
+              {plan.popular && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -14,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: '#342CA4',
+                    color: '#fff',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: '4px 14px',
+                    borderRadius: 999,
+                    letterSpacing: '0.06em',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  ✦ Mais popular
+                </div>
+              )}
 
-      {/* ── Comparison table ─────────────────────────────────────── */}
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '64px 56px 32px' }}>
-        <h2 style={{ textAlign: 'center', fontFamily: 'var(--font-display, Georgia)', fontWeight: 500, fontSize: 38, letterSpacing: '-0.02em', color: '#1f2433', marginBottom: 40 }}>
-          Comparação detalhada
-        </h2>
+              {/* Plan name */}
+              <div>
+                <div
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: '#fff',
+                    fontFamily: 'var(--font-display)',
+                    marginBottom: 6,
+                  }}
+                >
+                  {plan.name}
+                </div>
+                <p style={{ fontSize: 13, color: '#B8C1E0', lineHeight: 1.5, margin: 0 }}>
+                  {plan.desc}
+                </p>
+              </div>
 
-        {[
-          { label: 'CRM & Vendas', rows: [
-            { f: 'Leads ativos',         s: '500',        p: 'Ilimitado',   a: 'Ilimitado' },
-            { f: 'Pipeline kanban',       s: true,         p: true,          a: true },
-            { f: 'Pedidos & propostas',   s: true,         p: true,          a: true },
-            { f: 'Automações de funil',   s: false,        p: true,          a: true },
-            { f: 'Multi-empresa',         s: false,        p: false,         a: true },
-          ]},
-          { label: 'Meu Site', rows: [
-            { f: 'Editor visual',         s: false,        p: true,          a: true },
-            { f: 'Domínio próprio',       s: false,        p: true,          a: true },
-            { f: 'Sites simultâneos',     s: false,        p: '1',           a: 'Ilimitado' },
-          ]},
-          { label: 'Comunicação & IA', rows: [
-            { f: 'Inbox unificada',       s: 'WA + email', p: '+ Instagram', a: '+ Instagram + FB' },
-            { f: 'Conteúdo IA',           s: false,        p: '200/mês',     a: 'Ilimitado' },
-          ]},
-          { label: 'Financeiro', rows: [
-            { f: 'Cobrança Pix & cartão', s: true,         p: true,          a: true },
-            { f: 'Conciliação automática',s: false,        p: true,          a: true },
-          ]},
-          { label: 'Plataforma', rows: [
-            { f: 'Usuários',              s: '2',          p: '8',           a: 'Ilimitado' },
-            { f: 'API pública',           s: false,        p: false,         a: true },
-            { f: 'Suporte',               s: 'Chat',       p: 'Prioritário', a: 'Gerente dedicado' },
-          ]},
-        ].map((group) => (
-          <div key={group.label} style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(31,36,51,0.45)', padding: '8px 0 4px', borderBottom: '1px solid #eceef3', marginBottom: 0 }}>
-              {group.label}
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ color: 'rgba(31,36,51,0.5)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>
-                  <th style={{ padding: '8px 0', textAlign: 'left', width: '44%' }}></th>
-                  <th style={{ padding: '8px 0', width: '18%' }}>Starter</th>
-                  <th style={{ padding: '8px 0', width: '20%', color: '#232452' }}>Pro ★</th>
-                  <th style={{ padding: '8px 0', width: '18%' }}>Agency+</th>
-                </tr>
-              </thead>
-              <tbody>
-                {group.rows.map((row) => (
-                  <tr key={row.f} style={{ borderTop: '1px solid #eceef3' }}>
-                    <td style={{ padding: '10px 0', fontWeight: 500, color: '#1f2433' }}>{row.f}</td>
-                    {[row.s, row.p, row.a].map((v, i) => (
-                      <td key={i} style={{ padding: '10px 0', textAlign: 'center', color: '#1f2433' }}>
-                        {v === true ? (
-                          <span style={{ color: '#19b8a8', fontSize: 16 }}>✓</span>
-                        ) : v === false ? (
-                          <span style={{ color: 'rgba(31,36,51,0.25)', fontSize: 15 }}>—</span>
-                        ) : (
-                          <span style={{ fontSize: 12.5, fontWeight: 500, color: 'rgba(31,36,51,0.65)' }}>{v}</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+              {/* Price */}
+              <div>
+                {plan.enterprise ? (
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: '#fff',
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    Sob consulta
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 36,
+                        fontWeight: 700,
+                        color: '#fff',
+                        letterSpacing: '-0.03em',
+                      }}
+                    >
+                      R$ {annual ? plan.priceAnnual : plan.priceMonthly}
+                    </div>
+                    <div style={{ fontSize: 13, color: '#B8C1E0' }}>/mês</div>
+                  </div>
+                )}
+                {annual && !plan.enterprise && (
+                  <div style={{ fontSize: 11, color: '#1DD3C0', marginTop: 4, fontWeight: 600 }}>
+                    Cobrado anualmente
+                  </div>
+                )}
+              </div>
+
+              {/* CTA */}
+              <Link
+                href={plan.ctaHref}
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  padding: '12px',
+                  borderRadius: 8,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  background: plan.popular ? '#342CA4' : 'transparent',
+                  color: plan.popular ? '#fff' : '#E0E3FF',
+                  border: plan.popular ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                  transition: 'background .15s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.background = plan.popular
+                    ? '#3B2CA4'
+                    : 'rgba(255,255,255,0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.background = plan.popular
+                    ? '#342CA4'
+                    : 'transparent';
+                }}
+              >
+                {plan.cta}
+              </Link>
+
+              {/* Features */}
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {plan.features.map((f) => (
+                  <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#D1D5F0' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1DD3C0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    {f}
+                  </li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
-      </section>
-
-      {/* ── FAQ ─────────────────────────────────────────────────── */}
-      <section style={{ maxWidth: 740, margin: '0 auto', padding: '32px 56px 64px' }}>
-        <h2 style={{ textAlign: 'center', fontFamily: 'var(--font-display, Georgia)', fontWeight: 500, fontSize: 34, letterSpacing: '-0.02em', color: '#1f2433', marginBottom: 32 }}>
-          Perguntas frequentes
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-          {FAQS.map((faq, i) => (
-            <details key={i} style={{ borderTop: '1px solid #eceef3', padding: '18px 0' }}>
-              <summary style={{ fontSize: 15, fontWeight: 600, color: '#1f2433', cursor: 'pointer', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {faq.q}
-                <span style={{ fontSize: 18, color: 'rgba(31,36,51,0.4)', flexShrink: 0, marginLeft: 16 }}>+</span>
-              </summary>
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(31,36,51,0.65)', marginTop: 12, marginBottom: 0 }}>
-                {faq.a}
-              </p>
-            </details>
+              </ul>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* ── CTA ─────────────────────────────────────────────────── */}
-      <section style={{ background: '#232452', padding: '72px 56px', textAlign: 'center' }}>
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 600, margin: '0 auto' }}>
-          <h2 style={{ fontFamily: 'var(--font-display, Georgia)', fontWeight: 500, fontSize: 38, letterSpacing: '-0.02em', color: '#fff', margin: '0 0 14px' }}>
-            Ainda tem dúvidas?
-          </h2>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', marginBottom: 28 }}>
-            Nossa equipe fala português e está pronta para ajudar a escolher o plano certo.
-          </p>
-          <Link
-            href="/contato"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '13px 28px', borderRadius: 10,
-              background: '#19b8a8', color: '#232452',
-              fontSize: 15, fontWeight: 700, textDecoration: 'none',
-            }}
-          >
-            Falar com um especialista
-          </Link>
+      {/* FAQ */}
+      <section
+        style={{
+          maxWidth: 760,
+          margin: '0 auto',
+          padding: '0 24px 80px',
+        }}
+      >
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 32,
+            fontWeight: 700,
+            color: '#fff',
+            letterSpacing: '-0.02em',
+            textAlign: 'center',
+            margin: '0 0 40px',
+          }}
+        >
+          Perguntas frequentes
+        </h2>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {FAQS.map((faq, i) => (
+            <div
+              key={i}
+              style={{
+                borderTop: '1px solid rgba(255,255,255,0.08)',
+                padding: '0',
+              }}
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 16,
+                  padding: '20px 0',
+                  background: 'transparent',
+                  border: 0,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontFamily: 'var(--font-sans)',
+                }}
+              >
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#E0E3FF' }}>{faq.q}</span>
+                <span style={{ fontSize: 20, color: '#B8C1E0', flexShrink: 0, transition: 'transform .2s', transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>+</span>
+              </button>
+              {openFaq === i && (
+                <div style={{ paddingBottom: 20 }}>
+                  <p style={{ fontSize: 14, lineHeight: 1.65, color: '#B8C1E0', margin: 0 }}>{faq.a}</p>
+                </div>
+              )}
+            </div>
+          ))}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
         </div>
       </section>
-    </>
+
+      {/* CTA final */}
+      <section
+        style={{
+          background: '#12152C',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          padding: '64px 24px',
+          textAlign: 'center',
+        }}
+      >
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 28,
+            fontWeight: 700,
+            color: '#fff',
+            margin: '0 0 12px',
+          }}
+        >
+          Ainda em dúvida? Fale com um especialista.
+        </h2>
+        <p style={{ fontSize: 15, color: '#B8C1E0', margin: '0 0 28px' }}>
+          Nossa equipe fala português e está pronta para ajudar.
+        </p>
+        <Link
+          href="/demo"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: '#342CA4',
+            color: '#fff',
+            borderRadius: 10,
+            padding: '12px 28px',
+            fontSize: 15,
+            fontWeight: 700,
+            textDecoration: 'none',
+          }}
+        >
+          Agendar demonstração →
+        </Link>
+      </section>
+    </div>
   );
 }
