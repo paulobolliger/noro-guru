@@ -651,3 +651,59 @@ As seções a seguir definem o contexto estratégico e as diretrizes operacionai
 
 **Propriedades Padrão de Evento:**
 - `user_id`, `role`, `org_id`, `tenant_id`, `entity_type`, `entity_id`, `previous_status`, `new_status`, `source_page`, `latency_ms`, `success`, `error_code`.
+
+### 9.9 Especificações Práticas de Execução para /control
+
+Para que o desenvolvimento e rollout de `/control` ocorram sem atritos operacionais, as 8 diretrizes abaixo devem ser implementadas e respeitadas durante o design (Stitch) e code-review.
+
+**1. Matriz Rota x Permissão (Granular)**
+É mandatório detalhar a permissão exata em nível de ação (`view`, `create`, `update`, `delete`, `manage`).
+- Ex: `/clientes` -> Comercial (`view, create, update`), Admin (`manage`).
+- Ex: `/financeiro` -> Financeiro (`manage`), Super Admin (`view`).
+- A matriz deve ser implementada no Middleware do Next.js e confirmada via RLS no Supabase.
+
+**2. Definição de Dono (Owner) por Módulo**
+Cada área da plataforma requer aprovação do owner da regra de negócio:
+- *Comercial (Leads, Clientes, Pedidos):* Head de Vendas.
+- *Financeiro (Billing, Pagamentos):* CFO / Head Financeiro.
+- *Suporte e Comunicação:* Head de Operações/Sucesso do Cliente.
+- *Tenant, Domínios e Superadmin:* CTO / Product Owner.
+
+**3. SLA Operacional por Fluxo**
+Indicadores alvo exigidos em ambiente de produção:
+- **Suporte:** Ticket First Response em `< 15 minutos`.
+- **Financeiro:** Conciliação e atualização de status de webhook em `< 5 segundos`.
+- **Governança:** Criação/Setup de novo Tenant (incluindo domínios) automatizado em `< 3 minutos`.
+
+**4. Contratos de Dados por Página Crítica**
+Telas de mutação devem possuir schemas Zod refletindo o estado e validação:
+- **Campos:** Definição clara de `required` vs `optional`.
+- **Validações:** Regras de negócio (ex: CPF válido, margem de markup > 0).
+- **Erros:** Mensagens humanas padronizadas no frontend (ex: "E-mail já cadastrado neste tenant").
+- **Estados:** `idle`, `submitting`, `success`, `error`.
+
+**5. Padrão de Tabelas e Filtros**
+Toda tabela (grid) em `/control` deve seguir estritamente:
+- Ordenação padrão por "Mais recentes primeiro" (`created_at DESC`), exceto em fluxos financeiros onde o "Vencimento" tem prioridade.
+- Paginação baseada em cursores ou limite claro (ex: 50 itens/página).
+- Persistência obrigatória do estado de filtros na URL (`?status=active&page=2`) para facilitar compartilhamento.
+- Opção de exportação para CSV com as colunas atualmente visíveis em tela.
+
+**6. Catálogo Final de Eventos (Analytics)**
+O catálogo (`/docs/analytics.csv` ou equivalente interno) deve conter o mapeamento final de cada evento:
+- Nome final do evento (em `snake_case`).
+- Propriedades obrigatórias e opcionais por evento.
+- Origem do disparo (client-side vs server-action vs webhook).
+- Destino de roteamento (ex: GA4, PostHog, Mixpanel).
+
+**7. Critério de Rollout por Onda**
+Para que uma "Onda" seja promovida para produção, os seguintes gates devem estar verdes:
+- **QA e Permissão:** 100% dos fluxos testados com perfis cruzados (para garantir *deny by default*).
+- **Perf:** Páginas vitais carregando em LCP `< 2s`.
+- **Auditoria:** Teste fim-a-fim da geração de logs de auditoria no Supabase em ações destrutivas.
+
+**8. Plano de Migração Visual Sem Quebra**
+Ao alterar layouts globais (`apps/control/app/(protected)/layout.tsx`), deve-se adotar:
+- Uso de Feature Flags para o novo componente de layout.
+- Migração "Strangler Fig": Alterar componentes granulares (como TopBar/Sidebar) mantendo os contratos (`props`) originais, preservando a renderização legada até homologação completa nas rotas filhas.
+- Testes visuais ou Playwright E2E ativos durante a transição.
