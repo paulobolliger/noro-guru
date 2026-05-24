@@ -409,3 +409,245 @@ As seções a seguir definem o contexto estratégico e as diretrizes operacionai
 5. Acessibilidade AA mínima e SEO aplicados.
 6. Tracking Ativo.
 7. QA sem bloqueadores (0 bugs visuais/funcionais graves).
+
+## 9. Estrutura e Diretrizes para o App Administrativo (/control)
+
+*(Nota: O app `/control` é hospedado no subdomínio de gestão `app.noro.guru`)*
+
+### 9.1 Estrutura Global de /control
+
+**Arquitetura de Layout:**
+- Layout raiz da aplicação: `layout.tsx`
+- Layout de área protegida: `apps/control/app/(protected)/layout.tsx`
+- Layout contextual de Cliente: `apps/control/app/(protected)/clientes/[id]/layout.tsx`
+- Layout contextual de Tenant: `apps/control/app/(protected)/tenants/[id]/layout.tsx`
+
+**Padrões globais obrigatórios para /control:**
+- Sidebar + Topbar consistentes na área protegida.
+- Busca global e atalhos de navegação sempre disponíveis.
+- Breadcrumb em rotas de detalhe/edição para orientação de profundidade.
+- Estado vazio, loading e erro em tabelas/listas.
+- Ações críticas obrigatoriamente exigem modal de confirmação.
+- Auditoria nativa de ações administrativas.
+- Controle rigoroso de permissão por módulo (RBAC).
+
+### 9.2 Módulos, Subpáginas e Objetivo de Negócio
+
+**Autenticação e Entrada**
+- `/login`, `/debug`
+- **Objetivo:** Acesso seguro e diagnóstico técnico.
+
+**Operação Comercial**
+- `/clientes`, `/clientes/novo`, `/clientes/[id]`
+- `/leads`
+- `/orcamentos/*`
+- `/pedidos/*`
+- **Objetivo:** Converter e operar pipeline ponta a ponta.
+
+**Comunicação e Atendimento**
+- `/comunicacao`, `/comunicacao/chatbot`, `/comunicacao/chat/[id]`
+- `/support`, `/support/[id]`
+- `/notificacoes`, `/admin/notificacoes`
+- **Objetivo:** Centralizar relacionamento omni-channel, acompanhar SLA e histórico da conta.
+
+**Financeiro e Cobrança**
+- `/financeiro`, `/billing`, `/pagamentos`
+- `/settings/stripe`, `/settings/stripe/metrics`
+- **Objetivo:** Receita previsível, conciliação e monitoramento de cobrança.
+
+**Multi-tenant e Governança**
+- `/tenants`, `/tenants/[id]` e subpáginas
+- `/domains`, `/custom-domains`
+- `/users`
+- `/configuracoes/planos/*`
+- `/api-keys`
+- `/webhooks/endpoints`
+- **Objetivo:** Administrar contas, planos, acesso de terceiros e integrações.
+
+**Administração Central (Superadmin)**
+- `/control`, `/control/leads`, `/control/leads/kanban`
+- `/control/orgs`, `/control/orgs/[id]`, `/control/tenants`, `/control/tasks`
+- `/auditoria`, `/tarefas`
+- **Objetivo:** Visão macro e orquestração global da plataforma.
+
+**Apoio de Produto**
+- `/marketing`, `/email`, `/relatorios`, `/sobre-noro`
+- **Objetivo:** Crescimento, comunicação transacional/massiva e inteligência de gestão.
+
+### 9.3 Layout e Blocos por Tipo de Página (Control)
+
+**Página de Listagem (Tabelas/Grids)**
+- Header do módulo claro.
+- Filtros e barra de busca.
+- Tabela/lista com paginação ativa.
+- Seleção e Ações em lote.
+- Exportação de dados (CSV/Excel).
+- Renderização apropriada de estados vazios/loading/erro.
+
+**Página de Detalhe (Contextual)**
+- Header com resumo principal de dados.
+- Tabs de navegação contextual.
+- Timeline de atividade/log.
+- Métricas relacionadas rápidas.
+- Menu de ações rápidas.
+
+**Página de Criação/Edição (Forms)**
+- Formulário dividido em seções visuais lógicas.
+- Validação inline ativa (via Zod/RHF).
+- Autosave opcional onde aplicável.
+- Botões organizados: Salvar, Salvar e Continuar, Cancelar.
+- Feedback por toast/alert pós-ação.
+
+**Página de Monitoramento (Dashboards)**
+- Cards de KPI no topo.
+- Gráficos de série temporal (Recharts).
+- Alertas críticos/destaques.
+- Funcionalidade de Drill-down para visualizar os registros atrelados.
+
+### 9.4 Conexões Principais de Fluxo (Control)
+
+- **Fluxo Comercial:** Leads → Clientes → Orçamentos → Pedidos → Financeiro/Pagamentos.
+- **Fluxo de Atendimento:** Comunicação/Chat → Support Ticket → Notificações.
+- **Fluxo de Plataforma:** Tenants → Domínios/Configuração/Usuários/Assinatura.
+- **Fluxo Superadmin:** Control (orgs/tenants/leads/tasks) → Ações Globais → Auditoria.
+
+### 9.5 Prioridade por Onda (/control)
+
+**Onda 1. Núcleo Operacional e Receita**
+- **Rotas:** login, dashboard protegido, clientes, leads, orçamentos, pedidos, financeiro, pagamentos, billing.
+- **Motivo:** Sustenta a operação diária e a geração de caixa.
+- **Dependências:** Autenticação, permissões básicas, componentes base de listagem/formulário.
+
+**Onda 2. Atendimento e Comunicação**
+- **Rotas:** comunicação, chatbot, chat por id, support, support por id, notificações, admin notificações.
+- **Motivo:** Reduz fricção de atendimento e melhora SLA.
+- **Dependências:** Estrutura de tickets, timeline, notificações em tempo real ou polling.
+
+**Onda 3. Multi-tenant e Governança de Conta**
+- **Rotas:** tenants, tenants por id e subáreas, users, domains, custom-domains, webhooks, api-keys, configurações de planos.
+- **Motivo:** Escalabilidade da plataforma e controle de clientes B2B.
+- **Dependências:** RBAC mais granular e auditoria de mudanças.
+
+**Onda 4. Superadmin e Orquestração Global**
+- **Rotas:** control, control leads, kanban, orgs, org por id, control tenants, control tasks, auditoria, tarefas.
+- **Motivo:** Visão executiva e governança transversal.
+- **Dependências:** Dados consolidados e trilha de auditoria confiável.
+
+**Onda 5. Produto, Crescimento e Hardening**
+- **Rotas:** relatórios, marketing, email, sobre-noro, settings stripe e metrics, debug.
+- **Motivo:** Otimização contínua, observabilidade e operação avançada.
+- **Dependências:** Tracking operacional consolidado e baseline de performance.
+
+### 9.6 Critérios de Aceite por Tipo de Página
+
+**Listagem:**
+- Carrega em até 2 segundos no cenário médio.
+- Busca e filtros funcionam com combinação de critérios.
+- Paginação/sort preserva estado na URL.
+- Estados vazios, loading e erro implementados.
+- Ações em lote com confirmação quando houver risco.
+
+**Detalhe:**
+- Identificador visível e contexto claro da entidade.
+- Seções/tabs com navegação sem perda de estado.
+- Ações críticas protegidas por confirmação.
+- Histórico/atividade disponível quando aplicável.
+- Links de retorno preservam filtros da listagem.
+
+**Criação/Edição:**
+- Validação client e server alinhadas.
+- Mensagens de erro por campo e erro global.
+- Não perde dados em erro de submit.
+- Ação de salvar exibe feedback claro de sucesso.
+- Bloqueio para sair sem salvar quando houver alterações (dirty form).
+
+**Dashboard/KPI:**
+- KPIs com definição e período explícitos.
+- Filtros de período e tenant aplicam em todos os cards.
+- Drill-down para lista origem do número.
+- Estado de ausência de dados com ação recomendada.
+- Atualização previsível e sem inconsistência entre widgets.
+
+**Configuração/Admin:**
+- Apenas perfis autorizados acessam.
+- Toda alteração relevante gera trilha de auditoria.
+- Ações destrutivas com dupla confirmação.
+- Rollback possível para configurações críticas.
+- Mensagens de impacto exibidas antes de confirmar.
+
+### 9.7 Mapa de Permissões por Perfil (RBAC)
+
+**Regra Transversal Obrigatória:**
+- **Modelo Deny by Default.**
+- Escopo de permissão por ação: `view`, `create`, `update`, `delete`, `manage`.
+- Escopo por `tenant_id` ou `org_id` sempre validado no backend via RLS.
+
+**Super Admin:**
+- Acesso total a todas as rotas e ações.
+- Gerencia organizações, tenants, planos, webhooks, api-keys, auditoria.
+- Pode executar ações globais irreversíveis.
+
+**Admin Operacional:**
+- Acesso completo ao escopo da sua organização.
+- Gerencia clientes, leads, pedidos, orçamentos, suporte, comunicação.
+- Não pode alterar configurações globais da plataforma.
+
+**Financeiro:**
+- Acesso a financeiro, billing, pagamentos, relatórios financeiros.
+- Pode exportar e conciliar.
+- Sem acesso a administração técnica e chaves.
+
+**Comercial:**
+- Acesso a leads, clientes, orçamentos, pedidos.
+- Pode criar/editar pipeline comercial.
+- Sem acesso a configurações financeiras sensíveis.
+
+**Suporte:**
+- Acesso a support, comunicação, notificações.
+- Pode atualizar status, responder e escalar tickets.
+- Sem acesso a billing e governança global.
+
+**Marketing:**
+- Acesso a marketing, email e relatórios de campanha.
+- Pode criar e acompanhar comunicações.
+- Sem acesso a dados financeiros sensíveis.
+
+**Viewer/Auditor:**
+- Acesso somente leitura em módulos autorizados.
+- Pode consultar auditoria e relatórios.
+- Não cria, edita ou exclui registros.
+
+### 9.8 Eventos de Analytics Operacional
+
+**Padrão de Nomeclatura:**
+- Formato: `dominio_modulo_acao`. Exemplo: `control_leads_status_changed`.
+- Regras de Qualidade: Sem dados pessoais em payload, idempotência contra eventos duplicados, timestamps em UTC, catálogo versionado e alerta para queda de eventos críticos.
+
+**Eventos de Autenticação e Sessão:**
+- `auth_login_success`, `auth_login_failed`, `auth_logout`, `auth_session_expired`.
+
+**Eventos Comerciais:**
+- `leads_created`, `leads_qualified`, `leads_status_changed`.
+- `clientes_created`.
+- `orcamentos_created`, `orcamentos_converted_to_pedido`.
+- `pedidos_created`, `pedidos_status_changed`.
+
+**Eventos Financeiros:**
+- `financeiro_receita_lancada`, `financeiro_pagamento_confirmado`.
+- `billing_assinatura_alterada`, `billing_inadimplencia_detectada`.
+- `stripe_webhook_processed`, `stripe_webhook_failed`.
+
+**Eventos de Suporte/Comunicação:**
+- `support_ticket_created`, `support_ticket_first_response`, `support_ticket_resolved`, `support_ticket_reopened`.
+- `chat_conversation_started`, `chatbot_handoff_to_human`.
+
+**Eventos de Governança:**
+- `tenant_created`, `tenant_config_updated`, `user_role_changed`.
+- `api_key_created`, `api_key_revoked`.
+- `webhook_endpoint_created`, `webhook_delivery_failed`, `auditoria_export_requested`.
+
+**Eventos de Confiabilidade Operacional:**
+- `page_load_slow_detected`, `api_request_failed`, `retry_action_triggered`, `background_job_failed`, `background_job_reprocessed`.
+
+**Propriedades Padrão de Evento:**
+- `user_id`, `role`, `org_id`, `tenant_id`, `entity_type`, `entity_id`, `previous_status`, `new_status`, `source_page`, `latency_ms`, `success`, `error_code`.
