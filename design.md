@@ -185,3 +185,131 @@ Os componentes base estão no pacote `@noro/ui` implementados utilizando Shadcn 
 
 **Rota funcional interna**
 - Preview de site: `/dashboard/sites/[id]/preview`
+
+## 7. Blueprint Completo de Conteúdo/UX (apps/web)
+
+Abaixo está o blueprint completo de conteúdo/UX para todas as páginas e subpáginas de /web, projetado para facilitar o design via Stitch e implementação subsequente.
+
+### 7.1 Estrutura Global (Todas as páginas)
+
+**Elementos Globais Obrigatórios:**
+- Header consistente (Logo, Navegação Principal: Produto, Preços, Ecossistema, Suporte; Ações: Entrar e Começar grátis).
+- Footer consistente (Links institucionais, legais, contatos, CTA final).
+- CTA principal visível acima da dobra.
+- CTA secundário para usuários em fase inicial de funil (menos quentes).
+- Bloco de confiança (Prova social, clientes, etc).
+
+**UX:**
+- Breadcrumb ativo em páginas internas.
+- Estado de loading/skeleton padronizado.
+- Estado de erro amigável.
+
+**SEO:**
+- Title e Description únicos.
+- Open Graph otimizado.
+- H1 único por página.
+
+**Acessibilidade (A11y):**
+- Contraste nível AA (no mínimo).
+- Estado `focus-visible` claro para navegação via teclado.
+- Uso de `labels` e `aria` onde a semântica visual é insuficiente.
+
+**Tracking:**
+- Tracking ativo em: clique em CTA, envio de formulários, início/conclusão de wizards, clique em planos, e scroll depth.
+
+### 7.2 Tree de Páginas e Conexões
+
+**Fluxo Principal de Funil:**
+Home -> Pricing -> Lead ou Wizard -> Preview -> App.
+
+### 7.3 Especificação por Página
+
+**`/` (Home)**
+- **Objetivo:** Posicionamento e primeiro impacto. Direcionar para Pricing, Lead ou Wizard.
+- **Blocos:** Hero com headline forte, subheadline de valor, CTA primário, CTA secundário, prova social, benefícios principais, seção de ecossistema, depoimentos, CTA final.
+- **Conexões:** `/pricing`, `/ecosystem`, `/suporte`, `/lead`, `/wizard`.
+
+**`/pricing`**
+- **Objetivo:** Converter visitante quente.
+- **Blocos:** Comparativo de planos, toggle mensal/anual, destaque de plano recomendado, matriz de recursos, FAQ comercial, garantias/política de cancelamento, CTA por plano.
+- **Conexões:** `/lead`, `/wizard`, `app.noro.guru`.
+
+**`/contact`**
+- **Objetivo:** Captura de contato inbound.
+- **Blocos:** Hero curto de contato, formulário completo, motivo do contato, canal alternativo (email/WhatsApp), SLA de resposta, FAQ rápido.
+- **Conexões:** `/lead`, `/suporte`, `/privacy-policy`.
+
+**`/lead`**
+- **Objetivo:** Captura rápida de lead de alta intenção.
+- **Blocos:** Form short-form, campos mínimos, prova de segurança/privacidade, mensagem de próximo passo.
+- **Conexões:** `/wizard`, `/pricing`, `/contact`.
+
+**`/wizard`**
+- **Objetivo:** Qualificação guiada e geração de solução.
+- **Blocos:** Stepper de progresso, perguntas por etapa, upload/URL de logo, preferências visuais, confirmação final, estado de processamento.
+- **Conexões:** `/dashboard/sites/[id]/preview`, `/contact` (em caso de erro/abandono).
+
+**`/dashboard/sites/[id]/preview`**
+- **Objetivo:** Mostrar resultado gerado e empurrar para ativação.
+- **Blocos:** Preview principal, resumo de personalizações, próximos passos, CTA para app.
+- **Conexões:** `app.noro.guru`, `/pricing`.
+
+**`/about`**
+- **Objetivo:** Construir autoridade e confiança.
+- **Blocos:** Manifesto, história da empresa, missão/visão/valores, time, diferenciais, CTA para teste.
+- **Conexões:** `/pricing`, `/ecosystem`, `/lead`.
+
+**`/ecosystem`**
+- **Objetivo:** Apresentar a suíte completa de produtos.
+- **Blocos:** Hero do ecossistema, grid dos 4 produtos, como os módulos se conectam, casos de uso, CTA por módulo.
+- **Conexões:** Subpáginas do ecossistema, `/pricing`, `/lead`, `/wizard`.
+
+**`/ecosystem/dados-de-vistos`**
+- **Objetivo:** Vender valor da solução de dados e inteligência.
+- **Blocos:** Problema do mercado, cobertura de dados, atualização/frequência, casos de uso, CTA demo.
+- **Conexões:** `/lead`, `/pricing`, `/ecosystem`.
+
+**`/ecosystem/intelligent-websites`**
+- **Objetivo:** Vender serviço de geração de sites inteligentes.
+- **Blocos:** Hero produto, antes/depois, fluxo de criação, integrações, CTA para wizard.
+- **Conexões:** `/wizard`, `/lead`, `/ecosystem`.
+
+**`/ecosystem/intelligent-crm-erp`**
+- **Objetivo:** Vender operação unificada (Core/App).
+- **Blocos:** Hero, módulos CRM + ERP, automações, benefícios operacionais, CTA comercial.
+- **Conexões:** `/lead`, `/pricing`, `/ecosystem`.
+
+**`/ecosystem/ittd`**
+- **Objetivo:** Explicar e vender solução ITTD.
+- **Blocos:** Definição clara, benefícios técnicos/comerciais, exemplo prático, CTA de contato.
+- **Conexões:** `/lead`, `/contact`, `/ecosystem`.
+
+**`/suporte`**
+- **Objetivo:** Reduzir fricção e volume de tickets de atendimento.
+- **Blocos:** Busca de ajuda, FAQs, base de conhecimento, chat/contato, status de serviços e canais.
+- **Conexões:** `/contact`, artigos internos, `/privacy-policy`.
+
+**`/blog`**
+- **Objetivo:** Tráfego de SEO e educação de mercado.
+- **Blocos:** Hero editorial, lista de artigos, filtros/categorias, destaques, assinatura de newsletter.
+- **Conexões:** `/blog/[slug]`, `/lead`, `/pricing`.
+
+**`/blog/[slug]`**
+- **Objetivo:** Consumo de conteúdo com conversão contextualizada.
+- **Blocos:** Título, autor, data, tempo de leitura, conteúdo estruturado, bloco de CTA contextual, artigos relacionados.
+- **Conexões:** `/blog`, `/pricing`, `/lead`.
+
+**`/case-studies`**
+- **Objetivo:** Prova de resultado (Casos de sucesso).
+- **Blocos:** Lista de estudos de caso, KPIs por caso, segmentação por tipo, CTA para diagnóstico.
+- **Conexões:** `/lead`, `/pricing`, `/contact`.
+
+**`/privacy-policy`**
+- **Objetivo:** Conformidade e transparência legal (LGPD/GDPR).
+- **Blocos:** Escopo, dados coletados, base legal, retenção, direitos do titular, contato do DPO.
+- **Conexões:** `/contact`, `/terms-of-service`.
+
+**`/terms-of-service`**
+- **Objetivo:** Regras claras de uso da plataforma.
+- **Blocos:** Aceite, uso permitido, limitações, regras de pagamento e cancelamento, responsabilidades, foro/contato.
+- **Conexões:** `/contact`, `/privacy-policy`.
