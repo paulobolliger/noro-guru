@@ -313,3 +313,99 @@ Home -> Pricing -> Lead ou Wizard -> Preview -> App.
 - **Objetivo:** Regras claras de uso da plataforma.
 - **Blocos:** Aceite, uso permitido, limitações, regras de pagamento e cancelamento, responsabilidades, foro/contato.
 - **Conexões:** `/contact`, `/privacy-policy`.
+
+## 8. Diretrizes de Produto, Marca e Implementação
+
+As seções a seguir definem o contexto estratégico e as diretrizes operacionais para geração de interfaces com foco no processo de implementação via Stitch.
+
+### 8.1 Direção de Marca
+- **Adjetivos de marca:** Confiável, Estratégica, Premium, Clara, Eficiente.
+- **Sensação que a interface deve transmitir:** “Controle total da operação sem caos”; sofisticação sem parecer distante; tecnologia aplicada ao resultado comercial.
+- **Referências de linguagem visual:**
+  - *Gostamos:* Linear, Vercel, Stripe Docs (clareza, hierarquia, ritmo).
+  - *Não gostamos:* Visual “template genérico SaaS”, excesso de gradiente decorativo, motion constante sem função.
+- **Princípios de identidade:**
+  - Dark profissional como base.
+  - Contraste alto para legibilidade.
+  - Destaques de cor só em pontos de ação/ênfase.
+
+### 8.2 Público e Contexto
+- **ICP primário:** Agências de viagem e consultorias de vistos no Brasil, com operação em múltiplos processos simultâneos. Personas: Dono(a), gestor(a) comercial, gestor(a) operacional.
+- **Perfil de uso:** Baixa tolerância a fricção; precisa entender valor em menos de 30 segundos; decisão baseada em produtividade, previsibilidade e ganho de tempo.
+- **Dores principais:** Ferramentas fragmentadas, falta de previsibilidade comercial/financeira, gargalo em processos manuais, dificuldade de escalar atendimento sem perder qualidade.
+- **Momento do funil:**
+  - Topo: entende problema, busca clareza.
+  - Meio: compara solução e risco.
+  - Fundo: quer prova, preço transparente e próximo passo simples.
+
+### 8.3 Objetivo de Negócio e KPIs por Página
+- **Home:** Levar para Pricing (Primário) ou Lead/Wizard. KPI: CTR do CTA principal.
+- **Pricing:** Iniciar conversão. Reduzir fricção (FAQ/Garantias). KPI: Taxa de clique no plano.
+- **Lead:** Captura qualificada. KPI: Taxa de envio do form.
+- **Wizard:** Conclusão do fluxo e preview. KPI: Conclusão por sessão.
+- **Contact:** Contato comercial ou pré-venda. KPI: Taxa de envio + SLA.
+- **Ecosystem:** Aprofundar valor e mandar pro Lead. KPI: CTR por módulo.
+- **Institucional (About/Blog/Cases):** Autoridade. KPI: Tempo na página + CTR contextual.
+- **Suporte:** Autoatendimento. KPI: Resolução sem contato.
+- **Legais:** Conformidade sem fricção no funil.
+
+### 8.4 Copy Framework
+- **Tom de voz:** Consultivo, direto, seguro, sem jargão vazio. "Português claro de operação".
+- **Fórmula base:** Dor real -> promessa concreta -> prova -> ação simples.
+- **Estrutura de mensagem:** Headline (benefício direto), Subheadline (como e pra quem), Prova, CTA (verbo de ação + resultado esperado).
+- **Regras:** Evitar exageros verbais; mostrar o que acontece "depois do clique".
+
+### 8.5 Regras Visuais Obrigatórias
+- **Paleta Restrita:**
+  - Base dark: `#0B1220`
+  - Estrutura: `#342CA4`
+  - CTA primário/acento: `#1DD3C0`
+  - Destaque premium: `#D4AF37`
+  - Texto principal: `#E0E3FF`
+  - Texto secundário: `#B8C1E0`
+- **Tipografia:** Display em *Poppins*, Interface/Body em *Inter*. Usar escala modular.
+- **Forma e Profundidade:**
+  - Radius: Containers 16px, Cards 12px, Inputs/Botões menores 10-12px (CTA primário pode usar "pill").
+  - Elevação sutil em camadas, sem "glow" exagerado.
+- **Proibições:** Cores fora da paleta, animações contínuas (exceção loading), hardcode de hex massivo (usar tokens), seções light quebrando o tema dark sem motivo claro.
+
+### 8.6 Componentes e Variantes
+- **Globais:** Header, Footer, Hero, Button, Card, Form controls, FAQ accordion, Testimonial card, CTA section, Badge/status.
+- **Variantes Mínimas:**
+  - Button: primary, secondary, ghost, outline, danger.
+  - Card: default, elevated, highlighted.
+  - Input: default, focus, error, success, disabled.
+  - Badge: neutral, success, warning, premium.
+- **Estados:** default, hover, focus-visible, active, disabled, loading, error.
+
+### 8.7 Responsividade
+- **Breakpoints:** Mobile (320-767), Tablet (768-1279), Desktop (1280+).
+- **Comportamento:** Menu colapsável mobile; CTAs visíveis sem overflow horizontal; tabelas viram cards/listas no mobile; grids viram 1 ou 2 colunas dependendo da largura.
+- **Legibilidade:** Texto de conteúdo funcional >= 14px; max-width para linha de leitura confortável no desktop.
+
+### 8.8 Acessibilidade, SEO e Performance
+- **Acessibilidade:** WCAG AA mínimo; focus-visible óbvio; labels/aria injetados; teclado 100% funcional.
+- **SEO:** Meta title/description por rota, Open Graph otimizado, estrutura H1 única, H2/H3 coerentes.
+- **Performance:** Evitar assets pesados, focar LCP e TTI no conteúdo acima da dobra.
+
+### 8.9 Analytics Detalhado
+- **Eventos Base:** `page_view`, `cta_click`, `form_submit_start`, `form_submit_success`, `form_submit_error`, `pricing_plan_click`, `wizard_start`, `wizard_step_complete`, `wizard_complete`, `checkout_start`, `support_contact_click`, `scroll_depth`.
+- **Parâmetros Genéricos:** `page_name`, `page_type`, `cta_name`, `cta_position`, `plan_name`, `wizard_step`, `form_name`, `traffic_source`, `device_type`.
+- **Regras:** Nomenclatura consistente (`snake_case` ou padrão GA4), evitar disparos duplicados, alta prioridade para CTAs vitais do funil.
+
+### 8.10 Definição de Pronto e Ordem de Implementação
+**Ondas de Lançamento:**
+1. Home, Pricing, Lead, Wizard, Contact
+2. Ecosystem + 4 subpáginas
+3. About, Case Studies, Blog, Blog post
+4. Suporte, Privacy, Terms
+5. Polimento final e auditoria
+
+**Definição de Pronto (DoD):**
+1. Objetivo de negócio (KPI) atendido.
+2. Blocos de UX/Conteúdo completos.
+3. Design System aplicado sem violações graves.
+4. Responsivo validado.
+5. Acessibilidade AA mínima e SEO aplicados.
+6. Tracking Ativo.
+7. QA sem bloqueadores (0 bugs visuais/funcionais graves).
