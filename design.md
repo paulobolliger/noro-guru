@@ -1,73 +1,151 @@
-# System Design: NORO GURU
+# Design System Specification
 
-## Overview
-NORO GURU is a robust multi-tenant SaaS ecosystem built as a **Turborepo monorepo** consisting of multiple Next.js/React applications and shared packages.
+## 1. Design Tokens
 
-The system implements a modern **Control Plane + Tenant Apps** architecture with data isolation handled via Row Level Security (RLS) in Supabase.
+Os tokens abaixo representam a fundação visual do ecossistema NORO GURU, unificando as propriedades encontradas em `theme.css`, `globals.css` e nas configurações do Tailwind (`tailwind.config.js/ts`).
 
-## Architecture Patterns
+### 1.1 Cores (Color Palette)
 
-### Control Plane & Tenant Architecture
-- **Control Plane (`control`)**: A central management dashboard used by the platform administrators to manage tenants, billing, and API keys. It has visibility into all tenant activities and metrics.
-- **Tenant Apps (`core`)**: The primary multi-tenant application used by travel agencies. Each tenant accesses the platform via their own subdomain, ensuring logical isolation.
-- **Data Isolation (RLS)**: Row Level Security is enforced at the database level in Supabase. Every row in business-related tables belongs to a `tenant_id`, and policies ensure users can only access data belonging to their respective tenant.
-- **Deployment & Domains**:
-  - `apps/control` deploys to `control.noro.guru`
-  - `apps/core` deploys to `core.noro.guru` (and individual subdomains)
-  - `apps/web` deploys to `noro.guru`
+**Brand / Primary**
+- `--color-noro-primary` / `noro-primary`: `#342CA4` (Web/Marketing base)
+- `--color-noro-primary-deep`: `#3B2CA4`
+- `--color-noro-primary-dark`: `#23214F` / `#232452` (Core/App base)
 
-## Monorepo Structure
+**Accent & Highlights**
+- `--color-noro-accent` / `noro-accent`: `#1DD3C0` (Turquoise)
+- `--color-noro-gold` / `noro-gold`: `#D4AF37`
+- `--color-noro-gold-hover`: `#E5C04B`
 
-The project uses Turborepo for build orchestration and workspace management.
+**Neutrals & Backgrounds (Light/App Theme)**
+- `--surface`: `#FFFFFF`
+- `--surface-2`: `#F6F7FB` (Backgrounds de seções/sidebars)
+- `--fg`: `#1F2433` (Texto base em light mode)
+- `--border`: `#ECEEF3`
+- `--border-strong`: `#DFE2EA`
+- `--muted`: `rgba(31, 36, 51, 0.55)`
 
-```
-noro-guru/
-├── apps/
-│   ├── control/        # Control Plane - Platform Management (Next.js)
-│   ├── core/           # Tenant Application - Multi-tenant SaaS (Next.js)
-│   ├── web/            # Public-facing Landing Page & Marketing (Next.js)
-│   ├── financeiro/     # Financial Module (Next.js)
-│   ├── billing/        # Billing System (Next.js)
-│   └── visa-api/       # Visa Data API (Vite + React)
-│
-├── packages/
-│   ├── ui/             # Shared UI components (Shadcn/Radix)
-│   ├── lib/            # Shared utilities and helpers
-│   ├── types/          # Shared TypeScript definitions
-│   └── control-worker/ # Asynchronous workers for Control Plane
-│
-├── supabase/
-│   ├── migrations/     # SQL Migrations for database schema
-│   └── functions/      # Supabase Edge Functions
-│
-└── deploy/             # Deployment configurations
-```
+**Neutrals & Backgrounds (Dark/Web Theme)**
+- `--color-noro-dark`: `#0B1220` (Background escuro padrão)
+- `--color-noro-dark-purple`: `#12152C`
+- `--color-noro-surface-dark`: `#2B2E48`
+- `--color-noro-gray-future`: `#2E2E3A`
+- `--color-noro-light`: `#F8F9FB`
+- `--color-noro-gray-accent`: `#E2E8F0`
 
-## Database Schemas (Supabase PostgreSQL)
+**Text Colors**
+- `--color-noro-text-primary`: `#FFFFFF` (Dark mode headers)
+- `--color-noro-text-secondary`: `#E0E3FF`
+- `--color-noro-text-muted`: `#B8C1E0`
+- `--color-noro-text-body`: `#D1D5F0` (Textos longos em dark mode)
 
-The database is divided into logical schemas to separate platform administration from tenant business data.
+**Semantic / Feedback**
+- `Success`: `bg-green-600`
+- `Warning`: `bg-yellow-600`
+- `Error / Destructive`: `bg-rose-600` / `text-destructive`
+- `Info`: `bg-blue-600`
 
-### Schema `cp` (Control Plane)
-Handles cross-tenant administration, billing, and platform-level configurations.
-- `tenants` - Registered companies/organizations
-- `user_tenant_roles` - RBAC permissions per tenant
-- `api_keys` - Authentication keys for API access
-- `domains` - Mapping domains to tenants
-- `webhooks`, `webhook_logs` - Webhook management
-- `billing.subscriptions`, `billing.invoices` - Subscription and billing data
-- `ledger_accounts`, `ledger_entries` - Financial ledger
-- `support_tickets`, `support_messages` - Support system
+### 1.2 Tipografia (Typography)
 
-### Schema `public` (Business Data)
-Contains tenant-specific data. **All tables include a `tenant_id` column** to enforce RLS.
-- `noro_users`, `noro_clientes`, `noro_leads` - CRM and User data
-- `noro_orcamentos`, `noro_pedidos` - Quotes and Orders
-- `noro_tarefas`, `noro_interacoes`, `noro_notificacoes` - Tasks and Notifications
-- `fin_*` - Financial module tables (revenues, expenses, bank accounts, etc.)
-- `social_network_configs` - Social media integration configs
+As fontes são configuradas via CSS Variables nativas do `next/font`.
+- **Sans-serif (Base/UI):** `Plus Jakarta Sans` (`var(--font-sans)`) - Pesos: 400, 500, 600, 700, 800.
+- **Display / Serif:** `Fraunces` (`var(--font-display)`) - Utilizado em títulos impactantes. Eixos variáveis (`opsz`, `WONK`).
+- **Monospace:** `JetBrains Mono` (`var(--font-mono)`) - Pesos: 400, 500, 600, 700. Para códigos e dados técnicos.
 
-## Component Interactions
+### 1.3 Bordas e Sombras (Borders & Shadows)
 
-- **Billing Flow**: Stripe webhooks hit the Billing app (`apps/billing`), which communicates with the Control Plane (`apps/control`) to update the ledger in the database (`cp.ledger_entries`). The Financial module then displays this data.
-- **Tenant Routing**: When a request comes to the core application, the system uses the `cp.domains` table to resolve the requested domain to a specific `tenant_id`, setting the context for subsequent database queries.
-- **Shared Packages**: All apps leverage `@noro/ui`, `@noro/lib`, and `@noro/types` via workspace symlinks to maintain consistency and reduce duplication across the frontend.
+**Border Radius (`border-radius`)**
+- `sm`: `6px`
+- `md`: `8px`
+- `lg`: `10px`
+- Componentes Web (Cards): `1rem` (16px)
+
+**Box Shadows (`box-shadow`)**
+- `--shadow-noro-base`: `0 2px 8px rgba(0, 0, 0, 0.25)`
+- `--shadow-noro-glow-gold`: `0 0 10px #D4AF37`
+- `--shadow-noro-glow-turquoise`: `0 0 15px rgba(29, 211, 192, 0.3)`
+
+---
+
+## 2. Elementos Base & Estilos Globais
+
+- **Resets:** Margens e paddings zerados globalmente em `html, body`.
+- **Scrollbar:** Customizada globalmente. No tema escuro: track `#12152C`, thumb `#2B2E48`. No tema claro: track `transparent` ou `#f1f5f9`, thumb `rgba(255,255,255,0.15)` ou `#dfe2ea`.
+- **Focus Rings:** Elementos interativos (`*:focus-visible`) recebem `outline: 2px solid var(--color-noro-accent); outline-offset: 2px; border-radius: 4px;` para acessibilidade.
+- **Animações (Utilitários):**
+  - `.animate-fade-in-down` / `.animate-fade-in-up` para transições de carregamento.
+  - `.animate-pulse-slow`, `.animate-float`, `.animate-shimmer` para estados de loading e microinterações.
+  - `.animate-bounce-subtle` para CTAs na Web.
+
+---
+
+## 3. Catálogo de Componentes (Component Library)
+
+Os componentes base estão no pacote `@noro/ui` implementados utilizando Shadcn UI, Radix UI e Tailwind CSS.
+
+### 3.1 Button (`Button`)
+- **Propósito:** Disparo de ações.
+- **Variantes (`variant`):**
+  - `default`: Fundo gradiente (`from-indigo-600 to-purple-600`) com texto branco. Hover sutil.
+  - `destructive`: Fundo `#e11d48` (`rose-600`).
+  - `outline`: Borda translúcida, fundo transparente (`bg-white/5`), texto claro.
+  - `secondary`: Fundo semitransparente (`bg-white/10`).
+  - `ghost`: Fundo transparente, fundo semitransparente no hover.
+  - `link`: Texto sublinhado.
+- **Tamanhos (`size`):** `default` (h-10), `sm` (h-9), `lg` (h-11), `icon` (h-10 w-10).
+- **Props Base:** `variant`, `size`, `asChild`, `disabled`, `className`.
+- **Comportamento:** `active:scale-[0.98]` fornece feedback táctil no clique; `disabled:opacity-50` desativa ponteiro.
+
+### 3.2 Input (`Input`) & Textarea (`Textarea`)
+- **Propósito:** Entrada de dados textuais.
+- **Estilos:** Fundo levemente visível (`bg-white/5` ou `bg-background`), borda definida (`border-white/10` ou `border-input`), altura fixa (`h-10` ou `min-h-[80px]`).
+- **Estados:** `focus-visible:ring-2`, `disabled:opacity-50`, `disabled:cursor-not-allowed`.
+- **Props Base:** Ref-forwarding padrão HTML, `type` (para Input), `className`.
+
+### 3.3 Card (`Card`)
+- **Propósito:** Container semântico para agrupar informações relacionadas (ex: dados de usuários, gráficos de dashboard).
+- **Composição:** `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`.
+- **Comportamento na Web:** Transições de hover via classe `.card-noro:hover` que adiciona `transform: translateY(-4px)` e `box-shadow: var(--shadow-noro-glow-turquoise)`.
+
+### 3.4 Badge (`Badge`)
+- **Propósito:** Indicação visual de status, tags ou categorias.
+- **Variantes (`variant`):** `default`, `secondary`, `destructive`, `outline`, `success`, `warning`, `info`.
+- **Estilos Base:** `rounded-md`, `text-xs`, `font-semibold`, `px-2.5`, `py-0.5`.
+
+### 3.5 Avatar (`Avatar`)
+- **Propósito:** Exibição da imagem de perfil de usuários.
+- **Composição:** `Avatar` (Root circular `h-10 w-10`), `AvatarImage` (img render), `AvatarFallback` (placeholder renderizado caso falhe a imagem).
+
+### 3.6 Formulários (`Form`, `FormField`, `FormItem`, `FormLabel`, `FormMessage`)
+- **Propósito:** Infraestrutura de validação conectada via `react-hook-form`.
+- **Comportamento Esperado:** Propagação de IDs de acessibilidade (`aria-describedby`, `aria-invalid`), exibição automática de mensagens de erro (`text-destructive`).
+
+### 3.7 Tabela (`Table`)
+- **Propósito:** Exibição estruturada de dados densos (ex: leads, clientes).
+- **Composição:** `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`.
+- **Estilos:** Scroll horizontal automático (`overflow-auto`), bordas inferiores (`border-b`), hover no row (`hover:bg-muted/50`).
+
+### Outros Componentes Identificados
+- `Alert`, `Calendar` / `DatePickerWithRange`, `Checkbox`, `Dialog`, `Label`, `Popover`, `Select`, `Separator`, `Sheet`, `Skeleton`, `Switch`, `Tabs`, `Toast` / `use-toast`.
+
+---
+
+## 4. Padrões de Layout e Grids
+
+**Control Plane / Core App (`AdminLayoutClient`)**
+- Estrutura baseada em Flexbox em tela cheia: `min-h-screen flex bg-surface-2 text-fg`.
+- **Sidebar:** Fixa ou colapsável (largura controlada condicionalmente), com barra de rolagem customizada invisível (`.sidebar-scroll`).
+- **Main Content:** Coluna flexível `flex-1 flex flex-col overflow-hidden` que contém um `TopBar` (Header) e um elemento `main` (`overflow-y-auto` com padding interno padronizado: `padding: '24px 28px'`).
+
+**Web / Public App (`RootLayout`)**
+- Estrutura: `relative flex flex-col min-h-screen`.
+- Navegação: Um `Header` no topo, o conteúdo flexível intermediário (`flex-grow`), seguido por um `Footer`.
+- Padrão do site em dark theme (por default devido a `theme.css`) utilizando fundos gradientes (`gradient-noro-hero`).
+
+---
+
+## 5. Diretrizes de Acessibilidade (a11y) & UX
+
+- **Focus Management:** Todos os inputs e botões possuem `focus-visible:ring-2 focus-visible:outline-none`, garantindo que a navegação por teclado exiba claramente qual elemento está ativo sem degradar o design do mouse. No CSS global, `*:focus-visible` aplica outline utilizando a cor `accent`.
+- **Contraste de Cores:** Textos utilizam cores calculadas para padrões WCAG (ex: `--color-noro-text-muted` alterado para `#B8C1E0` e `--color-noro-text-body` para `#D1D5F0` com ratios acima de 7:1).
+- **Acessibilidade de Componentes (ARIA):** Componentes Radix UI (Shadcn) injetam nativamente controles de teclado corretos, `aria-expanded`, e focus trapping (ex: `Dialog`, `Popover`, `Select`). Os `Forms` vinculam os labels aos campos usando `htmlFor` e descrevem os erros com `aria-describedby` e `aria-invalid`.
+- **Animações (UX):** Interações incluem feedback visual através de scale/bounce sutil no clique do botão (`active:scale-[0.98]`), e animações fluídas em carregamento de páginas (`.animate-fade-in`). Recomenda-se adicionar um fallback `prefers-reduced-motion` no CSS para desabilitar animações (`animate-*`) caso requerido pelo usuário no sistema operacional.
