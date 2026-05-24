@@ -22,6 +22,12 @@ O **NORO GURU** é um ecossistema multi-tenant SaaS robusto construído como **m
 
 ---
 
+## 📚 Documentação Viva
+
+- Plano consolidado de domínios e DNS (Cloudflare): `docs/plano-dominios-cloudflare.md`
+
+---
+
 ## 1️⃣ ARQUITETURA GERAL
 
 ### 🏗️ Estrutura de Monorepo

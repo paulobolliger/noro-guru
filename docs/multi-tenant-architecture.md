@@ -160,6 +160,31 @@ export function useClients() {
 
 ## 🔑 **Resolução de Tenant por Domínio**
 
+### **Decisão Consolidada (24/05/2026)**
+
+Estratégia oficial de hosts:
+
+- `noro.guru` -> marketing institucional
+- `app.noro.guru` -> produto para clientes/agências
+- `admin.noro.guru` -> operação interna
+- `sites.noro.guru` -> landing de oferta de sites com IA
+- `api.noro.guru` -> endpoint técnico de APIs
+- `vistos.noro.guru` -> página comercial da API de vistos
+- `supabase.noro.guru` -> reservado para migração/self-host de backend
+- `n8n.noro.guru` -> reservado para automações futuras
+
+Modelo por tenant (exemplo `xyz`):
+
+- Site público grátis: `xyz.sites.noro.guru`
+- Site público com domínio próprio: `xyz.com.br` (ou `www.xyz.com.br`)
+- Área logada SaaS: `app.noro.guru` com contexto por sessão/tenant_id
+- Rota contextual opcional no app: `app.noro.guru/t/xyz/...`
+
+Diretriz:
+
+- separar domínio público do site e domínio do backoffice
+- evitar usar rotas públicas do site dentro do app, exceto preview/editor
+
 ### **Tabela: cp.domains**
 ```sql
 CREATE TABLE cp.domains (
@@ -170,7 +195,7 @@ CREATE TABLE cp.domains (
 );
 ```
 
-### **Domínios Cadastrados**
+### **Domínios Cadastrados (histórico/legado)**
 ```sql
 -- Tenant: 'noro' (principal)
 INSERT INTO cp.domains (tenant_id, domain, is_default) VALUES
@@ -179,6 +204,23 @@ INSERT INTO cp.domains (tenant_id, domain, is_default) VALUES
   ((SELECT id FROM cp.tenants WHERE slug='noro'), 'core.noro.guru', false),
   ((SELECT id FROM cp.tenants WHERE slug='noro'), 'visa-api.noro.guru', false);
 ```
+
+### **Domínios Cadastrados (alvo atual)**
+```sql
+-- Tenant: 'noro' (principal)
+INSERT INTO cp.domains (tenant_id, domain, is_default) VALUES
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'noro.guru', true),
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'app.noro.guru', false),
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'admin.noro.guru', false),
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'sites.noro.guru', false),
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'api.noro.guru', false),
+  ((SELECT id FROM cp.tenants WHERE slug='noro'), 'vistos.noro.guru', false);
+```
+
+Observação de transição:
+
+- manter `control.noro.guru`, `core.noro.guru` e `visa-api.noro.guru` como aliases temporários
+- aplicar redirecionamento gradual para os hosts alvo
 
 ### **Função Helper (Layout)**
 ```typescript
@@ -315,4 +357,4 @@ ALTER TABLE public.noro_clientes ENABLE ROW LEVEL SECURITY;
 ---
 
 **Documento gerado automaticamente após análise das migrations.**  
-**Última atualização:** 29/10/2025 - Branch: update3-subdominios
+**Última atualização:** 24/05/2026 - estratégia de domínio consolidada
