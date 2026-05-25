@@ -1,206 +1,379 @@
-import React from 'react';
-import { Metadata } from 'next';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
-export const metadata: Metadata = {
-  title: 'Blog NORO | Insights sobre Gestão e Tecnologia',
-  description: 'Artigos, tutoriais e insights sobre gestão empresarial, tecnologia, automação e transformação digital.',
-  keywords: 'blog noro, gestão empresarial, tecnologia, automação, transformação digital, CRM, ERP',
-};
+export const dynamic = 'force-static';
 
-// Mock de posts - Em produção, vir de um CMS ou API
-const posts = [
+const CATEGORIES = ['Todos', 'CRM & Vendas', 'Financeiro', 'IA', 'Atendimento', 'Sites', 'Turismo'];
+
+const POSTS = [
   {
     id: 1,
-    title: '10 Métricas Essenciais para Acompanhar em seu CRM',
-    excerpt: 'Descubra as métricas que realmente importam para medir o sucesso do seu time de vendas e aumentar conversões.',
+    title: '5 erros que agências de viagem cometem no CRM (e como evitar)',
+    excerpt: 'Leads esquecidos, follow-up tardio, pipeline desorganizado. Veja os erros mais comuns e como o Noro resolve cada um.',
     category: 'CRM & Vendas',
     author: 'Paulo Bolliger',
-    date: '2025-10-28',
+    date: '2026-05-20',
     readTime: '8 min',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
-    slug: '10-metricas-essenciais-crm',
+    featured: true,
   },
   {
     id: 2,
-    title: 'Como Automatizar Processos Repetitivos e Ganhar 10h por Semana',
-    excerpt: 'Aprenda a identificar e automatizar tarefas manuais que roubam o tempo produtivo da sua equipe.',
-    category: 'Automação',
-    author: 'Equipe NORO',
-    date: '2025-10-25',
+    title: 'Como automatizar cobranças e nunca mais esquecer um recebível',
+    excerpt: 'PIX, boleto e cartão integrados ao pedido. Veja como a conciliação automática economiza horas por semana.',
+    category: 'Financeiro',
+    author: 'Equipe Noro',
+    date: '2026-05-17',
     readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=400&fit=crop',
-    slug: 'automatizar-processos-repetitivos',
+    featured: false,
   },
   {
     id: 3,
-    title: 'Inteligência Artificial na Gestão: Casos de Uso Práticos',
-    excerpt: 'Explore como a IA está transformando a gestão empresarial com exemplos reais e aplicáveis ao seu negócio.',
-    category: 'Inteligência Artificial',
-    author: 'Dr. Carlos Santos',
-    date: '2025-10-22',
-    readTime: '12 min',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
-    slug: 'ia-na-gestao-casos-de-uso',
+    title: 'IA Operacional v2: o que mudou e por que isso importa para sua agência',
+    excerpt: 'Roteiros mais precisos, sugestões de preço e análise de conversão em tempo real. Confira as novidades.',
+    category: 'IA',
+    author: 'Tech Team',
+    date: '2026-05-14',
+    readTime: '10 min',
+    featured: false,
   },
   {
     id: 4,
-    title: 'Dashboard Financeiro: O Que Não Pode Faltar',
-    excerpt: 'Guia completo para construir um dashboard financeiro que facilite tomadas de decisão estratégicas.',
-    category: 'Finanças',
-    author: 'Ana Paula Lima',
-    date: '2025-10-20',
-    readTime: '10 min',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop',
-    slug: 'dashboard-financeiro-completo',
+    title: 'WhatsApp + Instagram + Email: como unificar o atendimento e responder 3x mais rápido',
+    excerpt: 'A caixa omnichannel do Noro une todos os canais em um lugar. Chega de perder mensagem no celular pessoal.',
+    category: 'Atendimento',
+    author: 'Marina Costa',
+    date: '2026-05-10',
+    readTime: '7 min',
+    featured: false,
   },
   {
     id: 5,
-    title: 'Multi-Tenant vs Single-Tenant: Qual Escolher?',
-    excerpt: 'Entenda as diferenças entre arquiteturas multi-tenant e single-tenant e qual é a melhor para seu negócio.',
-    category: 'Tecnologia',
-    author: 'Tech Team',
-    date: '2025-10-18',
-    readTime: '7 min',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=400&fit=crop',
-    slug: 'multi-tenant-vs-single-tenant',
+    title: 'Site da agência em 1 fim de semana: guia completo do builder Noro',
+    excerpt: 'Sem precisar de programador. Template, domínio, SEO e integração com CRM — tudo em um só lugar.',
+    category: 'Sites',
+    author: 'Equipe Noro',
+    date: '2026-05-07',
+    readTime: '9 min',
+    featured: false,
   },
   {
     id: 6,
-    title: 'Gestão de Leads: Do Primeiro Contato ao Fechamento',
-    excerpt: 'Estratégias comprovadas para nutrir leads e aumentar sua taxa de conversão em vendas.',
-    category: 'CRM & Vendas',
-    author: 'Marcelo Ferreira',
-    date: '2025-10-15',
-    readTime: '9 min',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop',
-    slug: 'gestao-de-leads-completa',
+    title: 'O que os dados de visto dizem sobre as viagens mais procuradas em 2026',
+    excerpt: 'Análise da base Visa API do Noro com as tendências de destino e requisitos de visto mais consultados.',
+    category: 'Turismo',
+    author: 'Rafael Souza',
+    date: '2026-05-03',
+    readTime: '12 min',
+    featured: false,
   },
 ];
 
-const categories = ['Todos', 'CRM & Vendas', 'Automação', 'Inteligência Artificial', 'Finanças', 'Tecnologia'];
+const INITIALS_COLOR: Record<string, string> = {
+  'Paulo Bolliger': '#342CA4',
+  'Equipe Noro': '#1DD3C0',
+  'Tech Team': '#D4AF37',
+  'Marina Costa': '#342CA4',
+  'Rafael Souza': '#1DD3C0',
+};
 
 export default function BlogPage() {
+  const [activeCategory, setActiveCategory] = useState('Todos');
+
+  const filtered = activeCategory === 'Todos'
+    ? POSTS
+    : POSTS.filter((p) => p.category === activeCategory);
+
+  const featured = filtered.find((p) => p.featured) ?? filtered[0];
+  const rest = filtered.filter((p) => p.id !== featured?.id);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+
       {/* Hero */}
-      <section className="pt-24 pb-16 px-6 md:px-12 bg-gradient-to-br from-[#342CA4] via-[#1DD3C0]/20 to-white">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
-            Blog NORO
-          </h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Insights, tutoriais e tendências sobre gestão, tecnologia e transformação digital
-          </p>
+      <section style={{ textAlign: 'center', padding: '80px 24px 48px' }}>
+        <h1
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            fontWeight: 700,
+            color: '#fff',
+            letterSpacing: '-0.03em',
+            lineHeight: 1.1,
+            margin: '0 0 16px',
+          }}
+        >
+          Blog Noro Guru
+        </h1>
+        <p style={{ fontSize: 18, color: '#B8C1E0', margin: '0 0 32px' }}>
+          Conteúdo para agências modernas
+        </p>
+
+        {/* Search */}
+        <div style={{ maxWidth: 480, margin: '0 auto', position: 'relative' }}>
+          <input
+            type="search"
+            placeholder="Buscar artigos..."
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 999,
+              padding: '12px 48px 12px 20px',
+              fontSize: 14,
+              color: '#fff',
+              outline: 'none',
+              boxSizing: 'border-box',
+              fontFamily: 'var(--font-sans)',
+            }}
+          />
+          <svg
+            style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: '#B8C1E0' }}
+            width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
         </div>
       </section>
 
-      {/* Filtros de Categoria */}
-      <section className="py-8 px-6 md:px-12 border-b border-gray-200 sticky top-0 bg-white z-40">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-wrap gap-4 justify-center">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={`px-6 py-2 rounded-full transition-all ${
-                  category === 'Todos'
-                    ? 'bg-[#342CA4] text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-[#342CA4]/10 hover:text-[#342CA4]'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Category chips */}
+      <section style={{ padding: '0 80px 40px', display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }} className="px-6 md:px-20">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            style={{
+              padding: '8px 18px',
+              borderRadius: 999,
+              border: '1px solid',
+              borderColor: activeCategory === cat ? '#342CA4' : 'rgba(255,255,255,0.1)',
+              background: activeCategory === cat ? 'rgba(52,44,164,0.2)' : 'transparent',
+              color: activeCategory === cat ? '#fff' : '#B8C1E0',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all .15s',
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            {cat}
+          </button>
+        ))}
       </section>
 
-      {/* Grid de Posts */}
-      <section className="py-16 px-6 md:px-12">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <article
-                key={post.id}
-                className="group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-[#342CA4] hover:shadow-xl transition-all"
+      {/* Content */}
+      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px 96px' }} className="px-6 md:px-20">
+
+        {/* Featured post */}
+        {featured && (
+          <Link
+            href={`/blog/${featured.id}`}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '60% 40%',
+              background: '#12152C',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 16,
+              overflow: 'hidden',
+              textDecoration: 'none',
+              marginBottom: 40,
+              transition: 'border-color .2s',
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.2)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; }}
+            className="grid-cols-1 md:grid-cols-5"
+          >
+            {/* Image placeholder */}
+            <div
+              style={{
+                background: 'linear-gradient(135deg, rgba(52,44,164,0.4), rgba(29,211,192,0.15))',
+                minHeight: 280,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{ fontSize: 64, opacity: 0.3 }}>📝</span>
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: '#342CA4',
+                  background: 'rgba(52,44,164,0.15)',
+                  border: '1px solid rgba(52,44,164,0.3)',
+                  borderRadius: 999,
+                  padding: '3px 12px',
+                  letterSpacing: '0.06em',
+                  width: 'fit-content',
+                }}
               >
-                {/* Imagem */}
-                <Link href={`/blog/${post.slug}`} className="block relative h-48 overflow-hidden">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-[#342CA4] text-white text-xs font-semibold rounded-full">
-                      {post.category}
-                    </span>
-                  </div>
-                </Link>
-
-                {/* Conteúdo */}
-                <div className="p-6">
-                  <Link href={`/blog/${post.slug}`}>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#342CA4] transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                  </Link>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
-
-                  {/* Meta */}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-[#342CA4]/10 flex items-center justify-center text-[#342CA4] font-semibold">
-                        {post.author.charAt(0)}
-                      </div>
-                      <span>{post.author}</span>
-                    </div>
-                    <span>{post.readTime}</span>
-                  </div>
-                  <div className="text-xs text-gray-400 mt-2">
-                    {new Date(post.date).toLocaleDateString('pt-BR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </div>
+                {featured.category}
+              </span>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 24,
+                  fontWeight: 700,
+                  color: '#fff',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.25,
+                  margin: 0,
+                }}
+              >
+                {featured.title}
+              </h2>
+              <p style={{ fontSize: 14, color: '#B8C1E0', lineHeight: 1.6, margin: 0 }}>
+                {featured.excerpt}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 'auto', paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: INITIALS_COLOR[featured.author] || '#342CA4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#fff' }}>
+                  {featured.author.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                 </div>
-              </article>
-            ))}
-          </div>
+                <span style={{ fontSize: 12, color: '#B8C1E0' }}>{featured.author}</span>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>·</span>
+                <span style={{ fontSize: 12, color: '#B8C1E0' }}>{featured.readTime} de leitura</span>
+              </div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: '#1DD3C0',
+                }}
+              >
+                Ler artigo →
+              </div>
+            </div>
+          </Link>
+        )}
 
-          {/* Paginação */}
-          <div className="mt-12 flex justify-center gap-2">
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Anterior</button>
-            <button className="px-4 py-2 bg-[#342CA4] text-white rounded-lg">1</button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">3</button>
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Próximo</button>
-          </div>
+        {/* Posts grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((post) => (
+            <Link
+              key={post.id}
+              href={`/blog/${post.id}`}
+              style={{
+                background: '#12152C',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'border-color .2s, box-shadow .2s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.14)';
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none';
+              }}
+            >
+              {/* Thumbnail */}
+              <div
+                style={{
+                  height: 160,
+                  background: 'linear-gradient(135deg, rgba(52,44,164,0.3), rgba(29,211,192,0.1))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span style={{ fontSize: 36, opacity: 0.4 }}>📄</span>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#1DD3C0',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {post.category}
+                </span>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: '#fff',
+                    letterSpacing: '-0.01em',
+                    lineHeight: 1.3,
+                    margin: 0,
+                  }}
+                >
+                  {post.title}
+                </h3>
+                <p style={{ fontSize: 13, color: '#B8C1E0', lineHeight: 1.55, margin: 0 }}>
+                  {post.excerpt.slice(0, 100)}…
+                </p>
+                <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: INITIALS_COLOR[post.author] || '#342CA4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 700, color: '#fff' }}>
+                    {post.author.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                  </div>
+                  <span style={{ fontSize: 11, color: '#B8C1E0' }}>{post.author}</span>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{post.readTime}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* Newsletter CTA */}
-      <section className="py-20 px-6 md:px-12 bg-gradient-to-br from-[#342CA4] to-[#1DD3C0]">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Receba Nossos Insights por Email
-          </h2>
-          <p className="text-white/90 text-lg mb-8">
-            Assine nossa newsletter e receba conteúdos exclusivos sobre gestão e tecnologia
-          </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Seu melhor email"
-              className="flex-1 px-6 py-4 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
-            />
-            <button className="bg-[#D4AF37] text-white font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_20px_#D4AF37] transition-all">
-              Assinar
-            </button>
-          </form>
+      <section style={{ background: '#12152C', borderTop: '1px solid rgba(255,255,255,0.08)', padding: '64px 24px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', margin: '0 0 12px' }}>
+          Receba novidades por email
+        </h2>
+        <p style={{ fontSize: 15, color: '#B8C1E0', margin: '0 0 28px' }}>
+          Conteúdo sobre gestão de agências, turismo e tecnologia.
+        </p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', maxWidth: 420, margin: '0 auto' }}>
+          <input
+            type="email"
+            placeholder="seu@email.com.br"
+            style={{
+              flex: 1,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 8,
+              padding: '12px 16px',
+              fontSize: 14,
+              color: '#fff',
+              outline: 'none',
+              fontFamily: 'var(--font-sans)',
+            }}
+          />
+          <button
+            style={{
+              background: '#342CA4',
+              color: '#fff',
+              border: 0,
+              borderRadius: 8,
+              padding: '12px 24px',
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            Assinar
+          </button>
         </div>
       </section>
     </div>

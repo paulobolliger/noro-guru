@@ -1,150 +1,363 @@
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import NoroLogo from '@/components/icons/NoroLogo';
 
-const AboutPage = () => {
-    return (
-        <div className="container mx-auto px-6 py-20 md:py-28 text-noro-accent/80 relative z-10">
-            <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-16">
-                    <div className="relative inline-block mb-8">
-                        <div className="absolute inset-0 bg-noro-turquoise/20 blur-3xl rounded-full"></div>
-                        <NoroLogo className="w-24 h-24 relative z-10 opacity-90" />
-                    </div>
-                    <div className="mb-2 font-display text-2xl font-bold tracking-widest text-noro-gold uppercase">NORO</div>
-                    <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-8 leading-tight">
-                        Tecnologia inteligente para <span className="text-noro-turquoise">agências de turismo</span> que querem crescer com controle
-                    </h1>
-                </div>
-
-                <div className="space-y-12">
-                    {/* Intro */}
-                    <Card variant="glass" className="p-8 md:p-12">
-                        <p className="text-xl text-white leading-relaxed mb-6">
-                            A NORO nasceu dentro do turismo — e por isso entende o que softwares genéricos nunca entenderam:
-                            <span className="text-noro-turquoise font-bold"> a complexidade real da operação de uma agência de viagens.</span>
-                        </p>
-                        <p className="text-noro-text-secondary text-lg leading-relaxed">
-                            Cotações, fornecedores, comissões, prazos, documentos, clientes, múltiplos canais de venda, integrações externas e decisões rápidas. Quando tudo isso cresce sem estrutura, o resultado é retrabalho, perda de margem e risco operacional.
-                        </p>
-                        <div className="mt-8 border-l-4 border-noro-gold pl-6 py-2">
-                            <p className="text-xl font-bold text-white italic">
-                                "A NORO existe para colocar ordem inteligente na operação turística, sem engessar o negócio."
-                            </p>
-                        </div>
-                    </Card>
-
-                    {/* Brain Section */}
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
-                        <div>
-                            <h2 className="text-3xl font-bold text-white mb-6">Um cérebro para agências que operam de verdade</h2>
-                            <p className="text-noro-text-secondary text-lg leading-relaxed mb-6">
-                                A NORO funciona como um <strong>control plane</strong> especializado em turismo, desenhado para centralizar e orquestrar tudo o que acontece no dia a dia de uma agência.
-                            </p>
-                            <p className="text-noro-text-secondary text-lg leading-relaxed">
-                                Ela conecta dados, processos, automações e inteligência artificial em um único núcleo, permitindo que a agência:
-                            </p>
-                            <ul className="mt-4 space-y-2">
-                                <li className="flex items-center gap-2 text-white font-medium"><span className="text-noro-turquoise">✓</span> Opere com clareza</li>
-                                <li className="flex items-center gap-2 text-white font-medium"><span className="text-noro-turquoise">✓</span> Escale com segurança</li>
-                                <li className="flex items-center gap-2 text-white font-medium"><span className="text-noro-turquoise">✓</span> Mantenha controle total da operação</li>
-                            </ul>
-                        </div>
-                        <Card variant="bordered" className="bg-noro-dark/50">
-                            <p className="text-center text-lg font-medium text-white">
-                                "Cada marca, produto ou frente de atuação mantém sua identidade e experiência própria. <br />
-                                <span className="text-noro-turquoise text-xl block mt-2">A NORO cuida do que está por trás."</span>
-                            </p>
-                        </Card>
-                    </div>
-
-                    {/* Features List */}
-                    <section>
-                        <h2 className="text-3xl font-bold text-white mb-8 text-center">O que a NORO faz, na prática</h2>
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            {[
-                                "Centraliza clientes, leads, propostas e vendas",
-                                "Organiza cotações, fornecedores, comissões e prazos",
-                                "Automatiza fluxos comerciais, operacionais e administrativos",
-                                "Integra plataformas de turismo, seguros, vistos e pagamentos",
-                                "Conecta inteligência artificial aos processos da agência",
-                                "Garante rastreabilidade, governança e visão estratégica"
-                            ].map((item, i) => (
-                                <Card key={i} variant="default" className="p-6 bg-white/5 border-white/5 hover:bg-white/10 transition-colors">
-                                    <p className="text-white font-medium">{item}</p>
-                                </Card>
-                            ))}
-                        </div>
-                        <div className="text-center mt-8">
-                            <p className="text-2xl font-bold text-noro-gold">
-                                Menos improviso. Menos planilha.<br />
-                                Mais margem, controle e previsibilidade.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Invisible / Essential */}
-                    <Card variant="glass" className="p-10 text-center">
-                        <h2 className="text-3xl font-bold text-white mb-6">Invisível para o viajante. Essencial para a agência.</h2>
-                        <p className="text-lg text-noro-text-secondary max-w-2xl mx-auto mb-8">
-                            A NORO não aparece para o cliente final. Ela trabalha nos bastidores, garantindo que a experiência entregue pela agência seja fluida, profissional e confiável.
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-12 text-xl font-bold text-noro-turquoise">
-                            <span>Organiza</span> • <span>Conecta</span> • <span>Automatiza</span> • <span>Aprende</span>
-                        </div>
-                        <p className="mt-6 text-white text-sm uppercase tracking-widest font-bold">Tudo no tempo certo.</p>
-                    </Card>
-
-                    {/* Target Audience */}
-                    <section className="bg-noro-gold/10 rounded-3xl p-10 md:p-14 border border-noro-gold/20">
-                        <h2 className="text-3xl font-bold text-white mb-8">Feita para agências que querem escalar</h2>
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div>
-                                <p className="text-white text-lg mb-4">A NORO é para agências de turismo que:</p>
-                                <ul className="space-y-3">
-                                    {["Já ultrapassaram o limite das planilhas", "Operam múltiplos fornecedores e canais", "Querem crescer sem perder controle", "Buscam profissionalizar a gestão sem burocracia"].map(item => (
-                                        <li key={item} className="flex items-start gap-3 text-noro-text-secondary">
-                                            <span className="text-noro-gold mt-1">➜</span> {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div className="flex items-center justify-center border-l border-white/10 pl-8">
-                                <p className="text-2xl font-bold text-white text-center">
-                                    Ela não substitui o agente.<br />
-                                    <span className="text-noro-gold">Ela potencializa a agência.</span>
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Conclusion - Infrastructure */}
-                    <div className="text-center space-y-6 pt-8">
-                        <h2 className="text-4xl font-bold text-white">NORO é infraestrutura para o turismo moderno</h2>
-                        <div className="flex justify-center gap-8 text-noro-text-muted text-lg">
-                            <span className="line-through decoration-red-500/50">Não é um CRM genérico</span>
-                            <span className="line-through decoration-red-500/50">Não é um ERP engessado</span>
-                        </div>
-                        <p className="text-xl text-noro-text-secondary max-w-3xl mx-auto">
-                            A NORO é uma infraestrutura estratégica, construída para evoluir junto com o negócio — conectando operação, inteligência e decisão em um único sistema coerente.
-                        </p>
-                        <div className="pt-8">
-                            <p className="text-lg font-medium text-white mb-8">
-                                Porque no turismo, crescer sem estrutura custa caro.<br />
-                                <span className="text-noro-turquoise">E estruturar sem entender o setor custa ainda mais.</span>
-                            </p>
-                            <Link href="/contact">
-                                <Button variant="primary" size="lg" className="shadow-[0_0_20px_#D4AF37]">
-                                    Conheça a NORO
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+export const metadata: Metadata = {
+  title: 'Sobre Nós | Noro Guru',
+  description: 'Conheça a missão, visão e o time por trás do Noro Guru — o sistema operacional da agência moderna.',
 };
 
-export default AboutPage;
+const TEAM = [
+  { name: 'Paulo Bolliger', role: 'Co-founder & CEO', initials: 'PB', color: '#342CA4' },
+  { name: 'Marina Costa', role: 'Co-founder & CPO', initials: 'MC', color: '#1DD3C0' },
+  { name: 'Rafael Souza', role: 'CTO', initials: 'RS', color: '#D4AF37' },
+  { name: 'Juliana Alves', role: 'Head de Customer Success', initials: 'JA', color: '#342CA4' },
+];
+
+const MVV = [
+  {
+    icon: '🎯',
+    color: '#342CA4',
+    label: 'Missão',
+    text: 'Colocar ordem inteligente na operação de agências de viagem brasileiras, sem engessar o negócio.',
+  },
+  {
+    icon: '👁️',
+    color: '#1DD3C0',
+    label: 'Visão',
+    text: 'Ser o sistema operacional de toda agência de turismo moderna da América Latina.',
+  },
+  {
+    icon: '❤️',
+    color: '#D4AF37',
+    label: 'Valores',
+    text: 'Simplicidade que respeita a complexidade real. Tecnologia a serviço de pessoas. Feito no Brasil, para o Brasil.',
+  },
+];
+
+export default function AboutPage() {
+  return (
+    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+
+      {/* Hero */}
+      <section
+        style={{
+          background: '#12152C',
+          padding: '80px 80px 96px',
+          position: 'relative',
+          overflow: 'hidden',
+          textAlign: 'center',
+        }}
+        className="px-6 md:px-20"
+      >
+        {/* Orbs */}
+        <div style={{ position: 'absolute', top: -80, left: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(52,44,164,0.3) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(29,211,192,0.15) 0%, transparent 65%)', pointerEvents: 'none' }} />
+
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 760, margin: '0 auto' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1DD3C0', marginBottom: 20 }}>
+            Nossa missão
+          </div>
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(40px, 6vw, 56px)',
+              fontWeight: 700,
+              color: '#fff',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+              margin: '0 0 24px',
+            }}
+          >
+            Construímos o sistema operacional das agências de turismo modernas.
+          </h1>
+          <p style={{ fontSize: 18, color: '#B8C1E0', lineHeight: 1.65, margin: 0 }}>
+            A Noro Guru nasceu dentro do turismo — e por isso entende o que softwares genéricos nunca entenderam.
+          </p>
+        </div>
+
+        {/* Photo placeholder */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            maxWidth: 900,
+            margin: '56px auto 0',
+            height: 320,
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, rgba(52,44,164,0.4), rgba(29,211,192,0.2))',
+            border: '1px solid rgba(255,255,255,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to bottom, transparent 60%, #12152C 100%)',
+            }}
+          />
+          <span style={{ fontSize: 64, opacity: 0.4 }}>📸</span>
+          <p style={{ position: 'absolute', bottom: 24, left: 0, right: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
+            Equipe Noro Guru · São Paulo, 2026
+          </p>
+        </div>
+      </section>
+
+      {/* Por que criamos */}
+      <section style={{ padding: '96px 0' }}>
+        <div
+          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px', display: 'grid', gridTemplateColumns: '55% 45%', gap: 80, alignItems: 'center' }}
+          className="px-6 md:px-20 grid-cols-1 md:grid-cols-2"
+        >
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#342CA4', marginBottom: 20 }}>
+              Nossa história
+            </div>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(28px, 3.5vw, 40px)',
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.2,
+                margin: '0 0 24px',
+              }}
+            >
+              Por que criamos o Noro Guru
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                'Vimos de perto como agências de viagem perdiam tempo e margem usando planilhas, WhatsApp e sistemas genéricos que nunca foram feitos para o turismo.',
+                'Cotações esquecidas. Comissões calculadas manualmente. Clientes sem follow-up. Sites desatualizados. O problema não era falta de esforço — era falta de ferramenta certa.',
+                'Por isso construímos a Noro Guru: uma plataforma que entende a complexidade real do dia a dia de uma agência e organiza tudo em um único lugar, com inteligência e simplicidade.',
+              ].map((p, i) => (
+                <p key={i} style={{ fontSize: 17, color: '#D1D5F0', lineHeight: 1.7, margin: 0 }}>
+                  {p}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          {/* Right image placeholder */}
+          <div
+            style={{
+              height: 380,
+              borderRadius: 16,
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <span style={{ fontSize: 48, opacity: 0.3 }}>🏢</span>
+          </div>
+        </div>
+      </section>
+
+      {/* MVV */}
+      <section style={{ background: '#12152C', padding: '96px 0' }}>
+        <div
+          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px' }}
+          className="px-6 md:px-20"
+        >
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(28px, 3.5vw, 40px)',
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '-0.02em',
+                margin: 0,
+              }}
+            >
+              Missão, Visão e Valores
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }} className="grid-cols-1 md:grid-cols-3">
+            {MVV.map((item) => (
+              <div
+                key={item.label}
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 16,
+                  padding: 32,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16,
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    background: `rgba(${hexToRgb(item.color)},0.15)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 22,
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: item.color }}>
+                  {item.label}
+                </div>
+                <p style={{ fontSize: 15, color: '#D1D5F0', lineHeight: 1.65, margin: 0 }}>
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section style={{ padding: '96px 0' }}>
+        <div
+          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px' }}
+          className="px-6 md:px-20"
+        >
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(28px, 3.5vw, 40px)',
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '-0.02em',
+                margin: 0,
+              }}
+            >
+              O time
+            </h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }} className="grid-cols-2 md:grid-cols-4">
+            {TEAM.map((member) => (
+              <div
+                key={member.name}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 12,
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    background: member.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 22,
+                    fontWeight: 700,
+                    color: '#fff',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {member.initials}
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#E0E3FF' }}>{member.name}</div>
+                  <div style={{ fontSize: 13, color: '#B8C1E0', marginTop: 4 }}>{member.role}</div>
+                </div>
+                <a
+                  href="#"
+                  style={{ fontSize: 12, color: '#B8C1E0', textDecoration: 'none' }}
+                  aria-label={`LinkedIn de ${member.name}`}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                    <rect x="2" y="9" width="4" height="12"/>
+                    <circle cx="4" cy="4" r="2"/>
+                  </svg>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Números */}
+      <section style={{ background: '#12152C', padding: '80px 0' }}>
+        <div
+          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 80px', textAlign: 'center' }}
+          className="px-6 md:px-20"
+        >
+          <div style={{ display: 'flex', gap: 0, justifyContent: 'center' }}>
+            {[
+              { v: '1.200+', l: 'agências' },
+              { v: '5 apps', l: 'no ecossistema' },
+              { v: 'Desde 2023', l: 'no mercado' },
+            ].map((stat, i) => (
+              <div
+                key={stat.l}
+                style={{
+                  flex: 1,
+                  padding: '40px 24px',
+                  borderRight: i < 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(36px, 5vw, 56px)',
+                    fontWeight: 800,
+                    color: '#fff',
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1,
+                    marginBottom: 8,
+                  }}
+                >
+                  {stat.v}
+                </div>
+                <div style={{ fontSize: 14, color: '#B8C1E0', fontWeight: 500 }}>{stat.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ padding: '80px 24px', textAlign: 'center' }}>
+        <Link
+          href="/pricing"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            color: '#E0E3FF',
+            textDecoration: 'none',
+            padding: '12px 28px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 10,
+          }}
+        >
+          Conheça nossa plataforma →
+        </Link>
+      </section>
+    </div>
+  );
+}
+
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return '255,255,255';
+  return `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`;
+}
