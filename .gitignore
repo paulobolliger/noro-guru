@@ -86,6 +86,7 @@ supabase/.history/
 # 💻 IDE / Editor / OS files
 # ==============================
 .vscode/
+.vscode/mcp.local.json
 .idea/
 .DS_Store
 Thumbs.db
