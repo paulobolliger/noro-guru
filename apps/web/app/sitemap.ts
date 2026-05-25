@@ -62,12 +62,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     route('/partners', 0.75, 'monthly'),
     route('/affiliate', 0.75, 'monthly'),
 
-    // Support & Legal
+    // Support & Help
     route('/ajuda', 0.8, 'weekly'),
     route('/seguranca', 0.7, 'monthly'),
-    route('/termos', 0.6, 'monthly'),
-    route('/privacidade', 0.6, 'monthly'),
+    route('/status', 0.7, 'daily'),
+    route('/changelog', 0.6, 'weekly'),
+
+    // Legal
+    route('/terms-of-service', 0.6, 'monthly'),
+    route('/privacy-policy', 0.6, 'monthly'),
     route('/cookies', 0.5, 'monthly'),
+    route('/lgpd', 0.5, 'monthly'),
     route('/sla', 0.6, 'monthly'),
   ];
 }
