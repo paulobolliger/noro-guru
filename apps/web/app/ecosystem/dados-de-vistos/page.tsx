@@ -1,192 +1,234 @@
 import React from 'react';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PassportIcon } from '@/components/icons/PassportIcon';
 
-const VistosGuruPage = () => {
-    return (
-        <div className="container mx-auto px-6 py-20 md:py-28 text-noro-accent/80 relative z-10">
-            <div className="max-w-4xl mx-auto">
-                {/* Hero Section */}
-                <div className="text-center mb-16">
-                    <div className="relative inline-block mb-8">
-                        <div className="absolute inset-0 bg-noro-turquoise/20 blur-3xl rounded-full"></div>
-                        <div className="inline-block p-4 bg-white/5 backdrop-blur-sm rounded-2xl mb-6 border border-white/10 relative z-10">
-                            <PassportIcon className="w-16 h-16 text-noro-turquoise" />
-                        </div>
-                    </div>
-                    <div className="mb-2 font-display text-2xl font-bold tracking-widest text-noro-gold uppercase">Vistos Guru</div>
-                    <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-8 leading-tight">
-                        Inteligência de Dados para <span className="text-transparent bg-clip-text bg-gradient-to-r from-noro-turquoise to-noro-purple-light">Processos de Vistos</span>
-                    </h1>
-                </div>
-
-                <div className="space-y-12">
-                    {/* Introduction */}
-                    <Card variant="glass" className="p-8 md:p-12">
-                        <p className="text-xl text-white leading-relaxed mb-6 font-medium text-center">
-                            Transforme complexidade operacional em eficiência, segurança e escala.
-                        </p>
-                        <hr className="border-white/10 my-8" />
-                        <p className="text-noro-text-secondary text-lg leading-relaxed mb-6">
-                            Processos de vistos são complexos por definição. <br />
-                            Regras variam por país, perfil, tipo de viagem e momento. Quando essa complexidade é tratada manualmente, ela vira gargalo.
-                        </p>
-                        <p className="text-noro-turquoise font-bold text-lg leading-relaxed mb-6 text-center">
-                            Quando é tratada com dados e automação, ela vira vantagem competitiva.
-                        </p>
-                        <div className="border-l-4 border-noro-gold pl-6 py-2">
-                            <p className="text-lg font-bold text-white italic">
-                                "A Inteligência de Dados para Processos de Vistos da NORO foi criada para organizar, acelerar e dar segurança a operações que lidam diariamente com exigências migratórias."
-                            </p>
-                        </div>
-                    </Card>
-
-                    {/* Less Risk, More Control */}
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <Card variant="default" className="bg-noro-dark/50 p-8 border-noro-gray-future/30">
-                            <h2 className="text-2xl font-bold text-white mb-6">Menos risco. Mais controle.</h2>
-                            <p className="text-noro-text-secondary mb-6">
-                                A NORO centraliza e estrutura todas as informações críticas do processo, permitindo que sua operação trabalhe com:
-                            </p>
-                            <ul className="space-y-3">
-                                {[
-                                    "Dados confiáveis e atualizados",
-                                    "Fluxos claros e previsíveis",
-                                    "Redução drástica de erros manuais",
-                                    "Visão completa do status"
-                                ].map(item => (
-                                    <li key={item} className="flex items-start gap-3 text-noro-text-muted text-sm">
-                                        <span className="text-noro-turquoise mt-1">●</span> {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <p className="mt-8 text-white font-medium border-t border-white/5 pt-4">
-                                Você deixa de "apagar incêndios" e passa a operar com controle.
-                            </p>
-                        </Card>
-                        <Card variant="default" className="bg-noro-dark/50 p-8 border-noro-gray-future/30">
-                            <h2 className="text-2xl font-bold text-white mb-6">Dados estruturados que escalam</h2>
-                            <p className="text-noro-text-secondary mb-6">
-                                Planilhas e checklists soltos não escalam. A NORO organiza regras e requisitos em dados estruturados.
-                            </p>
-                            <ul className="space-y-3">
-                                <li className="flex items-center gap-2 text-white"><span className="text-noro-gold">➜</span> Padronização da operação</li>
-                                <li className="flex items-center gap-2 text-white"><span className="text-noro-gold">➜</span> Reaproveitamento inteligente</li>
-                                <li className="flex items-center gap-2 text-white"><span className="text-noro-gold">➜</span> Treinamento rápido de equipes</li>
-                                <li className="flex items-center gap-2 text-white"><span className="text-noro-gold">➜</span> Crescimento sem perda de qualidade</li>
-                            </ul>
-                            <p className="mt-8 text-noro-turquoise font-bold text-center border-t border-white/5 pt-4">
-                                "O conhecimento passa a ser do sistema — não de pessoas específicas."
-                            </p>
-                        </Card>
-                    </div>
-
-                    {/* Automation & AI */}
-                    <Card variant="glass" className="p-8 md:p-12 relative overflow-hidden">
-                        <div className="grid md:grid-cols-2 gap-12 relative z-10">
-                            <div>
-                                <h2 className="text-3xl font-bold text-white mb-6">Automação que acompanha o processo real</h2>
-                                <p className="text-noro-text-secondary mb-6">
-                                    Cada solicitação de visto segue um caminho lógico. A NORO transforma esse caminho em fluxo operacional.
-                                </p>
-                                <ul className="space-y-2 mb-6">
-                                    {["Guiar cada processo passo a passo", "Automatizar tarefas repetitivas", "Gerar alertas de prazo e pendências", "Acompanhar volumes e gargalos"].map(item => (
-                                        <li key={item} className="flex items-center gap-2 text-white font-medium">
-                                            <span className="text-noro-turquoise">✓</span> {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <p className="text-xl font-bold text-white">
-                                    Resultado: <br />
-                                    <span className="text-noro-gold">Mais produtividade, menos retrabalho.</span>
-                                </p>
-                            </div>
-                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <span className="text-2xl">🤖</span> Inteligência Aplicada
-                                </h3>
-                                <p className="text-noro-text-muted mb-4">
-                                    A NORO utiliza IA como acelerador operacional, não como risco.
-                                </p>
-                                <p className="text-noro-text-secondary text-sm mb-4">
-                                    Ela apoia análises, interpreta cenários e acelera respostas, sempre conectada a regras, dados e validações claras.
-                                </p>
-                                <p className="mt-6 text-white font-bold text-sm bg-noro-turquoise/20 p-2 rounded text-center">
-                                    Mais velocidade, sem abrir mão de segurança.
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Professional Operation */}
-                    <section className="bg-noro-gold/5 rounded-3xl p-8 md:p-10 border border-noro-gold/20 text-center">
-                        <h2 className="text-3xl font-bold text-white mb-6">Operação profissional, do início ao fim</h2>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            {[
-                                "Histórico completo por cliente",
-                                "Rastreabilidade total",
-                                "Controle de acesso por perfil",
-                                "Visão consolidada"
-                            ].map(item => (
-                                <div key={item} className="p-4 rounded-xl bg-noro-dark border border-white/5">
-                                    <p className="text-white font-medium text-sm">{item}</p>
-                                </div>
-                            ))}
-                        </div>
-                        <p className="mt-8 text-noro-text-secondary">Tudo pensado para quem precisa operar com responsabilidade, volume e previsibilidade.</p>
-                    </section>
-
-                    {/* Target Audience */}
-                    <div className="text-center py-8">
-                        <h2 className="text-2xl font-bold text-white mb-6">Para quem isso faz diferença</h2>
-                        <div className="flex flex-wrap justify-center gap-4 mb-4">
-                            {[
-                                "Empresas com processos em escala",
-                                "Operações que querem reduzir risco",
-                                "Negócios focados em eficiência",
-                                "Equipes com regras complexas"
-                            ].map(item => (
-                                <span key={item} className="px-4 py-2 bg-white/5 rounded-full border border-white/10 text-noro-text-secondary shadow-sm text-sm">
-                                    {item}
-                                </span>
-                            ))}
-                        </div>
-                        <p className="text-noro-gold font-medium">"Se vistos fazem parte do seu core, estrutura é indispensável."</p>
-                    </div>
-
-                </div>
-
-                {/* Footer CTA */}
-                <div className="text-center mt-12 bg-gradient-to-t from-noro-turquoise/10 to-transparent pt-16 pb-8 rounded-t-3xl border-t border-white/5">
-                    <div className="mb-8 space-y-4">
-                        <h2 className="font-display text-4xl font-bold text-white">Complexidade não é o problema.</h2>
-                        <p className="text-xl text-noro-text-secondary max-w-3xl mx-auto">
-                            Com a NORO, complexidade vira processo, previsibilidade, eficiência e confiança.
-                        </p>
-                        <p className="text-2xl font-bold text-noro-turquoise">E confiança, nesse mercado, vira vantagem competitiva.</p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                        <Link href="/contact">
-                            <Button variant="primary" size="lg" className="shadow-[0_0_20px_#D4AF37]">
-                                Falar com Especialista
-                            </Button>
-                        </Link>
-                        <Link href="/ecosystem">
-                            <Button variant="secondary" size="lg">
-                                Ver Outras Soluções
-                            </Button>
-                        </Link>
-                    </div>
-                    <p className="mt-8 text-lg font-bold text-white">
-                        Inteligência de Dados para Processos de Vistos. <br />
-                        <span className="text-noro-text-muted font-normal text-base">Estrutura para quem precisa operar com precisão.</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
+export const metadata: Metadata = {
+  title: 'Visa API — Dados de Vistos para Agências | Noro Guru',
+  description: 'Acesse dados atualizados de requisitos de vistos para mais de 180 países. API para agências e desenvolvedores.',
 };
 
-export default VistosGuruPage;
+const FEATURES = [
+  { icon: '🗺️', title: '180+ países', desc: 'Base de dados cobrindo requisitos de vistos para passaportes brasileiros e internacionais.' },
+  { icon: '🔄', title: 'Atualização contínua', desc: 'Dados atualizados por equipe especializada. Alertas automáticos quando requisitos mudam.' },
+  { icon: '⚡', title: 'API REST', desc: 'Integre diretamente no seu sistema ou use a interface visual da plataforma Noro Core.' },
+  { icon: '🛡️', title: 'Dados confiáveis', desc: 'Fontes oficiais de embaixadas e consulados, com validação cruzada periódica.' },
+  { icon: '📋', title: 'Checklist por destino', desc: 'Lista completa de documentos necessários por perfil de viajante (turismo, negócios, estudo).' },
+  { icon: '🤖', title: 'IA para análise', desc: 'Interprete cenários complexos e antecipe mudanças de requisitos com auxílio de IA.' },
+];
+
+const COUNTRIES = [
+  { flag: '🇫🇷', name: 'França', type: 'Schengen', status: 'Visto obrigatório' },
+  { flag: '🇺🇸', name: 'EUA', type: 'B1/B2', status: 'Visto obrigatório' },
+  { flag: '🇦🇷', name: 'Argentina', type: 'Isento', status: 'Sem visto' },
+  { flag: '🇵🇹', name: 'Portugal', type: 'Schengen', status: 'Visto obrigatório' },
+  { flag: '🇨🇦', name: 'Canadá', type: 'eTA/Visto', status: 'eTA disponível' },
+  { flag: '🇯🇵', name: 'Japão', type: 'Isento', status: 'Sem visto (90d)' },
+];
+
+export default function DadosDeVistosPage() {
+  return (
+    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+
+      {/* Hero */}
+      <div
+        style={{
+          background: 'linear-gradient(180deg, #0D1526 0%, #0B1220 100%)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '96px 24px 80px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 600,
+            height: 400,
+            borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(212,175,55,0.12) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', position: 'relative' }}>
+          <Link href="/ecosystem" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 32 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            Ecossistema
+          </Link>
+
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, margin: '0 auto 24px' }}>
+            🛂
+          </div>
+
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#D4AF37', fontFamily: 'var(--font-mono)', marginBottom: 16 }}>
+            Visa API
+          </div>
+
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(28px, 5vw, 52px)',
+              fontWeight: 700,
+              color: '#fff',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+              margin: '0 0 20px',
+            }}
+          >
+            Dados de vistos<br />
+            <span style={{ color: '#D4AF37' }}>confiáveis e atualizados</span>
+          </h1>
+
+          <p style={{ fontSize: 18, color: '#B8C1E0', lineHeight: 1.65, margin: '0 0 40px', maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
+            Acesse requisitos de vistos para mais de 180 países diretamente na plataforma Noro Core, ou integre via API no seu sistema. Dados verificados, alertas de mudança automáticos.
+          </p>
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {['180+ países', 'API REST', 'Atualização diária', 'Passaporte BR'].map((tag) => (
+              <span
+                key={tag}
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: '#D4AF37',
+                  background: 'rgba(212,175,55,0.1)',
+                  border: '1px solid rgba(212,175,55,0.25)',
+                  borderRadius: 999,
+                  padding: '5px 14px',
+                  fontFamily: 'var(--font-mono)',
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '80px 24px 96px' }}>
+
+        {/* Sample data */}
+        <div style={{ marginBottom: 96 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 8px', textAlign: 'center' }}>
+            Amostra da base de dados
+          </h2>
+          <p style={{ fontSize: 16, color: '#B8C1E0', textAlign: 'center', margin: '0 0 40px' }}>
+            Dados para passaporte brasileiro — atualizado em maio de 2026.
+          </p>
+          <div
+            style={{
+              background: '#12152C',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 14,
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '2fr 1fr 1fr',
+                padding: '12px 24px',
+                background: 'rgba(255,255,255,0.04)',
+                borderBottom: '1px solid rgba(255,255,255,0.07)',
+              }}
+            >
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#B8C1E0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>País</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#B8C1E0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Tipo</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#B8C1E0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Status</span>
+            </div>
+            {COUNTRIES.map((c, i) => (
+              <div
+                key={c.name}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2fr 1fr 1fr',
+                  padding: '16px 24px',
+                  borderBottom: i < COUNTRIES.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  alignItems: 'center',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 20 }}>{c.flag}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{c.name}</span>
+                </div>
+                <span
+                  style={{
+                    fontSize: 12,
+                    color: '#B8C1E0',
+                    fontFamily: 'var(--font-mono)',
+                  }}
+                >
+                  {c.type}
+                </span>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: c.status === 'Sem visto' || c.status.startsWith('Sem visto') ? '#1DD3C0' : c.status.includes('eTA') ? '#D4AF37' : '#B8C1E0',
+                  }}
+                >
+                  {c.status}
+                </span>
+              </div>
+            ))}
+            <div style={{ padding: '12px 24px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: 12, color: '#B8C1E0' }}>+ 174 países disponíveis na plataforma completa</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div style={{ marginBottom: 96 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 32px', textAlign: 'center' }}>
+            Recursos da Visa API
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                style={{
+                  background: '#12152C',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 14,
+                  padding: 28,
+                }}
+              >
+                <div style={{ fontSize: 32, marginBottom: 14 }}>{f.icon}</div>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>{f.title}</h3>
+                <p style={{ fontSize: 14, color: '#B8C1E0', margin: 0, lineHeight: 1.65 }}>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(52,44,164,0.1) 100%)',
+            border: '1px solid rgba(212,175,55,0.25)',
+            borderRadius: 16,
+            padding: '48px 40px',
+            textAlign: 'center',
+          }}
+        >
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 12px' }}>
+            Acesse a Visa API
+          </h2>
+          <p style={{ fontSize: 15, color: '#B8C1E0', margin: '0 0 28px', maxWidth: 440, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
+            Disponível integrada ao Noro Core ou via API para desenvolvedores. Entre em contato para acesso e documentação.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#D4AF37', color: '#0B1220', borderRadius: 10, padding: '13px 28px', fontSize: 15, fontWeight: 800, textDecoration: 'none' }}>
+              Solicitar acesso →
+            </Link>
+            <Link href="/ecosystem" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.07)', color: '#E0E3FF', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: '13px 24px', fontSize: 15, fontWeight: 600, textDecoration: 'none' }}>
+              Ver ecossistema
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

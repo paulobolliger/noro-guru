@@ -1,185 +1,253 @@
 import React from 'react';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { WebsiteIcon } from '@/components/icons/WebsiteIcon';
 
-const IntelligentWebsitesPage = () => {
-    return (
-        <div className="container mx-auto px-6 py-20 md:py-28 text-noro-accent/80 relative z-10">
-            <div className="max-w-4xl mx-auto">
-                {/* Hero Section */}
-                <div className="text-center mb-16">
-                    <div className="relative inline-block mb-8">
-                        <div className="absolute inset-0 bg-noro-turquoise/20 blur-3xl rounded-full"></div>
-                        <div className="inline-block p-4 bg-white/5 backdrop-blur-sm rounded-2xl mb-6 border border-white/10 relative z-10">
-                            <WebsiteIcon className="w-16 h-16 text-noro-turquoise" />
-                        </div>
-                    </div>
-                    <div className="mb-2 font-display text-2xl font-bold tracking-widest text-noro-gold uppercase">Intelligent Websites</div>
-                    <h1 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight mb-8 leading-tight">
-                        Criação de Sites Inteligentes para <span className="text-noro-turquoise">Agências</span>
-                    </h1>
-                </div>
-
-                <div className="space-y-12">
-                    {/* Intro / Problem */}
-                    <Card variant="glass" className="p-8 md:p-12">
-                        <p className="text-xl text-white leading-relaxed mb-6 font-medium text-center">
-                            Seu site não deve ser apenas um cartão de visitas. <br />
-                            Deve ser seu melhor vendedor, trabalhando 24/7 para capturar leads e gerar negócios.
-                        </p>
-                        <hr className="border-white/10 my-8" />
-                        <p className="text-noro-text-secondary text-lg leading-relaxed mb-6 text-center">
-                            A maioria dos sites de agências de turismo faz uma coisa muito bem: <br />
-                            <span className="text-white font-bold">existir.</span>
-                        </p>
-                        <p className="text-noro-gold font-bold text-2xl text-center mb-6">
-                            Mas existir não paga contas.
-                        </p>
-                        <p className="text-noro-text-secondary text-lg leading-relaxed text-center">
-                            O site de uma agência moderna precisa vender, qualificar, educar e direcionar o cliente — mesmo quando ninguém está online. É exatamente para isso que a Criação de Sites Inteligentes da NORO foi desenvolvida.
-                        </p>
-                    </Card>
-
-                    {/* Solution Details */}
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <Card variant="default" className="bg-noro-dark/50 p-8 border-noro-gray-future/30">
-                            <h2 className="text-2xl font-bold text-white mb-6">Um site bonito não basta. <br /><span className="text-noro-turquoise">Ele precisa funcionar.</span></h2>
-                            <p className="text-noro-text-secondary mb-6">
-                                Layouts genéricos, textos vazios e formulários que ninguém responde não geram negócio.
-                            </p>
-                            <p className="text-white mb-4">Os sites criados pela NORO são projetados para:</p>
-                            <ul className="space-y-3">
-                                {[
-                                    "Atrair o cliente certo",
-                                    "Explicar valor com clareza",
-                                    "Capturar leads qualificados",
-                                    "Apoiar o processo de venda",
-                                    "Integrar diretamente com o CRM"
-                                ].map(item => (
-                                    <li key={item} className="flex items-start gap-3 text-noro-text-muted text-sm">
-                                        <span className="text-noro-gold mt-1">➜</span> {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <p className="mt-6 text-white text-sm italic border-t border-white/5 pt-4">
-                                "Seu site deixa de ser um custo. Passa a ser um canal ativo de geração de receita."
-                            </p>
-                        </Card>
-
-                        <div className="space-y-8">
-                            <div className="bg-white/5 rounded-2xl p-8 border border-white/10">
-                                <h3 className="text-xl font-bold text-white mb-4">Inteligência desde o primeiro clique</h3>
-                                <p className="text-noro-text-secondary mb-4 text-sm">Cada site criado pela NORO nasce integrado à inteligência da plataforma.</p>
-                                <ul className="space-y-2 mb-4">
-                                    <li className="flex items-center gap-2 text-white text-sm"><span className="text-noro-turquoise">✓</span> Formulários conectados ao CRM</li>
-                                    <li className="flex items-center gap-2 text-white text-sm"><span className="text-noro-turquoise">✓</span> Leads organizados automaticamente</li>
-                                    <li className="flex items-center gap-2 text-white text-sm"><span className="text-noro-turquoise">✓</span> Histórico de interações preservado</li>
-                                    <li className="flex items-center gap-2 text-white text-sm"><span className="text-noro-turquoise">✓</span> Dados prontos para ação comercial</li>
-                                </ul>
-                                <p className="text-white font-bold text-sm">Nada se perde. Nada fica solto.</p>
-                            </div>
-
-                            <div className="bg-white/5 rounded-2xl p-8 border border-white/10">
-                                <h3 className="text-xl font-bold text-white mb-4">Conteúdo que orienta e converte</h3>
-                                <p className="text-noro-text-secondary mb-4 text-sm">
-                                    O cliente não quer “ler sobre a agência”. Ele quer entender se você resolve o problema dele.
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {["Conteúdo claro", "Linguagem simples", "Foco em conversão", "CTAs estratégicos"].map(tag => (
-                                        <span key={tag} className="px-2 py-1 bg-noro-turquoise/10 text-noro-turquoise rounded text-xs font-bold uppercase">{tag}</span>
-                                    ))}
-                                </div>
-                                <p className="mt-4 text-right font-bold text-white text-sm">Menos curiosos. Mais oportunidades reais.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Designed for Tourism */}
-                    <Card variant="glass" className="p-10 relative overflow-hidden">
-                        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                            <div className="md:w-1/2">
-                                <h2 className="text-3xl font-bold text-white mb-6">Experiência pensada para turismo</h2>
-                                <p className="text-noro-text-secondary text-lg mb-6">
-                                    Agências de turismo têm particularidades que plataformas genéricas ignoram. A NORO desenvolve sites pensados para:
-                                </p>
-                                <ul className="space-y-3">
-                                    {[
-                                        "Serviços complexos e personalizados",
-                                        "Múltiplos produtos (viagens, seguros, vistos)",
-                                        "Jornadas longas de decisão",
-                                        "Atendimento humano aliado à tecnologia"
-                                    ].map(item => (
-                                        <li key={item} className="flex items-center gap-3 text-white">
-                                            <span className="w-2 h-2 rounded-full bg-noro-gold"></span> {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div className="md:w-1/2 bg-noro-dark/50 p-6 rounded-2xl border border-white/5 text-center">
-                                <p className="text-xl font-bold text-white mb-4">Um site que cresce junto com a agência</p>
-                                <p className="text-noro-text-muted mb-6">
-                                    O site não é um projeto fechado. Ele é parte do ecossistema. Pode evoluir para novas páginas, integrações com IA e fluxos de captação.
-                                </p>
-                                <p className="text-noro-turquoise font-bold text-lg">
-                                    Sem refazer tudo. <br />
-                                    Sem trocar de ferramenta.
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Target Audience */}
-                    <div className="text-center py-8 bg-white/5 rounded-3xl border border-white/5">
-                        <h2 className="text-2xl font-bold text-white mb-6">Para quem esse produto faz sentido</h2>
-                        <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
-                            {[
-                                "Agências que querem vender mais pelo digital",
-                                "Operações que precisam organizar leads",
-                                "Empresas que já superaram o 'site institucional'",
-                                "Negócios que veem tecnologia como investimento"
-                            ].map(item => (
-                                <span key={item} className="px-4 py-2 bg-noro-dark/80 rounded-lg border border-white/10 text-white shadow-sm text-sm">
-                                    {item}
-                                </span>
-                            ))}
-                        </div>
-                        <p className="text-noro-text-muted italic mt-6">"Se o site hoje não gera negócio, ele está subutilizado."</p>
-                    </div>
-
-                </div>
-
-                {/* Footer CTA */}
-                <div className="text-center mt-20">
-                    <div className="mb-8 space-y-4">
-                        <h2 className="font-display text-4xl font-bold text-white">Seu melhor vendedor não tira férias</h2>
-                        <p className="text-xl text-noro-text-secondary max-w-2xl mx-auto">
-                            Enquanto sua equipe atende clientes, negocia e executa, o site trabalha silenciosamente:
-                        </p>
-                        <div className="flex justify-center gap-4 text-noro-turquoise font-bold text-lg">
-                            <span>Apresentando</span> • <span>Filtrando</span> • <span>Capturando</span> • <span>Preparando a venda</span>
-                        </div>
-                    </div>
-                    <p className="text-2xl font-bold text-white mb-8">
-                        24 horas por dia. 7 dias por semana.
-                    </p>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Link href="/contact">
-                            <Button variant="primary" size="lg" className="shadow-[0_0_20px_#D4AF37]">
-                                Solicitar Proposta
-                            </Button>
-                        </Link>
-                        <Link href="/portfolio">
-                            <Button variant="secondary" size="lg">
-                                Ver Portfolio
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+export const metadata: Metadata = {
+  title: 'Sites Inteligentes para Agências de Turismo | Noro Guru',
+  description: 'Gere o site da sua agência em minutos com IA. Design profissional, integrado ao CRM, com captação de leads automática.',
 };
 
-export default IntelligentWebsitesPage;
+const STEPS = [
+  { num: '01', title: 'Você informa os dados', desc: 'Nome da agência, serviços, diferenciais, logo e cores. Leva menos de 5 minutos.' },
+  { num: '02', title: 'A IA gera o site', desc: 'Estrutura, textos, seções e layout criados automaticamente com base no seu perfil.' },
+  { num: '03', title: 'Você personaliza', desc: 'Edite textos, cores, imagens e seções diretamente no editor visual.' },
+  { num: '04', title: 'Publique em um clique', desc: 'Domínio *.sites.noro.guru incluído. Conecte seu domínio próprio quando quiser.' },
+];
+
+const FEATURES = [
+  { icon: '🔗', title: 'Integrado ao CRM', desc: 'Leads que chegam pelo site entram automaticamente no pipeline da agência.' },
+  { icon: '📱', title: 'Responsivo', desc: 'Funciona perfeitamente em celular, tablet e desktop. Sem configuração extra.' },
+  { icon: '⚡', title: 'Rápido', desc: 'Performance otimizada para Google. Core Web Vitals no verde.' },
+  { icon: '🤖', title: 'Conteúdo com IA', desc: 'Textos de vendas, descrições de destinos e CTAs gerados por IA.' },
+  { icon: '🌐', title: 'Domínio próprio', desc: 'Conecte seu domínio personalizado a partir do plano Profissional.' },
+  { icon: '📊', title: 'Analytics integrado', desc: 'Veja quantas visitas, leads gerados e taxa de conversão direto no painel.' },
+];
+
+export default function IntelligentWebsitesPage() {
+  return (
+    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+
+      {/* Hero */}
+      <div
+        style={{
+          background: 'linear-gradient(180deg, #0D1526 0%, #0B1220 100%)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '96px 24px 80px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: '10%',
+            transform: 'translateY(-50%)',
+            width: 500,
+            height: 400,
+            borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(29,211,192,0.12) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', position: 'relative' }}>
+          <Link href="/ecosystem" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 32 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+            Ecossistema
+          </Link>
+
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: 'rgba(29,211,192,0.15)', border: '1px solid rgba(29,211,192,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 36, margin: '0 auto 24px' }}>
+            🌐
+          </div>
+
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1DD3C0', fontFamily: 'var(--font-mono)', marginBottom: 16 }}>
+            Sites Inteligentes
+          </div>
+
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(28px, 5vw, 52px)',
+              fontWeight: 700,
+              color: '#fff',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.1,
+              margin: '0 0 20px',
+            }}
+          >
+            Seu site profissional<br />
+            <span style={{ color: '#1DD3C0' }}>pronto em minutos</span>
+          </h1>
+
+          <p style={{ fontSize: 18, color: '#B8C1E0', lineHeight: 1.65, margin: '0 0 40px', maxWidth: 540, marginLeft: 'auto', marginRight: 'auto' }}>
+            A IA gera o site da sua agência do zero — com textos de vendas, design profissional e integração direta ao CRM para capturar leads automaticamente.
+          </p>
+
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link
+              href="/wizard"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: '#1DD3C0',
+                color: '#0B1220',
+                borderRadius: 10,
+                padding: '13px 28px',
+                fontSize: 15,
+                fontWeight: 800,
+                textDecoration: 'none',
+              }}
+            >
+              ✨ Gerar meu site grátis
+            </Link>
+            <Link
+              href="/demo"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: 'rgba(255,255,255,0.07)',
+                color: '#E0E3FF',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: 10,
+                padding: '13px 24px',
+                fontSize: 15,
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              Ver demo
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '80px 24px 96px' }}>
+
+        {/* How it works */}
+        <div style={{ marginBottom: 96 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 8px', textAlign: 'center' }}>
+            Como funciona
+          </h2>
+          <p style={{ fontSize: 16, color: '#B8C1E0', textAlign: 'center', margin: '0 0 48px' }}>
+            De zero a site publicado em menos de 30 minutos.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 }}>
+            {STEPS.map((step) => (
+              <div
+                key={step.num}
+                style={{
+                  background: '#12152C',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 14,
+                  padding: 28,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 28,
+                    fontWeight: 800,
+                    color: '#342CA4',
+                    opacity: 0.5,
+                    lineHeight: 1,
+                    marginBottom: 16,
+                  }}
+                >
+                  {step.num}
+                </div>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>
+                  {step.title}
+                </h3>
+                <p style={{ fontSize: 14, color: '#B8C1E0', margin: 0, lineHeight: 1.6 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div style={{ marginBottom: 96 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 32px', textAlign: 'center' }}>
+            O que está incluído
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                style={{
+                  background: '#12152C',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 14,
+                  padding: '24px 28px',
+                  display: 'flex',
+                  gap: 16,
+                  alignItems: 'flex-start',
+                }}
+              >
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
+                    background: 'rgba(29,211,192,0.1)',
+                    border: '1px solid rgba(29,211,192,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 22,
+                    flexShrink: 0,
+                  }}
+                >
+                  {f.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: '#fff', margin: '0 0 6px' }}>{f.title}</h3>
+                  <p style={{ fontSize: 13, color: '#B8C1E0', margin: 0, lineHeight: 1.6 }}>{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(29,211,192,0.12) 0%, rgba(52,44,164,0.12) 100%)',
+            border: '1px solid rgba(29,211,192,0.25)',
+            borderRadius: 16,
+            padding: '56px 40px',
+            textAlign: 'center',
+          }}
+        >
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 12px' }}>
+            Seu melhor vendedor não tira férias
+          </h2>
+          <p style={{ fontSize: 16, color: '#B8C1E0', margin: '0 0 8px', lineHeight: 1.6 }}>
+            Enquanto sua equipe atende, o site capta leads 24h por dia.
+          </p>
+          <p style={{ fontSize: 14, color: '#B8C1E0', margin: '0 0 32px' }}>
+            Grátis no plano Starter · Domínio próprio a partir do Profissional
+          </p>
+          <Link
+            href="/wizard"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#1DD3C0',
+              color: '#0B1220',
+              borderRadius: 10,
+              padding: '14px 32px',
+              fontSize: 16,
+              fontWeight: 800,
+              textDecoration: 'none',
+            }}
+          >
+            ✨ Criar meu site agora
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
