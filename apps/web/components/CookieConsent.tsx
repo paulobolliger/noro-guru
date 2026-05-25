@@ -9,7 +9,6 @@ export default function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      // Aguarda 2 segundos antes de mostrar o banner
       const timer = setTimeout(() => {
         setShowBanner(true);
       }, 2000);
@@ -20,8 +19,6 @@ export default function CookieConsent() {
   const acceptCookies = () => {
     localStorage.setItem('cookie-consent', 'accepted');
     setShowBanner(false);
-    
-    // Recarregar para ativar analytics
     if (typeof window !== 'undefined') {
       window.location.reload();
     }
@@ -37,43 +34,74 @@ export default function CookieConsent() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 bg-white/95 backdrop-blur-lg border-t-2 border-[#342CA4]/20 shadow-2xl animate-slide-up">
-      <div className="container mx-auto max-w-6xl">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          {/* Conteúdo */}
-          <div className="flex-1">
-            <div className="flex items-start gap-3 mb-2">
-              <span className="text-2xl">🍪</span>
-              <div>
-                <h3 className="font-bold text-gray-900 mb-1">
-                  Usamos Cookies
-                </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  Utilizamos cookies para melhorar sua experiência, analisar o tráfego do site e personalizar conteúdo. 
-                  Ao continuar navegando, você concorda com nossa{' '}
-                  <Link href="/privacy-policy" className="text-[#1DD3C0] hover:underline">
-                    Política de Privacidade
-                  </Link>.
-                </p>
-              </div>
-            </div>
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+        padding: '0',
+        background: 'rgba(13,21,38,0.97)',
+        backdropFilter: 'blur(12px)',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        boxShadow: '0 -8px 32px rgba(0,0,0,0.5)',
+      }}
+    >
+      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        {/* Content */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: 1, minWidth: 280 }}>
+          <span style={{ fontSize: 22, flexShrink: 0, marginTop: 2 }}>🍪</span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 4 }}>Usamos cookies</div>
+            <p style={{ fontSize: 13, color: '#B8C1E0', margin: 0, lineHeight: 1.55 }}>
+              Cookies essenciais e opcionais para melhorar sua experiência.{' '}
+              <Link href="/cookies" style={{ color: '#1DD3C0', textDecoration: 'none' }}>
+                Saiba mais
+              </Link>{' '}
+              ou ajuste suas preferências.
+            </p>
           </div>
+        </div>
 
-          {/* Botões */}
-          <div className="flex gap-3 flex-shrink-0">
-            <button
-              onClick={declineCookies}
-              className="px-6 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all"
-            >
-              Recusar
-            </button>
-            <button
-              onClick={acceptCookies}
-              className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#342CA4] to-[#1DD3C0] hover:shadow-lg rounded-lg transition-all"
-            >
-              Aceitar Cookies
-            </button>
-          </div>
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: 10, flexShrink: 0, flexWrap: 'wrap' }}>
+          <button
+            onClick={declineCookies}
+            style={{
+              padding: '9px 20px',
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#B8C1E0',
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 8,
+              cursor: 'pointer',
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.12)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.07)'; }}
+          >
+            Apenas essenciais
+          </button>
+          <button
+            onClick={acceptCookies}
+            style={{
+              padding: '9px 20px',
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#fff',
+              background: '#342CA4',
+              border: 'none',
+              borderRadius: 8,
+              cursor: 'pointer',
+              transition: 'opacity 0.15s',
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.85'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
+          >
+            Aceitar todos
+          </button>
         </div>
       </div>
     </div>
