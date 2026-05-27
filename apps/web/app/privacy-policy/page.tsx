@@ -8,155 +8,166 @@ export const metadata: Metadata = {
 };
 
 const TOC = [
-  'Introdução',
-  'Dados que coletamos',
-  'Como usamos seus dados',
-  'Compartilhamento de dados',
-  'Seus direitos (LGPD)',
-  'Cookies e rastreamento',
-  'Segurança dos dados',
-  'Alterações nesta política',
-  'Contato e DPO',
+  { id: 'intro', label: 'Introdução' },
+  { id: 'dados', label: 'Dados que coletamos' },
+  { id: 'uso', label: 'Como usamos seus dados' },
+  { id: 'compartilhamento', label: 'Compartilhamento de dados' },
+  { id: 'direitos', label: 'Seus direitos (LGPD)' },
+  { id: 'cookies', label: 'Cookies e rastreamento' },
+  { id: 'seguranca', label: 'Segurança dos dados' },
+  { id: 'alteracoes', label: 'Alterações nesta política' },
+  { id: 'contato', label: 'Contato e DPO' },
 ];
 
 const LGPD_RIGHTS = [
-  'Confirmar a existência de tratamento de seus dados',
-  'Acessar os dados que mantemos sobre você',
-  'Corrigir dados incompletos, inexatos ou desatualizados',
-  'Solicitar anonimização, bloqueio ou eliminação',
-  'Solicitar portabilidade dos dados para outro fornecedor',
-  'Revogar o consentimento a qualquer momento',
-  'Se opor a tratamento baseado em legítimo interesse',
-  'Não ser submetido a decisões exclusivamente automatizadas',
-];
-
-const SECTIONS = [
-  {
-    id: 'p-1',
-    title: '1. Introdução',
-    content: 'A Noro Guru (Nomade Group) respeita sua privacidade e está comprometida em proteger seus dados pessoais. Esta Política informa como coletamos, usamos, compartilhamos e protegemos seus dados ao usar nossa plataforma, em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018) e demais normas aplicáveis.',
-  },
-  {
-    id: 'p-2',
-    title: '2. Dados que coletamos',
-    content: 'Coletamos: (a) Dados fornecidos por você — nome, e-mail, CNPJ, telefone, dados de pagamento, informações de clientes inseridas no CRM; (b) Dados de uso — logs de acesso, funcionalidades utilizadas, histórico de ações, preferências de configuração; (c) Dados técnicos — endereço IP, tipo de navegador, sistema operacional, identificadores de dispositivo.',
-  },
-  {
-    id: 'p-3',
-    title: '3. Como usamos seus dados',
-    content: 'Usamos seus dados para: prestar e melhorar os serviços contratados; processar pagamentos e emitir cobranças; enviar comunicações sobre a plataforma (atualizações, segurança, suporte); personalizar a experiência de uso; cumprir obrigações legais e regulatórias; prevenir fraudes e garantir a segurança da plataforma. Não vendemos seus dados para terceiros.',
-  },
-  {
-    id: 'p-4',
-    title: '4. Compartilhamento de dados',
-    content: 'Compartilhamos dados apenas com: parceiros de infraestrutura necessários para operar a plataforma (processadores de pagamento, CDN, provedores de e-mail transacional); autoridades quando exigido por lei ou ordem judicial; terceiros com seu consentimento explícito e documentado. Todos os parceiros assinam Acordos de Processamento de Dados (DPA) compatíveis com a LGPD.',
-  },
-  {
-    id: 'p-5',
-    title: '5. Seus direitos (LGPD)',
-    lgpdRights: true,
-    content: 'Como titular dos dados, você tem os seguintes direitos garantidos pela LGPD. Para exercê-los, entre em contato: privacidade@noro.guru. Respondemos em até 15 dias úteis.',
-  },
-  {
-    id: 'p-6',
-    title: '6. Cookies e rastreamento',
-    content: 'Usamos cookies essenciais (necessários para funcionamento), cookies analíticos (para entender como você usa a plataforma, via dados agregados e anonimizados) e cookies de preferências (para lembrar suas configurações). Você pode gerenciar cada categoria pelo banner de consentimento ou pela nossa Política de Cookies.',
-  },
-  {
-    id: 'p-7',
-    title: '7. Segurança dos dados',
-    content: 'Todos os dados são armazenados em servidores no Brasil, com criptografia AES-256 em repouso e TLS 1.3 em trânsito. Realizamos auditorias de segurança semestrais, testes de penetração anuais e monitoramento contínuo. Em caso de incidente de segurança com risco aos titulares, notificaremos a ANPD e os afetados em até 72 horas.',
-  },
-  {
-    id: 'p-8',
-    title: '8. Alterações nesta política',
-    content: 'Podemos atualizar esta Política periodicamente. Quando houver alterações materiais — mudanças nas finalidades de tratamento, novos tipos de dados coletados ou novos compartilhamentos — notificaremos por e-mail e dentro da plataforma com pelo menos 30 dias de antecedência. Alterações menores podem ser publicadas sem aviso prévio.',
-  },
-  {
-    id: 'p-9',
-    title: '9. Contato e DPO',
-    content: 'Encarregado de Dados (DPO): Rafael Souza · privacidade@noro.guru · Noro Guru — Nomade Group · São Paulo, SP, Brasil. Para solicitações relacionadas a LGPD, usamos o canal dedicado: privacidade@noro.guru com prazo de resposta de 15 dias úteis.',
-  },
+  'Confirmação de tratamento',
+  'Acesso imediato aos dados',
+  'Correção de dados incompletos',
+  'Anonimização ou bloqueio',
+  'Portabilidade das informações',
+  'Eliminação de dados tratados',
+  'Informação sobre compartilhamento',
+  'Revogação do consentimento',
 ];
 
 export default function PrivacyPolicyPage() {
   return (
-    <div style={{ background: '#0B1220', minHeight: '100vh' }}>
+    <div style={{ background: '#0B1220', minHeight: '100vh', fontFamily: 'var(--font-sans)', color: '#D1D5F0' }}>
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(180deg,#0D1526 0%,#0B1220 100%)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '80px 24px 60px' }}>
+      <header style={{ background: '#0D1526', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingTop: 80, paddingBottom: 56, paddingLeft: 24, paddingRight: 24 }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 24 }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-            Início
+          <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 28, fontWeight: 500 }}>
+            ← Políticas
           </Link>
-          <div style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: '#7C3AED', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', background: 'rgba(124,58,237,0.12)', border: '1px solid rgba(124,58,237,0.3)', padding: '3px 12px', borderRadius: 999, marginBottom: 16 }}>
-            Política de Privacidade
+          <div>
+            <span style={{ display: 'inline-block', background: '#7C3AED', color: '#fff', fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600, padding: '3px 12px', borderRadius: 999, marginBottom: 20, letterSpacing: '0.06em' }}>
+              Política de Privacidade
+            </span>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,3.5vw,36px)', fontWeight: 700, color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+              Como protegemos seus dados
+            </h1>
+            <p style={{ fontSize: 13, color: '#B8C1E0', margin: 0, fontWeight: 500 }}>
+              Última atualização: maio de 2026 · Vigência: LGPD / Lei 13.709/2018
+            </p>
           </div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 12px', lineHeight: 1.15 }}>
-            Como protegemos seus dados
-          </h1>
-          <p style={{ fontSize: 13, color: '#B8C1E0', margin: 0 }}>
-            Última atualização: maio de 2026 · Vigência: LGPD / Lei 13.709/2018
-          </p>
         </div>
-      </div>
+      </header>
 
-      {/* Body — 2-column */}
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '64px 24px 96px', display: 'grid', gridTemplateColumns: '220px 1fr', gap: 48, alignItems: 'start' }}>
-
+      {/* Body — 2-column: sidebar 260px + content */}
+      <main style={{ maxWidth: 900, margin: '0 auto', padding: '56px 24px 80px', display: 'grid', gridTemplateColumns: '260px 1fr', gap: 48, alignItems: 'start' }}>
         {/* Sidebar TOC */}
-        <div style={{ position: 'sticky', top: 24 }}>
-          <div style={{ background: '#12152C', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B8C1E0', fontFamily: 'var(--font-mono)', marginBottom: 16 }}>Índice</div>
-            <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {TOC.map((item, i) => (
-                <li key={item} style={{ marginBottom: 10 }}>
-                  <a href={`#p-${i + 1}`} style={{ fontSize: 13, color: '#1DD3C0', textDecoration: 'none', display: 'flex', gap: 8, alignItems: 'flex-start', lineHeight: 1.4 }}>
-                    <span style={{ fontSize: 11, color: '#4B5578', fontFamily: 'var(--font-mono)', flexShrink: 0, marginTop: 1 }}>{String(i + 1).padStart(2, '0')}.</span>
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+        <aside style={{ position: 'sticky', top: 28, background: '#12152C', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: 24, boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', color: '#fff', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14, opacity: 0.7 }}>
+            Nesta página
+          </h3>
+          <nav style={{ display: 'flex', flexDirection: 'column' }}>
+            {TOC.map((item, i) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#1DD3C0', textDecoration: 'none', padding: '9px 0', borderBottom: i < TOC.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', lineHeight: 1.4, fontWeight: 400 }}
+              >
+                <span style={{ opacity: 0.45, fontSize: 11, flexShrink: 0, marginTop: 1, fontFamily: 'var(--font-mono)' }}>{String(i + 1).padStart(2, '0')}.</span>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </aside>
 
         {/* Main content */}
-        <div>
-          {SECTIONS.map((section, i) => (
-            <div key={section.id} id={section.id} style={{ marginBottom: 0 }}>
-              <div style={{ paddingBottom: 40, paddingTop: i === 0 ? 0 : 40, borderBottom: i < SECTIONS.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 14px', letterSpacing: '-0.01em' }}>
-                  {section.title}
-                </h2>
-                <p style={{ fontSize: 14, color: '#B8C1E0', lineHeight: 1.75, margin: section.lgpdRights ? '0 0 20px' : 0 }}>
-                  {section.content}
-                </p>
-                {section.lgpdRights && (
-                  <div style={{ background: 'rgba(52,44,164,0.1)', border: '1px solid rgba(52,44,164,0.25)', borderRadius: 12, padding: 20 }}>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                      {LGPD_RIGHTS.map((right) => (
-                        <li key={right} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#D1D5F0', lineHeight: 1.5, marginBottom: 10 }}>
-                          <span style={{ color: '#1DD3C0', flexShrink: 0, marginTop: 1 }}>✓</span>
-                          {right}
-                        </li>
-                      ))}
-                    </ul>
+        <article style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+          {/* 1. Introdução */}
+          <section id="intro">
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 14 }}>1. Introdução</h2>
+            <div style={{ fontSize: 14, color: '#D1D5F0', lineHeight: 1.75, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <p style={{ margin: 0 }}>A privacidade dos seus dados é um pilar fundamental da operação do Noro Guru. Elaboramos esta política para ser transparente sobre como coletamos, armazenamos, processamos e protegemos as informações que você confia à nossa plataforma.</p>
+              <p style={{ margin: 0 }}>Ao utilizar nossos serviços, você concorda com as práticas descritas neste documento, que foi estruturado em total conformidade com a Lei Geral de Proteção de Dados (LGPD).</p>
+            </div>
+          </section>
+
+          {/* 2. Dados que coletamos */}
+          <section id="dados">
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 14 }}>2. Dados que coletamos</h2>
+            <div style={{ fontSize: 14, color: '#D1D5F0', lineHeight: 1.75, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <p style={{ margin: 0 }}>Para fornecer uma experiência personalizada e garantir a segurança das suas operações, coletamos diferentes categorias de informações:</p>
+              <ul style={{ listStyle: 'disc', paddingLeft: 20, margin: 0, color: '#B8C1E0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <li><strong style={{ color: '#fff', fontWeight: 500 }}>Dados de Cadastro:</strong> Nome, e-mail corporativo, cargo e informações de faturamento.</li>
+                <li><strong style={{ color: '#fff', fontWeight: 500 }}>Dados de Uso:</strong> Logs de acesso, interações com a interface, tempo de permanência em dashboards específicos.</li>
+                <li><strong style={{ color: '#fff', fontWeight: 500 }}>Dados de Integração:</strong> Metadados técnicos gerados quando você conecta o Noro Guru às suas fontes de dados internas.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* 3. Como usamos */}
+          <section id="uso">
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 14 }}>3. Como usamos seus dados</h2>
+            <div style={{ fontSize: 14, color: '#D1D5F0', lineHeight: 1.75, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <p style={{ margin: 0 }}>A finalidade principal do tratamento dos seus dados é a prestação dos serviços contratados. Utilizamos suas informações estritamente para:</p>
+              <ul style={{ listStyle: 'disc', paddingLeft: 20, margin: 0, color: '#B8C1E0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <li>Autenticar seu acesso e garantir a segurança do seu workspace.</li>
+                <li>Processar pagamentos e gerenciar assinaturas.</li>
+                <li>Melhorar a experiência da plataforma (utilizando dados anonimizados).</li>
+                <li>Enviar alertas críticos de sistema e notificações sobre atualizações.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* 4. Compartilhamento */}
+          <section id="compartilhamento">
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 14 }}>4. Compartilhamento de dados</h2>
+            <p style={{ fontSize: 14, color: '#D1D5F0', lineHeight: 1.75, margin: 0 }}>Compartilhamos dados apenas com parceiros de infraestrutura necessários para operar a plataforma (processadores de pagamento, CDN, provedores de e-mail transacional) ou quando exigido por lei. Não vendemos seus dados. Todos os parceiros assinam Acordos de Processamento de Dados (DPA) compatíveis com a LGPD.</p>
+          </section>
+
+          {/* 5. Direitos LGPD — grid 2 colunas igual ao Stitch */}
+          <section id="direitos">
+            <div style={{ background: 'rgba(52,44,164,0.1)', border: '1px solid rgba(52,44,164,0.25)', borderRadius: 12, padding: 28, position: 'relative', overflow: 'hidden' }}>
+              {/* Glow */}
+              <div style={{ position: 'absolute', top: 0, right: 0, width: 200, height: 200, background: 'rgba(52,44,164,0.1)', borderRadius: '50%', filter: 'blur(60px)', transform: 'translate(30%, -50%)', pointerEvents: 'none' }} />
+              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: '#fff', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ color: '#1DD3C0', fontSize: 22 }}>🛡️</span>
+                Seus direitos (LGPD)
+              </h3>
+              <p style={{ fontSize: 13, color: '#B8C1E0', margin: '0 0 20px' }}>Como titular dos dados, você tem o direito garantido por lei de requisitar a qualquer momento:</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 28px' }}>
+                {LGPD_RIGHTS.map((right) => (
+                  <div key={right} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ color: '#1DD3C0', fontSize: 18, flexShrink: 0, lineHeight: 1.3 }}>✓</span>
+                    <span style={{ fontSize: 13, color: '#D1D5F0', lineHeight: 1.45 }}>{right}</span>
                   </div>
-                )}
+                ))}
+              </div>
+              <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(52,44,164,0.2)' }}>
+                <p style={{ fontSize: 12, color: '#B8C1E0', margin: 0 }}>
+                  Para exercer seus direitos, envie um e-mail para{' '}
+                  <a href="mailto:privacidade@noro.guru" style={{ color: '#fff', textDecoration: 'none' }}>privacidade@noro.guru</a>.
+                </p>
               </div>
             </div>
+          </section>
+
+          {/* 6-9 restantes */}
+          {[
+            { id: 'cookies', n: 6, title: 'Cookies e rastreamento', text: 'Usamos cookies essenciais (necessários para funcionamento), cookies analíticos (para entender como você usa a plataforma, via dados agregados e anonimizados) e cookies de preferências. Você pode gerenciar cada categoria pelo banner de consentimento ou pela nossa Política de Cookies.' },
+            { id: 'seguranca', n: 7, title: 'Segurança dos dados', text: 'Todos os dados são armazenados em servidores no Brasil, com criptografia AES-256 em repouso e TLS 1.3 em trânsito. Realizamos auditorias de segurança semestrais e testes de penetração anuais. Em caso de incidente, notificaremos a ANPD e os afetados em até 72 horas.' },
+            { id: 'alteracoes', n: 8, title: 'Alterações nesta política', text: 'Quando houver alterações materiais, notificaremos por e-mail e dentro da plataforma com pelo menos 30 dias de antecedência. Alterações menores podem ser publicadas sem aviso prévio. O uso continuado após a vigência implica aceite das novas condições.' },
+            { id: 'contato', n: 9, title: 'Contato e DPO', text: 'Encarregado de Dados (DPO): Rafael Souza · privacidade@noro.guru · Noro Guru — Nomade Group · São Paulo, SP, Brasil. Prazo de resposta: 15 dias úteis.' },
+          ].map((s) => (
+            <section key={s.id} id={s.id}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 14 }}>{s.n}. {s.title}</h2>
+              <p style={{ fontSize: 14, color: '#D1D5F0', lineHeight: 1.75, margin: 0 }}>{s.text}</p>
+            </section>
           ))}
 
-          {/* Footer links */}
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 32, marginTop: 8, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-            <Link href="/terms-of-service" style={{ color: '#1DD3C0', fontSize: 13, textDecoration: 'none' }}>Termos de Uso →</Link>
-            <Link href="/cookies" style={{ color: '#B8C1E0', fontSize: 13, textDecoration: 'none' }}>Política de Cookies →</Link>
-            <Link href="/lgpd" style={{ color: '#B8C1E0', fontSize: 13, textDecoration: 'none' }}>LGPD →</Link>
-            <Link href="/seguranca" style={{ color: '#B8C1E0', fontSize: 13, textDecoration: 'none' }}>Segurança →</Link>
+          {/* Footer legal links */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 28, marginTop: 8, fontSize: 13, fontWeight: 500 }}>
+            <Link href="/terms-of-service" style={{ color: '#1DD3C0', textDecoration: 'none' }}>Termos de Serviço</Link>
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+            <Link href="/cookies" style={{ color: '#1DD3C0', textDecoration: 'none' }}>Política de Cookies</Link>
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+            <Link href="/sla" style={{ color: '#1DD3C0', textDecoration: 'none' }}>Acordo de Nível de Serviço (SLA)</Link>
           </div>
-        </div>
-      </div>
+        </article>
+      </main>
     </div>
   );
 }
