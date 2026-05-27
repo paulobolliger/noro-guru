@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__stitch__get_screen",
+      "WebFetch(domain:lh3.googleusercontent.com)",
+      "WebFetch(domain:contribution.usercontent.google.com)",
+      "Skill(stitch-build:react-components)",
+      "Skill(stitch-build:react-components:*)",
+      "Bash(xargs grep -l \"redirect\\(\")",
+      "Bash(grep -v \"^\\\\$\")"
+    ]
+  }
+}

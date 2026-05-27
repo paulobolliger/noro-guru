@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Imprensa | Noro Guru',
+  title: 'Press | Noro Guru',
   description: 'Recursos de imprensa, mídia kit e cobertura jornalística da Noro Guru.',
 };
 
@@ -50,7 +50,7 @@ const MILESTONES = [
   { date: 'Mar 2025', event: 'Fundação da Noro Guru em São Paulo' },
 ];
 
-export default function ImprensaPage() {
+export default function PressPage() {
   return (
     <div style={{ background: '#0B1220', minHeight: '100vh' }}>
 

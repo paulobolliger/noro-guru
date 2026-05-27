@@ -59,7 +59,7 @@ export default function CookiesPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(180deg,#0D1526 0%,#0B1220 100%)', borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '80px 24px 60px' }}>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <Link href="/privacidade" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 24 }}>
+          <Link href="/privacy-policy" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#B8C1E0', textDecoration: 'none', marginBottom: 24 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Políticas
           </Link>
@@ -140,8 +140,8 @@ export default function CookiesPage() {
             Respondemos em até 72 horas úteis.
           </p>
           <div style={{ display: 'flex', gap: 12 }}>
-            <Link href="/privacidade" style={{ color: '#1DD3C0', fontSize: 13, textDecoration: 'none' }}>Política de Privacidade →</Link>
-            <Link href="/termos" style={{ color: '#B8C1E0', fontSize: 13, textDecoration: 'none' }}>Termos de Uso →</Link>
+            <Link href="/privacy-policy" style={{ color: '#1DD3C0', fontSize: 13, textDecoration: 'none' }}>Política de Privacidade →</Link>
+            <Link href="/terms-of-service" style={{ color: '#B8C1E0', fontSize: 13, textDecoration: 'none' }}>Termos de Uso →</Link>
           </div>
         </div>
       </div>

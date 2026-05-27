@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Segurança | Noro Guru',
+  title: 'Security | Noro Guru',
   description: 'Como a Noro Guru protege seus dados com criptografia, auditorias e conformidade com os mais altos padrões de segurança.',
 };
 
@@ -53,7 +53,7 @@ const CERTS = [
   { label: 'PCI DSS', desc: 'Segurança de dados de pagamento', status: 'Via Stripe ✓' },
 ];
 
-export default function SegurancaPage() {
+export default function SecurityPage() {
   return (
     <div style={{ background: '#0B1220', minHeight: '100vh' }}>
 

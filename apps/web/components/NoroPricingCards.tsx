@@ -50,7 +50,7 @@ const PLANS = [
     priceMonthly: 1297,
     priceAnnual: 1097,
     cta: 'Falar com vendas',
-    ctaHref: '/contato',
+    ctaHref: '/demo',
     features: [
       'Usuários ilimitados',
       'Tudo do Pro, sem limites',

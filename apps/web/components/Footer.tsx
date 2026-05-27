@@ -13,19 +13,19 @@ const FOOTER_LINKS = {
   ],
   Empresa: [
     { label: 'Sobre Nós', href: '/about' },
-    { label: 'Manifesto', href: '/about#manifesto' },
+    { label: 'Manifesto', href: '/manifesto' },
     { label: 'Blog', href: '/blog' },
     { label: 'Cases de Sucesso', href: '/cases' },
-    { label: 'Carreiras', href: '/carreiras' },
-    { label: 'Imprensa', href: '/imprensa' },
+    { label: 'Carreiras', href: '/careers' },
+    { label: 'Imprensa', href: '/press' },
   ],
   'Suporte & Legal': [
-    { label: 'Central de Ajuda', href: '/ajuda' },
+    { label: 'Central de Ajuda', href: '/help' },
     { label: 'Status da Plataforma', href: '/status' },
     { label: 'Política de Privacidade', href: '/privacy-policy' },
     { label: 'Termos de Serviço', href: '/terms-of-service' },
     { label: 'LGPD', href: '/lgpd' },
-    { label: 'Segurança', href: '/seguranca' },
+    { label: 'Segurança', href: '/security' },
   ],
 };
 

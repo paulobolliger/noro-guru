@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Carreiras | Noro Guru',
+  title: 'Careers | Noro Guru',
   description: 'Junte-se à Noro Guru e ajude a construir o futuro das agências de turismo no Brasil.',
 };
 
@@ -64,7 +64,7 @@ const BENEFITS = [
   'Equipamento MacBook fornecido',
 ];
 
-export default function CarreirasPage() {
+export default function CareersPage() {
   return (
     <div style={{ background: '#0B1220', minHeight: '100vh' }}>
 

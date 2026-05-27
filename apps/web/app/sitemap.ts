@@ -42,8 +42,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // About / Company
     route('/about', 0.8, 'monthly'),
     route('/manifesto', 0.7, 'monthly'),
-    route('/carreiras', 0.75, 'monthly'),
-    route('/imprensa', 0.6, 'monthly'),
+    route('/careers', 0.75, 'monthly'),
+    route('/press', 0.6, 'monthly'),
 
     // Blog
     route('/blog', 0.8, 'daily'),
@@ -63,8 +63,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     route('/affiliate', 0.75, 'monthly'),
 
     // Support & Help
-    route('/ajuda', 0.8, 'weekly'),
-    route('/seguranca', 0.7, 'monthly'),
+    route('/help', 0.8, 'weekly'),
+    route('/security', 0.7, 'monthly'),
     route('/status', 0.7, 'daily'),
     route('/changelog', 0.6, 'weekly'),
 
