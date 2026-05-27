@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Noro Guru | O sistema operacional da agência moderna</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Public+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#342CA4",
+                        accent: "#1DD3C0",
+                        gold: "#D4AF37",
+                        surface: "#0B1220",
+                        surface_2: "#12152C",
+                        muted: "#B8C1E0",
+                        body_text: "#D1D5F0"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope", "sans-serif"],
+                        display: ["Manrope", "sans-serif"],
+                        body: ["Plus Jakarta Sans", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .grid-pattern {
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .hero-glow-1 {
+            background: radial-gradient(circle, rgba(52, 44, 164, 0.2) 0%, transparent 70%);
+        }
+        .hero-glow-2 {
+            background: radial-gradient(circle, rgba(29, 211, 192, 0.15) 0%, transparent 70%);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #342CA4, #1DD3C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(18, 21, 44, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-white font-body selection:bg-accent selection:text-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-xl bg-surface/70 border-b border-white/5">
+<nav class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto w-full">
+<div class="text-xl font-headline font-extrabold text-[#342CA4]">Noro Guru</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#342CA4] font-bold transition-all" href="#">Produto</a>
+<a class="text-white/60 hover:text-white transition-colors" href="#">Recursos</a>
+<a class="text-white/60 hover:text-white transition-colors" href="#">Preços</a>
+<a class="text-white/60 hover:text-white transition-colors" href="#">Clientes</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-white font-semibold hover:opacity-80 transition-all">Login</button>
+<button class="bg-primary text-white px-5 py-2.5 rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all">Criar conta</button>
+</div>
+</nav>
+</header>
+<main>
+<!-- Section 1: Hero -->
+<section class="relative min-h-screen pt-32 pb-20 overflow-hidden flex flex-col items-center">
+<div class="absolute inset-0 grid-pattern z-0"></div>
+<div class="absolute -top-40 -left-40 w-[600px] h-[600px] hero-glow-1 z-0"></div>
+<div class="absolute -bottom-40 -right-40 w-[600px] h-[600px] hero-glow-2 z-0"></div>
+<div class="relative z-10 max-w-5xl px-6 text-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-accent text-sm font-semibold mb-8 animate-fade-in">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                    Novo: IA Operacional v2 — Ver novidades →
+                </div>
+<h1 class="font-headline font-extrabold text-5xl md:text-7xl leading-tight tracking-tight mb-6">
+                    O sistema operacional <br/>
+<span class="text-gradient">da agência moderna.</span>
+</h1>
+<p class="text-muted text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
+                    CRM, financeiro, atendimento, sites e IA em uma plataforma única. <br class="hidden md:block"/>
+                    Do primeiro lead ao cliente fidelizado, automatize sua jornada completa.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+<button class="w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20">
+                        Começar gratuitamente
+                    </button>
+<button class="w-full sm:w-auto border border-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/5 transition-all">
+                        Ver demonstração
+                    </button>
+</div>
+<!-- Dashboard Mockup -->
+<div class="relative max-w-5xl mx-auto group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+<div class="relative bg-surface_2 rounded-xl border border-white/10 overflow-hidden shadow-2xl transform perspective-1000 rotate-x-2">
+<div class="bg-white/5 px-4 py-2 border-b border-white/10 flex items-center gap-2">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+</div>
+<div class="mx-auto bg-white/5 px-3 py-1 rounded text-[10px] text-white/40 font-mono">app.noro.guru/dashboard</div>
+</div>
+<img alt="Noro Guru Dashboard Interface" class="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-500" data-alt="A sophisticated dark-mode SaaS dashboard interface for business management. The UI features elegant purple and teal data visualizations, clean typography, and professional financial charts. The layout is minimalist with high-end glassmorphism elements, set against a deep charcoal and navy background that reflects a modern enterprise aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8bp4b67HsQYb6PySMlS-H3gKelpkfH7YOnL93aJL0GOR3eibDsQ7EpYCRqDrysJDgaet12hZ-Ql2ZI_QRUBnopii2QzeNCb_VIj0e5LOhSGOLgb_WH58maJOJ1-Syu3GxUTaHmG5C2srrpxCKT3S8aytNbc4qqUDqOfrv5kGhbDLU752Ra0KkHD3-sK81LnHZwU0DJ7wrSIb5KDD2i_NMRnbkf2afmDZ5hjiFnPIOMcZzcTuUXkWGS-65Anx68yW3PGYt5TJ7yAk"/>
+</div>
+</div>
+<!-- Social Proof -->
+<div class="mt-24">
+<p class="text-muted font-semibold text-sm uppercase tracking-widest mb-10">Mais de 800 agências já operam com o Noro</p>
+<div class="flex flex-wrap justify-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all">
+<img alt="Stripe" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVreqegHc3fsN5loIcd8Xbclnk28Q3nJD4_Hyy_fLqqKVnYiaz_uOJA8p-I43y9vxj_gko4XOAZDsgF062U3AOLxZoOiXrUYNNEOJykZ4zNSNptIl80bwPFR9PHAGzf75ZHPpsFcQI9SmUDlFc7vlO8fKLgUUbrtGCbH51S_Z9Y0ZePILgfDxdxXoU0_WtxFa5ldY4DmHF6656ZcGfpsNthKkxBxgmhrNDPDHLGwwPlNws3ieHPmXZoHAlAkopAHSC-BeWExP2zWU"/>
+<img alt="Intercom" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBUB6B2rK69JaIIl8G0XPbAj4F3QuyKt0kIlTAZkcywqqmf542b6mqAg9a6HxGEo2CxoLWsIqPlRyNiqu7YDgrAGEiDphpagxQD9TXDwDvEwWGr14jD2LFiqKeUdPg5vwY9Su-tWFXB6O4SioUj0U7_CZObtW4KINBweUYISnaIqhS8zEo3v6JzBGD0wJVzyS1KJgyJI1DY-z21elfHW_K_3S99cVJkct8418u1a--dlN4Os9GiU6p67s-j2wPWFFhNGfdLW2o0E"/>
+<img alt="Slack" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwG0h-dHJa-uTGo9fZcIJn0YwKB-paVUJaRd4bYRD3InhBWsQVh60284BbtG1GEyU-XpfMaDTOJ8TB_s5c_0FemVHa2CSggyAF8fIWjJKGLpxmHeOYtlOl4rFdSH1v9v2-KnRMtGzEK3nq9fqitI2Y9_Xgk46jaVSxlrMV08gtQ5t_yDMXrDTtTIvyOZOlyGeJlhgT0YP_B5_ia-6BDPZlTF0oSw9WTB6ONGgga5NNCcJfYb276Zml0YXYgmS64v7Luh9aVk-nnhw"/>
+<img alt="Airbnb" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPp8bt09a5jMT2_N8a98uEJrkE6FMo96ItUClqgOAIRJ_cfa9MQ3Ab1yIqN_bhBQykxoiVE9G_p0W1aCLk8_fns_ZeGEMslqBPokQFzZi06ivtIJ9uPTW-McSzcnZK3iq8IqI1QoiB415t09WS83etvAjDJK3YbO6mkVTTVX-bTgentx5pwlHVKVBzeAS9QWhtLbvMmrE3aIHrBttDQfs9qY6T35t9TQNJmynqi1Ti_komm0spiFkXfRfYph6_ExEmIM0_E1uBQdw"/>
+<img alt="Notion" class="h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAitMj0XaOQodINuWmt39wrMzWefJlDSXEEzoG7nVOfLvAYjjA_yGOehqSo-N1lW43H8mxTpIraLs2g0yENM0tbPYCWVt4XqD4SML4ymJac6qWJDdjwtQNmeqNO7KM8te67K2b4seY5tHiYcLpF7EHbI_WDn0r08SY7PlbqpGtaSX39ZyPSIIZXk5RCmp_Aqv-nwqHqmaKpaK96FSAsudjeSCgcIZpUWJztmJWBnLUA1QBGzBx5zqBdxKqid0kIsp3ZFUFHv1N8LNU"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Problem/Solution -->
+<section class="bg-surface_2 py-32 px-6">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-headline font-bold text-4xl md:text-5xl text-white mb-6">Chega de ferramentas separadas.</h2>
+<p class="text-muted text-lg max-w-2xl mx-auto">Conectar planilhas, CRMs de terceiros e ferramentas de financeiro é coisa do passado. A fragmentação mata sua margem.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="p-8 rounded-2xl bg-surface border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-red-500">close</span>
+</div>
+<h3 class="text-xl font-bold mb-4">Caos Operacional</h3>
+<p class="text-body_text mb-6">Informações perdidas entre WhatsApp, e-mail e planilhas que ninguém atualiza.</p>
+<div class="flex items-center gap-2 text-accent font-bold">
+<span class="material-symbols-outlined">check_circle</span>
+<span>Centralização total no Noro</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-8 rounded-2xl bg-surface border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-red-500">sync_problem</span>
+</div>
+<h3 class="text-xl font-bold mb-4">Churn Descontrolado</h3>
+<p class="text-body_text mb-6">Falta de visibilidade sobre a saúde do cliente resulta em cancelamentos surpresa.</p>
+<div class="flex items-center gap-2 text-accent font-bold">
+<span class="material-symbols-outlined">check_circle</span>
+<span>Score de saúde em tempo real</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-8 rounded-2xl bg-surface border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-red-500">payments</span>
+</div>
+<h3 class="text-xl font-bold mb-4">Financeiro Frágil</h3>
+<p class="text-body_text mb-6">Inadimplência alta e dificuldade em conciliar pagamentos recorrentes.</p>
+<div class="flex items-center gap-2 text-accent font-bold">
+<span class="material-symbols-outlined">check_circle</span>
+<span>Faturamento 100% automático</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: The 5 Pillars -->
+<section class="bg-surface py-32 px-6">
+<div class="max-w-7xl mx-auto">
+<!-- Tab Headers -->
+<div class="flex flex-wrap justify-center gap-4 mb-16 overflow-x-auto pb-4">
+<button class="px-6 py-3 rounded-full text-white/50 font-semibold hover:text-white transition-all whitespace-nowrap">CRM &amp; Pipeline</button>
+<button class="px-6 py-3 rounded-full text-white/50 font-semibold hover:text-white transition-all whitespace-nowrap">Financeiro</button>
+<button class="px-6 py-3 rounded-full text-white/50 font-semibold hover:text-white transition-all whitespace-nowrap">Atendimento</button>
+<button class="px-6 py-3 rounded-full text-white/50 font-semibold hover:text-white transition-all whitespace-nowrap">Sites &amp; Marketing</button>
+<button class="px-6 py-3 rounded-full bg-primary text-white font-bold ring-4 ring-primary/20 whitespace-nowrap">IA Operacional</button>
+</div>
+<!-- Active Tab Content -->
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div>
+<div class="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<h3 class="font-headline font-bold text-4xl mb-6">Inteligência Artificial que realmente trabalha.</h3>
+<p class="text-body_text text-lg mb-8 leading-relaxed">
+                            Não é apenas um chat. Nossa IA analisa seus dados, sugere ações de retenção, automatiza respostas de suporte e cria relatórios financeiros complexos em segundos.
+                        </p>
+<ul class="space-y-4 mb-10">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-accent mt-0.5">verified</span>
+<span class="text-muted">Previsão de churn baseada em comportamento de uso.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-accent mt-0.5">verified</span>
+<span class="text-muted">Geração automática de propostas e contratos.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-accent mt-0.5">verified</span>
+<span class="text-muted">Resumo inteligente de reuniões e próximos passos.</span>
+</li>
+</ul>
+<button class="flex items-center gap-2 text-accent font-bold text-lg hover:gap-4 transition-all">
+                            Explorar IA Operacional <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="relative group">
+<div class="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl group-hover:bg-primary/20 transition-all"></div>
+<div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+<img alt="Noro AI Engine Interface" class="w-full h-full object-cover" data-alt="A futuristic and sleek software interface displaying advanced data analytics and AI processing modules. The screen shows vibrant glowing neural network diagrams, floating data widgets with neon highlights, and professional command-line elements. The overall aesthetic is dark, high-tech, and sophisticated, using a deep midnight blue and purple color scheme with electric teal accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmSinvE0cfCnYPgwpG7yjoJuMN6v6QlxScppYUJqRlBFL6h59MxtMnCm5Ja0kWfJZY3dPE0RbMJOZ_gbsL04NMgkbpt30Tw0tKpAHidIsqJzvvBbPrLbxvnaufhyKFtPho0o8k5dZbj7L7hiWO9y_OJR0NiSKCcNSdHV4coUFZ06oP3JgtdtGM2po7OlsEqMG5wymBHKgLeUhXdJjIpzeA8pWrhSbXtVXpM2Cwlh-N9KVaPy7FK3nrW2XgOMAZLfzCJzW7gHV8Ykw"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Final CTA -->
+<section class="px-6 py-24">
+<div class="max-w-7xl mx-auto">
+<div class="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-primary to-[#232452] p-12 md:p-24 text-center">
+<div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 blur-[100px] rounded-full -mr-20 -mt-20"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/40 blur-[100px] rounded-full -ml-20 -mb-20"></div>
+<div class="relative z-10">
+<h2 class="font-headline font-bold text-4xl md:text-6xl text-white mb-8">Pronto para modernizar sua agência?</h2>
+<p class="text-white/80 text-xl max-w-2xl mx-auto mb-12">Junte-se a centenas de agências que escalaram suas operações com o Noro Guru. Teste grátis por 14 dias.</p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+<button class="bg-white text-primary px-10 py-5 rounded-xl font-bold text-xl hover:bg-opacity-90 transition-all shadow-xl">
+                                Começar agora — É grátis
+                            </button>
+<button class="text-white border border-white/30 px-10 py-5 rounded-xl font-bold text-xl hover:bg-white/10 transition-all">
+                                Falar com um especialista
+                            </button>
+</div>
+<p class="mt-8 text-white/50 text-sm">Sem cartão de crédito necessário. Cancelamento fácil.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface_2 border-t border-white/5 px-8 py-12">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-headline font-extrabold text-[#342CA4]">Noro Guru</div>
+<p class="font-body text-sm text-muted">© 2024 Noro Guru. O sistema operacional da agência moderna.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-muted text-sm hover:text-primary transition-colors" href="#">Termos de Uso</a>
+<a class="text-muted text-sm hover:text-primary transition-colors" href="#">Privacidade</a>
+<a class="text-muted text-sm hover:text-primary transition-colors" href="#">Suporte</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+<a class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">campaign</span>
+</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for the dashboard tilt
+        const dashboard = document.querySelector('.perspective-1000');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            if(dashboard) {
+                dashboard.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        // Header background change on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.remove('bg-surface/70');
+                header.classList.add('bg-surface');
+            } else {
+                header.classList.remove('bg-surface');
+                header.classList.add('bg-surface/70');
+            }
+        });
+    </script>
+</body></html>

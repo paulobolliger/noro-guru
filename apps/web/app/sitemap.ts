@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     route('/ecosystem/intelligent-websites', 0.75, 'monthly'),
     route('/ecosystem/dados-de-vistos', 0.75, 'monthly'),
     route('/ecosystem/ittd', 0.6, 'monthly'),
+    route('/ecosystem/visa-api', 0.75, 'monthly'),
     route('/ecosystem/control', 0.75, 'monthly'),
     route('/ecosystem/parceiros', 0.7, 'monthly'),
 

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Noro Guru | Visa API para Desenvolvedores</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#342CA4",
+                        accent: "#1DD3C0",
+                        background: "#0B1220",
+                        surface: "#12152C",
+                        code: "#1a1d35",
+                        textMain: "#D1D5F0",
+                        textMuted: "#B8C1E0"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope", "sans-serif"],
+                        display: ["Manrope", "sans-serif"],
+                        body: ["Plus Jakarta Sans", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .grid-pattern {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glow-purple {
+            filter: blur(120px);
+            background: #342CA4;
+            opacity: 0.15;
+        }
+        .glow-teal {
+            filter: blur(120px);
+            background: #1DD3C0;
+            opacity: 0.15;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-textMain font-body selection:bg-accent/30 selection:text-white">
+<!-- TopNavBar -->
+<header class="fixed w-full z-50 bg-[#0B1220] border-b border-white/10 shadow-[0_0_20px_rgba(29,211,192,0.05)]">
+<nav class="flex justify-between items-center px-6 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-headline font-extrabold text-white tracking-tight" href="/">Noro Guru</a>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-headline font-bold text-[#1DD3C0] border-b-2 border-[#1DD3C0] pb-1" href="#">Documentation</a>
+<a class="font-headline font-bold text-[#D1D5F0] hover:text-white transition-colors" href="#">Pricing</a>
+<a class="font-headline font-bold text-[#D1D5F0] hover:text-white transition-colors" href="#">Changelog</a>
+<a class="font-headline font-bold text-[#D1D5F0] hover:text-white transition-colors" href="#">Showcase</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-[#D1D5F0] hover:text-white transition-all font-bold active:scale-95 duration-150">Login</button>
+<button class="px-5 py-2 bg-[#342CA4] text-white rounded-lg font-bold hover:bg-[#342CA4]/90 transition-all active:scale-95 duration-150">Sign Up</button>
+</div>
+</nav>
+</header>
+<main class="relative overflow-hidden">
+<!-- Hero Section -->
+<section class="relative pt-[140px] pb-24 px-6 grid-pattern min-h-screen">
+<!-- Decorative Glows -->
+<div class="absolute top-0 left-0 w-[400px] h-[400px] glow-purple rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-0 right-0 w-[500px] h-[500px] glow-teal rounded-full translate-x-1/3 translate-y-1/3"></div>
+<div class="max-w-[900px] mx-auto text-center relative z-10">
+<span class="inline-flex items-center px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-semibold mb-8 animate-fade-in">
+                    API de Vistos · 150+ países cobertos
+                </span>
+<h1 class="text-5xl md:text-6xl lg:text-[60px] font-headline font-extrabold leading-[1.1] mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#1DD3C0] to-[#342CA4]">
+                    Consulte requisitos de visto em segundos.
+                </h1>
+<p class="text-lg md:text-[18px] text-textMuted max-w-2xl mx-auto mb-10">
+                    API REST para agências, plataformas de turismo e integradores. Dados em tempo real para automação de conformidade internacional.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+<button class="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95">
+                        Começar grátis
+                    </button>
+<button class="w-full sm:w-auto px-8 py-4 bg-transparent border border-accent text-accent font-bold rounded-lg hover:bg-accent/5 transition-all hover:-translate-y-0.5 active:scale-95">
+                        Ver documentação
+                    </button>
+</div>
+<!-- Hero Code Card -->
+<div class="w-full max-w-2xl mx-auto bg-surface border border-white/10 rounded-xl p-1 shadow-2xl overflow-hidden">
+<div class="bg-surface/50 border-b border-white/10 px-4 py-2 flex items-center justify-between">
+<div class="flex gap-1.5">
+<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+</div>
+<span class="text-xs font-mono text-white/30 uppercase tracking-widest">Endpoint Explorer</span>
+</div>
+<div class="p-6 text-left font-mono text-sm leading-relaxed overflow-x-auto">
+<div class="flex items-center gap-3 mb-4">
+<span class="px-2 py-0.5 bg-green-500/15 text-green-400 rounded text-xs font-bold">GET</span>
+<span class="text-textMain">/v1/visa/requirements?origin=BR&amp;destination=PT</span>
+</div>
+<div class="text-[#D1D5F0]">
+<span class="text-[#1DD3C0]">{</span><br/>
+<span class="pl-4 text-[#1DD3C0]">"visa_required"</span>: <span class="text-[#A78BFA]">false</span>,<br/>
+<span class="pl-4 text-[#1DD3C0]">"stay_limit_days"</span>: <span class="text-[#A78BFA]">90</span>,<br/>
+<span class="pl-4 text-[#1DD3C0]">"documents_required"</span>: <span class="text-[#1DD3C0]">[</span><span class="text-[#F59E0B]">"Passaporte válido"</span><span class="text-[#1DD3C0]">]</span><br/>
+<span class="text-[#1DD3C0]">}</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Metrics Section -->
+<section class="bg-surface py-20 px-6 border-y border-white/5 relative z-10">
+<div class="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+<div class="space-y-2">
+<div class="text-[48px] font-headline font-bold text-white">150+ países</div>
+<p class="text-accent font-medium tracking-wide uppercase text-xs">Cobertura Global</p>
+</div>
+<div class="space-y-2">
+<div class="text-[48px] font-headline font-bold text-white">99.9% uptime</div>
+<p class="text-accent font-medium tracking-wide uppercase text-xs">Disponibilidade Garantida</p>
+</div>
+<div class="space-y-2">
+<div class="text-[48px] font-headline font-bold text-white">&lt; 200ms latência</div>
+<p class="text-accent font-medium tracking-wide uppercase text-xs">Resposta Instantânea</p>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="py-32 px-6">
+<div class="max-w-screen-xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="text-3xl md:text-4xl font-headline font-bold text-white mb-4">Arquitetura focada no desenvolvedor</h2>
+<p class="text-textMuted max-w-xl mx-auto">Tudo o que você precisa para integrar verificações de viagem complexas em sua plataforma em questão de horas, não semanas.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Feature Card -->
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">checklist</span>
+<h3 class="text-xl font-bold text-white mb-3">Checklist de Requisitos</h3>
+<p class="text-textMuted text-sm leading-relaxed">Dados granulares sobre formulários necessários, taxas e prazos de processamento por jurisdição.</p>
+</div>
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">bolt</span>
+<h3 class="text-xl font-bold text-white mb-3">Dados em Tempo Real</h3>
+<p class="text-textMuted text-sm leading-relaxed">Atualizações diárias baseadas em canais governamentais oficiais e acordos bilaterais.</p>
+</div>
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">webhook</span>
+<h3 class="text-xl font-bold text-white mb-3">Webhooks</h3>
+<p class="text-textMuted text-sm leading-relaxed">Notificações automáticas quando as regras de entrada de um país mudam drasticamente.</p>
+</div>
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">translate</span>
+<h3 class="text-xl font-bold text-white mb-3">Multi-idioma</h3>
+<p class="text-textMuted text-sm leading-relaxed">Respostas formatadas em PT-BR, EN e ES para facilitar a exibição direta ao seu usuário final.</p>
+</div>
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">terminal</span>
+<h3 class="text-xl font-bold text-white mb-3">Sandbox Gratuito</h3>
+<p class="text-textMuted text-sm leading-relaxed">Ambiente de teste completo com chaves de API imediatas para começar a buildar agora mesmo.</p>
+</div>
+<div class="p-8 bg-surface/40 border border-white/10 rounded-2xl hover:border-accent/40 transition-all group">
+<span class="material-symbols-outlined text-accent text-3xl mb-6 block group-hover:scale-110 transition-transform">verified_user</span>
+<h3 class="text-xl font-bold text-white mb-3">SLA Garantido</h3>
+<p class="text-textMuted text-sm leading-relaxed">Contratos de nível de serviço de nível empresarial para aplicações críticas de missão.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- How it Works Section -->
+<section class="py-32 px-6 bg-surface/20">
+<div class="max-w-screen-xl mx-auto">
+<div class="flex flex-col lg:flex-row gap-20">
+<div class="lg:w-1/2">
+<h2 class="text-3xl md:text-4xl font-headline font-bold text-white mb-12">Como funciona a integração</h2>
+<div class="space-y-12">
+<div class="flex gap-6">
+<span class="text-5xl font-headline font-bold text-white/10">01</span>
+<div>
+<h4 class="text-xl font-bold text-white mb-2">Obtenha sua Chave</h4>
+<p class="text-textMuted">Crie sua conta e gere uma `API_KEY` instantânea para começar a fazer requisições.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<span class="text-5xl font-headline font-bold text-white/10">02</span>
+<div>
+<h4 class="text-xl font-bold text-white mb-2">Configure os Parâmetros</h4>
+<p class="text-textMuted">Envie a origem e o destino para obter os requisitos detalhados de entrada.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<span class="text-5xl font-headline font-bold text-white/10">03</span>
+<div>
+<h4 class="text-xl font-bold text-white mb-2">Exiba para o Usuário</h4>
+<p class="text-textMuted">Utilize nossos payloads estruturados para montar sua interface de check-in ou vendas.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2">
+<div class="bg-code rounded-xl overflow-hidden border border-white/10">
+<div class="flex border-b border-white/10">
+<button class="px-6 py-3 text-xs font-mono font-bold text-accent border-b-2 border-accent bg-white/5" id="tab-curl" onclick="switchTab('curl')">cURL</button>
+<button class="px-6 py-3 text-xs font-mono font-bold text-textMuted border-b-2 border-transparent hover:bg-white/5 transition-all" id="tab-js" onclick="switchTab('js')">Node.js</button>
+</div>
+<div class="p-6">
+<pre class="font-mono text-sm leading-relaxed overflow-x-auto" id="code-curl"><span class="text-white/40"># Fazer uma consulta simples</span>
+<span class="text-[#2563EB]">curl</span> -X GET <span class="text-[#F59E0B]">"https://api.noro.guru/v1/visa/requirements"</span> \
+  -H <span class="text-[#F59E0B]">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -G \
+  -d <span class="text-[#F59E0B]">"origin=BR"</span> \
+  -d <span class="text-[#F59E0B]">"destination=PT"</span></pre>
+<pre class="hidden font-mono text-sm leading-relaxed overflow-x-auto" id="code-js"><span class="text-[#A78BFA]">const</span> response = <span class="text-[#A78BFA]">await</span> fetch(<span class="text-[#F59E0B]">"https://api.noro.guru/v1/..."</span>, {
+  method: <span class="text-[#F59E0B]">"GET"</span>,
+  headers: {
+    <span class="text-[#1DD3C0]">"Authorization"</span>: <span class="text-[#F59E0B]">`Bearer ${API_KEY}`</span>
+  }
+});
+<span class="text-[#A78BFA]">const</span> data = <span class="text-[#A78BFA]">await</span> response.json();</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-32 px-6">
+<div class="max-w-4xl mx-auto p-12 rounded-[2rem] bg-gradient-to-br from-primary/20 to-accent/10 border border-white/10 text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 glow-teal rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+<h2 class="text-4xl font-headline font-bold text-white mb-6">Pronto para automatizar seus vistos?</h2>
+<p class="text-textMuted text-lg mb-10 max-w-xl mx-auto">Comece a integrar hoje com 1.000 requisições gratuitas por mês. Sem cartão de crédito.</p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="px-10 py-4 bg-accent text-background font-bold rounded-lg hover:shadow-[0_0_30px_rgba(29,211,192,0.3)] transition-all active:scale-95">Criar conta gratuita</button>
+<button class="px-10 py-4 bg-white/5 text-white font-bold rounded-lg hover:bg-white/10 transition-all border border-white/10 active:scale-95">Falar com vendas</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0B1220] border-t border-white/10">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 px-12 py-16 max-w-screen-2xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<a class="font-headline text-lg font-bold text-white block mb-4" href="#">Noro Guru</a>
+<p class="font-body text-[#D1D5F0] text-sm mb-6">Simplificando a mobilidade global através de dados precisos e acessíveis via API.</p>
+<div class="flex gap-4">
+<a class="text-[#D1D5F0]/60 hover:text-[#1DD3C0] transition-all" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="text-[#D1D5F0]/60 hover:text-[#1DD3C0] transition-all" href="#"><span class="material-symbols-outlined">terminal</span></a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Plataforma</h4>
+<ul class="space-y-3">
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">API Reference</a></li>
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">System Status</a></li>
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">Security</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Legal</h4>
+<ul class="space-y-3">
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">Terms of Service</a></li>
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">Privacy Policy</a></li>
+<li><a class="font-body text-[#D1D5F0] text-sm hover:underline decoration-[#1DD3C0] transition-all duration-300" href="#">Community</a></li>
+</ul>
+</div>
+<div class="flex flex-col justify-between">
+<div>
+<h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Newsletter</h4>
+<div class="flex bg-white/5 rounded-lg overflow-hidden border border-white/10">
+<input class="bg-transparent border-none focus:ring-0 text-sm px-4 py-2 w-full text-white" placeholder="dev@company.com" type="text"/>
+<button class="bg-accent text-background px-3 py-2 transition-all hover:bg-accent/90">
+<span class="material-symbols-outlined scale-75">send</span>
+</button>
+</div>
+</div>
+<p class="font-body text-[#D1D5F0]/60 text-xs mt-8">© 2024 Noro Guru. Powered by Visa API.</p>
+</div>
+</div>
+</footer>
+<script>
+        function switchTab(tab) {
+            const curlBtn = document.getElementById('tab-curl');
+            const jsBtn = document.getElementById('tab-js');
+            const curlCode = document.getElementById('code-curl');
+            const jsCode = document.getElementById('code-js');
+
+            if (tab === 'curl') {
+                curlBtn.classList.add('text-accent', 'border-accent', 'bg-white/5');
+                curlBtn.classList.remove('text-textMuted', 'border-transparent');
+                jsBtn.classList.remove('text-accent', 'border-accent', 'bg-white/5');
+                jsBtn.classList.add('text-textMuted', 'border-transparent');
+                curlCode.classList.remove('hidden');
+                jsCode.classList.add('hidden');
+            } else {
+                jsBtn.classList.add('text-accent', 'border-accent', 'bg-white/5');
+                jsBtn.classList.remove('text-textMuted', 'border-transparent');
+                curlBtn.classList.remove('text-accent', 'border-accent', 'bg-white/5');
+                curlBtn.classList.add('text-textMuted', 'border-transparent');
+                jsCode.classList.remove('hidden');
+                curlCode.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

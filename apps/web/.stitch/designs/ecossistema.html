@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ecosystem | Noro Guru</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;family=Public+Sans:wght@400;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#342CA4",
+                        accent: "#1DD3C0",
+                        gold: "#D4AF37",
+                        background: "#0B1220",
+                        surface: "#12152C",
+                        muted: "#B8C1E0",
+                        body: "#D1D5F0"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope", "sans-serif"],
+                        display: ["Manrope", "sans-serif"],
+                        body: ["Plus Jakarta Sans", "sans-serif"],
+                        label: ["Public Sans", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+        .hero-glow {
+            background: radial-gradient(circle at center, #12152C 0%, #0B1220 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-body selection:bg-primary selection:text-white">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0B1220]/70 backdrop-blur-xl border-b border-white/10 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center max-w-[1200px] mx-auto px-10 h-20">
+<div class="text-2xl font-headline font-extrabold text-white">Noro Guru</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-[#E0E3FF] hover:text-white transition-colors" href="#">Solutions</a>
+<a class="text-[#E0E3FF] hover:text-white transition-colors" href="#">Product</a>
+<a class="text-white font-bold border-b-2 border-[#1DD3C0] pb-1" href="#">Ecosystem</a>
+<a class="text-[#E0E3FF] hover:text-white transition-colors" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-[#E0E3FF] hover:text-white transition-colors px-4 py-2 text-sm font-semibold">Login</button>
+<button class="bg-[#342CA4] hover:bg-[#3B2CA4] text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20">Get Started</button>
+</div>
+</div>
+</header>
+<main class="relative">
+<!-- Hero Section -->
+<section class="relative pt-40 pb-20 overflow-hidden bg-grid hero-glow">
+<!-- Decorative Orbs -->
+<div class="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-accent/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="max-w-[1200px] mx-auto px-10 text-center relative z-10">
+<h1 class="font-headline font-extrabold text-white text-5xl md:text-[56px] leading-tight mb-6 tracking-tight">
+                    O ecossistema Noro Guru
+                </h1>
+<p class="text-muted text-xl md:text-2xl max-w-[760px] mx-auto font-medium">
+                    Seis apps. Um sistema operacional completo.
+                </p>
+<div class="mt-16 flex justify-center">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-all duration-700"></div>
+<img alt="Noro Guru Ecosystem Diagram" class="relative z-10 w-full max-w-[600px] h-auto drop-shadow-2xl transform transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB43vg6K9-Hjwq7hmzJs3V4yQNET9fqd1tC_QPSyYzQ_wYnK0u8qRdLzWL__5qRpCrdD-YGmjG-WOt5oY5FrVEIS7D1VrIf2nH--orgeyGeOPS9vDQtO48Z56_N8Jc3BUHHUhQv_c2BIvNlCetiolxv2k2kljYOCzr4qeLSyDR2XKlb3ZDXp5ZU4ANjaUXtP4_NjFjO_t6N_mLkejKa4GfwQYheVG7XaZ657FWSFcSXekYDEaxboCksx1jMV3KSeeenVYghR0jlpxQ"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Grid of Apps -->
+<section class="py-20 px-10 max-w-[1200px] mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Noro Web -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-primary" data-icon="language">language</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">01</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro Web</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Site de marketing e conversão projetado para máxima performance e autoridade de marca.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Visitantes</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+<!-- Noro Core -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-blue-500" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">02</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">app.noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro Core</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Painel operacional completo para gestão de agências, centralizando dados e processos.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Agências (Tenants)</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+<!-- Noro Control -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-gold" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">03</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">admin.noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro Control</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Administração de alto nível da plataforma, controle de segurança e logs de auditoria.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Admins Noro</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+<!-- Noro Sites -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-accent" data-icon="web">web</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">04</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">sites.noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro Sites</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Sites ultrarrápidos para clientes das agências utilizando tecnologia ISR de última geração.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Clientes das Agências</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+<!-- Noro Visa -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-green-500" data-icon="description">description</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">05</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">visa.noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro Visa</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Gestão automatizada de vistos e documentação complexa com workflows inteligentes.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Agências</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+<!-- Noro API -->
+<div class="bg-surface border border-white/10 rounded-xl p-[28px] group hover:border-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]">
+<div class="mb-6 flex items-center justify-between">
+<span class="material-symbols-outlined text-[56px] text-slate-400" data-icon="terminal">terminal</span>
+<span class="text-[10px] font-mono text-muted/50 tracking-wider">06</span>
+</div>
+<div class="mb-2 font-mono text-xs text-muted/60">api.noro.guru</div>
+<h3 class="font-headline font-bold text-white text-xl mb-3">Noro API</h3>
+<p class="text-body text-sm leading-relaxed mb-6">Portal de desenvolvedor com documentação e endpoints para integrações personalizadas.</p>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">Developers</span>
+</div>
+<a class="text-accent font-bold text-sm flex items-center gap-2 group/link transition-colors hover:brightness-110" href="#">
+                        Saiba mais <span class="transition-transform group-hover/link:translate-x-1">→</span>
+</a>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-20 px-10 max-w-[1200px] mx-auto text-center">
+<div class="bg-gradient-to-r from-primary/10 to-accent/5 rounded-3xl p-12 border border-white/5">
+<h2 class="font-headline font-bold text-3xl text-white mb-6">Pronto para unificar sua operação?</h2>
+<button class="bg-[#342CA4] hover:bg-[#3B2CA4] text-white px-10 py-4 rounded-lg font-bold text-lg transition-all shadow-xl shadow-primary/20">
+                    Começar agora
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#12152C] border-t border-white/10 w-full transition-opacity duration-200">
+<div class="py-20 px-10 max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-xl font-headline font-bold text-white">Noro Guru</div>
+<p class="font-body text-[#B8C1E0] text-sm text-center md:text-left">© 2024 Noro Guru. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-8">
+<a class="text-[#B8C1E0] hover:text-white transition-colors text-sm" href="#">Privacy Policy</a>
+<a class="text-[#B8C1E0] hover:text-white transition-colors text-sm" href="#">Terms of Service</a>
+<a class="text-[#B8C1E0] hover:text-white transition-colors text-sm" href="#">Documentation</a>
+<a class="text-[#B8C1E0] hover:text-white transition-colors text-sm" href="#">Support</a>
+</nav>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-white text-xl" data-icon="share">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-white text-xl" data-icon="public">public</span>
+</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.remove('bg-[#0B1220]/70');
+                header.classList.add('bg-[#0B1220]', 'shadow-lg');
+            } else {
+                header.classList.add('bg-[#0B1220]/70');
+                header.classList.remove('bg-[#0B1220]', 'shadow-lg');
+            }
+        });
+
+        // Micro-interaction: Hover glow tracking for cards (optional subtle effect)
+        document.querySelectorAll('.bg-surface').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>
