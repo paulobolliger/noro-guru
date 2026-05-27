@@ -56,6 +56,7 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
         toast({
             title: 'Copiado!',
             description: `${provider} copiado para a área de transferência.`,
+            variant: 'default',
         });
     };
 

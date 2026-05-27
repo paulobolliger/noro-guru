@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@noro/ui/card"
 import { Badge } from "@noro/ui/badge"
 import { Button } from "@noro/ui/button"

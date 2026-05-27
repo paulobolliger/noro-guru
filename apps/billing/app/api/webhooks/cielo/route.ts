@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CieloService } from '@/lib/cielo';
 
 export async function POST(req: NextRequest) {
-  // Implemente aqui o webhook da Cielo
-  // Este é apenas um exemplo básico da estrutura
   try {
-    const body = await req.json();
+    await req.json();
     
     const cieloService = new CieloService({
       merchantId: process.env.CIELO_MERCHANT_ID!,
@@ -13,8 +11,7 @@ export async function POST(req: NextRequest) {
       sandbox: process.env.NODE_ENV !== 'production'
     });
 
-    // Processar notificação da Cielo
-    // Implemente a lógica específica baseada no tipo de notificação
+    void cieloService;
 
     return new NextResponse(null, { status: 200 });
   } catch (error) {

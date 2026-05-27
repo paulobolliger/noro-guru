@@ -1,5 +1,4 @@
-// types/admin.ts
-import type { Database } from '@/types/supabase';
+import type { Database } from './appwrite';
 
 export type UserRole = 'cliente' | 'admin' | 'super_admin';
 
@@ -158,7 +157,6 @@ export interface Pedido {
   updated_at: string;
 }
 
-// NOVO TIPO ADICIONADO AQUI
 export type PedidoComRelacionamentos = Database['public']['Tables']['pedidos']['Row'] & {
   pedido_itens: Database['public']['Tables']['pedido_itens']['Row'][];
   clientes: Database['public']['Tables']['noro_clientes']['Row'] | null;

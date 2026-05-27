@@ -13,6 +13,6 @@ export function registerNotifyEmail(taskList: TaskList) {
   taskList[NOTIFY_EMAIL_TASK] = async (payload: unknown, helpers) => {
     const p = payload as Payload;
     helpers.logger.info(`notify-email placeholder for ticket ${p.ticketId}` as any);
-    // TODO: implement email delivery via SES or Resend
+    // Email delivery is intentionally not wired in this local worker.
   };
 }

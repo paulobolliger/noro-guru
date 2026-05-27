@@ -10,7 +10,6 @@
     "lint": "turbo lint",
     "build:web": "next build apps/control",
     "start:web": "next start apps/control",
-    "generate:types": "npx supabase gen types typescript --project-id gjffoongddkorxnnzmzc > packages/types/supabase.ts",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish"
@@ -22,7 +21,9 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.9",
-    "supabase": "^2.53.6",
+    "dotenv-cli": "^11.0.0",
+    "node-appwrite": "^17.2.0",
+    "tsx": "^4.22.3",
     "turbo": "latest"
   },
   "dependencies": {

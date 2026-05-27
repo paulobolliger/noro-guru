@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CountryList } from './CountryList';
 import { CountryDetail } from './CountryDetail';
 import { Header } from './Header';
-import { getCountries } from '../services/supabaseService';
+import { getCountries } from '../services/dataService';
 import type { CountryVisaInfo } from '../types';
 import { LoadingSpinner } from './LoadingSpinner';
 

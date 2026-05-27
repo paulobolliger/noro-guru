@@ -5,11 +5,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
-import { 
-  AreaChart, 
-  BarChart, 
-  DonutChart 
-} from '@/components/ui/charts';
+import {
+  Area,
+  AreaChart as RechartsAreaChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { getStripeMetrics } from './actions';
 import { formatCurrency } from '@/lib/utils';
 
@@ -18,7 +24,7 @@ interface StripeMetrics {
     mrr: number;
     arr: number;
     totalRevenue: number;
-    revenueByDay: { date: string; amount: number }[];
+    revenueByDay: { date: string | Date; amount: number }[];
     revenueByPlan: { plan: string; amount: number }[];
   };
   subscriptions: {
@@ -27,14 +33,18 @@ interface StripeMetrics {
     trialing: number;
     canceled: number;
     churnRate: number;
-    subscriptionsByDay: { date: string; count: number }[];
+    subscriptionsByDay: { date: string | Date; count: number }[];
     subscriptionsByPlan: { plan: string; count: number }[];
   };
   customers: {
     total: number;
     new: number;
-    customersByDay: { date: string; count: number }[];
+    customersByDay: { date: string | Date; count: number }[];
   };
+}
+
+function toDateInputValue(date: Date) {
+  return date.toISOString().slice(0, 10);
 }
 
 export default function StripeMetricsPage() {
@@ -96,8 +106,10 @@ export default function StripeMetricsPage() {
 
       <div className="flex items-center justify-between mb-6">
         <DateRangePicker
-          value={dateRange}
-          onChange={setDateRange}
+          dateFrom={toDateInputValue(dateRange[0])}
+          dateTo={toDateInputValue(dateRange[1])}
+          onDateFromChange={(date) => setDateRange(([, end]) => [new Date(date), end])}
+          onDateToChange={(date) => setDateRange(([start]) => [start, new Date(date)])}
         />
         <Select value={currency} onValueChange={(value) => setCurrency(value as 'brl' | 'usd')}>
           <SelectTrigger className="w-32">
@@ -252,6 +264,58 @@ export default function StripeMetricsPage() {
           </div>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+const chartColors = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed'];
+
+function AreaChart({
+  data,
+  xField,
+  yField,
+  category,
+}: {
+  data: Record<string, unknown>[];
+  xField: string;
+  yField: string;
+  category: string;
+}) {
+  return (
+    <div className="h-72">
+      <ResponsiveContainer width="100%" height="100%">
+        <RechartsAreaChart data={data}>
+          <XAxis dataKey={xField} />
+          <YAxis />
+          <Tooltip />
+          <Area type="monotone" dataKey={yField} name={category} stroke="#2563eb" fill="#2563eb" fillOpacity={0.2} />
+        </RechartsAreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function DonutChart({
+  data,
+  category,
+  value,
+}: {
+  data: Record<string, unknown>[];
+  category: string;
+  value: string;
+}) {
+  return (
+    <div className="h-72">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Tooltip />
+          <Pie data={data} dataKey={value} nameKey={category} innerRadius={60} outerRadius={100}>
+            {data.map((_, index) => (
+              <Cell key={index} fill={chartColors[index % chartColors.length]} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 }

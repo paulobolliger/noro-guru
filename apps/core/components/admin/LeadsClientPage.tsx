@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import KanbanBoard from './KanbanBoard';
 import LeadDetailModal from './LeadDetailModal';
 import LeadsStats from './LeadsStats';

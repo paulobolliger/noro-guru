@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 import { updatePedido } from "@/app/(protected)/pedidos/pedidos-actions";
 import { useRouter } from 'next/navigation';
 

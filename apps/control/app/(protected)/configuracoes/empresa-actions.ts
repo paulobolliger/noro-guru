@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/empresa-actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@lib/supabase/admin";
+import { getSupabaseAdmin } from "@noro/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 // Tipo para os dados da empresa, baseado no seu SQL

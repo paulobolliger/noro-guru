@@ -138,12 +138,16 @@ export async function getTenantSubscriptions(plan_id: string) {
 
   if (error) throw error
   
-  return (data || []).map(sub => ({
-    tenant_id: sub.tenant_id,
-    tenant_name: sub.tenants?.name,
-    status: sub.status,
-    created_at: sub.created_at
-  })) as TenantSubscription[]
+  return (data || []).map(sub => {
+    const tenant = Array.isArray(sub.tenants) ? sub.tenants[0] : sub.tenants
+
+    return {
+      tenant_id: sub.tenant_id,
+      tenant_name: tenant?.name,
+      status: sub.status,
+      created_at: sub.created_at
+    }
+  }) as TenantSubscription[]
 }
 
 interface PlanHistoryEntry {
@@ -183,7 +187,7 @@ export async function getPlanHistory(plan_id: string) {
 
   if (error) throw error
   
-  return (data || []).map(entry => ({
+  return ((data || []) as any[]).map(entry => ({
     id: entry.id,
     changed_by_name: entry.users?.name || 'Usuário desconhecido',
     old_plan: entry.old_plan,

@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@lib/supabase/client';
+import { createClient } from '@noro/lib/supabase/client';
 import Portal from "@/components/ui/portal";
 
 type Item = { type: 'page'|'action'|'tenant'|'lead'; label: string; href?: string; onClick?: () => void };

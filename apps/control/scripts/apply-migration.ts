@@ -3,6 +3,12 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs';
 
+if (process.env.NORO_ALLOW_LEGACY_DB_SCRIPT !== 'I_UNDERSTAND_THIS_TOUCHES_DATA') {
+  throw new Error(
+    'Legacy database script is frozen. Set NORO_ALLOW_LEGACY_DB_SCRIPT=I_UNDERSTAND_THIS_TOUCHES_DATA only after an audited rollback plan.',
+  );
+}
+
 // Carregar .env.local
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
 

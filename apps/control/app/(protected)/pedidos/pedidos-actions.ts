@@ -1,19 +1,26 @@
 // app/admin/(protected)/pedidos/pedidos-actions.ts
 'use server';
 
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { revalidatePath } from 'next/cache';
 import { Database } from "@noro-types/supabase";
 import { createStripeCharge } from './providers/stripe-provider';
 import { createCieloCharge } from './providers/cielo-provider'; 
 import { createBTGCharge } from './providers/btg-provider'; 
-import { PedidoComRelacionamentos } from "@types/admin";
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 
 // Definição da interface para o retorno padrão das Server Actions
 export type ServerActionReturn = {
     success: boolean;
     message: string;
     data?: any;
+};
+
+type OrcamentoItemParaPedido = {
+    descricao: string | null;
+    quantidade: number | null;
+    valor_unitario: number | null;
+    valor_final: number | null;
 };
 
 // ================================================================
@@ -62,7 +69,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
         const { data: novoPedido } = await supabase.from('pedidos').insert({ orcamento_id: orcamento.id, cliente_id: orcamento.lead_id, valor_total: orcamento.valor_total, status: 'EM_PROCESSAMENTO', }).select('id').single().throwOnError();
         if(!novoPedido) throw new Error('Falha ao criar o pedido');
 
-        const pedidoItensPayload = (orcamento.orcamento_itens || []).map(item => ({ pedido_id: novoPedido.id, servico_nome: item.descricao, quantidade: item.quantidade, valor_unitario: item.valor_unitario, valor_total: item.valor_final }));
+        const pedidoItensPayload = ((orcamento.orcamento_itens || []) as OrcamentoItemParaPedido[]).map((item) => ({ pedido_id: novoPedido.id, servico_nome: item.descricao, quantidade: item.quantidade, valor_unitario: item.valor_unitario, valor_total: item.valor_final }));
         if (pedidoItensPayload.length > 0) { await supabase.from('pedido_itens').insert(pedidoItensPayload).throwOnError(); }
 
         revalidatePath('/admin/orcamentos');

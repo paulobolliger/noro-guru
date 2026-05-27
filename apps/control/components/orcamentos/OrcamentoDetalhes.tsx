@@ -36,7 +36,7 @@ export function OrcamentoDetalhes({ orcamento }: OrcamentoDetalhesProps) {
     try {
       const result = await convertToPedido(orcamento.id);
       if (result.success) {
-        toast({ title: 'Sucesso!', description: result.message });
+        toast({ title: 'Sucesso!', description: result.message, variant: 'default' });
         if (result.data?.pedidoId) {
             router.push(`/admin/pedidos/${result.data.pedidoId}`);
         } else {

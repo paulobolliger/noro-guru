@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import type { ConfiguracaoSistema } from '@/app/(protected)/configuracoes/config-actions';
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];

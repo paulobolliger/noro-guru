@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { signOut } from '@noro/lib/services/authService';
 import {
   LayoutDashboard, Columns2, UserCheck, MessageSquare, CheckSquare,
   FileText, Package, DollarSign, Sparkles, Megaphone,
@@ -95,7 +95,6 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
 
   const [collapsed, setCollapsed] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -121,7 +120,7 @@ export default function Sidebar({
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    await supabase.auth.signOut();
+    await signOut();
     router.push('/login');
     router.refresh();
   };

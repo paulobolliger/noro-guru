@@ -20,4 +20,6 @@ export * from "./textarea"
 export * from "./sheet"
 export * from "./switch"
 export * from "./avatar"
+export * from "./progress"
+export * from "./scroll-area"
 

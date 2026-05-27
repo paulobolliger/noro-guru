@@ -48,7 +48,7 @@ export async function deleteContact(formData: FormData) {
 }
 
 export async function updateContact(formData: FormData) {
-  const supabase = createServerSupabaseClient();
+  const supabase = createAdminSupabaseClient();
   const id = String(formData.get('id') || '');
   if (!id) throw new Error('Contato inválido');
   const email = String(formData.get('email') || '');

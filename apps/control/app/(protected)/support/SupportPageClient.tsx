@@ -254,7 +254,7 @@ export default function SupportPageClient({ tickets, tenants, activeTenantId }: 
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         tenants={tenants}
-        defaultTenantId={activeTenantId}
+        defaultTenantId={activeTenantId ?? null}
         onCreated={handleTicketCreated}
       />
     </div>

@@ -6,7 +6,7 @@ import { Globe, Clock, Calendar, DollarSign, CheckCircle2, AlertTriangle, Loader
 import { saveConfiguracaoSistema, saveConfiguracaoUsuario, type ConfiguracaoSistema, type ConfiguracaoUsuario } from "@/app/(protected)/configuracoes/config-actions";
 import { Button as NButton } from '@/../../packages/ui/button';
 import { Alert as NAlert } from '@/../../packages/ui/alert';
-import { Select as NSelect } from '@/../../packages/ui/select';
+import { NSelect } from '@/components/ui';
 
 interface PreferenciasTabProps {
   configSistema: ConfiguracaoSistema;
@@ -136,11 +136,15 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-default">
           {statusSistema && (
-            <NAlert className="mr-auto" variant={statusSistema.success ? 'success' : 'error'} icon={statusSistema.success ? <CheckCircle2 size={16}/> : <AlertTriangle size={16}/>}>
-              {statusSistema.message}
+            <NAlert className="mr-auto" variant={statusSistema.success ? 'success' : 'error'}>
+              <span className="inline-flex items-center gap-2">
+                {statusSistema.success ? <CheckCircle2 size={16}/> : <AlertTriangle size={16}/>}
+                {statusSistema.message}
+              </span>
             </NAlert>
           )}
-          <NButton onClick={handleSaveSistema} disabled={isSavingSistema} variant="primary" leftIcon={isSavingSistema ? <Loader2 className="animate-spin" size={18} /> : undefined}>
+          <NButton onClick={handleSaveSistema} disabled={isSavingSistema} variant="default">
+            {isSavingSistema && <Loader2 className="mr-2 animate-spin" size={18} />}
             {isSavingSistema ? 'Salvando...' : 'Salvar configuracoes do sistema'}
           </NButton>
         </div>
@@ -171,11 +175,15 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-default">
           {statusUsuario && (
-            <NAlert className="mr-auto" variant={statusUsuario.success ? 'success' : 'error'} icon={statusUsuario.success ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}>
-              {statusUsuario.message}
+            <NAlert className="mr-auto" variant={statusUsuario.success ? 'success' : 'error'}>
+              <span className="inline-flex items-center gap-2">
+                {statusUsuario.success ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                {statusUsuario.message}
+              </span>
             </NAlert>
           )}
-          <NButton onClick={handleSaveUsuario} disabled={isSavingUsuario} variant="primary" leftIcon={isSavingUsuario ? <Loader2 className="animate-spin" size={18} /> : undefined}>
+          <NButton onClick={handleSaveUsuario} disabled={isSavingUsuario} variant="default">
+            {isSavingUsuario && <Loader2 className="mr-2 animate-spin" size={18} />}
             {isSavingUsuario ? 'Salvando...' : 'Salvar minhas preferências'}
           </NButton>
         </div>

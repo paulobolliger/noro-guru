@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@lib/supabase/client';
+import { createClient } from '@noro/lib/supabase/client';
 
 export default function ChatBadge() {
   const [unreadCount, setUnreadCount] = useState(0);

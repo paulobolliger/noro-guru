@@ -6,18 +6,17 @@ import StatCard from './StatCard';
 import LeadsRecentes from './LeadsRecentes';
 import TarefasList from './TarefasList';
 import Link from 'next/link';
-import type { Database } from "@noro-types/supabase";
+import type { Lead, Tarefa } from "@noro-types/admin";
 
 // Tipos para as props
-type Lead = Database['public']['Tables']['noro_leads']['Row'];
-type Tarefa = Database['public']['Tables']['noro_tarefas']['Row'] & {
+type TarefaComLead = Tarefa & {
   noro_leads?: { nome: string } | null;
 };
 
 interface AdminDashboardProps {
   metrics: any;
   leadsRecentes: Lead[];
-  tarefas: Tarefa[];
+  tarefas: TarefaComLead[];
 }
 
 export default function AdminDashboard({ metrics, leadsRecentes, tarefas }: AdminDashboardProps) {

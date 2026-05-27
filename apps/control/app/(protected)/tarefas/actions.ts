@@ -1,5 +1,5 @@
 "use server";
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 export async function listTasks() {
   const supabase = createServerSupabaseClient();
@@ -22,6 +22,29 @@ export async function createTask(formData: FormData) {
   } as any;
   if (!payload.title) throw new Error('Título é obrigatório');
   const { error } = await supabase.schema('cp').from('tasks').insert(payload);
+  if (error) throw new Error(error.message);
+}
+
+export async function createTicket(formData: FormData) {
+  const supabase = createServerSupabaseClient();
+  const { data: auth } = await supabase.auth.getUser();
+  const subject = String(formData.get('subject') || '').trim();
+  const summary = String(formData.get('description') || '').trim() || null;
+  const priority = String(formData.get('priority') || 'normal').trim().toLowerCase() || 'normal';
+  const tenantId = String(formData.get('tenant_id') || '').trim() || null;
+
+  if (!subject) throw new Error('Assunto é obrigatório');
+
+  const { error } = await supabase.schema('cp').from('support_tickets').insert({
+    subject,
+    summary,
+    priority,
+    tenant_id: tenantId,
+    source: 'manual',
+    requester_id: auth?.user?.id || null,
+    requester_email: auth?.user?.email || null,
+  });
+
   if (error) throw new Error(error.message);
 }
 

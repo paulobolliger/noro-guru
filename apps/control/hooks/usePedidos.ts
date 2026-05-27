@@ -91,9 +91,12 @@ export function usePedido(pedidoId: string | null) {
 
   useEffect(() => {
     if (!pedidoId) {
+      setPedido(null);
       setIsLoading(false);
       return;
     }
+
+    const id = pedidoId;
 
     async function fetchPedido() {
       try {
@@ -102,7 +105,7 @@ export function usePedido(pedidoId: string | null) {
         const { data, error: fetchError } = await supabase
           .from('noro_pedidos')
           .select('*')
-          .eq('id', pedidoId)
+          .eq('id', id)
           .single();
 
         if (fetchError) throw fetchError;

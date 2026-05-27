@@ -8,7 +8,15 @@ interface LeadsRecentesProps {
 
 export default function LeadsRecentes({ leads }: LeadsRecentesProps) {
   const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {\n    novo: 'border border-default bg-[var(--color-surface-alt)] text-primary',\n    contato_inicial: 'border border-default bg-[var(--color-surface-alt)] text-secondary',\n    qualificado: 'border border-default bg-[rgba(29,211,192,0.18)] text-success',\n    proposta_enviada: 'border border-default bg-[var(--color-surface-alt)] text-accent',\n    negociacao: 'border border-default bg-[var(--color-surface-alt)] text-primary',\n    ganho: 'border border-default bg-[rgba(29,211,192,0.22)] text-success',\n    perdido: 'border border-default bg-[rgba(239,68,68,0.18)] text-rose-400',\n  };
+    const colors: Record<string, string> = {
+      novo: 'border border-default bg-[var(--color-surface-alt)] text-primary',
+      contato_inicial: 'border border-default bg-[var(--color-surface-alt)] text-secondary',
+      qualificado: 'border border-default bg-[rgba(29,211,192,0.18)] text-success',
+      proposta_enviada: 'border border-default bg-[var(--color-surface-alt)] text-accent',
+      negociacao: 'border border-default bg-[var(--color-surface-alt)] text-primary',
+      ganho: 'border border-default bg-[rgba(29,211,192,0.22)] text-success',
+      perdido: 'border border-default bg-[rgba(239,68,68,0.18)] text-rose-400',
+    };
     return colors[status] || 'border border-default bg-[var(--color-surface-alt)] text-secondary';
   };
 

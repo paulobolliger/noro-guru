@@ -5,7 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
-import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { NButton } from '@/components/ui';

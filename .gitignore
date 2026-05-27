@@ -130,6 +130,9 @@ npm-debug.log*
 yarn-debug.log*
 lerna-debug.log*
 
+# Diretório de scripts de migração local
+/migracao-bd/
+
 # =====================================================
 # ==============================
 # Local / Windows reserved files

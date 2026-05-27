@@ -1,11 +1,11 @@
 // app/admin/(protected)/pedidos/[id]/page.tsx
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { notFound } from 'next/navigation';
 import PedidoDetalhesCard from "@/components/pedidos/PedidoDetalhesCard";
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@ui/button";
-import { PedidoComRelacionamentos } from "@types/admin"; // CORRIGIDO: Importa do ficheiro de tipos
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 
 interface PedidoDetalhesPageProps {
   params: {

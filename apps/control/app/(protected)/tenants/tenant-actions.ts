@@ -3,6 +3,7 @@
 import { getSupabaseServer } from '@/lib/supabaseServer';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
 import { notFound } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 // ... previous imports
 
@@ -22,6 +23,7 @@ export type TenantContext = {
             email_used?: number;
             max_users?: number; // New field
         };
+        modulos_contratados?: Record<string, boolean>;
     };
     // ... (rest of type)
     configuracoes?: {
@@ -263,7 +265,7 @@ export async function updateTenantCompany(tenantId: string, formData: FormData) 
     // Check if record exists for existing docs preservation
     const { data: existingRecord } = await supabase
         .from('noro_empresa')
-        .select('id, documentos')
+        .select('id, documentos, logo_url')
         .eq('tenant_id', tenantId)
         .maybeSingle();
 

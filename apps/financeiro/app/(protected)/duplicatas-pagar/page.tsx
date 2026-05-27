@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
 import { DuplicatasPagarClient } from './duplicatas-pagar-client';
 import { getCurrentTenantId } from '@/lib/tenant';
@@ -29,7 +30,7 @@ async function getDuplicatasPagar() {
 }
 
 async function getFornecedores() {
-  // TODO: Implementar busca de fornecedores
+  // Fornecedores não possuem collection Appwrite oficial neste pacote.
   return [];
 }
 

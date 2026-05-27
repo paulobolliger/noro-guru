@@ -7,7 +7,7 @@ import {
   Loader2, AlertCircle, CheckCircle2, Calendar, Globe, Briefcase, CreditCard
 } from 'lucide-react';
 import { createClienteAction } from "@/app/(protected)/clientes/actions";
-import type { ClienteStatus, ClienteTipo, ClienteSegmento, ClienteNivel } from "@types/clientes";
+import type { ClienteStatus, ClienteTipo, ClienteSegmento, ClienteNivel } from "@noro/types/clientes";
 // NOVO: Importa as listas de dados
 import { PROFISSOES, PAISES_E_NACIONALIDADES } from "@lib/client-data";
 

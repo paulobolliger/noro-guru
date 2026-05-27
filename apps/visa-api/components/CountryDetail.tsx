@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { CountryVisaInfo, ApprovalTip, SecurityInfo, HealthInfo, VisaType, ProcessStep, GeneralInfo } from '../types';
 import { getLiveVisaData } from '../services/visaApiService';
-import { updateCountry } from '../services/supabaseService';
+import { updateCountry } from '../services/dataService';
 import { generateSummaryWithAI } from '../services/geminiService';
 import { LoadingSpinner } from './LoadingSpinner';
 import { AutomationStatus } from '../types';
@@ -90,7 +90,7 @@ export const CountryDetail: React.FC<CountryDetailProps> = ({ country, onBack, o
       dataToSave.last_verified = new Date().toISOString().split('T')[0];
       dataToSave.automation_status = AutomationStatus.OK;
       
-      const updated = await updateCountry(dataToSave);
+      const updated = await updateCountry(dataToSave.id, dataToSave);
       onUpdate(updated);
       setLiveData(null);
     } catch (error) {

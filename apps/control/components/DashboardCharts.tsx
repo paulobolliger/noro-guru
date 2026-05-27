@@ -11,6 +11,12 @@ interface DashboardChartsProps {
 
 export default function DashboardCharts({ receitaMensal, leadsPorOrigem, conversaoPorMes }: DashboardChartsProps) {
   const COLORS = ['#5053c4', '#342ca4', '#232452', '#60a5fa', '#34d399', '#fbbf24'];
+  const renderLeadLabel = (props: unknown) => {
+    const payload = props && typeof props === 'object' ? props as Record<string, unknown> : {};
+    const origem = typeof payload.origem === 'string' ? payload.origem : '';
+    const percent = typeof payload.percent === 'number' ? payload.percent : 0;
+    return `${origem}: ${(percent * 100).toFixed(0)}%`;
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
@@ -49,7 +55,7 @@ export default function DashboardCharts({ receitaMensal, leadsPorOrigem, convers
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ origem, percent }) => `${origem}: ${(percent * 100).toFixed(0)}%`}
+              label={renderLeadLabel}
               outerRadius={100}
               fill="#8884d8"
               dataKey="total"

@@ -131,9 +131,11 @@ export default function PermissionGrid({ user, onClose, onUpdate }: PermissionGr
           {status && (
             <NAlert
               variant={status.success ? 'success' : 'error'}
-              icon={status.success ? <Check size={16} /> : <X size={16} />}
             >
-              {status.message}
+              <span className="inline-flex items-center gap-2">
+                {status.success ? <Check size={16} /> : <X size={16} />}
+                {status.message}
+              </span>
             </NAlert>
           )}
 

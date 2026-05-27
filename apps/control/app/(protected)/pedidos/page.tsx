@@ -1,5 +1,5 @@
 // app/admin/(protected)/pedidos/page.tsx
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { PedidosList } from "@/components/pedidos/PedidosList";
 import { Database } from "@noro-types/supabase";
 import { Suspense } from 'react';

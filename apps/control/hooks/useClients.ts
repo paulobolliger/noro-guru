@@ -94,9 +94,12 @@ export function useClient(clientId: string | null) {
 
   useEffect(() => {
     if (!clientId) {
+      setClient(null);
       setIsLoading(false);
       return;
     }
+
+    const id = clientId;
 
     async function fetchClient() {
       try {
@@ -105,7 +108,7 @@ export function useClient(clientId: string | null) {
         const { data, error: fetchError } = await supabase
           .from('noro_clientes')
           .select('*')
-          .eq('id', clientId)
+          .eq('id', id)
           .single();
 
         if (fetchError) throw fetchError;

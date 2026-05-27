@@ -16,6 +16,9 @@
       "@noro/lib": [
         "../../packages/lib"
       ],
+      "@noro/lib/*": [
+        "../../packages/lib/*"
+      ],
       "@noro/types": [
         "../../packages/types"
       ]

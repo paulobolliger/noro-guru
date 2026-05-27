@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 function slugify(input: string) {
   return input
-    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '');

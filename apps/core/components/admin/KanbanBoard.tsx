@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import { Users, DollarSign, GripVertical } from 'lucide-react';
 import {
   DndContext,

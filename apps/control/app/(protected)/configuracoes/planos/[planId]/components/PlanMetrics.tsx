@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@noro/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@noro/ui/alert"
 import { Progress } from "@noro/ui/progress"

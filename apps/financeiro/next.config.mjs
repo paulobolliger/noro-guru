@@ -2,7 +2,7 @@
 const nextConfig = {
   transpilePackages: ['@noro/types', '@noro/lib', '@noro/ui'],
   images: {
-    domains: ['supabase.co', 'cloudinary.com'],
+    domains: ['cloudinary.com'],
   },
 };
 

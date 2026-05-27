@@ -1,5 +1,3 @@
-import { type ThemeConfig } from 'tailwindcss/types/config'
-
 export const noroTheme = {
   colors: {
     primary: {
@@ -153,5 +151,4 @@ export const tailwindConfig = {
       spacing: noroTheme.spacing,
       blur: noroTheme.blur,
     }
-  }
 }

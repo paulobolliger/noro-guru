@@ -15,7 +15,7 @@ const FIELDS = [
 ];
 
 function normalize(s: string) {
-  return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+  return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 export default function LeadImportModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

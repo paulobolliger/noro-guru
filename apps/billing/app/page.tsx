@@ -1,75 +1,49 @@
-import { headers } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Metadata } from "next";
-import BillingPortal from "@/components/BillingPortal";
+import Link from 'next/link';
+import { Metadata } from 'next';
+import BillingPortal from '@/components/BillingPortal';
+import { getTenantBillingEmail } from '@noro/lib/services/billingService';
+import { tenantsService } from '@noro/lib/services/tenantService';
 
 export const metadata: Metadata = {
   title: 'Faturamento | Noro Guru',
   description: 'Gerencie sua assinatura e métodos de pagamento',
 };
 
-export default async function RootPage() {
-  const headersList = headers();
-  const supabase = createServerComponentClient({ 
-    headers: () => headersList 
-  });
+interface RootPageProps {
+  searchParams: {
+    tenantId?: string;
+  };
+}
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  // Buscar dados do tenant
-  const { data: tenant } = await supabase
-    .from('tenants')
-    .select('id, email, billing_email')
-    .single();
+export default async function RootPage({ searchParams }: RootPageProps) {
+  const tenant = searchParams.tenantId
+    ? await tenantsService.getById(searchParams.tenantId)
+    : null;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">Faturamento</h1>
-        <p className="text-gray-600">Gerencie seus planos e pagamentos</p>
+        <p className="text-gray-600">Gerencie planos e pagamentos pelo Stripe.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Link 
-              href="/plans" 
+            <Link
+              href="/plans"
               className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-colors"
             >
               <h2 className="text-xl font-semibold mb-2">Planos</h2>
-              <p className="text-gray-600">Gerencie os planos disponíveis</p>
+              <p className="text-gray-600">Planos são gerenciados no Stripe.</p>
             </Link>
 
-            <Link 
-              href="/subscriptions" 
+            <Link
+              href="/billing/success"
               className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-colors"
             >
-              <h2 className="text-xl font-semibold mb-2">Assinaturas</h2>
-              <p className="text-gray-600">Visualize e gerencie assinaturas ativas</p>
-            </Link>
-
-            <Link 
-              href="/invoices" 
-              className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-colors"
-            >
-              <h2 className="text-xl font-semibold mb-2">Faturas</h2>
-              <p className="text-gray-600">Histórico de faturas e pagamentos</p>
-            </Link>
-
-            <Link 
-              href="/reports" 
-              className="p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-colors"
-            >
-              <h2 className="text-xl font-semibold mb-2">Relatórios</h2>
-              <p className="text-gray-600">Análise e relatórios financeiros</p>
+              <h2 className="text-xl font-semibold mb-2">Checkout</h2>
+              <p className="text-gray-600">Confirmação de sessões de pagamento.</p>
             </Link>
           </div>
         </div>
@@ -77,17 +51,18 @@ export default async function RootPage() {
         <div className="md:col-span-1">
           {tenant && (
             <BillingPortal
-              tenantId={tenant.id}
-              customerEmail={tenant.billing_email || tenant.email}
+              tenantId={tenant.$id}
+              customerEmail={getTenantBillingEmail(tenant)}
             />
           )}
-          <Link 
-            href="/settings" 
-            className="mt-6 p-6 bg-white rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-colors block"
-          >
-            <h2 className="text-xl font-semibold mb-2">Configurações</h2>
-            <p className="text-gray-600">Configure integrações e preferências</p>
-          </Link>
+          {!tenant && (
+            <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-2">Portal do cliente</h2>
+              <p className="text-gray-600">
+                Abra esta página com um tenant Appwrite válido para acessar o portal.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

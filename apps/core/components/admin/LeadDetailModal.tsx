@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Mail, Phone, Calendar, Users, MapPin, MessageSquare, DollarSign, Percent, Clock, Tag, ExternalLink, FileText } from 'lucide-react';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';

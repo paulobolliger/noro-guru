@@ -1,4 +1,4 @@
-﻿// components/admin/AdminDashboard.tsx
+// components/admin/AdminDashboard.tsx
 'use client';
 
 import { DollarSign, Users, CreditCard, TrendingUp, Plus } from 'lucide-react'; // Importei o ícone Plus
@@ -6,7 +6,7 @@ import StatCard from './StatCard';
 import LeadsRecentes from './LeadsRecentes';
 import TarefasList from './TarefasList';
 import Link from 'next/link';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 
 // Tipos para as props
 type Lead = Database['public']['Tables']['noro_leads']['Row'];

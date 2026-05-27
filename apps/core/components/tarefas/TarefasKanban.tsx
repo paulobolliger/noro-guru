@@ -34,7 +34,6 @@ export default function TarefasKanban({ tarefas }: KanbanProps) {
         e.preventDefault();
         const taskId = e.dataTransfer.getData('taskId');
 
-        // Optimistic update logic could go here
         startTransition(async () => {
             try {
                 await updateTarefaStatus(taskId, status);
@@ -49,7 +48,6 @@ export default function TarefasKanban({ tarefas }: KanbanProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
             {COLUMNS.map((col) => {
                 const colTarefas = tarefas.filter(t =>
-                    // Normalizar status para garantir match
                     (t.status === col.id) ||
                     (col.id === 'pendente' && !['em_andamento', 'concluida'].includes(t.status))
                 );

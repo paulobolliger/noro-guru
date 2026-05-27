@@ -1,25 +1,23 @@
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-export async function PATCH(request: Request) {
-  const supabase = createServerSupabaseClient();
-  const body = await request.json();
-  const { id, type, status } = body;
+const message = 'Endpoint legado desativado: não há collection Appwrite oficial para este recurso.';
 
-  if (!id || !type || !status) {
-      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
-  }
+export async function GET() {
+  return NextResponse.json({ data: [], message });
+}
 
-  const table = type === 'roteiro' ? 'noro_ai_roteiros' : 'noro_ai_artigos';
+export async function POST() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
 
-  const { error } = await supabase
-    .from(table)
-    .update({ status })
-    .eq('id', id);
+export async function PUT() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+export async function PATCH() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
 
-  return NextResponse.json({ success: true });
+export async function DELETE() {
+  return NextResponse.json({ error: message }, { status: 410 });
 }

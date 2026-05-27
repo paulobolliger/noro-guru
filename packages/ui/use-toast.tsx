@@ -91,7 +91,7 @@ function dispatch(action: Action) {
   listeners.forEach((listener) => listener(state));
 }
 
-function toast(
+export function toast(
   props: Omit<Toast, 'id' | 'duration'> & {
     id?: string;
     duration?: number;

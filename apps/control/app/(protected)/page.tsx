@@ -1,7 +1,7 @@
     // app/admin/(protected)/page.tsx
-    import { getDashboardMetrics, getLeads, getTarefas, getSupabaseAdmin } from "@lib/supabase/admin";
+    import { getDashboardMetrics, getSupabaseAdmin } from "@noro/lib/supabase/admin";
     import AdminDashboard from "@/components/AdminDashboard";
-    import { createServerSupabaseClient } from "@lib/supabase/server";
+    import { createServerSupabaseClient } from "@noro/lib/supabase/server";
     import { redirect } from 'next/navigation';
 
     export const dynamic = 'force-dynamic';

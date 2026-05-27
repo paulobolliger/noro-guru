@@ -26,11 +26,7 @@ const stripeConfigSchema = z.object({
 
 type StripeConfigFormData = z.infer<typeof stripeConfigSchema>;
 
-interface StripeConfigPageProps {
-  initialData?: StripeConfigFormData;
-}
-
-export default function StripeConfigPage({ initialData }: StripeConfigPageProps) {
+export default function StripeConfigPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,7 +37,7 @@ export default function StripeConfigPage({ initialData }: StripeConfigPageProps)
     formState: { errors }
   } = useForm<StripeConfigFormData>({
     resolver: zodResolver(stripeConfigSchema),
-    defaultValues: initialData || {
+    defaultValues: {
       enabled: false,
       liveMode: false,
       publishableKey: '',
@@ -49,7 +45,7 @@ export default function StripeConfigPage({ initialData }: StripeConfigPageProps)
       webhookSecret: '',
       successUrl: 'https://app.noroguru.com.br/billing/success',
       cancelUrl: 'https://app.noroguru.com.br/billing/cancel'
-    }
+    },
   });
 
   const enabled = watch('enabled');

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useTransition, useRef } from 'react';
-import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page";
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 import { addPedidoItem, deletePedidoItem, updatePedidoItem } from "@/app/(protected)/pedidos/pedidos-actions";
 import { currencyFormat } from '@/utils/currency-format';
 import { useToast } from "@ui/use-toast";
@@ -64,7 +64,7 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
       const result = await addPedidoItem(payload);
 
       if (result.success) {
-        toast({ title: 'Sucesso!', description: result.message });
+        toast({ title: 'Sucesso!', description: result.message, variant: 'default' });
         setNewItem(initialNewItemState); // Limpar formulário
 
         // NOTA: Como a Server Action usa revalidatePath, o ideal é confiar no Next.js
@@ -104,7 +104,7 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
       const result = await deletePedidoItem(itemId);
 
       if (result.success) {
-        toast({ title: 'Sucesso!', description: result.message });
+        toast({ title: 'Sucesso!', description: result.message, variant: 'default' });
         
         // Remove do estado local (otimista, idealmente o servidor faria o refresh)
         setItems(prev => prev.filter(item => item.id !== itemId));
@@ -147,7 +147,7 @@ export default function PedidoItemManager({ initialItems, pedidoId }: PedidoItem
         });
 
         if (result.success) {
-            toast({ title: 'Item Atualizado', description: 'O item foi salvo e o total do pedido recalculado.' });
+            toast({ title: 'Item Atualizado', description: 'O item foi salvo e o total do pedido recalculado.', variant: 'default' });
         } else {
             toast({ title: 'Erro!', description: result.message, variant: 'destructive' });
             // Reverter o estado local em caso de falha (não implementado aqui para simplicidade)

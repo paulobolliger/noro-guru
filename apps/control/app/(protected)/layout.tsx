@@ -2,9 +2,9 @@
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
 import type Database from "@noro-types/supabase";
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import AdminLayoutClient from "@/components/AdminLayoutClient";
-import { getNotificacoes } from "@lib/supabase/admin";
+import { getNotificacoes } from "@noro/lib/supabase/admin";
 // NOVO: Importa a função de buscar config do sistema
 import { getConfiguracaoSistema } from './configuracoes/config-actions'; 
 import { getUserTenants, getActiveTenantId, setActiveTenant } from './tenants/actions';
@@ -13,6 +13,13 @@ import { Toaster } from "@ui/use-toast"; // Assumindo que use-toast.tsx também 
 // TenantSelector removido - não será mais exibido globalmente
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
+type LayoutUser = {
+  id: string;
+  nome: string | null;
+  email: string;
+  role: string;
+  avatar_url?: string | null;
+};
 
 export default async function ProtectedAdminLayout({
   children,
@@ -52,8 +59,8 @@ export default async function ProtectedAdminLayout({
     // O Toaster deve ser renderizado no lado do cliente, assim como o AdminLayoutClient
     <Suspense fallback={<div>A carregar layout do admin...</div>}>
       <AdminLayoutClient 
-        user={profile} 
-        notificacoes={notificacoes}
+        user={profile as unknown as LayoutUser} 
+        notificacoes={notificacoes as any}
         configSistema={configSistema} // Passa a config para o layout do cliente
       >
         {/* REMOVIDO: TenantSelector não aparece mais em todas as páginas

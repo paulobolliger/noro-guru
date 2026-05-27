@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { createBillingPortalSession } from './actions';
-import { CreditCard, ExternalLink } from 'lucide-react';
+import { createBillingPortalSession } from '@/app/actions';
 
 interface BillingPortalProps {
   tenantId: string;
@@ -17,10 +14,7 @@ export default function BillingPortal({ tenantId, customerEmail }: BillingPortal
   const handleOpenPortal = async () => {
     try {
       setIsLoading(true);
-      const { url } = await createBillingPortalSession({
-        tenantId,
-        customerEmail
-      });
+      const { url } = await createBillingPortalSession({ tenantId, customerEmail });
       window.location.href = url;
     } catch (error) {
       console.error('Erro ao abrir portal:', error);
@@ -30,36 +24,18 @@ export default function BillingPortal({ tenantId, customerEmail }: BillingPortal
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Portal de Faturamento</CardTitle>
-        <CardDescription>
-          Gerencie sua assinatura e métodos de pagamento
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="text-sm text-muted-foreground">
-            No portal de faturamento você pode:
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Atualizar métodos de pagamento</li>
-              <li>Ver histórico de faturas</li>
-              <li>Baixar recibos</li>
-              <li>Atualizar informações de faturamento</li>
-            </ul>
-          </div>
-
-          <Button
-            onClick={handleOpenPortal}
-            disabled={isLoading}
-            className="w-full"
-          >
-            <CreditCard className="w-4 h-4 mr-2" />
-            {isLoading ? 'Abrindo portal...' : 'Abrir Portal de Faturamento'}
-            <ExternalLink className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-semibold mb-2">Portal de Faturamento</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Gerencie assinatura, métodos de pagamento e histórico de faturas pelo Stripe.
+      </p>
+      <button
+        onClick={handleOpenPortal}
+        disabled={isLoading}
+        className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+      >
+        {isLoading ? 'Abrindo portal...' : 'Abrir Portal de Faturamento'}
+      </button>
+    </div>
   );
 }

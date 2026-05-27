@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { signInWithEmailPassword } from '@noro/lib/services/authService'
 
 const inputStyle = {
   display: 'flex',
@@ -41,13 +41,12 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
     setError('')
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw error
+      await signInWithEmailPassword(email, password)
       router.push(redirectTo || '/')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro ao fazer login'
+      setError(message)
     } finally {
       setLoading(false)
     }

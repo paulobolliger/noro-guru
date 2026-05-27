@@ -1,5 +1,5 @@
 "use server";
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 export async function loadControlMetrics(rangeDays: number = 30, tenantId?: string | null, plan?: string | null) {
   const supabase = createServerSupabaseClient();

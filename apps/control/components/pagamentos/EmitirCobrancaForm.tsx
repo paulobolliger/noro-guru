@@ -10,6 +10,7 @@ import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { Badge } from "@ui/badge";
 import { Loader2, DollarSign, Copy, LinkIcon, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Database } from "@noro-types/supabase";
@@ -138,6 +139,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
         toast({
             title: 'Copiado!',
             description: `Detalhe de pagamento ${provider} copiado para a área de transferência.`,
+            variant: 'default',
         });
   };
 

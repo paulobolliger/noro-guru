@@ -10,7 +10,7 @@ import {
   updateDocumento,
   deleteDocumento 
 } from "@/app/(protected)/clientes/[id]/actions";
-import type { DocumentoStatus, DocumentoTipo } from "@types/clientes";
+import type { DocumentoStatus, DocumentoTipo } from "@noro/types/clientes";
 import { PAISES_E_NACIONALIDADES } from "@lib/client-data";
 
 interface Documento {
@@ -176,7 +176,7 @@ export default function DocumentosTab({ clienteId }: DocumentosTabProps) {
       router.refresh();
       setStatusMsg({ ok: true, msg: 'Documento salvo com sucesso.'});
     } else {
-      setStatusMsg({ ok: false, msg: 'Erro ao salvar: ' + (result.error || result.message) });
+      setStatusMsg({ ok: false, msg: 'Erro ao salvar: ' + (result.error || 'erro desconhecido') });
     }
 
     setIsSaving(false);

@@ -45,12 +45,10 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
 
   return (
     <div className="space-y-8">
-      {/* Configurações do Sistema */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200">
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Configurações do Sistema</h2>
         <p className="text-gray-600 mb-6">Defina as configurações globais da aplicação</p>
 
-        {/* SEÇÃO DE APARÊNCIA ADICIONADA */}
         <div className="border-b border-gray-200 pb-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Aparência do Painel</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -91,7 +89,6 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Moeda Padrão */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
               <DollarSign size={18} />
@@ -99,7 +96,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </label>
             <select
               value={sistema.moeda_padrao}
-              onChange={(e) => setSistema({ ...sistema, moeda_padrao: e.target.value as any })}
+              onChange={(e) => setSistema({ ...sistema, moeda_padrao: e.target.value as ConfiguracaoSistema['moeda_padrao'] })}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="EUR">EUR (€) - Euro</option>
@@ -107,8 +104,6 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
               <option value="BRL">BRL (R$) - Real Brasileiro</option>
             </select>
           </div>
-          {/* Outros campos (Fuso, Idioma, Data) permanecem aqui... */}
-          {/* Fuso Horário */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
               <Clock size={18} />
@@ -127,7 +122,6 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </select>
           </div>
 
-          {/* Idioma */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
               <Globe size={18} />
@@ -135,7 +129,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </label>
             <select
               value={sistema.idioma}
-              onChange={(e) => setSistema({ ...sistema, idioma: e.target.value as any })}
+              onChange={(e) => setSistema({ ...sistema, idioma: e.target.value as ConfiguracaoSistema['idioma'] })}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="pt">Português</option>
@@ -144,7 +138,6 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </select>
           </div>
 
-          {/* Formato de Data */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
               <Calendar size={18} />
@@ -152,7 +145,7 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
             </label>
             <select
               value={sistema.formato_data}
-              onChange={(e) => setSistema({ ...sistema, formato_data: e.target.value as any })}
+              onChange={(e) => setSistema({ ...sistema, formato_data: e.target.value as ConfiguracaoSistema['formato_data'] })}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="DD/MM/YYYY">DD/MM/YYYY (16/10/2025)</option>
@@ -162,7 +155,6 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
           </div>
         </div>
 
-        {/* Feedback e Botão Salvar Sistema */}
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
           {statusSistema && (
             <div className={`flex items-center gap-2 text-sm ${statusSistema.success ? 'text-green-600' : 'text-red-600'}`}>
@@ -181,12 +173,9 @@ export default function PreferenciasTab({ configSistema, configUsuario, userId }
         </div>
       </div>
 
-      {/* Preferências do Usuário (sem alterações) */}
       <div className="bg-white rounded-xl p-6 border border-gray-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Minhas Preferências</h2>
         <p className="text-gray-600 mb-6">Personalize sua experiência de uso</p>
-        {/* ... conteúdo das preferências do usuário permanece o mesmo ... */}
-        {/* Feedback e Botão Salvar Usuário */}
         <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
           {statusUsuario && (
             <div className={`flex items-center gap-2 text-sm ${statusUsuario.success ? 'text-green-600' : 'text-red-600'}`}>

@@ -1,5 +1,5 @@
 // app/api/webhooks/btg/route.ts
-import { createServerSupabaseClient } from "@lib/supabase/server"; // CORRIGIDO
+import { createServerSupabaseClient } from "@noro/lib/supabase/server"; // CORRIGIDO
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
@@ -16,7 +16,7 @@ const BTG_WEBHOOK_SECRET = process.env.BTG_WEBHOOK_SECRET;
  * Gerencia os eventos de pagamento de PIX e Boleto para conciliação.
  */
 export async function POST(req: Request) {
-    const supabase = createServerClient();
+    const supabase = createServerSupabaseClient();
 
     // 1. Verificar a Autenticação do Webhook (Segurança Crítica)
     const authHeader = req.headers.get('Authorization');
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
             // Buscamos pela cobrança associada ao pedido que ainda está AGUARDANDO_PAGAMENTO
             const { data: cobranca, error: fetchError } = await supabase
                 .from('cobrancas')
-                .select('id, provider')
+                    .select('id, provider, provider_data')
                 .eq('pedido_id', pedidoId)
                 .eq('status', 'AGUARDANDO_PAGAMENTO') // Busca a cobrança pendente
                 .single();

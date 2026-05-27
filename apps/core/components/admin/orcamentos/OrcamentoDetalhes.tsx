@@ -1,4 +1,4 @@
-﻿// components/admin/orcamentos/OrcamentoDetalhes.tsx
+// components/admin/orcamentos/OrcamentoDetalhes.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -19,7 +19,7 @@ import {
 import { convertToPedido } from '@/app/pedidos/pedidos-actions';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 
 // Tipo local para evitar importações cruzadas
 type OrcamentoComItens = Database['public']['Tables']['noro_orcamentos']['Row'] & {

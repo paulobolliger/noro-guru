@@ -14,6 +14,7 @@ export default function KpiCard({
   delta?: { value: number; period?: string } | null;
   icon?: any;
   loading?: boolean;
+  sparkline?: Array<{ x: string | number; y: number }>;
 }) {
   const deltaText = delta ? `${delta.value > 0 ? "+" : ""}${delta.value.toFixed(1)}%${delta?.period ? ` vs ${delta.period}` : ""}` : null;
   const deltaColor = !delta ? "" : delta.value > 0 ? "text-green-600" : delta.value < 0 ? "text-red-600" : "text-gray-600";

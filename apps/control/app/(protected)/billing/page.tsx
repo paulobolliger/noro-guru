@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { DollarSign, FileText, Layout, TrendingUp } from "lucide-react";
 
 export default async function BillingPage() {

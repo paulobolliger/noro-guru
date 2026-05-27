@@ -39,6 +39,15 @@ export function useTenants() {
     async function fetchTenants() {
       try {
         const supabase = createClient();
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+
+        if (userError) throw userError;
+
+        const userId = userData.user?.id;
+        if (!userId) {
+          setTenants([]);
+          return;
+        }
         
         // Busca user_tenant_roles com tenant expandido
         // RLS já filtra para mostrar apenas tenants do usuário logado
@@ -49,7 +58,7 @@ export function useTenants() {
             role,
             tenant:tenants(*)
           `)
-          .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+          .eq('user_id', userId);
 
         if (fetchError) throw fetchError;
 

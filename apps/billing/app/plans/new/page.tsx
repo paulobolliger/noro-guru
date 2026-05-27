@@ -1,21 +1,26 @@
 import { Metadata } from 'next';
-import { createPlan } from '../actions';
-import PlanForm from '../components/PlanForm';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Novo Plano',
-  description: 'Crie um novo plano de assinatura'
+  description: 'Planos são criados no Stripe',
 };
 
 export default function NewPlanPage() {
   return (
     <div className="container py-10">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight mb-8">
-          Novo Plano
-        </h1>
-
-        <PlanForm onSubmit={createPlan} />
+      <div className="mx-auto max-w-2xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">Novo Plano</h1>
+        <p className="text-gray-600 mb-6">
+          Planos de assinatura devem ser criados no Stripe. O Appwrite não possui
+          uma collection oficial para planos neste projeto.
+        </p>
+        <Link
+          href="/plans"
+          className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-white"
+        >
+          Voltar para planos
+        </Link>
       </div>
     </div>
   );

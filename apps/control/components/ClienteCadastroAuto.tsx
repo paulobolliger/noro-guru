@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAutoPreenchimentoBrasilAPI } from '@/apps/financeiro/lib/useAutoPreenchimentoBrasilAPI';
+import { useAutoPreenchimentoBrasilAPI } from '../../financeiro/lib/useAutoPreenchimentoBrasilAPI';
 
 export default function ClienteCadastroAuto() {
   const [form, setForm] = useState({

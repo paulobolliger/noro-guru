@@ -1,9 +1,11 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+"use server"
+
+import { createServerSupabaseClient } from "@noro/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
 // Função para buscar um plano específico
 export async function getPlan(planId: string) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   const { data: plan, error } = await supabase
     .from("subscription_plans")
@@ -21,7 +23,7 @@ export async function getPlan(planId: string) {
 
 // Função para atualizar um plano
 export async function updatePlan(planId: string, updates: any) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   // Primeiro valida as mudanças
   const { needsApproval } = await validatePlanChanges(planId, updates)
@@ -49,7 +51,7 @@ export async function updatePlan(planId: string, updates: any) {
 
 // Funções para aprovações
 export async function getPlanApprovals() {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   const { data: approvals, error } = await supabase
     .from("plan_approvals")
@@ -69,13 +71,13 @@ export async function getPlanApprovals() {
 }
 
 export async function approvePlanChanges(approvalId: string) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
-  const { data: userId } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
   
   const { error } = await supabase.rpc("approve_plan_changes", {
     p_approval_id: approvalId,
-    p_approved_by: userId.user?.id
+    p_approved_by: data.user?.id
   })
   
   if (error) {
@@ -87,7 +89,7 @@ export async function approvePlanChanges(approvalId: string) {
 }
 
 export async function rejectPlanChanges(approvalId: string) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   const { error } = await supabase
     .from("plan_approvals")
@@ -107,7 +109,7 @@ export async function rejectPlanChanges(approvalId: string) {
 
 // Funções para métricas
 export async function getPlanMetrics(planId: string, period: "daily" | "weekly" | "monthly") {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   const { data: metrics, error } = await supabase
     .from("plan_usage_metrics")
@@ -149,7 +151,7 @@ export async function getPlanMetrics(planId: string, period: "daily" | "weekly" 
 
 // Função para buscar histórico
 export async function getPlanHistory(planId: string) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   const { data: history, error } = await supabase
     .from("plan_change_history")
@@ -170,7 +172,7 @@ export async function getPlanHistory(planId: string) {
 
 // Função para validar mudanças
 export async function validatePlanChanges(planId: string, changes: any) {
-  const supabase = createClientComponentClient()
+  const supabase = createServerSupabaseClient()
   
   // Busca plano atual
   const { data: currentPlan } = await supabase
@@ -198,7 +200,7 @@ export async function validatePlanChanges(planId: string, changes: any) {
     // Busca número de assinaturas afetadas
     const { count } = await supabase
       .from("subscriptions")
-      .select("*", { count: true })
+      .select("*", { count: "exact" })
       .eq("plan_id", planId)
     
     // Criar solicitação de aprovação

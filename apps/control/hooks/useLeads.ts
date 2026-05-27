@@ -97,9 +97,12 @@ export function useLead(leadId: string | null) {
 
   useEffect(() => {
     if (!leadId) {
+      setLead(null);
       setIsLoading(false);
       return;
     }
+
+    const id = leadId;
 
     async function fetchLead() {
       try {
@@ -108,7 +111,7 @@ export function useLead(leadId: string | null) {
         const { data, error: fetchError } = await supabase
           .from('noro_leads')
           .select('*')
-          .eq('id', leadId)
+          .eq('id', id)
           .single();
 
         if (fetchError) throw fetchError;

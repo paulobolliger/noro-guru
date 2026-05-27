@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+          '@noro/lib': path.resolve(__dirname, '../../packages/lib'),
         }
       }
     };

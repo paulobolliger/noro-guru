@@ -3,7 +3,7 @@
 
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Plane, Calendar, DollarSign, Edit, Send, Download, CheckCircle, XCircle, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
+import { FileText, Plane, Calendar, DollarSign, Edit, Send, Download, CheckCircle, XCircle, RefreshCw, Loader2, AlertCircle, Trash2, User } from 'lucide-react';
 import type { Database } from "@noro-types/supabase";
 import { format } from 'date-fns';
 import { updateOrcamento, deleteOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";

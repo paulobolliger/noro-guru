@@ -1,13 +1,13 @@
 // app/admin/login/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from "@lib/supabase/client";
+import { createClient } from "@noro/lib/supabase/client";
 import { Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
-export default function AdminLoginPage() {
+function AdminLoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // Se o login for bem-sucedido, redireciona para a rota que tentou aceder, ou para /admin
@@ -183,5 +183,13 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminLoginPageContent />
+    </Suspense>
   );
 }

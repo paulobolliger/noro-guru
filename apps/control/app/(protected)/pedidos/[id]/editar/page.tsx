@@ -1,8 +1,8 @@
 // app/admin/(protected)/pedidos/[id]/editar/page.tsx
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { notFound } from 'next/navigation';
 import { Database } from "@noro-types/supabase";
-import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page"; // Reutilizando a tipagem
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 import EditPedidoForm from "@/components/pedidos/EditPedidoForm";
 import { Button } from "@ui/button";
 import Link from 'next/link';

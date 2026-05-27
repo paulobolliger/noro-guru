@@ -1,9 +1,9 @@
-import { createServerSupabaseClient } from '@lib/supabase/server';
+import { createServerSupabaseClient } from '@noro/lib/supabase/server';
 import { Database } from "@noro-types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react'; 
 import { PagamentosList } from "@/components/pagamentos/PagamentosList"; // Novo componente de lista
-import { PedidoComRelacionamentos } from "@/app/(protected)/pedidos/[id]/page"; // Reutilizando a tipagem
+import type { PedidoComRelacionamentos } from "@noro/types/admin";
 
 // Tipo de Pedido simplificado para esta listagem, mas usando o tipo completo para a busca
 export type PedidoParaPagamento = Pick<PedidoComRelacionamentos, 
@@ -29,7 +29,7 @@ async function fetchPedidosParaPagamento(): Promise<PedidoParaPagamento[]> {
         status,
         created_at,
         cliente_id,
-        clientes(nome_completo, email) // Buscamos apenas nome e email do cliente
+        clientes(nome_completo, email)
       `
     )
     .in('status', statusesAguardandoCobranca) // Filtra pelos status relevantes
@@ -41,7 +41,7 @@ async function fetchPedidosParaPagamento(): Promise<PedidoParaPagamento[]> {
   }
 
   // O casting é necessário pois o Supabase Select com joins retorna o tipo base
-  return (pedidos || []) as PedidoParaPagamento[];
+  return (pedidos || []) as unknown as PedidoParaPagamento[];
 }
 
 export default async function PagamentosPage() {

@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { getPlan } from "../../../actions"
+import { getPlan } from "../actions"
 import { PlanForm } from "../components/PlanForm"
 import { notFound } from "next/navigation"
 import { Button } from "@noro/ui/button"

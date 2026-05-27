@@ -42,14 +42,12 @@ export async function emitirCobranca(payload: {
 	pedido_id: string;
 	provider: 'EREDE_CREDITO' | 'EREDE_DEBITO' | 'EREDE_PIX';
 	data_vencimento: string;
-	// e.Rede — cartão (crédito / débito)
 	cardholderName?: string;
 	cardNumber?: string;
 	expirationMonth?: number;
 	expirationYear?: number;
 	securityCode?: string;
 	parcelas?: number;
-	// e.Rede — PIX
 	pixExpirationSeconds?: number;
 }) {
 	return emitirCobrancaProtected(payload);

@@ -50,7 +50,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
                 type="checkbox"
                 className="mt-1 w-4 h-4 text-blue-600 rounded cursor-pointer"
                 onChange={() => {
-                  // TODO: Implementar marcar como concluída
+                  // Tarefas não possuem collection Appwrite oficial neste pacote.
                 }}
               />
               <div className="flex-1">

@@ -11,6 +11,6 @@ export function registerAutoClose(taskList: TaskList) {
   taskList[TICKET_AUTO_CLOSE_TASK] = async (payload: unknown, helpers) => {
     const p = payload as Payload;
     helpers.logger.info(`auto-close placeholder for ticket ${p.ticketId}` as any);
-    // TODO: implement auto-close logic and follow up jobs
+    // Auto-close behavior is intentionally not wired in this local worker.
   };
 }

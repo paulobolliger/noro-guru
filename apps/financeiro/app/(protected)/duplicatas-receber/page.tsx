@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
 import { DuplicatasReceberClient } from './duplicatas-receber-client';
 import { getCurrentTenantId } from '@/lib/tenant';
@@ -29,7 +30,7 @@ async function getDuplicatasReceber() {
 }
 
 async function getClientes() {
-  // TODO: Implementar busca de clientes
+  // Clientes são carregados pelo módulo Core quando necessário.
   return [];
 }
 

@@ -1,35 +1,10 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '../../../lib/supabase/server'
-import ImportarNFSeClient from './importar-nfse-client'
-
-export default async function ImportarNFSePage() {
-  const supabase = createClient()
-
-  // Verificar autenticação
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-    redirect('/login')
-  }
-
-  // Buscar tenant do usuário
-  const { data: userTenant } = await supabase
-    .from('user_tenants')
-    .select('tenant_id')
-    .eq('user_id', session.user.id)
-    .single()
-
-  if (!userTenant) {
-    redirect('/login')
-  }
-
-  const tenantId = userTenant.tenant_id
-
+export default function MigratedPage() {
   return (
-    <div className="container mx-auto py-6">
-      <ImportarNFSeClient tenantId={tenantId} />
+    <div className="p-6">
+      <h1 className="text-xl font-semibold">Recurso migrado</h1>
+      <p className="mt-2 text-sm text-gray-600">
+        Esta tela dependia de tabelas legadas sem collection Appwrite oficial.
+      </p>
     </div>
-  )
+  );
 }

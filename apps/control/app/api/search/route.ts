@@ -2,7 +2,7 @@
 // API de busca global com suporte multi-tenant via RLS
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@lib/supabase/server';
+import { createServerSupabaseClient } from '@noro/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 

@@ -4,11 +4,25 @@
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
-import type { Database } from "@noro-types/supabase";
 import type { ConfiguracaoSistema } from "@/app/(protected)/configuracoes/config-actions";
 
-type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
-type Notificacao = Database['public']['Tables']['noro_notificacoes']['Row'];
+type NomadeUser = {
+  id: string;
+  nome: string | null;
+  email: string;
+  role: string;
+  avatar_url?: string | null;
+};
+
+type Notificacao = {
+  id: string;
+  user_id: string;
+  titulo: string;
+  mensagem: string | null;
+  link: string | null;
+  lida: boolean;
+  created_at: string;
+};
 
 interface AdminLayoutClientProps {
   user: NomadeUser;

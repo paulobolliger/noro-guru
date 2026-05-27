@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   Loader2, DollarSign, Copy, CreditCard, QrCode
 } from 'lucide-react';
-import { Database } from '@/types/supabase';
+import { Database } from '@/types/appwrite';
 import { format } from 'date-fns';
 
 type Cobranca = Database['public']['Tables']['cobrancas']['Row'];

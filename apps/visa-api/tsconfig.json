@@ -21,6 +21,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@noro/lib": [
+        "../../packages/lib"
+      ],
+      "@noro/lib/*": [
+        "../../packages/lib/*"
       ]
     },
     "allowImportingTsExtensions": true,

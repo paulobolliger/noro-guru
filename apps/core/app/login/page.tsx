@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { getCurrentUser } from '@noro/lib/services/authService';
 import LoginForm from './LoginForm';
 
 export default async function LoginPage({
@@ -7,10 +7,7 @@ export default async function LoginPage({
 }: {
   searchParams: { redirect?: string; error?: string };
 }) {
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (user) {
     return redirect(searchParams.redirect || '/');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { buscarBanco } from '@/apps/financeiro/lib/brasilapi';
-import { useAutoPreenchimentoBrasilAPI } from '@/apps/financeiro/lib/useAutoPreenchimentoBrasilAPI';
+import { buscarBanco } from '../../financeiro/lib/brasilapi';
+import { useAutoPreenchimentoBrasilAPI } from '../../financeiro/lib/useAutoPreenchimentoBrasilAPI';
 
 export default function ContaBancariaCadastroAuto() {
   const [form, setForm] = useState({

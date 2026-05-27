@@ -1,6 +1,6 @@
 'use client';
 
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import { TrendingUp, DollarSign, Users, Target, Award, AlertTriangle } from 'lucide-react';
 
 type Lead = Database['public']['Tables']['noro_leads']['Row'];

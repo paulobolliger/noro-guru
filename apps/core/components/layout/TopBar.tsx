@@ -1,8 +1,8 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { LogOut, User } from 'lucide-react'
+import { signOut } from '@noro/lib/services/authService'
 
 interface TopBarProps {
   user: {
@@ -13,10 +13,9 @@ interface TopBarProps {
 
 export default function TopBar({ user }: TopBarProps) {
   const router = useRouter()
-  const supabase = createClient()
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await signOut()
     router.push('/login')
     router.refresh()
   }

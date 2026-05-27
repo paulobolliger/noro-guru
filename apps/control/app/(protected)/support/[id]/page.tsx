@@ -78,7 +78,7 @@ export default function SupportTicketPage({ params }: { params: { id: string } }
         throw new Error(payload.error || "Falha ao atualizar ticket");
       }
       await refresh();
-      toast({ description: "Ticket atualizado." });
+      toast({ description: "Ticket atualizado.", variant: "default" });
     } catch (err: any) {
       toast({ description: err?.message || "Erro ao atualizar", variant: "destructive" });
     } finally {
@@ -112,7 +112,7 @@ export default function SupportTicketPage({ params }: { params: { id: string } }
       setMessageBody("");
       setInternal(false);
       await Promise.all([refreshMessages(), refresh()]);
-      toast({ description: "Mensagem enviada." });
+      toast({ description: "Mensagem enviada.", variant: "default" });
     } catch (err: any) {
       toast({ description: err?.message || "Erro ao enviar mensagem", variant: "destructive" });
     } finally {

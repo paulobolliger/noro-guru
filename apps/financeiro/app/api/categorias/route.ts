@@ -1,28 +1,23 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-  try {
-    const supabase = createClient();
-    const body = await request.json();
+const message = 'Endpoint legado desativado: não há collection Appwrite oficial para este recurso.';
 
-    const { data, error } = await supabase
-      .from('fin_categorias')
-      .insert([body])
-      .select()
-      .single();
+export async function GET() {
+  return NextResponse.json({ data: [], message });
+}
 
-    if (error) {
-      console.error('Erro ao criar categoria:', error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+export async function POST() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
 
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Erro no POST /api/categorias:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
-  }
+export async function PUT() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
+
+export async function PATCH() {
+  return NextResponse.json({ error: message }, { status: 410 });
+}
+
+export async function DELETE() {
+  return NextResponse.json({ error: message }, { status: 410 });
 }

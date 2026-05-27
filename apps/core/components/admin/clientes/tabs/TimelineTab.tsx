@@ -76,7 +76,7 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
       alert('Digite uma nota');
       return;
     }
-    // TODO: Implementar salvamento real de notas em noro_interacoes
+    // Notas de timeline não possuem collection Appwrite oficial neste pacote.
     alert('Nota adicionada (mock). Integração real virá com noro_interacoes.');
     setNovaNota('');
     setShowAddNota(false);

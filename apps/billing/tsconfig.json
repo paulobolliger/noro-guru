@@ -1,13 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@noro/lib": ["../../packages/lib"],
+      "@noro/lib/*": ["../../packages/lib/*"]
     }
   },
   "include": [

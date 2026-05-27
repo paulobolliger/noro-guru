@@ -100,9 +100,12 @@ export function useOrcamento(orcamentoId: string | null) {
 
   useEffect(() => {
     if (!orcamentoId) {
+      setOrcamento(null);
       setIsLoading(false);
       return;
     }
+
+    const id = orcamentoId;
 
     async function fetchOrcamento() {
       try {
@@ -111,7 +114,7 @@ export function useOrcamento(orcamentoId: string | null) {
         const { data, error: fetchError } = await supabase
           .from('noro_orcamentos')
           .select('*')
-          .eq('id', orcamentoId)
+          .eq('id', id)
           .single();
 
         if (fetchError) throw fetchError;

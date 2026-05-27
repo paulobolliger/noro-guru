@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { OrcamentoDetalhes } from "@/components/orcamentos/OrcamentoDetalhes";
 import { getOrcamentoById } from '../orcamentos-actions'; 
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 interface PageProps {
   params: { id: string };

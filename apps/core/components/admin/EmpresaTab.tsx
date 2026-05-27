@@ -15,7 +15,7 @@ export default function EmpresaTab({ empresaDados }: EmpresaTabProps) {
 
   const handleSubmit = (formData: FormData) => {
     setStatus(null);
-    formData.append('empresa_id', empresaDados.id); // Adiciona o ID para a action saber qual linha atualizar
+    formData.append('empresa_id', empresaDados.id);
 
     startSavingTransition(async () => {
       const result = await updateEmpresaDados(formData);
@@ -29,7 +29,6 @@ export default function EmpresaTab({ empresaDados }: EmpresaTabProps) {
       <h2 className="text-2xl font-bold text-gray-900 mb-2">Dados da Empresa</h2>
       <p className="text-gray-600 mb-8">Informações centrais que serão usadas em documentos e comunicações.</p>
 
-      {/* Seção de Informações Básicas */}
       <section className="border-b border-gray-200 pb-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><Building size={20} /> Informações Básicas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,7 +51,6 @@ export default function EmpresaTab({ empresaDados }: EmpresaTabProps) {
         </div>
       </section>
 
-      {/* Seção de Redes Sociais */}
       <section className="border-b border-gray-200 pb-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><LinkIcon size={20} /> Redes Sociais</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -75,7 +73,6 @@ export default function EmpresaTab({ empresaDados }: EmpresaTabProps) {
         </div>
       </section>
 
-      {/* Botão de Salvar */}
       <div className="flex items-center justify-end gap-4 mt-8">
         {status && (
           <div className={`flex items-center gap-2 text-sm ${status.success ? 'text-green-600' : 'text-red-600'}`}>

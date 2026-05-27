@@ -1,15 +1,16 @@
-﻿import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY as string;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
-if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
-  throw new Error("Stripe env vars missing");
-}
-const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
 
 export async function POST(req: Request) {
+  if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Stripe env vars missing" }, { status: 500 });
+  }
+
+  const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
   const supabase = createServerSupabaseClient();
   let event: Stripe.Event;
   try {
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
             issued_at: inv.created ? new Date(inv.created * 1000).toISOString() : null,
             due_at: inv.due_date ? new Date(inv.due_date * 1000).toISOString() : null,
             stripe_invoice_id,
-          }, { upsert: false });
+          });
         break;
       }
       case "invoice.paid": {

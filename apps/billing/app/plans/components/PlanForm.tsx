@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useTransition } from 'react';
-import { PlanFormData } from './actions';
+import type { PlanFormData } from '../actions';
 import { toast } from 'sonner';
 
 const planSchema = z.object({

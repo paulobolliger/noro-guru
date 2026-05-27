@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { checkStripeIntegration } from './actions';
+import { checkStripeIntegration } from '../actions';
 import { AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
 interface IntegrationStatus {

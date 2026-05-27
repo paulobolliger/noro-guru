@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { getPlan } from "../../actions"
+import { getPlan } from "./actions"
 import { PlanHeader } from "./components/PlanHeader"
 import { PlanDetails } from "./components/PlanDetails"
 import { PlanSubscribers } from "./components/PlanSubscribers"

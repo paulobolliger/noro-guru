@@ -5,7 +5,7 @@ import { Search, Bell, Menu } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 
 type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
 type Notificacao = Database['public']['Tables']['noro_notificacoes']['Row'];

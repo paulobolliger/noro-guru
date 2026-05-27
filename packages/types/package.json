@@ -7,7 +7,7 @@
         ".": "./src/index.ts",
         "./blueprint": "./src/blueprint/index.ts",
         "./financeiro": "./financeiro.ts",
-        "./supabase": "./supabase.ts",
+        "./appwrite": "./appwrite.ts",
         "./admin": "./admin.ts",
         "./clientes": "./clientes.ts",
         "./control-plane": "./control-plane.ts",

@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@lib/supabase/admin";
+import { getSupabaseAdmin } from "@noro/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 // --- Funções de Gestão de Utilizadores ---

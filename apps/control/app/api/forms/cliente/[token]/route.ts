@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@lib/supabase/server';
+import { createServerSupabaseClient } from '@noro/lib/supabase/server';
 
 function buildCorsHeaders(origin: string | null) {
   const allowed = (process.env.ALLOWED_ORIGINS || '*')

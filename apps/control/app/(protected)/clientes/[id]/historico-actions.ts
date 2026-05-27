@@ -1,6 +1,6 @@
 'use server';
 
-import { createServerSupabaseClient } from "@lib/supabase/server";
+import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 // Busca dados reais para o Histórico do Cliente (orçamentos, pedidos, cobranças)
 export async function getClienteHistorico(clienteId: string) {

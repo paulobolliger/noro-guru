@@ -1,2 +1,38 @@
-failed to retrieve generated types: {"message":"Your account does not have the necessary privileges to access this endpoint. For more details, refer to our documentation https://supabase.com/docs/guides/platform/access-control"}
-Try rerunning the command with --debug to troubleshoot the error.
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+type GenericRecord = Record<string, any>
+
+type GenericTable = {
+  Row: GenericRecord
+  Insert: GenericRecord
+  Update: GenericRecord
+}
+
+export type Database = {
+  public: {
+    Tables: Record<string, GenericTable>
+    Views: Record<string, GenericTable>
+    Functions: Record<string, { Args: GenericRecord; Returns: any }>
+    Enums: Record<string, string>
+  }
+  cp: {
+    Tables: Record<string, GenericTable>
+    Views: Record<string, GenericTable>
+    Functions: Record<string, { Args: GenericRecord; Returns: any }>
+    Enums: Record<string, string>
+  }
+  billing: {
+    Tables: Record<string, GenericTable>
+    Views: Record<string, GenericTable>
+    Functions: Record<string, { Args: GenericRecord; Returns: any }>
+    Enums: Record<string, string>
+  }
+}
+
+export default Database

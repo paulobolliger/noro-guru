@@ -1,4 +1,20 @@
 {
     "name": "@noro/lib",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "main": "./index.ts",
+    "types": "./index.ts",
+    "exports": {
+        ".": "./index.ts",
+        "./services/authService": "./services/authService.ts",
+        "./services/billingService": "./services/billingService.ts",
+        "./services/crmService": "./services/crmService.ts",
+        "./services/financeiroService": "./services/financeiroService.ts",
+        "./services/runtimeCrud": "./services/runtimeCrud.ts",
+        "./services/tenantService": "./services/tenantService.ts",
+        "./services/visaService": "./services/visaService.ts",
+        "./supabase": "./supabase/index.ts",
+        "./supabase/admin": "./supabase/admin.ts",
+        "./supabase/client": "./supabase/client.ts",
+        "./supabase/server": "./supabase/server.ts"
+    }
 }

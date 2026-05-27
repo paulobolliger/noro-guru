@@ -4,7 +4,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Plus, Search } from 'lucide-react';
-import type { Database } from '@/types/supabase';
+import type { Database } from '@/types/appwrite';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 

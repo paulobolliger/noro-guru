@@ -1,114 +1,34 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@noro-types/supabase'
-import { MarkupPadrao, RegraPreco } from '@/types/pricing'
+import type { MarkupPadrao, RegraPreco, SimulacaoPreco } from '@/types/pricing';
 
-const supabase = createClientComponentClient<any>()
+const disabledMessage =
+  'Precificação usava tabelas e funções SQL sem collections Appwrite oficiais.';
 
 export const pricingApi = {
-  // Markups
-  async listMarkups() {
-    const { data, error } = await supabase
-      .from('markups')
-      .select('*')
-      .order('ordem')
-    
-    if (error) throw error
-    return data
+  async listMarkups(): Promise<MarkupPadrao[]> {
+    return [];
   },
-
-  async createMarkup(markup: Omit<MarkupPadrao, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await supabase
-      .from('markups')
-      .insert(markup)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async createMarkup(_markup: Omit<MarkupPadrao, 'id' | 'created_at' | 'updated_at'>) {
+    throw new Error(disabledMessage);
   },
-
-  async updateMarkup(id: string, markup: Partial<MarkupPadrao>) {
-    const { data, error } = await supabase
-      .from('markups')
-      .update(markup)
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async updateMarkup(_id: string, _markup: Partial<MarkupPadrao>) {
+    throw new Error(disabledMessage);
   },
-
-  async toggleMarkupStatus(id: string, ativo: boolean) {
-    const { data, error } = await supabase
-      .from('markups')
-      .update({ ativo })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async toggleMarkupStatus(_id: string, _ativo: boolean) {
+    throw new Error(disabledMessage);
   },
-
-  // Regras de Preço
-  async listRegrasPreco() {
-    const { data, error } = await supabase
-      .from('regras_preco')
-      .select('*')
-      .order('prioridade')
-    
-    if (error) throw error
-    return data
+  async listRegrasPreco(): Promise<RegraPreco[]> {
+    return [];
   },
-
-  async createRegraPreco(regra: Omit<RegraPreco, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await supabase
-      .from('regras_preco')
-      .insert(regra)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async createRegraPreco(_regra: Omit<RegraPreco, 'id' | 'created_at' | 'updated_at'>) {
+    throw new Error(disabledMessage);
   },
-
-  async updateRegraPreco(id: string, regra: Partial<RegraPreco>) {
-    const { data, error } = await supabase
-      .from('regras_preco')
-      .update(regra)
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async updateRegraPreco(_id: string, _regra: Partial<RegraPreco>) {
+    throw new Error(disabledMessage);
   },
-
-  async toggleRegraPrecoStatus(id: string, ativo: boolean) {
-    const { data, error } = await supabase
-      .from('regras_preco')
-      .update({ ativo })
-      .eq('id', id)
-      .select()
-      .single()
-    
-    if (error) throw error
-    return data
+  async toggleRegraPrecoStatus(_id: string, _ativo: boolean) {
+    throw new Error(disabledMessage);
   },
-
-  // Cálculo de Preços
-  async calcularPreco(params: {
-    preco_base: number
-    produto_id?: string
-    cliente_id?: string
-    quantidade?: number
-    data?: string
-  }) {
-    const { data, error } = await supabase
-      .rpc('calcular_preco_final', params)
-    
-    if (error) throw error
-    return data
-  }
-}
+  async simularPreco(_params: SimulacaoPreco) {
+    throw new Error(disabledMessage);
+  },
+};
