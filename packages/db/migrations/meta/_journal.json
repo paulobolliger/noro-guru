@@ -15,6 +15,13 @@
       "when": 1780091221035,
       "tag": "0001_confused_rachel_grey",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780093370128,
+      "tag": "0002_cheerful_loki",
+      "breakpoints": true
     }
   ]
 }

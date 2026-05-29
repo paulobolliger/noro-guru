@@ -6,7 +6,10 @@ import { leads } from './leads';
 import { tenantMemberships } from './memberships';
 import { modules } from './modules';
 import { planModules, plans } from './plans';
+import { pricingRules } from './pricing-rules';
+import { products } from './products';
 import { platformRoleAssignments } from './roles';
+import { suppliers } from './suppliers';
 import { tenantModules } from './tenant-modules';
 import { tenants } from './tenants';
 import { users } from './users';
@@ -19,7 +22,10 @@ export * from './leads';
 export * from './memberships';
 export * from './modules';
 export * from './plans';
+export * from './pricing-rules';
+export * from './products';
 export * from './roles';
+export * from './suppliers';
 export * from './tenant-modules';
 export * from './tenants';
 export * from './users';
@@ -150,4 +156,27 @@ export const clientsRelations = relations(clients, ({ one }) => ({
 export const tenantsLeadsRelations = relations(tenants, ({ many }) => ({
   leads: many(leads),
   clients: many(clients),
+  pricingRules: many(pricingRules),
+}));
+
+export const suppliersRelations = relations(suppliers, ({ many }) => ({
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+  supplier: one(suppliers, {
+    fields: [products.supplierId],
+    references: [suppliers.id],
+  }),
+}));
+
+export const pricingRulesRelations = relations(pricingRules, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [pricingRules.tenantId],
+    references: [tenants.id],
+  }),
+  plan: one(plans, {
+    fields: [pricingRules.planId],
+    references: [plans.id],
+  }),
 }));

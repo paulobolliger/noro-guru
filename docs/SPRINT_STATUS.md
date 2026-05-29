@@ -20,7 +20,7 @@ Supabase deve ser tratado como legado/transicional. Appwrite esta eliminado. Asa
 | Sprint 1 | Auth, tenant e base de dados canonica | `concluida` | Alta | Sprint 0 concluida; 1A–1N concluidas | Sprint 1 concluida em 2026-05-29 |
 | Sprint 1N | Bootstrap do platform_owner em banco dev/staging | `concluida` | Alta | DEV_STAGING_DATABASE_URL e PLATFORM_OWNER_LOGTO_SUB confirmados por Paulo | Concluida em 2026-05-29 |
 | Sprint 2 | CRM minimo em PostgreSQL/Drizzle | `concluida` | Alta | Sprint 1 concluida | Concluida em 2026-05-29 |
-| Sprint 3 | Produtos manuais e fornecedores basicos | `nao_iniciada` | Media | Sprint 2 concluida | Definir catalogo manual-first e fornecedores basicos |
+| Sprint 3 | Produtos manuais e fornecedores basicos | `concluida` | Media | Sprint 2 concluida | Concluida em 2026-05-29 |
 | Sprint 4 | Propostas / quote builder canonico | `nao_iniciada` | Alta | Sprint 3 concluida | Consolidar proposta como base para checkout |
 | Sprint 5 | Checkout Asaas minimo | `nao_iniciada` | Alta | Sprint 4 concluida e decisoes Asaas aprovadas | Planejar `PaymentProvider`, `AsaasProvider` e webhooks |
 | Sprint 6 | Comissao simples e eventos financeiros | `nao_iniciada` | Alta | Sprint 5 concluida | Definir regra simples de comissao e eventos financeiros |
@@ -41,11 +41,11 @@ Use apenas estes status no documento:
 
 ## 3. Sprint atual
 
-Sprint atual: Sprint 3 — Produtos manuais e fornecedores basicos
+Sprint atual: Sprint 4 — Propostas / quote builder canonico
 
-Status atual da Sprint 2: `concluida`
+Status atual da Sprint 3: `concluida`
 
-Proxima acao: Iniciar Sprint 3 — modelar produtos manuais e fornecedores basicos com `tenant_id`.
+Proxima acao: Iniciar Sprint 4 — modelar propostas, itens, snapshot financeiro e status.
 
 ## Sprint 0 — Alinhamento documental e decisoes criticas
 
@@ -416,7 +416,7 @@ Schemas aprovados pelo Paulo com justificativas de dominio (turismo). Nenhuma mi
 
 ## Sprint 3 — Produtos manuais e fornecedores basicos
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Criar um catalogo inicial manual-first para permitir propostas sem depender de APIs de fornecedor.
@@ -455,22 +455,37 @@ Criar um catalogo inicial manual-first para permitir propostas sem depender de A
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `packages/db/schema/suppliers.ts` — catálogo global de fornecedores com integração API
+- `packages/db/schema/products.ts` — catálogo global de produtos (9 categorias, sem custo, sem tenant_id)
+- `packages/db/schema/pricing-rules.ts` — estrutura de regras de composição de preço (plataforma + tenant)
+- `packages/db/schema/index.ts` — relações suppliers/products/pricing_rules adicionadas
+- `packages/db/repositories/suppliersRepository.ts` — CRUD + stats por tipo
+- `packages/db/repositories/productsRepository.ts` — CRUD + stats por categoria
+- `packages/db/repositories/pricingRulesRepository.ts` — CRUD + leitura por escopo
+- `packages/db/repositories/index.ts` — exports adicionados
+- `packages/db/migrations/0002_cheerful_loki.sql` — migration aplicada ao Neon (15 tabelas)
+- `apps/control/app/(protected)/catalogo/fornecedores/actions.ts` — CRUD admin
+- `apps/control/app/(protected)/catalogo/produtos/actions.ts` — CRUD admin
+- `docs/SPRINT_STATUS.md`
 
-**Resultado final:**
-- Nao iniciado.
+**Decisoes arquiteturais registradas:**
+- Suppliers e products sao catálogo global da plataforma (sem tenant_id)
+- custo_base_cents removido do produto — snapshot fica na booking (Sprint 5+)
+- preco_tipo determina comportamento na proposta: manual | api_tempo_real | api_cache
+- pricing_rules com escopo plataforma/tenant — lógica de composição de preço em sprint futura
+- apps/core nao recebe actions nesta sprint — consome catálogo via Sprint 4 (propostas)
 
 **Data de inicio:**  
-A definir.
+2026-05-29.
 
 **Data de conclusao:**  
-A definir.
+2026-05-29.
 
 **Agente/responsavel:**  
-A definir.
+Claude / Paulo Bolliger.
 
 **Observacoes:**  
-Nenhuma.
+Catálogo global gerenciado pelo apps/control. Tenant consome via sistema de reservas (Sprint 4+). Regras de pricing sem lógica ainda — estrutura criada para evitar migration destrutiva futura.
 
 ## Sprint 4 — Propostas / quote builder canonico
 

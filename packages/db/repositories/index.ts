@@ -8,3 +8,6 @@ export * as plansRepository from './plansRepository';
 export * as tenantModulesRepository from './tenantModulesRepository';
 export * as leadsRepository from './leadsRepository';
 export * as clientsRepository from './clientsRepository';
+export * as suppliersRepository from './suppliersRepository';
+export * as productsRepository from './productsRepository';
+export * as pricingRulesRepository from './pricingRulesRepository';
