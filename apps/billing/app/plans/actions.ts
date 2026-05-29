@@ -17,10 +17,10 @@ export type PlanFormData = z.infer<typeof planSchema>;
 
 export async function createPlan(formData: PlanFormData) {
   planSchema.parse(formData);
-  throw new Error('Planos devem ser criados no Stripe. Não há collection Appwrite oficial para planos.');
+  throw new Error('Planos devem ser criados no Stripe. Não há modelo de dados ativo para planos.');
 }
 
 export async function updatePlan(_id: string, formData: PlanFormData) {
   planSchema.parse(formData);
-  throw new Error('Planos devem ser atualizados no Stripe. Não há collection Appwrite oficial para planos.');
+  throw new Error('Planos devem ser atualizados no Stripe. Não há modelo de dados ativo para planos.');
 }

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, Plus, Pencil, Loader2 } from 'lucide-react';
-import { Database } from '@/types/appwrite'; // Importe o tipo Database
+import { Database } from '@/types/database';
 
 // Tipo do item do pedido para o estado local, baseado no Supabase
 type PedidoItem = Database['public']['Tables']['pedido_itens']['Row'];

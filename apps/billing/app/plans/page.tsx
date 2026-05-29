@@ -22,7 +22,7 @@ export default async function PlansPage() {
         <h2 className="text-xl font-semibold mb-2">Sem collection local de planos</h2>
         <p className="text-gray-600">
           `billing.plans` era uma tabela Supabase/Postgres. Como ela não existe na lista
-          oficial de collections Appwrite, o app não mantém um CRUD local de planos.
+          oficial de modelos de dados legados, o app não mantém um CRUD local de planos.
         </p>
       </div>
     </div>

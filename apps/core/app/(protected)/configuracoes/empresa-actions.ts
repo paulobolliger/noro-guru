@@ -1,6 +1,6 @@
 'use server';
 
-const message = 'Ação legada desativada: não há collection Appwrite oficial para este recurso.';
+const message = 'Ação legada desativada: o modelo de dados legado deste recurso foi desativado.';
 
 export interface EmpresaDados {
   id: string;
@@ -18,7 +18,7 @@ export interface EmpresaDados {
 
 export async function getEmpresaDados(..._args: unknown[]): Promise<any> {
   return {
-    id: 'appwrite-disabled',
+    id: 'legacy-disabled',
     nome_empresa: null,
     documento: null,
     email_principal: null,

@@ -1,4 +1,4 @@
-﻿// components/admin/TarefasList.tsx
+// components/admin/TarefasList.tsx
 import Link from 'next/link';
 import { Tarefa } from '@/types/admin';
 
@@ -50,7 +50,7 @@ export default function TarefasList({ tarefas }: TarefasListProps) {
                 type="checkbox"
                 className="mt-1 w-4 h-4 text-blue-600 rounded cursor-pointer"
                 onChange={() => {
-                  // Tarefas não possuem collection Appwrite oficial neste pacote.
+                  // Tarefas não possuem modelo de dados ativo neste pacote.
                 }}
               />
               <div className="flex-1">

@@ -1,7 +1,7 @@
 import type { MarkupPadrao, RegraPreco, SimulacaoPreco } from '@/types/pricing';
 
 const disabledMessage =
-  'Precificação usava tabelas e funções SQL sem collections Appwrite oficiais.';
+  'Precificação usava tabelas e funções SQL sem modelo de dados ativo.';
 
 export const pricingApi = {
   async listMarkups(): Promise<MarkupPadrao[]> {

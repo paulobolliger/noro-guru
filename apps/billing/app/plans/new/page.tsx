@@ -12,8 +12,8 @@ export default function NewPlanPage() {
       <div className="mx-auto max-w-2xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-bold tracking-tight mb-4">Novo Plano</h1>
         <p className="text-gray-600 mb-6">
-          Planos de assinatura devem ser criados no Stripe. O Appwrite não possui
-          uma collection oficial para planos neste projeto.
+          Planos de assinatura ainda devem ser criados no Stripe legado ate a
+          migracao para o modelo financeiro Asaas.
         </p>
         <Link
           href="/plans"

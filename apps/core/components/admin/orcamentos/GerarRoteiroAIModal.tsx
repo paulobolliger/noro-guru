@@ -4,7 +4,7 @@
 import { useState, useTransition } from 'react';
 import { X, Wand2, Loader2, AlertCircle } from 'lucide-react';
 import { INTENCOES_VIAGEM } from '@/lib/client-data';
-import type { Database } from '@/types/appwrite';
+import type { Database } from '@/types/database';
 
 type Cliente = Database['public']['Tables']['noro_clientes']['Row'];
 

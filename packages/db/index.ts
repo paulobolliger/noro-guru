@@ -1,8 +1,14 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { getDatabaseUrl, NORO_DATABASE } from '@noro/config';
+import * as schema from './schema';
 
 export type DatabaseClient = ReturnType<typeof createDatabaseClient>;
+export type NoroDatabase = PostgresJsDatabase<typeof schema>;
+
+export * from './schema';
+export * from './repositories';
 
 export function createPostgresClient(connectionString = getDatabaseUrl()) {
   return postgres(connectionString, {
@@ -17,7 +23,7 @@ export function createDatabaseClient(connectionString = getDatabaseUrl()) {
   const client = createPostgresClient(connectionString);
   return {
     client,
-    db: drizzle(client),
+    db: drizzle(client, { schema }),
     async close() {
       await client.end();
     },

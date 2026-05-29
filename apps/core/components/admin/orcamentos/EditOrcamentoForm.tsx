@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FileText, User, Plane, Calendar, DollarSign, Loader2, AlertCircle, CheckCircle2, Plus, Edit2, Trash2, X, Save } from 'lucide-react';
 import { updateOrcamento } from '@/app/orcamentos/orcamentos-actions';
 import { format } from 'date-fns';
-import type { Database } from '@/types/appwrite';
+import type { Database } from '@/types/database';
 
 // Tipos baseados nas estruturas do projeto
 type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];

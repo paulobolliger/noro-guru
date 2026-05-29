@@ -1,37 +1,60 @@
 # control-worker
 
-Control Plane background worker powered by Graphile Worker. Handles support ticket automations, email notifications, and SLA checks.
+Background worker do Control Plane, baseado em Graphile Worker.
 
-## Local development
+Status: manter, mas tratar como infraestrutura em implementacao. As tasks atuais ainda sao placeholders.
+
+## Papel
+
+`packages/control-worker` deve executar tarefas assíncronas da plataforma NORO:
+
+- notificacoes operacionais;
+- verificacoes de SLA;
+- automacoes de suporte;
+- processamento futuro de eventos de billing, comunicacao e integracoes.
+
+Ele pertence ao contexto `apps/control`/`admin.noro.guru`, nao ao portal tenant.
+
+## Banco E Auth
+
+Direcao oficial:
+
+- PostgreSQL central via `DATABASE_URL`;
+- Drizzle para schema e acesso de dados quando aplicavel;
+- Logto como camada oficial de auth nos apps que acionam fluxos protegidos.
+
+Supabase nao deve ser citado como requisito operacional novo. Qualquer uso remanescente deve ser tratado como legado/transicional conforme:
+
+```txt
+docs/architecture/data-auth-transition.md
+docs/architecture/supabase-residue-report.md
+supabase/FROZEN.md
+```
+
+## Variaveis
+
+- `DATABASE_URL`: conexao PostgreSQL oficial.
+- `WORKER_CONCURRENCY`: opcional, default 5.
+- `WORKER_SCHEMA`: opcional, default `graphile_worker`.
+- Provedor de email: configurar apenas quando a task de email for implementada no modelo vigente.
+
+## Desenvolvimento Local
 
 ```bash
-# from repo root
-npm install
 npm run --workspace control-worker dev
 ```
 
-Environment variables (via `.env.local` or Railway service variables):
+## Deploy
 
-- `DATABASE_URL` – Supabase Postgres connection string with service role permissions.
-- `WORKER_CONCURRENCY` – Optional, defaults to 5.
-- `WORKER_SCHEMA` – Optional, defaults to `graphile_worker`.
-- `RESEND_API_KEY` or `AWS_SES_*` – Configure email provider when implementing notify-email task.
+1. Build: `npm run --workspace control-worker build`.
+2. Start: `npm run --workspace control-worker start`.
+3. Configurar `DATABASE_URL` e variaveis de worker.
+4. Manter pelo menos uma instancia ativa quando houver filas reais em producao.
 
-## Railway deployment
+## Tasks Atuais
 
-1. Create a new service from this package (Node 18 runtime).
-2. Set build command to `npm run --workspace control-worker build`.
-3. Set start command to `npm run --workspace control-worker start`.
-4. Configure env vars:
-   - `DATABASE_URL` (Supabase service role string)
-   - `WORKER_CONCURRENCY` (e.g. 5)
-   - Email provider secrets.
-5. Enable redeploy on git pushes; keep at least one instance running for continuous job processing.
+- `support_notify_email`
+- `support_sla_check`
+- `support_ticket_auto_close`
 
-## Tasks overview
-
-- `support_notify_email`: send transactional emails when tickets update.
-- `support_sla_check`: evaluate SLA timers and enqueue follow-up work.
-- `support_ticket_auto_close`: close stale tickets and notify stakeholders.
-
-Each task currently logs a placeholder; implement logic once APIs and db procedures are ready.
+As tasks ainda devem ser revisadas antes de assumir comportamento produtivo.

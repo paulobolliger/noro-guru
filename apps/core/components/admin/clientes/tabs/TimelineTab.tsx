@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { Clock, MessageSquare, Mail, Phone, FileText, Package, DollarSign, Plus, Save, X } from 'lucide-react';
@@ -76,7 +76,7 @@ export default function TimelineTab({ clienteId }: TimelineTabProps) {
       alert('Digite uma nota');
       return;
     }
-    // Notas de timeline não possuem collection Appwrite oficial neste pacote.
+    // Notas de timeline não possuem modelo de dados ativo neste pacote.
     alert('Nota adicionada (mock). Integração real virá com noro_interacoes.');
     setNovaNota('');
     setShowAddNota(false);

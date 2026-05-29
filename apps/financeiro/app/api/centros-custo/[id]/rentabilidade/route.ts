@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const message = 'Endpoint legado desativado: não há collection Appwrite oficial para este recurso.';
+const message = 'Endpoint legado desativado: o modelo de dados legado deste recurso foi desativado.';
 
 export async function GET() {
   return NextResponse.json({ data: [], message });

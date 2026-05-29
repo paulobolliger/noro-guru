@@ -59,7 +59,7 @@ export default async function RootPage({ searchParams }: RootPageProps) {
             <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-2">Portal do cliente</h2>
               <p className="text-gray-600">
-                Abra esta página com um tenant Appwrite válido para acessar o portal.
+                Abra esta página com um tenant válido para acessar o portal.
               </p>
             </div>
           )}

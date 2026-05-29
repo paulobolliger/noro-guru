@@ -1,6 +1,6 @@
 'use server';
 
-const message = 'Ação legada desativada: não há collection Appwrite oficial para este recurso.';
+const message = 'Ação legada desativada: o modelo de dados legado deste recurso foi desativado.';
 
 export interface Tarefa {
   id: string;

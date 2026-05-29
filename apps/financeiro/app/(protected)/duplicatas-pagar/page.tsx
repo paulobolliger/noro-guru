@@ -30,7 +30,7 @@ async function getDuplicatasPagar() {
 }
 
 async function getFornecedores() {
-  // Fornecedores não possuem collection Appwrite oficial neste pacote.
+  // Fornecedores não possuem modelo de dados ativo neste pacote.
   return [];
 }
 

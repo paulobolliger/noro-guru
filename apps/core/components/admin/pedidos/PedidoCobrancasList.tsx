@@ -3,7 +3,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils'; // Assumindo este utilitário
-import { Database } from '@/types/appwrite';
+import { Database } from '@/types/database';
 import { Badge } from '@/components/ui/badge'; 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Copy, LinkIcon, AlertTriangle, CheckCircle } from 'lucide-react';

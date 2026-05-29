@@ -1,0 +1,8 @@
+export * as usersRepository from './usersRepository';
+export * as authIdentityRepository from './authIdentityRepository';
+export * as tenantsRepository from './tenantsRepository';
+export * as membershipsRepository from './membershipsRepository';
+export * as platformRolesRepository from './platformRolesRepository';
+export * as modulesRepository from './modulesRepository';
+export * as plansRepository from './plansRepository';
+export * as tenantModulesRepository from './tenantModulesRepository';

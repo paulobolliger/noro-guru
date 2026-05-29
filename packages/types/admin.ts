@@ -1,4 +1,4 @@
-import type { Database } from './appwrite';
+import type { Database } from './supabase';
 
 export type UserRole = 'cliente' | 'admin' | 'super_admin';
 

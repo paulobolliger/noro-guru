@@ -9,8 +9,8 @@ export function usePricing() {
   const [isLoading, setIsLoading] = useState(false);
 
   const runDisabledMutation = async () => {
-    toast.error('Precificação não possui collections Appwrite oficiais.');
-    throw new Error('Precificação não possui collections Appwrite oficiais.');
+    toast.error('Precificação não possui modelo de dados ativo nesta fase.');
+    throw new Error('Precificação não possui modelo de dados ativo nesta fase.');
   };
 
   return {

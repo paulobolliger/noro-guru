@@ -19,7 +19,7 @@ import {
 import { convertToPedido } from '@/app/pedidos/pedidos-actions';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import type { Database } from '@/types/appwrite';
+import type { Database } from '@/types/database';
 
 // Tipo local para evitar importações cruzadas
 type OrcamentoComItens = Database['public']['Tables']['noro_orcamentos']['Row'] & {

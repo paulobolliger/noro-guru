@@ -7,7 +7,16 @@
       "Skill(stitch-build:react-components)",
       "Skill(stitch-build:react-components:*)",
       "Bash(xargs grep -l \"redirect\\(\")",
-      "Bash(grep -v \"^\\\\$\")"
+      "Bash(grep -v \"^\\\\$\")",
+      "mcp__stitch__get_project",
+      "Bash(python3 -c \"import json,sys; screens=[s for s in json.load\\(sys.stdin\\)['screens'] if s.get\\('title'\\)]; [print\\(s['title'],'|',s['name']\\) for s in screens]\")",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(bash scripts/fetch-stitch.sh \"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzA4MTRlOWZjZWI1MjQ2MTk5YWFmNDk4YmVhYjA2YmIwEgsSBxDM9aaJ1goYAZIBIwoKcHJvamVjdF9pZBIVQhM3OTM0MjAwNTQyMTIwOTEyNzEw&filename=&opi=96797242\" \".stitch/designs/ecossistema.html\")",
+      "Bash(bash scripts/fetch-stitch.sh \"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2EyMTI2MDQ2MGI5NjQ3OTU5NjRjNjE5OTk0ZjNjZTBhEgsSBxDM9aaJ1goYAZIBIwoKcHJvamVjdF9pZBIVQhM3OTM0MjAwNTQyMTIwOTEyNzEw&filename=&opi=96797242\" \".stitch/designs/visa-api.html\")",
+      "Bash(bash scripts/fetch-stitch.sh \"https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2I3OGJmMTc2NWQwNjRkYzZiOWZmZTJhNDBmZWM0YjA5EgsSBxDM9aaJ1goYAZIBIwoKcHJvamVjdF9pZBIVQhM3OTM0MjAwNTQyMTIwOTEyNzEw&filename=&opi=96797242\" \".stitch/designs/home.html\")",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\paulo\\\\0-dev\\\\02-aplicacoes\\\\04 noro-guru\\\\noro-guru\\\\apps\\\\web\\\\.stitch\\\\designs\" | Select-Object Name, @{N='Size';E={$_.Length}})",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\paulo\\\\0-dev\\\\02-aplicacoes\\\\04 noro-guru\\\\noro-guru\\\\apps\\\\web\\\\app\\\\ecosystem\\\\visa-api\")"
     ]
   }
 }

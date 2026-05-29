@@ -6,7 +6,7 @@ import StatCard from './StatCard';
 import LeadsRecentes from './LeadsRecentes';
 import TarefasList from './TarefasList';
 import Link from 'next/link';
-import type { Database } from '@/types/appwrite';
+import type { Database } from '@/types/database';
 
 // Tipos para as props
 type Lead = Database['public']['Tables']['noro_leads']['Row'];

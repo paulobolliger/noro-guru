@@ -21,7 +21,7 @@ export const userTenantsService = createCollectionService<UserTenant>(
 
 export async function getTenantIdForUser(userId: string): Promise<string> {
   void userId;
-  throw new Error('Tenant lookup via Appwrite desativado. Use packages/db na próxima fase.');
+  throw new Error('Tenant lookup pela camada legada desativado. Use packages/db na próxima fase.');
 }
 
 export async function getTenantForUser(userId: string): Promise<Tenant> {

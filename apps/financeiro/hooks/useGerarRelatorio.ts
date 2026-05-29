@@ -22,7 +22,7 @@ export function useGerarRelatorio(): UseGerarRelatorioReturn {
 
   const gerarRelatorio = async (_config: RelatorioConfig) => {
     setIsLoading(true);
-    const err = new Error('Relatórios de pricing dependiam de funções SQL sem collection Appwrite oficial.');
+    const err = new Error('Relatórios de pricing dependiam de funções SQL sem modelo de dados ativo.');
     setError(err);
     setIsLoading(false);
     throw err;
