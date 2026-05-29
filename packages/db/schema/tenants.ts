@@ -31,11 +31,29 @@ export const tenants = noro.table(
     planId: uuid('plan_id').references(() => plans.id),
     billingStatus: text('billing_status').$type<TenantBillingStatus>().notNull().default('trialing'),
     metadata: jsonb('metadata').$type<Record<string, unknown>>(),
+
+    // Portal público + área do viajante (apps/portal)
+    // Subdomínio: {portalSlug}.agencia.noro.guru
+    portalSlug: text('portal_slug'),
+    // Domínio customizado (planos superiores): xyz.com.br
+    portalDomain: text('portal_domain'),
+    // Tema white label: logo, cores, fontes
+    portalTheme: jsonb('portal_theme').$type<{
+      logoUrl?: string;
+      faviconUrl?: string;
+      primaryColor?: string;
+      secondaryColor?: string;
+      fontFamily?: string;
+      agencyDisplayName?: string;
+    }>(),
+
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex('tenants_slug_uidx').on(table.slug),
+    uniqueIndex('tenants_portal_slug_uidx').on(table.portalSlug),
+    uniqueIndex('tenants_portal_domain_uidx').on(table.portalDomain),
     index('tenants_status_idx').on(table.status),
     index('tenants_plan_id_idx').on(table.planId),
     index('tenants_billing_status_idx').on(table.billingStatus),

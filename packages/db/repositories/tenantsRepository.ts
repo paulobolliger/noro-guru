@@ -13,6 +13,9 @@ export type CreateTenantInput = {
   planId?: string | null;
   billingStatus?: TenantBillingStatus;
   metadata?: Record<string, unknown> | null;
+  portalSlug?: string | null;
+  portalDomain?: string | null;
+  portalTheme?: Record<string, unknown> | null;
 };
 
 export async function createTenant(db: NoroDatabase, input: CreateTenantInput) {
@@ -60,6 +63,36 @@ export async function updateTenantPlan(db: NoroDatabase, tenantId: string, planI
     .where(eq(tenants.id, tenantId))
     .returning();
 
+  return updated ?? null;
+}
+
+// Lookups para resolução de tenant pelo middleware do apps/portal
+export async function getTenantByPortalSlug(db: NoroDatabase, portalSlug: string) {
+  return db.query.tenants.findFirst({
+    where: eq(tenants.portalSlug, portalSlug),
+  });
+}
+
+export async function getTenantByPortalDomain(db: NoroDatabase, portalDomain: string) {
+  return db.query.tenants.findFirst({
+    where: eq(tenants.portalDomain, portalDomain),
+  });
+}
+
+export async function updateTenantPortal(
+  db: NoroDatabase,
+  tenantId: string,
+  input: {
+    portalSlug?: string | null;
+    portalDomain?: string | null;
+    portalTheme?: Record<string, unknown> | null;
+  },
+) {
+  const [updated] = await db
+    .update(tenants)
+    .set({ ...input, updatedAt: new Date() })
+    .where(eq(tenants.id, tenantId))
+    .returning();
   return updated ?? null;
 }
 
