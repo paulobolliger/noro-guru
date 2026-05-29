@@ -1,6 +1,8 @@
 import { relations } from 'drizzle-orm';
 import { auditEvents } from './audit';
+import { clients } from './clients';
 import { identityLinks } from './identity-links';
+import { leads } from './leads';
 import { tenantMemberships } from './memberships';
 import { modules } from './modules';
 import { planModules, plans } from './plans';
@@ -11,7 +13,9 @@ import { users } from './users';
 
 export * from './_schema';
 export * from './audit';
+export * from './clients';
 export * from './identity-links';
+export * from './leads';
 export * from './memberships';
 export * from './modules';
 export * from './plans';
@@ -111,4 +115,39 @@ export const auditEventsRelations = relations(auditEvents, ({ one }) => ({
     fields: [auditEvents.tenantId],
     references: [tenants.id],
   }),
+}));
+
+export const leadsRelations = relations(leads, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [leads.tenantId],
+    references: [tenants.id],
+  }),
+  assignedToUser: one(users, {
+    fields: [leads.assignedTo],
+    references: [users.id],
+  }),
+  convertedClient: one(clients, {
+    fields: [leads.convertedTo],
+    references: [clients.id],
+  }),
+}));
+
+export const clientsRelations = relations(clients, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [clients.tenantId],
+    references: [tenants.id],
+  }),
+  originLead: one(leads, {
+    fields: [clients.leadId],
+    references: [leads.id],
+  }),
+  assignedToUser: one(users, {
+    fields: [clients.assignedTo],
+    references: [users.id],
+  }),
+}));
+
+export const tenantsLeadsRelations = relations(tenants, ({ many }) => ({
+  leads: many(leads),
+  clients: many(clients),
 }));

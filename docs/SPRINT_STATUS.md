@@ -19,7 +19,7 @@ Supabase deve ser tratado como legado/transicional. Appwrite esta eliminado. Asa
 | Sprint 0 | Alinhamento documental e decisoes criticas | `concluida` | Alta | Decisoes do Paulo registradas | Nenhuma; sprint encerrada |
 | Sprint 1 | Auth, tenant e base de dados canonica | `concluida` | Alta | Sprint 0 concluida; 1A–1N concluidas | Sprint 1 concluida em 2026-05-29 |
 | Sprint 1N | Bootstrap do platform_owner em banco dev/staging | `concluida` | Alta | DEV_STAGING_DATABASE_URL e PLATFORM_OWNER_LOGTO_SUB confirmados por Paulo | Concluida em 2026-05-29 |
-| Sprint 2 | CRM minimo em PostgreSQL/Drizzle | `nao_iniciada` | Alta | Sprint 1 concluida | Planejar leads/clientes com `tenant_id` e repositorios Drizzle |
+| Sprint 2 | CRM minimo em PostgreSQL/Drizzle | `concluida` | Alta | Sprint 1 concluida | Concluida em 2026-05-29 |
 | Sprint 3 | Produtos manuais e fornecedores basicos | `nao_iniciada` | Media | Sprint 2 concluida | Definir catalogo manual-first e fornecedores basicos |
 | Sprint 4 | Propostas / quote builder canonico | `nao_iniciada` | Alta | Sprint 3 concluida | Consolidar proposta como base para checkout |
 | Sprint 5 | Checkout Asaas minimo | `nao_iniciada` | Alta | Sprint 4 concluida e decisoes Asaas aprovadas | Planejar `PaymentProvider`, `AsaasProvider` e webhooks |
@@ -41,11 +41,11 @@ Use apenas estes status no documento:
 
 ## 3. Sprint atual
 
-Sprint atual: Sprint 2 — CRM minimo em PostgreSQL/Drizzle
+Sprint atual: Sprint 3 — Produtos manuais e fornecedores basicos
 
-Status atual da Sprint 1: `concluida`
+Status atual da Sprint 2: `concluida`
 
-Proxima acao: Iniciar Sprint 2 — modelar leads e clientes com `tenant_id`, criar repositorios Drizzle, definir CRM minimo sem Supabase.
+Proxima acao: Iniciar Sprint 3 — modelar produtos manuais e fornecedores basicos com `tenant_id`.
 
 ## Sprint 0 — Alinhamento documental e decisoes criticas
 
@@ -343,7 +343,7 @@ Rota `/auth/whoami` e try-catch de debug no callback devem ser removidos na Spri
 
 ## Sprint 2 — CRM minimo em PostgreSQL/Drizzle
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Recriar o fluxo minimo de CRM sobre a base canonica, sem depender de Supabase como caminho novo.
@@ -384,22 +384,35 @@ Recriar o fluxo minimo de CRM sobre a base canonica, sem depender de Supabase co
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `packages/db/schema/leads.ts` — schema canonico de leads (turismo) com 25 colunas
+- `packages/db/schema/clients.ts` — schema canonico de clientes (turismo) com 51 colunas
+- `packages/db/schema/index.ts` — relacoes leads/clients adicionadas
+- `packages/db/repositories/leadsRepository.ts` — CRUD + stats por status
+- `packages/db/repositories/clientsRepository.ts` — CRUD + stats por status
+- `packages/db/repositories/index.ts` — exports adicionados
+- `packages/db/migrations/0001_confused_rachel_grey.sql` — migration aplicada ao Neon
+- `apps/core/app/(protected)/leads/actions.ts` — actions Drizzle (substitui stub)
+- `apps/core/app/(protected)/clientes/actions.ts` — actions Drizzle (substitui stub)
+- `docs/SPRINT_STATUS.md`
 
 **Resultado final:**
-- Nao iniciado.
+- Schema de leads (25 colunas, turismo-first) e clientes (51 colunas, Person PGI) criados no schema `noro`.
+- Migration 0001 aplicada ao Neon. Repositorios com CRUD completo e filtros por tenant.
+- Actions no `apps/core` substituem stubs e operam via Drizzle/PostgreSQL.
+- Supabase nao e chamado nas novas rotas. Dados legados permanecem no Supabase sem migracao.
+- Nota: tenantId e passado explicitamente pelas actions — integracao completa com Logto/tenant context fica para sprint dedicada (1O).
 
 **Data de inicio:**  
-A definir.
+2026-05-29.
 
 **Data de conclusao:**  
-A definir.
+2026-05-29.
 
 **Agente/responsavel:**  
-A definir.
+Claude / Paulo Bolliger.
 
 **Observacoes:**  
-Nenhuma.
+Schemas aprovados pelo Paulo com justificativas de dominio (turismo). Nenhuma migracao de dados legados nesta sprint.
 
 ## Sprint 3 — Produtos manuais e fornecedores basicos
 

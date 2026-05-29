@@ -6,3 +6,5 @@ export * as platformRolesRepository from './platformRolesRepository';
 export * as modulesRepository from './modulesRepository';
 export * as plansRepository from './plansRepository';
 export * as tenantModulesRepository from './tenantModulesRepository';
+export * as leadsRepository from './leadsRepository';
+export * as clientsRepository from './clientsRepository';
