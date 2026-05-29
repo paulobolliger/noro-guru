@@ -11,3 +11,4 @@ export * as clientsRepository from './clientsRepository';
 export * as suppliersRepository from './suppliersRepository';
 export * as productsRepository from './productsRepository';
 export * as pricingRulesRepository from './pricingRulesRepository';
+export * as proposalsRepository from './proposalsRepository';

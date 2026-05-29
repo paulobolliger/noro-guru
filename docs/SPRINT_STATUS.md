@@ -21,7 +21,7 @@ Supabase deve ser tratado como legado/transicional. Appwrite esta eliminado. Asa
 | Sprint 1N | Bootstrap do platform_owner em banco dev/staging | `concluida` | Alta | DEV_STAGING_DATABASE_URL e PLATFORM_OWNER_LOGTO_SUB confirmados por Paulo | Concluida em 2026-05-29 |
 | Sprint 2 | CRM minimo em PostgreSQL/Drizzle | `concluida` | Alta | Sprint 1 concluida | Concluida em 2026-05-29 |
 | Sprint 3 | Produtos manuais e fornecedores basicos | `concluida` | Media | Sprint 2 concluida | Concluida em 2026-05-29 |
-| Sprint 4 | Propostas / quote builder canonico | `nao_iniciada` | Alta | Sprint 3 concluida | Consolidar proposta como base para checkout |
+| Sprint 4 | Propostas / quote builder canonico | `concluida` | Alta | Sprint 3 concluida | Concluida em 2026-05-29 |
 | Sprint 5 | Checkout Asaas minimo | `nao_iniciada` | Alta | Sprint 4 concluida e decisoes Asaas aprovadas | Planejar `PaymentProvider`, `AsaasProvider` e webhooks |
 | Sprint 6 | Comissao simples e eventos financeiros | `nao_iniciada` | Alta | Sprint 5 concluida | Definir regra simples de comissao e eventos financeiros |
 | Sprint 7 | Sites/vitrines conectados ao funil | `nao_iniciada` | Media | Sprint 2, Sprint 4 e Sprint 5 concluidas | Conectar sites a lead, proposta e checkout |
@@ -41,11 +41,11 @@ Use apenas estes status no documento:
 
 ## 3. Sprint atual
 
-Sprint atual: Sprint 4 — Propostas / quote builder canonico
+Sprint atual: Sprint 5 — Checkout Asaas minimo
 
-Status atual da Sprint 3: `concluida`
+Status atual da Sprint 4: `concluida`
 
-Proxima acao: Iniciar Sprint 4 — modelar propostas, itens, snapshot financeiro e status.
+Proxima acao: Iniciar Sprint 5 — PaymentProvider, AsaasProvider, webhook e status canonico de pagamento.
 
 ## Sprint 0 — Alinhamento documental e decisoes criticas
 
@@ -489,7 +489,7 @@ Catálogo global gerenciado pelo apps/control. Tenant consome via sistema de res
 
 ## Sprint 4 — Propostas / quote builder canonico
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Consolidar proposta como ponte entre CRM, produtos, checkout e comissao.
@@ -528,22 +528,34 @@ Consolidar proposta como ponte entre CRM, produtos, checkout e comissao.
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `packages/db/schema/proposals.ts` — proposals (32 colunas) + proposal_items (19 colunas)
+- `packages/db/schema/index.ts` — relacoes proposals/proposal_items adicionadas
+- `packages/db/repositories/proposalsRepository.ts` — CRUD completo + fluxo aceite + recalc automatico
+- `packages/db/repositories/index.ts` — export adicionado
+- `packages/db/migrations/0003_fearless_talon.sql` — migration aplicada (17 tabelas)
+- `apps/core/app/(protected)/orcamentos/orcamentos-actions.ts` — substitui stub Supabase; CRUD + envio + status + itens
+- `apps/core/app/proposta/[token]/actions.ts` — rota publica: visualizar (aciona 'visualizada'), aceitar, leitura
 
-**Resultado final:**
-- Nao iniciado.
+**Decisoes arquiteturais registradas:**
+- Proposta nao armazena conversao BRL — apenas moeda_base + taxa_cambio_snapshot para referencia historica
+- Snapshot BRL pertence ao pagamento (Sprint 5), nao a proposta
+- Painel publico consulta API de cambio do /control em tempo real a cada acesso
+- status 'visualizada' acionado automaticamente por acesso ao aceite_token
+- snapshot_pricing_rules bloqueado no repository apos aceita_at (imutabilidade explícita)
+- numero gerado sequencialmente por tenant: {ANO}-{NNNN}
+- Versionamento: versao int no cabecalho, incrementado a cada envio
 
 **Data de inicio:**  
-A definir.
+2026-05-29.
 
 **Data de conclusao:**  
-A definir.
+2026-05-29.
 
 **Agente/responsavel:**  
-A definir.
+Claude / Paulo Bolliger.
 
 **Observacoes:**  
-Nenhuma.
+Proposta pronta para alimentar Sprint 5 (checkout Asaas). Pagamento usa proposal.id como referencia.
 
 ## Sprint 5 — Checkout Asaas minimo
 

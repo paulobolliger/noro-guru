@@ -8,6 +8,7 @@ import { modules } from './modules';
 import { planModules, plans } from './plans';
 import { pricingRules } from './pricing-rules';
 import { products } from './products';
+import { proposalItems, proposals } from './proposals';
 import { platformRoleAssignments } from './roles';
 import { suppliers } from './suppliers';
 import { tenantModules } from './tenant-modules';
@@ -24,6 +25,7 @@ export * from './modules';
 export * from './plans';
 export * from './pricing-rules';
 export * from './products';
+export * from './proposals';
 export * from './roles';
 export * from './suppliers';
 export * from './tenant-modules';
@@ -167,6 +169,29 @@ export const productsRelations = relations(products, ({ one }) => ({
   supplier: one(suppliers, {
     fields: [products.supplierId],
     references: [suppliers.id],
+  }),
+}));
+
+export const proposalsRelations = relations(proposals, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [proposals.tenantId],
+    references: [tenants.id],
+  }),
+  createdByUser: one(users, {
+    fields: [proposals.createdBy],
+    references: [users.id],
+  }),
+  items: many(proposalItems),
+}));
+
+export const proposalItemsRelations = relations(proposalItems, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [proposalItems.proposalId],
+    references: [proposals.id],
+  }),
+  product: one(products, {
+    fields: [proposalItems.productId],
+    references: [products.id],
   }),
 }));
 
