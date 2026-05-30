@@ -1,0 +1,6 @@
+{
+  "name": "Noro Guru",
+  "description": "O sistema operacional completo da sua agência de turismo — CRM, financeiro, propostas com IA e site de vendas integrados numa única plataforma.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

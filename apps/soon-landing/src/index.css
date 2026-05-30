@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  --color-noro-purple: #342CA4;
+  --color-noro-purple-deep: #1F196F;
+  --color-noro-purple-light: #6B54E8;
+  --color-noro-purple-hover: #483FC2;
+  --color-noro-teal: #1DD3C0;
+  --color-noro-teal-glow: rgba(29, 211, 192, 0.4);
+  --color-noro-dark: #0D0B2A;
+  --color-noro-dark-elevated: #14113D;
+  --color-noro-dark-card: #15133D;
+  --color-noro-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    background-color: #0D0B2A;
+    color: #FFFFFF;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+}
+
+/* Custom design aesthetics for Bold Typography (Generous high-impact visuals) */
+.grid-bg {
+  background-image: radial-gradient(rgba(107, 84, 232, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.glow-purple {
+  box-shadow: 0 0 50px rgba(52, 44, 164, 0.3);
+}
+
+.glow-teal {
+  box-shadow: 0 0 40px rgba(29, 211, 192, 0.2);
+}
+
+.glow-border {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.glow-border-focus {
+  border-color: #1DD3C0;
+  box-shadow: 0 0 12px rgba(29, 211, 192, 0.45);
+}
+
