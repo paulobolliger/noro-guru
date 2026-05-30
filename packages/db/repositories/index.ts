@@ -13,3 +13,7 @@ export * as productsRepository from './productsRepository';
 export * as pricingRulesRepository from './pricingRulesRepository';
 export * as proposalsRepository from './proposalsRepository';
 export * as clientPortalSessionsRepository from './clientPortalSessionsRepository';
+export * as paymentProviderAccountsRepository from './paymentProviderAccountsRepository';
+export * as paymentCustomersRepository from './paymentCustomersRepository';
+export * as paymentChargesRepository from './paymentChargesRepository';
+export * as paymentWebhookEventsRepository from './paymentWebhookEventsRepository';

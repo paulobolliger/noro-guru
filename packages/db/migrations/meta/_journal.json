@@ -43,6 +43,13 @@
       "when": 1780098984047,
       "tag": "0005_dazzling_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780102239796,
+      "tag": "0006_milky_timeslip",
+      "breakpoints": true
     }
   ]
 }

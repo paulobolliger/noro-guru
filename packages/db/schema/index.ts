@@ -7,6 +7,10 @@ import { leads } from './leads';
 import { tenantMemberships } from './memberships';
 import { modules } from './modules';
 import { planModules, plans } from './plans';
+import { paymentCharges } from './payment-charges';
+import { paymentCustomers } from './payment-customers';
+import { paymentProviderAccounts } from './payment-provider-accounts';
+import { paymentWebhookEvents } from './payment-webhook-events';
 import { pricingRules } from './pricing-rules';
 import { products } from './products';
 import { proposalItems, proposals } from './proposals';
@@ -25,6 +29,10 @@ export * from './leads';
 export * from './memberships';
 export * from './modules';
 export * from './plans';
+export * from './payment-charges';
+export * from './payment-customers';
+export * from './payment-provider-accounts';
+export * from './payment-webhook-events';
 export * from './pricing-rules';
 export * from './products';
 export * from './proposals';
@@ -194,6 +202,17 @@ export const proposalItemsRelations = relations(proposalItems, ({ one }) => ({
   product: one(products, {
     fields: [proposalItems.productId],
     references: [products.id],
+  }),
+}));
+
+export const paymentCustomersRelations = relations(paymentCustomers, ({ many }) => ({
+  charges: many(paymentCharges),
+}));
+
+export const paymentChargesRelations = relations(paymentCharges, ({ one }) => ({
+  customer: one(paymentCustomers, {
+    fields: [paymentCharges.paymentCustomerId],
+    references: [paymentCustomers.id],
   }),
 }));
 
