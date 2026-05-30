@@ -43,8 +43,10 @@ export type CreateChargeInput = {
   dueDate: string;       // YYYY-MM-DD
   installments?: number;
   description?: string;
-  // Split: walletId da subconta do tenant + percentual da NORO
-  walletId?: string | null;
+  externalReference?: string | null;  // ID interno da cobrança para rastreamento
+  // Split Modelo B (agência): walletId DA SUBCONTA DO TENANT + % retido pela NORO
+  // NORO não entra no array — fica com o saldo automático como conta originadora
+  tenantWalletId?: string | null;
   splitNoroPct?: number | null;
   // URL de callback após pagamento hospedado
   callbackSuccessUrl?: string | null;

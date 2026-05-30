@@ -24,8 +24,8 @@ function getAsaasConfig() {
   return {
     apiKey,
     baseUrl: sandbox
-      ? 'https://sandbox.asaas.com/api/v3'
-      : 'https://www.asaas.com/api/v3',
+      ? 'https://api-sandbox.asaas.com/v3'
+      : 'https://api.asaas.com/v3',
   };
 }
 
@@ -103,29 +103,38 @@ export class AsaasProvider implements PaymentProvider {
   }
 
   async createCharge(input: CreateChargeInput): Promise<ProviderCharge> {
+    const totalValue = input.amountCents / 100;
+
     const body: Record<string, unknown> = {
       customer: input.providerCustomerId,
       billingType: input.billingType,
-      value: input.amountCents / 100,
       dueDate: input.dueDate,
       description: input.description ?? 'Pagamento NORO',
+      externalReference: input.externalReference,
     };
 
     if (input.installments && input.installments > 1) {
+      // Asaas: usar totalValue + installmentCount para parcelamento
       body.installmentCount = input.installments;
-      body.installmentValue = input.amountCents / 100 / input.installments;
+      body.totalValue = totalValue;
+    } else {
+      body.value = totalValue;
     }
 
     if (input.callbackSuccessUrl) {
       body.callback = { successUrl: input.callbackSuccessUrl };
     }
 
-    // Split automático: walletId do tenant + percentual NORO
-    if (input.walletId && input.splitNoroPct != null) {
+    // Split: apenas o walletId do TENANT no array — NORO fica com o saldo restante
+    // automaticamente (é a conta originadora).
+    // REGRA: não incluir o próprio walletId da NORO no split.
+    // Aplica-se ao Modelo B (agência) — no Modelo A não há split (tudo para a NORO).
+    if (input.tenantWalletId && input.splitNoroPct != null) {
+      const tenantPct = 100 - input.splitNoroPct;
       body.split = [
         {
-          walletId: input.walletId,
-          percentualValue: 100 - input.splitNoroPct,
+          walletId: input.tenantWalletId,
+          percentualValue: tenantPct,
         },
       ];
     }
@@ -202,6 +211,68 @@ export class AsaasProvider implements PaymentProvider {
       raw: body,
     };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Criação de subconta (onboarding de tenant)
+// Chamado pelo apps/control ao ativar billing Asaas para um tenant
+// ---------------------------------------------------------------------------
+
+export type CreateSubaccountInput = {
+  name: string;
+  email: string;
+  cpfCnpj: string;
+  mobilePhone: string;
+  incomeValue: number;   // faturamento mensal estimado
+  address: string;
+  addressNumber: string;
+  province: string;      // bairro
+  postalCode: string;
+  complement?: string;
+  companyType?: 'MEI' | 'LIMITED' | 'INDIVIDUAL' | 'ASSOCIATION';
+};
+
+export type AsaasSubaccount = {
+  id: string;
+  walletId: string;
+  apiKey: string;        // retornado UMA única vez — armazenar imediatamente
+  name: string;
+  email: string;
+};
+
+export async function createAsaasSubaccount(
+  input: CreateSubaccountInput,
+): Promise<AsaasSubaccount> {
+  const data = await asaasFetch<{
+    id: string;
+    walletId: string;
+    apiKey: string;
+    name: string;
+    email: string;
+  }>('/accounts', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: input.name,
+      email: input.email,
+      cpfCnpj: input.cpfCnpj.replace(/\D/g, ''),
+      mobilePhone: input.mobilePhone.replace(/\D/g, ''),
+      incomeValue: input.incomeValue,
+      address: input.address,
+      addressNumber: input.addressNumber,
+      province: input.province,
+      postalCode: input.postalCode.replace(/\D/g, ''),
+      ...(input.complement ? { complement: input.complement } : {}),
+      ...(input.companyType ? { companyType: input.companyType } : {}),
+    }),
+  });
+
+  return {
+    id: data.id,
+    walletId: data.walletId,
+    apiKey: data.apiKey,
+    name: data.name,
+    email: data.email,
+  };
 }
 
 // Instância singleton — usar em actions e route handlers

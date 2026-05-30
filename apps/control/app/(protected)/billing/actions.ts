@@ -6,7 +6,7 @@ import {
   paymentCustomersRepository,
   paymentChargesRepository,
 } from '@noro/db';
-import { asaasProvider } from '@noro/lib/providers/asaas-provider';
+import { asaasProvider, createAsaasSubaccount } from '@noro/lib/providers/asaas-provider';
 
 function getDb() {
   return createDatabaseClient();
@@ -22,38 +22,56 @@ export async function ativarBillingAsaas(
   tenantData: {
     name: string;
     email: string;
-    cpfCnpj?: string;
-    phone?: string;
+    cpfCnpj: string;        // obrigatório no Asaas
+    mobilePhone: string;    // obrigatório no Asaas
+    incomeValue: number;    // faturamento mensal estimado
+    address: string;
+    addressNumber: string;
+    province: string;       // bairro
+    postalCode: string;
+    complement?: string;
+    companyType?: 'MEI' | 'LIMITED' | 'INDIVIDUAL' | 'ASSOCIATION';
   },
 ) {
   const { db, close } = getDb();
   try {
-    // Verifica se já existe conta
     const existing = await paymentProviderAccountsRepository.getProviderAccount(db, tenantId);
     if (existing?.status === 'active') {
       return { success: false, message: 'Billing Asaas já está ativo para este tenant.' };
     }
 
-    // Registra consentimento explícito
+    // Registra consentimento explícito antes de qualquer chamada ao gateway
     const account = await paymentProviderAccountsRepository.createProviderAccount(db, {
       tenantId,
       consentRegisteredAt: new Date(),
       consentRegisteredBy: activatedByUserId,
     });
-
     if (!account) return { success: false, message: 'Erro ao registrar consentimento.' };
 
-    // Cria subconta no Asaas via API master da NORO
-    // TODO: Asaas subaccount creation endpoint
-    // Por ora, marca como in_review aguardando resposta da API
+    // Cria subconta Asaas via API master da NORO
+    const subconta = await createAsaasSubaccount(tenantData);
+
+    // ATENÇÃO: apiKey retornada UMA única vez — persistir imediatamente
+    // Em produção, criptografar antes de armazenar
     await paymentProviderAccountsRepository.updateProviderAccountOnboarding(db, tenantId, {
-      onboardingStatus: 'in_review',
-      metadata: { tenantData, requestedAt: new Date().toISOString() },
+      providerAccountId: subconta.id,
+      providerWalletId: subconta.walletId,
+      onboardingStatus: 'approved',
+      status: 'active',
+      metadata: {
+        apiKey: subconta.apiKey,   // TODO: criptografar em produção
+        createdAt: new Date().toISOString(),
+      },
     });
 
-    return { success: true, account };
+    return { success: true, walletId: subconta.walletId };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Erro ao ativar billing';
+    // Reverte para pending se a criação no Asaas falhou
+    await paymentProviderAccountsRepository.updateProviderAccountOnboarding(
+      createDatabaseClient().db, tenantId,
+      { onboardingStatus: 'rejected', metadata: { error: message } },
+    );
     return { success: false, message };
   } finally {
     await close();
@@ -174,7 +192,9 @@ export async function emitirCobranca(
       dueDate: input.dueDate,
       installments: input.installments,
       description: input.description,
-      walletId: input.repasseModelo === 'agencia' ? walletId : null,
+      externalReference: charge.id,
+      // Split apenas para Modelo B (agência): tenant recebe %, NORO fica com o resto
+      tenantWalletId: input.repasseModelo === 'agencia' ? walletId : null,
       splitNoroPct: input.repasseModelo === 'agencia' ? splitNoroPct : null,
       callbackSuccessUrl: input.callbackSuccessUrl,
     });
