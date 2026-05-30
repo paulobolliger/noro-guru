@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "^16.2.6",
     "@noro/renderer": "file:../../packages/renderer",
     "@noro/types": "file:../../packages/types",
     "@supabase/supabase-js": "^2.39.0",
