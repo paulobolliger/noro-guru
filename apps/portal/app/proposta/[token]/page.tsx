@@ -13,7 +13,7 @@ export default async function PropostaPublicaPage({ params }: Props) {
   if (!tenant) notFound();
 
   const { db, close } = createDatabaseClient();
-  let proposal: Awaited<ReturnType<typeof proposalsRepository.getProposalByToken>> = null;
+  let proposal: Awaited<ReturnType<typeof proposalsRepository.getProposalByToken>> = undefined;
   try {
     proposal = await proposalsRepository.getProposalByToken(db, token);
   } finally {

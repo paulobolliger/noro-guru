@@ -50,6 +50,13 @@
       "when": 1780102239796,
       "tag": "0006_milky_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1780200000000,
+      "tag": "0007_proposal_documents",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
-import { leads, type LeadStatus, type LeadSource } from '../schema';
+import { leads, type LeadStatus, type LeadSource, type LeadTipoViagem } from '../schema';
 import type { NoroDatabase } from '../index';
 
 export type CreateLeadInput = {
@@ -18,7 +18,7 @@ export type CreateLeadInput = {
   dataViagemInicio?: string | null;
   dataViagemFim?: string | null;
   numPax?: number | null;
-  tipoViagem?: string | null;
+  tipoViagem?: LeadTipoViagem | null;
   status?: LeadStatus;
 };
 

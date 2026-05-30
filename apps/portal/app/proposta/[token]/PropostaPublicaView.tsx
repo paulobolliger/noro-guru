@@ -12,7 +12,7 @@ type Proposal = {
   moedaBase: string;
   validadeAte: string | null;
   descricao: string | null;
-  aceitaTipo: string | null;
+  aceiteTipo: string | null;
   aceitaAt: Date | null;
 };
 

@@ -3,7 +3,9 @@
 import { createDatabaseClient, clientPortalSessionsRepository, clientsRepository } from '@noro/db';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 const SESSION_COOKIE = 'portal_session_id';
 
 export async function requestMagicLink(
@@ -39,7 +41,7 @@ export async function requestMagicLink(
 
     // Envia email apenas se o cliente existe — evita enumeração de e-mails
     if (client) {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: process.env.CONTACT_FROM ?? 'NORO <no-reply@noro.guru>',
         to: email,
         subject: `Seu acesso ao portal — ${agencyDisplayName}`,

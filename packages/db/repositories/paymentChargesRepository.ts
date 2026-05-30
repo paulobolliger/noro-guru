@@ -1,5 +1,5 @@
-import { and, desc, eq } from 'drizzle-orm';
-import { paymentCharges, type ChargeStatus, type ChargeRepasseModelo } from '../schema';
+import { and, desc, eq, inArray } from 'drizzle-orm';
+import { paymentCharges, proposals, type ChargeStatus, type ChargeRepasseModelo } from '../schema';
 import type { NoroDatabase } from '../index';
 
 export type CreateChargeInput = {
@@ -88,6 +88,42 @@ export async function updateChargeFromWebhook(
     .where(eq(paymentCharges.id, chargeId))
     .returning();
   return updated ?? null;
+}
+
+export type ChargeWithProposal = Awaited<ReturnType<typeof getChargesByClient>>[number];
+
+export async function getChargesByClient(
+  db: NoroDatabase,
+  tenantId: string,
+  clientId: string,
+  filters: { limit?: number; offset?: number } = {},
+) {
+  const { limit = 50, offset = 0 } = filters;
+
+  const clientProposals = await db.query.proposals.findMany({
+    where: and(eq(proposals.tenantId, tenantId), eq(proposals.clientId, clientId)),
+    columns: { id: true, titulo: true, destinoPrincipal: true },
+  });
+
+  if (clientProposals.length === 0) return [];
+
+  const proposalIds = clientProposals.map((p) => p.id);
+
+  const charges = await db.query.paymentCharges.findMany({
+    where: and(
+      eq(paymentCharges.tenantId, tenantId),
+      inArray(paymentCharges.proposalId, proposalIds),
+    ),
+    orderBy: [desc(paymentCharges.createdAt)],
+    limit,
+    offset,
+  });
+
+  const proposalMap = Object.fromEntries(clientProposals.map((p) => [p.id, p]));
+  return charges.map((c) => ({
+    ...c,
+    proposal: c.proposalId ? (proposalMap[c.proposalId] ?? null) : null,
+  }));
 }
 
 export async function setChargeEscrow(

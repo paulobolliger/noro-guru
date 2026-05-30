@@ -1,5 +1,5 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
-import { clients, type ClientStatus, type ClientTipo } from '../schema';
+import { clients, type ClientStatus, type ClientTipo, type ClientNivel, type ClientSegmento } from '../schema';
 import type { NoroDatabase } from '../index';
 
 export type CreateClientInput = {
@@ -32,8 +32,8 @@ export type CreateClientInput = {
   nivelMobilidade?: string | null;
   aptoAtividadeFisica?: boolean | null;
   status?: ClientStatus;
-  nivel?: string | null;
-  segmento?: string | null;
+  nivel?: ClientNivel | null;
+  segmento?: ClientSegmento | null;
   assignedTo?: string | null;
   destinosVisitados?: string[] | null;
   destinosDesejados?: string[] | null;

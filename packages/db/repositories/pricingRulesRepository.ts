@@ -1,5 +1,5 @@
 import { and, asc, eq } from 'drizzle-orm';
-import { pricingRules, type PricingRuleEscopo, type PricingRuleTipo } from '../schema';
+import { pricingRules, type PricingRuleEscopo, type PricingRuleTipo, type PricingRuleCanal } from '../schema';
 import type { NoroDatabase } from '../index';
 
 export type CreatePricingRuleInput = {
@@ -8,7 +8,7 @@ export type CreatePricingRuleInput = {
   tenantId?: string | null;
   categoria?: string | null;
   planId?: string | null;
-  canal?: string | null;
+  canal?: PricingRuleCanal | null;
   tipoRegra: PricingRuleTipo;
   valor: string;
   moeda?: string;

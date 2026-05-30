@@ -20,6 +20,16 @@ import { type NextRequest, NextResponse } from 'next/server';
 const NORO_PORTAL_DOMAIN = 'agencia.noro.guru';
 const SESSION_COOKIE = 'portal_session_id';
 
+// Rotas que exigem sessão autenticada do viajante
+// Correspondem ao route group app/(cliente)/
+const PROTECTED_PREFIXES = ['/', '/propostas', '/pagamentos', '/documentos'];
+
+function isProtectedPath(pathname: string): boolean {
+  // A raiz `/` é protegida mas não é prefixo de `/login`, `/auth`, `/proposta`
+  if (pathname === '/') return true;
+  return PROTECTED_PREFIXES.slice(1).some((prefix) => pathname.startsWith(prefix));
+}
+
 function resolvePortalTenant(host: string): { portalSlug: string; portalDomain: string } {
   // Remove porta (dev: localhost:3005)
   const cleanHost = host.split(':')[0];
@@ -51,8 +61,8 @@ export function middleware(request: NextRequest) {
   response.headers.set('x-portal-domain', portalDomain);
   response.headers.set('x-portal-host', host);
 
-  // Protege /cliente — redireciona para /login se não há sessão
-  if (pathname.startsWith('/cliente')) {
+  // Protege rotas autenticadas — redireciona para /login se não há sessão
+  if (isProtectedPath(pathname)) {
     const sessionId = request.cookies.get(SESSION_COOKIE)?.value;
     if (!sessionId) {
       const loginUrl = new URL('/login', request.url);

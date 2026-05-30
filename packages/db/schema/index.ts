@@ -13,6 +13,7 @@ import { paymentProviderAccounts } from './payment-provider-accounts';
 import { paymentWebhookEvents } from './payment-webhook-events';
 import { pricingRules } from './pricing-rules';
 import { products } from './products';
+import { proposalDocuments } from './proposal-documents';
 import { proposalItems, proposals } from './proposals';
 import { platformRoleAssignments } from './roles';
 import { suppliers } from './suppliers';
@@ -35,6 +36,7 @@ export * from './payment-provider-accounts';
 export * from './payment-webhook-events';
 export * from './pricing-rules';
 export * from './products';
+export * from './proposal-documents';
 export * from './proposals';
 export * from './roles';
 export * from './suppliers';
@@ -192,6 +194,14 @@ export const proposalsRelations = relations(proposals, ({ one, many }) => ({
     references: [users.id],
   }),
   items: many(proposalItems),
+  documents: many(proposalDocuments),
+}));
+
+export const proposalDocumentsRelations = relations(proposalDocuments, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [proposalDocuments.proposalId],
+    references: [proposals.id],
+  }),
 }));
 
 export const proposalItemsRelations = relations(proposalItems, ({ one }) => ({
