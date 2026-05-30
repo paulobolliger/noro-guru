@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { auditEvents } from './audit';
+import { clientPortalSessions } from './client-portal-sessions';
 import { clients } from './clients';
 import { identityLinks } from './identity-links';
 import { leads } from './leads';
@@ -17,6 +18,7 @@ import { users } from './users';
 
 export * from './_schema';
 export * from './audit';
+export * from './client-portal-sessions';
 export * from './clients';
 export * from './identity-links';
 export * from './leads';

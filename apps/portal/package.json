@@ -1,0 +1,28 @@
+{
+  "name": "portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3005",
+    "build": "next build",
+    "start": "next start --port 3005",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@noro/db": "*",
+    "@noro/lib": "*",
+    "@noro/ui": "*",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "resend": "^6.1.2"
+  },
+  "devDependencies": {
+    "@noro/eslint-config": "*",
+    "@noro/typescript-config": "*",
+    "@types/node": "24.7.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "^18",
+    "typescript": "5.9.3"
+  }
+}
