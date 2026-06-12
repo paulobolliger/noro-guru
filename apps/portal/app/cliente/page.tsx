@@ -174,7 +174,7 @@ export default async function ClienteDashboardPage() {
           ) : (
             <p style={{ color: '#94a3b8', fontSize: 14 }}>Nenhuma proposta ainda</p>
           )}
-          <a href="/propostas" style={{ display: 'block', marginTop: 16, fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
+          <a href="/cliente/propostas" style={{ display: 'block', marginTop: 16, fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
             Ver todas →
           </a>
         </div>
@@ -212,7 +212,7 @@ export default async function ClienteDashboardPage() {
           ) : (
             <p style={{ color: '#94a3b8', fontSize: 14 }}>Nenhum pagamento pendente</p>
           )}
-          <a href="/pagamentos" style={{ display: 'block', marginTop: 16, fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
+          <a href="/cliente/pagamentos" style={{ display: 'block', marginTop: 16, fontSize: 13, color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
             Ver pagamentos →
           </a>
         </div>
@@ -224,12 +224,12 @@ export default async function ClienteDashboardPage() {
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
         {[
-          { label: 'Propostas', href: '/propostas', emoji: '📋' },
-          { label: 'Pagamentos', href: '/pagamentos', emoji: '💳' },
-          { label: 'Documentos', href: '/documentos', emoji: '📂' },
-          { label: 'Itinerário', href: '/itinerario', emoji: '🗓️' },
-          { label: 'Mensagens', href: '/mensagens', emoji: '💬' },
-          { label: 'Emergência', href: '/emergencia', emoji: '🆘' },
+          { label: 'Propostas', href: '/cliente/propostas', emoji: '📋' },
+          { label: 'Pagamentos', href: '/cliente/pagamentos', emoji: '💳' },
+          { label: 'Documentos', href: '/cliente/documentos', emoji: '📂' },
+          { label: 'Itinerário', href: '/cliente/itinerario', emoji: '🗓️' },
+          { label: 'Mensagens', href: '/cliente/mensagens', emoji: '💬' },
+          { label: 'Emergência', href: '/cliente/emergencia', emoji: '🆘' },
         ].map((item) => (
           <a
             key={item.href}

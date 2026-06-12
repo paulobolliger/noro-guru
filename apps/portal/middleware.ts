@@ -21,13 +21,9 @@ const NORO_PORTAL_DOMAIN = 'agencia.noro.guru';
 const SESSION_COOKIE = 'portal_session_id';
 
 // Rotas que exigem sessão autenticada do viajante
-// Correspondem ao route group app/(cliente)/
-const PROTECTED_PREFIXES = ['/', '/propostas', '/pagamentos', '/documentos', '/itinerario', '/mensagens', '/emergencia'];
-
+// Correspondem a app/cliente/* (prefixo real de URL)
 function isProtectedPath(pathname: string): boolean {
-  // A raiz `/` é protegida mas não é prefixo de `/login`, `/auth`, `/proposta`
-  if (pathname === '/') return true;
-  return PROTECTED_PREFIXES.slice(1).some((prefix) => pathname.startsWith(prefix));
+  return pathname === '/cliente' || pathname.startsWith('/cliente/');
 }
 
 function resolvePortalTenant(host: string): { portalSlug: string; portalDomain: string } {

@@ -33,9 +33,9 @@ export default async function ClienteLayout({ children }: { children: React.Reac
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-        <span style={{ fontWeight: 700 }}>
+        <a href="/cliente" style={{ fontWeight: 700, textDecoration: 'none', color: 'inherit' }}>
           {tenant.portalTheme?.agencyDisplayName ?? tenant.name}
-        </span>
+        </a>
         <a href="/auth/signout" style={{ color: '#64748b', fontSize: 14 }}>Sair</a>
       </nav>
       <main style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
