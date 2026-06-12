@@ -40,6 +40,8 @@ export type LogtoSessionClaims = {
    * Mapeado para `identity_links.provider_subject` no banco.
    */
   providerSubject: string;
+  /** Alias de providerSubject — satisfaz AuthClaims.subject exigido por requireUser(). */
+  subject: string;
   /** E-mail primário do usuário conforme claim Logto. */
   email?: string | null;
   /** Nome de exibição conforme claim Logto (campo `name` do IdTokenClaims). */
@@ -79,6 +81,7 @@ async function readLogtoSession(config: LogtoNextConfig): Promise<LogtoSessionCl
   return {
     provider: 'logto',
     providerSubject: ctx.claims.sub,
+    subject: ctx.claims.sub, // AuthClaims.subject — required by requireUser()
     email: ctx.claims.email ?? null,
     name: ctx.claims.name ?? null,
     picture: ctx.claims.picture ?? null,

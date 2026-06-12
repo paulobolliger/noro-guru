@@ -1,83 +1,56 @@
-// app/admin/(protected)/layout.tsx
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
-import type Database from "@noro-types/supabase";
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
-import AdminLayoutClient from "@/components/AdminLayoutClient";
-import { getNotificacoes } from "@noro/lib/supabase/admin";
-// NOVO: Importa a função de buscar config do sistema
-import { getConfiguracaoSistema } from './configuracoes/config-actions'; 
-import { getUserTenants, getActiveTenantId, setActiveTenant } from './tenants/actions';
-// NOVO: Importa o Toaster
-import { Toaster } from "@ui/use-toast"; // Assumindo que use-toast.tsx também exporta Toaster
-// TenantSelector removido - não será mais exibido globalmente
+import { createDatabaseClient } from '@noro/db';
+import { requireUser, UnauthenticatedError, UserNotFoundError, logtoSessionAdapter } from '@noro/auth';
+import { logtoConfig } from '@/lib/logto';
+import AdminLayoutClient from '@/components/AdminLayoutClient';
+import { getConfiguracaoSistema } from './configuracoes/config-actions';
+import { Toaster } from '@ui/use-toast';
 
-type NomadeUser = Database['public']['Tables']['noro_users']['Row'];
-type LayoutUser = {
-  id: string;
-  nome: string | null;
-  email: string;
-  role: string;
-  avatar_url?: string | null;
+const DEFAULT_CONFIG = {
+  moeda_padrao: 'BRL' as const,
+  fuso_horario: 'America/Sao_Paulo',
+  idioma: 'pt' as const,
+  formato_data: 'DD/MM/YYYY' as const,
 };
 
-export default async function ProtectedAdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const supabase = createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
+  const { db, close } = createDatabaseClient();
 
-  if (!user) {
-    return redirect('/login?redirect=/');
+  try {
+    const userCtx = await requireUser({
+      db,
+      sessionAdapter: logtoSessionAdapter(logtoConfig),
+    });
+
+    const configSistema = await getConfiguracaoSistema().catch(() => DEFAULT_CONFIG);
+
+    const profile = {
+      id: userCtx.user.id,
+      nome: userCtx.user.displayName ?? (userCtx.claims?.name as string) ?? userCtx.user.email,
+      email: userCtx.user.email,
+      role: 'super_admin',
+      avatar_url: (userCtx.claims?.picture as string) ?? null,
+    };
+
+    return (
+      <Suspense fallback={<div>Carregando...</div>}>
+        <AdminLayoutClient
+          user={profile as any}
+          notificacoes={[]}
+          configSistema={configSistema}
+        >
+          {children}
+          <Toaster />
+        </AdminLayoutClient>
+      </Suspense>
+    );
+  } catch (error) {
+    if (error instanceof UnauthenticatedError || error instanceof UserNotFoundError) {
+      redirect('/auth/sign-in');
+    }
+    throw error;
+  } finally {
+    await close();
   }
-
-  const { data: userProfile } = await supabase
-    .schema('noro_auth').from('users_legado')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  const profile = userProfile as NomadeUser | null;
-
-  if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
-    await supabase.auth.signOut();
-    return redirect('/login?error=unauthorized');
-  }
-
-  // Busca as notificações E as configurações do sistema
-  const [notificacoes, configSistema] = await Promise.all([
-    getNotificacoes(user.id, 5),
-    getConfiguracaoSistema()
-  ]);
-
-  const tenants = await getUserTenants();
-  const activeTenantId = await getActiveTenantId();
-
-  return (
-    // O Toaster deve ser renderizado no lado do cliente, assim como o AdminLayoutClient
-    <Suspense fallback={<div>A carregar layout do admin...</div>}>
-      <AdminLayoutClient 
-        user={profile as unknown as LayoutUser} 
-        notificacoes={notificacoes as any}
-        configSistema={configSistema} // Passa a config para o layout do cliente
-      >
-        {/* REMOVIDO: TenantSelector não aparece mais em todas as páginas
-        {tenants.length > 0 && (
-          <div className="border-b border-border bg-card/50">
-            <TenantSelector 
-              tenants={tenants}
-              activeTenantId={activeTenantId}
-              onTenantChange={setActiveTenant}
-            />
-          </div>
-        )}
-        */}
-        {children}
-        {/* CRÍTICO: O Toaster deve ser incluído para renderizar as notificações */}
-        <Toaster /> 
-      </AdminLayoutClient>
-    </Suspense>
-  );
 }
