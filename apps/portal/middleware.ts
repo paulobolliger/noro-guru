@@ -6,7 +6,7 @@ import { type NextRequest, NextResponse } from 'next/server';
  * Padrões de domínio suportados:
  *   xyz.agencia.noro.guru  → portalSlug = 'xyz'
  *   xyz.com.br             → portalDomain = 'xyz.com.br' (domínio customizado)
- *   localhost:3005          → modo dev (sem resolução de tenant)
+ *   localhost:3005          → usa PORTAL_DEV_SLUG do .env.local
  *
  * Headers injetados para uso em Server Components:
  *   x-portal-slug     → slug do tenant (ou vazio)
@@ -45,7 +45,11 @@ function resolvePortalTenant(host: string): { portalSlug: string; portalDomain: 
     return { portalSlug: '', portalDomain: cleanHost };
   }
 
-  // Dev local / sem tenant
+  // Dev local — usa PORTAL_DEV_SLUG do .env.local se definido
+  if (cleanHost === 'localhost') {
+    return { portalSlug: process.env.PORTAL_DEV_SLUG ?? '', portalDomain: '' };
+  }
+
   return { portalSlug: '', portalDomain: '' };
 }
 
