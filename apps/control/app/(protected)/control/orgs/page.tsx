@@ -6,7 +6,7 @@ export default async function OrgsPage() {
 
   // Get tenants
   const { data: tenantsData, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('tenants')
     .select('id, name, slug, plan, status, created_at')
     .order('created_at', { ascending: false })
@@ -17,7 +17,7 @@ export default async function OrgsPage() {
 
   // Get API keys count per tenant
   const { data: apiKeysData } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('api_keys')
     .select('tenant_id');
 

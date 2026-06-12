@@ -224,7 +224,7 @@ export async function getConversations(): Promise<Conversation[]> {
     const supabase = getSupabaseServer();
     
     const { data, error } = await supabase
-      .from('conversations')
+      .schema('comunicacao').from('conversations')
       .select('*')
       .order('last_message_at', { ascending: false });
     
@@ -245,7 +245,7 @@ export async function getConversationMessages(conversationId: string): Promise<M
     const supabase = getSupabaseServer();
     
     const { data, error } = await supabase
-      .from('messages')
+      .schema('comunicacao').from('messages')
       .select('*')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
@@ -270,7 +270,7 @@ export async function sendMessage(conversationId: string, message: string): Prom
     const { data: { user } } = await supabase.auth.getUser();
     
     const { data, error } = await supabase
-      .from('messages')
+      .schema('comunicacao').from('messages')
       .insert({
         conversation_id: conversationId,
         sender: 'agent',
@@ -308,7 +308,7 @@ export async function updateConversationStatus(
     }
     
     const { error } = await supabase
-      .from('conversations')
+      .schema('comunicacao').from('conversations')
       .update(updateData)
       .eq('id', conversationId);
     
@@ -351,7 +351,7 @@ export async function createConversation(data: {
     const supabase = getSupabaseServer();
     
     const { data: conversation, error } = await supabase
-      .from('conversations')
+      .schema('comunicacao').from('conversations')
       .insert({
         tenant_id: data.tenant_id,
         client_name: data.client_name,
@@ -372,7 +372,7 @@ export async function createConversation(data: {
     // Se houver mensagem inicial, criar a mensagem
     if (data.initial_message && conversation) {
       await supabase
-        .from('messages')
+        .schema('comunicacao').from('messages')
         .insert({
           conversation_id: conversation.id,
           sender: 'client',

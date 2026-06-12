@@ -4,7 +4,7 @@ import { getActiveTenantId } from "../tenants/actions";
 
 export async function listDomains() {
   const supabase = createAdminSupabaseClient();
-  const { data, error } = await supabase.schema('cp').from('domains').select('id, tenant_id, domain, is_default, created_at').order('created_at', { ascending: false });
+  const { data, error } = await supabase.schema('platform').from('domains').select('id, tenant_id, domain, is_default, created_at').order('created_at', { ascending: false });
   if (error) throw new Error(error.message);
   return data;
 }
@@ -27,31 +27,31 @@ export async function createDomain(formData: FormData) {
   }
 
   // Unicidade global
-  const { data: exists } = await supabase.schema('cp').from('domains').select('id').eq('domain', domain).maybeSingle();
+  const { data: exists } = await supabase.schema('platform').from('domains').select('id').eq('domain', domain).maybeSingle();
   if (exists) throw new Error('Domínio já cadastrado');
 
   // Se marcar default, zera anteriores do tenant
   if (is_default) {
-    await supabase.schema('cp').from('domains').update({ is_default: false }).eq('tenant_id', tenantId);
+    await supabase.schema('platform').from('domains').update({ is_default: false }).eq('tenant_id', tenantId);
   }
 
-  const { error } = await supabase.schema('cp').from('domains').insert({ tenant_id: tenantId, domain, is_default });
+  const { error } = await supabase.schema('platform').from('domains').insert({ tenant_id: tenantId, domain, is_default });
   if (error) throw new Error(error.message);
 }
 
 export async function deleteDomain(id: string) {
   const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.schema('cp').from('domains').delete().eq('id', id);
+  const { error } = await supabase.schema('platform').from('domains').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }
 
 export async function setDefaultDomain(id: string) {
   const supabase = createAdminSupabaseClient();
   // Obter domínio para saber o tenant
-  const { data: dom, error: getErr } = await supabase.schema('cp').from('domains').select('tenant_id').eq('id', id).maybeSingle();
+  const { data: dom, error: getErr } = await supabase.schema('platform').from('domains').select('tenant_id').eq('id', id).maybeSingle();
   if (getErr || !dom) throw new Error(getErr?.message || 'Domínio não encontrado');
   // Desmarcar anteriores e marcar este
-  await supabase.schema('cp').from('domains').update({ is_default: false }).eq('tenant_id', dom.tenant_id);
-  const { error } = await supabase.schema('cp').from('domains').update({ is_default: true }).eq('id', id);
+  await supabase.schema('platform').from('domains').update({ is_default: false }).eq('tenant_id', dom.tenant_id);
+  const { error } = await supabase.schema('platform').from('domains').update({ is_default: true }).eq('id', id);
   if (error) throw new Error(error.message);
 }

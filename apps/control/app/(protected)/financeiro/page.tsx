@@ -5,8 +5,8 @@ import { DollarSign } from 'lucide-react';
 
 export default async function FinanceiroPage() {
   const supabase = createServerSupabaseClient();
-  const { data: accounts } = await supabase.schema('cp').from('ledger_accounts').select('*').order('code');
-  const { data: entries } = await supabase.schema('cp').from('ledger_entries').select('account_id, tenant_id, amount_cents, memo, occurred_at').order('occurred_at', { ascending: false }).limit(50);
+  const { data: accounts } = await supabase.schema('platform').from('ledger_accounts').select('*').order('code');
+  const { data: entries } = await supabase.schema('platform').from('ledger_entries').select('account_id, tenant_id, amount_cents, memo, occurred_at').order('occurred_at', { ascending: false }).limit(50);
   
   // Calculate metrics
   const totalEntries = entries?.length || 0;

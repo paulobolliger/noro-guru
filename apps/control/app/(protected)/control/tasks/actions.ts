@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 export async function listTasks() {
   const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.schema('cp').from('tasks').select('*').order('created_at', { ascending: false }).limit(100);
+  const { data, error } = await supabase.schema('platform').from('tasks').select('*').order('created_at', { ascending: false }).limit(100);
   if (error) throw new Error(error.message);
   return data;
 }
@@ -21,7 +21,7 @@ export async function createTask(formData: FormData) {
     entity_id: String(formData.get('entity_id') || '') || null,
   } as any;
   if (!payload.title) throw new Error('Título é obrigatório');
-  const { error } = await supabase.schema('cp').from('tasks').insert(payload);
+  const { error } = await supabase.schema('platform').from('tasks').insert(payload);
   if (error) throw new Error(error.message);
 }
 

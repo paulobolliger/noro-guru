@@ -9,7 +9,7 @@ import { Bell } from 'lucide-react';
 async function markAllRead(userId: string) {
   "use server";
   const supabase = createServerSupabaseClient();
-  const { error } = await supabase.from('noro_notificacoes').update({ lida: true }).eq('user_id', userId);
+  const { error } = await supabase.schema('comunicacao').from('notificacoes').update({ lida: true }).eq('user_id', userId);
   if (error) throw error;
   revalidatePath('/notificacoes');
 }
@@ -20,7 +20,7 @@ export default async function NotificacoesPage() {
   if (!user) return null;
 
   const { data } = await supabase
-    .from('noro_notificacoes')
+    .schema('comunicacao').from('notificacoes')
     .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })

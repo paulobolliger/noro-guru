@@ -7,7 +7,7 @@ export type CreateApiKeyResult = { ok: true; plaintext: string; last4: string } 
 export async function listApiKeys() {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from("api_keys")
     .select("id, name, last4, scope, expires_at, created_at")
     .order("created_at", { ascending: false });
@@ -21,7 +21,7 @@ async function resolveActiveTenantId(supabase: ReturnType<typeof createAdminSupa
   const uid = auth?.user?.id;
   if (uid) {
     const { data: utr } = await supabase
-      .schema('cp')
+      .schema('platform')
       .from("user_tenant_roles")
       .select("tenant_id")
       .eq("user_id", uid)
@@ -30,7 +30,7 @@ async function resolveActiveTenantId(supabase: ReturnType<typeof createAdminSupa
     if (utr?.tenant_id) return utr.tenant_id as string;
   }
   // 2) Fallback: tenant principal 'noro'
-  const { data: tenantNoro } = await supabase.schema('cp').from("tenants").select("id").eq("slug", "noro").maybeSingle();
+  const { data: tenantNoro } = await supabase.schema('platform').from("tenants").select("id").eq("slug", "noro").maybeSingle();
   return tenantNoro?.id ?? null;
 }
 
@@ -44,7 +44,7 @@ export async function createApiKey(name: string, scope: string[] = ["visa:read"]
     const tenantId = await resolveActiveTenantId(supabase);
     if (!tenantId) return { ok: false, error: "Tenant não encontrado" };
 
-    const { error } = await supabase.schema('cp').from("api_keys").insert({
+    const { error } = await supabase.schema('platform').from("api_keys").insert({
       tenant_id: tenantId,
       name,
       hash,
@@ -61,7 +61,7 @@ export async function createApiKey(name: string, scope: string[] = ["visa:read"]
 
 export async function revokeApiKey(id: string) {
   const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.schema('cp').from("api_keys").delete().eq("id", id);
+  const { error } = await supabase.schema('platform').from("api_keys").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 
@@ -69,7 +69,7 @@ export async function loadUsageDaily(keyId?: string) {
   const supabase = createAdminSupabaseClient();
   const fromISO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   let query = supabase
-    .schema('cp')
+    .schema('platform')
     .from('api_key_logs')
     .select('key_id, elapsed_ms, status, created_at')
     .gte('created_at', fromISO)

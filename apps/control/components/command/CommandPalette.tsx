@@ -43,8 +43,8 @@ export default function CommandPalette() {
       const results: Item[] = [...base];
       const term = q.trim();
       if (term) {
-        const { data: t } = await supabase.schema('cp').from('tenants').select('id, name, slug').ilike('name', `%${term}%`).limit(5);
-        const { data: l } = await supabase.schema('cp').from('leads').select('id, organization_name').ilike('organization_name', `%${term}%`).limit(5);
+        const { data: t } = await supabase.schema('platform').from('tenants').select('id, name, slug').ilike('name', `%${term}%`).limit(5);
+        const { data: l } = await supabase.schema('platform_crm').from('leads').select('id, organization_name').ilike('organization_name', `%${term}%`).limit(5);
         (t||[]).forEach((r: any) => results.push({ type: 'tenant', label: `Tenant: ${r.name}`, href: `/control/orgs/${r.id}` }));
         (l||[]).forEach((r: any) => results.push({ type: 'lead', label: `Lead: ${r.organization_name}`, href: `/control/leads` }));
       }

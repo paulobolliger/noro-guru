@@ -33,7 +33,7 @@ export default function DeleteNoroUserModal({ user, isOpen, onClose, onSuccess }
 
       // Deletar usuário
       const { error: deleteError } = await supabase
-        .from('noro_users')
+        .schema('noro_auth').from('users_legado')
         .delete()
         .eq('id', user.id);
 

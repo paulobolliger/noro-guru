@@ -57,7 +57,7 @@ export function useOrcamentos(filters: OrcamentoFilters = {}) {
         const supabase = createClient();
         
         let query = supabase
-          .from('noro_orcamentos')
+          .schema('sales').from('proposals')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -112,7 +112,7 @@ export function useOrcamento(orcamentoId: string | null) {
         const supabase = createClient();
         
         const { data, error: fetchError } = await supabase
-          .from('noro_orcamentos')
+          .schema('sales').from('proposals')
           .select('*')
           .eq('id', id)
           .single();
@@ -156,7 +156,7 @@ export function useOrcamentosStats() {
         
         // RLS já filtra por tenant
         const { data: allOrcamentos } = await supabase
-          .from('noro_orcamentos')
+          .schema('sales').from('proposals')
           .select('status, valor_total');
 
         if (allOrcamentos) {

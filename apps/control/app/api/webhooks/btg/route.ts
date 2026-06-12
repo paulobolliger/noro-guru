@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
             // C. Atualizar o status do Pedido para CONCLUIDO
             await supabase
-                .from('pedidos')
+                .schema('sales').from('orders')
                 .update({ status: 'CONCLUIDO' })
                 .eq('id', pedidoId);
                 

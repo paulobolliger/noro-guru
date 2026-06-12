@@ -20,7 +20,7 @@ export default async function ConfiguracoesPage() {
     configUsuario,
     envVariables
   ] = await Promise.all([
-    supabase.from('noro_users').select('*').order('created_at', { ascending: false }),
+    supabase.schema('noro_auth').from('users_legado').select('*').order('created_at', { ascending: false }),
     getConfiguracaoSistema(),
     getConfiguracaoUsuario(user.id),
     getEnvVariables()

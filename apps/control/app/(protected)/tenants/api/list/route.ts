@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     const supabase = createServerSupabaseClient();
 
     let query = supabase
-      .schema('cp')
+      .schema('platform')
       .from('tenants')
       .select('id, name, slug, plan, status, created_at', { count: 'exact' })
       .order('created_at', { ascending: false });

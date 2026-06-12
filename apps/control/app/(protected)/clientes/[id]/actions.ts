@@ -26,7 +26,7 @@ export async function createClientUpdateToken(clienteId: string) {
   const token = randomUUID();
   const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 horas de validade
 
-  const { error } = await supabase.from('noro_update_tokens').insert({
+  const { error } = await supabase.schema('noro_auth').from('update_tokens').insert({
     token,
     cliente_id: clienteId,
     expires_at: expiresAt.toISOString(),
@@ -49,7 +49,7 @@ export async function getClientByUpdateToken(token: string) {
   const supabase = createServerSupabaseClient();
 
   const { data: tokenData, error: tokenError } = await supabase
-    .from('noro_update_tokens')
+    .schema('noro_auth').from('update_tokens')
     .select('*, cliente:noro_clientes(*)')
     .eq('token', token)
     .single();
@@ -77,7 +77,7 @@ export async function updateClientFromPublicForm(token: string, formData: FormDa
 
   // 1. Revalidar o token antes de qualquer ação
   const { data: tokenData, error: tokenError } = await supabase
-    .from('noro_update_tokens')
+    .schema('noro_auth').from('update_tokens')
     .select('cliente_id, expires_at, used_at')
     .eq('token', token)
     .single();
@@ -110,7 +110,7 @@ export async function updateClientFromPublicForm(token: string, formData: FormDa
 
   // 3. Atualizar os dados do cliente
   const { error: updateError } = await supabase
-    .from('noro_clientes')
+    .schema('crm').from('clients')
     .update(updates)
     .eq('id', cliente_id);
 
@@ -121,7 +121,7 @@ export async function updateClientFromPublicForm(token: string, formData: FormDa
 
   // 4. Invalidar o token marcando como usado
   await supabase
-    .from('noro_update_tokens')
+    .schema('noro_auth').from('update_tokens')
     .update({ used_at: new Date().toISOString() })
     .eq('token', token);
   
@@ -139,7 +139,7 @@ export async function getClienteDetalhes(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase // Tipagem implícita já funciona com o client configurado
-    .from('noro_clientes')
+    .schema('crm').from('clients')
     .select(`
       *,
       agente:noro_users!agente_responsavel_id(id, nome, email, avatar_url),
@@ -187,7 +187,7 @@ export async function updateCliente(clienteId: string, formData: FormData) {
   };
 
   const { error } = await supabase
-    .from('noro_clientes')
+    .schema('crm').from('clients')
     .update(updates)
     .eq('id', clienteId);
 
@@ -208,7 +208,7 @@ export async function getClienteDocumentos(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from('noro_clientes_documentos')
+    .schema('crm').from('client_documents')
     .select('*')
     .eq('cliente_id', clienteId)
     .order('created_at', { ascending: false });
@@ -241,7 +241,7 @@ export async function createDocumento(clienteId: string, formData: FormData) {
   };
 
   const { error } = await supabase
-    .from('noro_clientes_documentos')
+    .schema('crm').from('client_documents')
     .insert(documento);
 
   if (error) {
@@ -269,7 +269,7 @@ export async function updateDocumento(documentoId: string, formData: FormData) {
   };
 
   const { error } = await supabase
-    .from('noro_clientes_documentos')
+    .schema('crm').from('client_documents')
     .update(updates)
     .eq('id', documentoId);
 
@@ -286,7 +286,7 @@ export async function deleteDocumento(documentoId: string, clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { error } = await supabase
-    .from('noro_clientes_documentos')
+    .schema('crm').from('client_documents')
     .delete()
     .eq('id', documentoId);
 
@@ -307,7 +307,7 @@ export async function getClientePreferencias(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from('noro_clientes_preferencias')
+    .schema('crm').from('client_preferences')
     .select('*')
     .eq('cliente_id', clienteId)
     .single();
@@ -351,7 +351,7 @@ export async function upsertPreferencias(clienteId: string, formData: FormData) 
   };
 
   const { error } = await supabase
-    .from('noro_clientes_preferencias')
+    .schema('crm').from('client_preferences')
     .upsert(preferencias, { onConflict: 'cliente_id' });
 
   if (error) {
@@ -371,7 +371,7 @@ export async function getClienteEnderecos(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from('noro_clientes_enderecos')
+    .schema('crm').from('client_addresses')
     .select('*')
     .eq('cliente_id', clienteId)
     .order('principal', { ascending: false })
@@ -404,13 +404,13 @@ export async function createEndereco(clienteId: string, formData: FormData) {
 
   if (endereco.principal) {
     await supabase
-      .from('noro_clientes_enderecos')
+      .schema('crm').from('client_addresses')
       .update({ principal: false })
       .eq('cliente_id', clienteId);
   }
 
   const { error } = await supabase
-    .from('noro_clientes_enderecos')
+    .schema('crm').from('client_addresses')
     .insert(endereco);
 
   if (error) {
@@ -441,14 +441,14 @@ export async function updateEndereco(enderecoId: string, formData: FormData, cli
 
   if (updates.principal) {
     await supabase
-      .from('noro_clientes_enderecos')
+      .schema('crm').from('client_addresses')
       .update({ principal: false })
       .eq('cliente_id', clienteId)
       .neq('id', enderecoId);
   }
 
   const { error } = await supabase
-    .from('noro_clientes_enderecos')
+    .schema('crm').from('client_addresses')
     .update(updates)
     .eq('id', enderecoId);
 
@@ -465,7 +465,7 @@ export async function deleteEndereco(enderecoId: string, clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { error } = await supabase
-    .from('noro_clientes_enderecos')
+    .schema('crm').from('client_addresses')
     .delete()
     .eq('id', enderecoId);
 
@@ -486,7 +486,7 @@ export async function getClienteContatosEmergencia(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from('noro_clientes_contatos_emergencia')
+    .schema('sales').from('emergency_contacts')
     .select('*')
     .eq('cliente_id', clienteId)
     .order('created_at', { ascending: false });
@@ -512,7 +512,7 @@ export async function createContatoEmergencia(clienteId: string, formData: FormD
   };
 
   const { error } = await supabase
-    .from('noro_clientes_contatos_emergencia')
+    .schema('sales').from('emergency_contacts')
     .insert(contato);
 
   if (error) {
@@ -528,7 +528,7 @@ export async function deleteContatoEmergencia(contatoId: string, clienteId: stri
   const supabase = createServerSupabaseClient();
 
   const { error } = await supabase
-    .from('noro_clientes_contatos_emergencia')
+    .schema('sales').from('emergency_contacts')
     .delete()
     .eq('id', contatoId);
 
@@ -549,7 +549,7 @@ export async function getClienteMilhas(clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from('noro_clientes_milhas')
+    .schema('crm').from('client_miles')
     .select('*')
     .eq('cliente_id', clienteId)
     .order('companhia', { ascending: true });
@@ -581,7 +581,7 @@ export async function createMilhas(clienteId: string, formData: FormData) {
   }
 
   const { error } = await supabase
-    .from('noro_clientes_milhas')
+    .schema('crm').from('client_miles')
     .insert(milhas);
 
   if (error) {
@@ -607,7 +607,7 @@ export async function updateMilhas(milhasId: string, formData: FormData, cliente
   };
 
   const { error } = await supabase
-    .from('noro_clientes_milhas')
+    .schema('crm').from('client_miles')
     .update(updates)
     .eq('id', milhasId);
 
@@ -624,7 +624,7 @@ export async function deleteMilhas(milhasId: string, clienteId: string) {
   const supabase = createServerSupabaseClient();
 
   const { error } = await supabase
-    .from('noro_clientes_milhas')
+    .schema('crm').from('client_miles')
     .delete()
     .eq('id', milhasId);
 

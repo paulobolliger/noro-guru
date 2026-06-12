@@ -4,12 +4,12 @@ import { DollarSign, FileText, Layout, TrendingUp } from "lucide-react";
 export default async function BillingPage() {
   const supabase = createServerSupabaseClient();
   const [{ count: plans }, { count: subs }, { count: accounts }] = await Promise.all([
-    supabase.schema('cp').from('plans').select('*', { count: 'exact', head: true }),
-    supabase.schema('cp').from('subscriptions').select('*', { count: 'exact', head: true }),
-    supabase.schema('cp').from('ledger_accounts').select('*', { count: 'exact', head: true }),
+    supabase.schema('platform').from('plans').select('*', { count: 'exact', head: true }),
+    supabase.schema('platform').from('subscriptions').select('*', { count: 'exact', head: true }),
+    supabase.schema('platform').from('ledger_accounts').select('*', { count: 'exact', head: true }),
   ]);
   const { data: invoices } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('invoices')
     .select('tenant_id, amount_cents, currency, status, issued_at, created_at')
     .order('created_at', { ascending: false })

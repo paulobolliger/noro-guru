@@ -30,7 +30,7 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
     const supabaseAdmin = getSupabaseAdmin();
     
     const { data, error } = await supabaseAdmin
-      .from('noro_configuracoes')
+      .schema('sites').from('configuracoes')
       .select('*')
       .eq('tipo', 'sistema')
       .is('user_id', null);
@@ -86,7 +86,7 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
     // Upsert (inserir ou atualizar)
     for (const item of configs) {
       const { error } = await supabaseAdmin
-        .from('noro_configuracoes')
+        .schema('sites').from('configuracoes')
         .upsert({
           tipo: item.tipo,
           chave: item.chave,
@@ -116,7 +116,7 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
     const supabaseAdmin = getSupabaseAdmin();
     
     const { data, error } = await supabaseAdmin
-      .from('noro_configuracoes')
+      .schema('sites').from('configuracoes')
       .select('*')
       .eq('tipo', 'usuario')
       .eq('user_id', userId);
@@ -158,7 +158,7 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
 
     for (const item of configs) {
       const { error } = await supabaseAdmin
-        .from('noro_configuracoes')
+        .schema('sites').from('configuracoes')
         .upsert({
           tipo: item.tipo,
           chave: item.chave,

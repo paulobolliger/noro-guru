@@ -66,7 +66,7 @@ export async function inviteTenantUser(tenantId: string, email: string, role: st
         .eq('tenant_id', tenantId);
         
     const { data: companyData } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('limites')
         .eq('tenant_id', tenantId)
         .single();
@@ -95,7 +95,7 @@ export async function updateTenantMaxUsers(tenantId: string, newLimit: number) {
     
     // 1. Get current limit
     const { data: existingCompany } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('id, limites')
         .eq('tenant_id', tenantId)
         .maybeSingle();
@@ -109,7 +109,7 @@ export async function updateTenantMaxUsers(tenantId: string, newLimit: number) {
 
     // 2. Update limit
     await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .update({ limites: newLimites })
         .eq('id', existingCompany.id);
 
@@ -131,7 +131,7 @@ export async function getTenantContext(tenantId: string): Promise<TenantContext>
 
     // 1. Fetch Tenant Base Info
     const { data: tenant, error: tenantError } = await supabase
-        .schema('cp')
+        .schema('platform')
         .from('tenants')
         .select('*')
         .eq('id', tenantId)
@@ -144,7 +144,7 @@ export async function getTenantContext(tenantId: string): Promise<TenantContext>
 
     // 2. Fetch Company Data
     const { data: empresa } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('*')
         // @ts-ignore
         .eq('tenant_id', tenantId) 
@@ -152,7 +152,7 @@ export async function getTenantContext(tenantId: string): Promise<TenantContext>
 
     // 3. Fetch System Settings
      const { data: config } = await supabase
-        .from('noro_configuracoes')
+        .schema('sites').from('configuracoes')
         .select('*')
         .eq('tenant_id', tenantId)
         .eq('tipo', 'sistema')
@@ -264,7 +264,7 @@ export async function updateTenantCompany(tenantId: string, formData: FormData) 
     // Helper to process file input for docs map
     // Check if record exists for existing docs preservation
     const { data: existingRecord } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('id, documentos, logo_url')
         .eq('tenant_id', tenantId)
         .maybeSingle();
@@ -336,13 +336,13 @@ export async function updateTenantCompany(tenantId: string, formData: FormData) 
 
     if (existingRecord) {
         await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .update(data)
             .eq('id', existingRecord.id);
     } else {
         // Create new if missing
         await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .insert({
                 tenant_id: tenantId,
                 ...data
@@ -357,19 +357,19 @@ export async function updateTenantModules(tenantId: string, modulos: any) {
     
     // Check if record exists
     const { data: existing } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('id')
         .eq('tenant_id', tenantId)
         .maybeSingle();
 
     if (existing) {
         await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .update({ modulos_contratados: modulos })
             .eq('id', existing.id);
     } else {
         await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .insert({
                 tenant_id: tenantId,
                 modulos_contratados: modulos,
@@ -387,7 +387,7 @@ export async function updateTenantCredits(tenantId: string, data: { aiBalance: n
     // 1. Update Email Limits (in noro_empresa)
     // We fetch existing first to merge or create 'limites'
     const { data: existingCompany } = await supabase
-        .from('noro_empresa')
+        .schema('sites').from('empresa')
         .select('id, limites')
         .eq('tenant_id', tenantId)
         .maybeSingle();
@@ -399,12 +399,12 @@ export async function updateTenantCredits(tenantId: string, data: { aiBalance: n
     
     if (existingCompany) {
         await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .update({ limites: newLimites })
             .eq('id', existingCompany.id);
     } else {
          await supabase
-            .from('noro_empresa')
+            .schema('sites').from('empresa')
             .insert({ 
                 tenant_id: tenantId,
                 limites: newLimites,
@@ -462,7 +462,7 @@ export async function updateTenantSettings(tenantId: string, formData: FormData)
 
     // Check if configuration record exists for this tenant
     const { data: existing } = await supabase
-        .from('noro_configuracoes')
+        .schema('sites').from('configuracoes')
         .select('id')
         .eq('tenant_id', tenantId)
         .eq('tipo', 'sistema')
@@ -470,13 +470,13 @@ export async function updateTenantSettings(tenantId: string, formData: FormData)
 
     if (existing) {
         await supabase
-            .from('noro_configuracoes')
+            .schema('sites').from('configuracoes')
             .update(data)
             .eq('id', existing.id);
     } else {
         // Create new if missing
         await supabase
-            .from('noro_configuracoes')
+            .schema('sites').from('configuracoes')
             .insert({
                 tenant_id: tenantId,
                 ...data

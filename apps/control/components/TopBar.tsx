@@ -66,7 +66,7 @@ export default function TopBar({
       const fetchClienteName = async () => {
         setClienteNome('Carregando...');
         const { data } = await supabase
-          .from('noro_clientes')
+          .schema('crm').from('clients')
           .select('nome')
           .eq('id', clienteId)
           .single();
@@ -93,7 +93,7 @@ export default function TopBar({
         if (tenantId && tenantId !== 'new' && !segmentOverrides[tenantId]) {
           const fetchTenantSlug = async () => {
             const { data } = await supabase
-              .schema('cp')
+              .schema('platform')
               .from('tenants')
               .select('slug')
               .eq('id', tenantId)
@@ -114,7 +114,7 @@ export default function TopBar({
     const fetchUnreadMessages = async () => {
       try {
         const { data, error } = await supabase
-          .from('conversations')
+          .schema('comunicacao').from('conversations')
           .select('unread_count')
           .eq('status', 'active');
 
@@ -239,7 +239,7 @@ export default function TopBar({
                     className="text-xs text-gray-600 hover:text-gray-900"
                     onClick={async () => {
                       try {
-                        await supabase.from('noro_notificacoes').update({ lida: true }).eq('user_id', user.id);
+                        await supabase.schema('comunicacao').from('notificacoes').update({ lida: true }).eq('user_id', user.id);
                         setNotificacoes(notificacoes.map(n => ({ ...n, lida: true })));
                       } catch (error) {
                         console.error(error);

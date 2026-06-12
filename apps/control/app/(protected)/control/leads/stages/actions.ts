@@ -11,7 +11,7 @@ export async function listStages() {
   
   // Buscar stages globais do Control Plane (tenant_id IS NULL)
   const { data, error } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .select("*")
     .is("tenant_id", null) // Stages globais
@@ -37,7 +37,7 @@ export async function listStages() {
     
     try {
       const { data: newStages, error: insertError } = await admin
-        .schema("cp")
+        .schema('platform')
         .from("lead_stages")
         .insert(stagesToInsert)
         .select();
@@ -80,7 +80,7 @@ export async function createStage(formData: FormData) {
   
   // Get max ord
   const { data: maxData } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .select("ord")
     .is("tenant_id", null)
@@ -91,7 +91,7 @@ export async function createStage(formData: FormData) {
   const nextOrd = (maxData?.ord ?? -1) + 1;
   
   const { error } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .insert({
       tenant_id: CONTROL_PLANE_TENANT_ID,
@@ -116,7 +116,7 @@ export async function updateStage(formData: FormData) {
   
   const admin = createAdminSupabaseClient();
   const { error } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .update({ label, is_won, is_lost })
     .eq("id", id)
@@ -134,7 +134,7 @@ export async function deleteStage(formData: FormData) {
   
   // Check if stage has leads
   const { data: stage } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .select("slug")
     .eq("id", id)
@@ -144,7 +144,7 @@ export async function deleteStage(formData: FormData) {
   if (!stage) throw new Error("Stage não encontrada");
   
   const { count } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("leads")
     .select("id", { count: "exact", head: true })
     .eq("stage", stage.slug);
@@ -154,7 +154,7 @@ export async function deleteStage(formData: FormData) {
   }
   
   const { error } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .delete()
     .eq("id", id)
@@ -175,7 +175,7 @@ export async function reorderStages(formData: FormData) {
   // Update each stage with new ord
   for (let i = 0; i < ids.length; i++) {
     await admin
-      .schema("cp")
+      .schema('platform')
       .from("lead_stages")
       .update({ ord: i })
       .eq("id", ids[i])

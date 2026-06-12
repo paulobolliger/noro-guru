@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     }));
 
     const { data, error } = await supabase
-      .from('notifications')
+      .schema('comunicacao').from('notifications')
       .insert(notifications)
       .select();
 
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
 
     // Buscar notificações recentes
     const { data: notifications, error } = await supabase
-      .from('notifications')
+      .schema('comunicacao').from('notifications')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(50);

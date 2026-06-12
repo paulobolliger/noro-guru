@@ -10,7 +10,7 @@ async function fetchLeads(): Promise<Lead[]> {
     const supabaseAdmin = getSupabaseAdmin();
     try {
         const { data, error } = await supabaseAdmin
-            .from('noro_leads')
+            .schema('crm').from('leads')
             .select('*')
             .order('created_at', { ascending: false });
 

@@ -14,7 +14,7 @@ export type Domain = {
 export async function getTenantDomains(tenantId: string): Promise<Domain[]> {
     const supabase = getSupabaseServer();
     const { data } = await supabase
-        .from('noro_domains')
+        .schema('sites').from('domains')
         .select('*')
         .eq('tenant_id', tenantId)
         .order('created_at', { ascending: false });
@@ -33,7 +33,7 @@ export async function addDomain(tenantId: string, domain: string) {
     }
 
     const { error } = await supabase
-        .from('noro_domains')
+        .schema('sites').from('domains')
         .insert({
             tenant_id: tenantId,
             domain: cleanDomain,
@@ -59,7 +59,7 @@ export async function verifyDomain(domainId: string, tenantId: string) {
     // For now, we manually approve/verify.
     
     const { error } = await supabase
-        .from('noro_domains')
+        .schema('sites').from('domains')
         .update({ verified: true, status: 'active' })
         .eq('id', domainId);
 
@@ -75,7 +75,7 @@ export async function deleteDomain(domainId: string, tenantId: string) {
     const supabase = getSupabaseServer();
     
     const { error } = await supabase
-        .from('noro_domains')
+        .schema('sites').from('domains')
         .delete()
         .eq('id', domainId);
 

@@ -8,7 +8,7 @@ export async function getClienteHistorico(clienteId: string) {
 
   try {
     const { data: orcamentos, error: orcErr } = await supabase
-      .from('noro_orcamentos')
+      .schema('sales').from('proposals')
       .select('id, titulo, valor_total, status, created_at')
       .eq('lead_id', clienteId)
       .order('created_at', { ascending: false });
@@ -58,7 +58,7 @@ export async function getClienteTimeline(clienteId: string) {
     }> = [];
 
     const { data: orcamentos } = await supabase
-      .from('noro_orcamentos')
+      .schema('sales').from('proposals')
       .select('id, titulo, created_at, status, valor_total')
       .eq('lead_id', clienteId)
       .order('created_at', { ascending: false });

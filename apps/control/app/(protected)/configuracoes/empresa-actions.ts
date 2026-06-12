@@ -23,7 +23,7 @@ export async function getEmpresaDados(): Promise<EmpresaDados> {
   const supabaseAdmin = getSupabaseAdmin();
   try {
     const { data, error } = await supabaseAdmin
-      .from('noro_empresa')
+      .schema('sites').from('empresa')
       .select('*')
       .single(); // Usamos single() pois só haverá uma linha
 
@@ -77,7 +77,7 @@ export async function updateEmpresaDados(formData: FormData) {
   try {
     // Como garantimos que sempre haverá uma linha, usamos update
     const { error } = await supabaseAdmin
-      .from('noro_empresa')
+      .schema('sites').from('empresa')
       .update(updates)
       .eq('id', formData.get('empresa_id') as string); // Assume que o ID da empresa é passado no form
 

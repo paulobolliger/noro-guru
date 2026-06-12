@@ -8,7 +8,7 @@ export async function GET() {
   if (!auth?.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .select('*')
     .order('updated_at', { ascending: false })
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   if (!subject || !tenant_id) return NextResponse.json({ error: 'subject and tenant_id required' }, { status: 400 });
 
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .insert({ subject, summary, tenant_id, priority, source, requester_id: auth.user.id, requester_email: auth.user.email || null })
     .select('*')

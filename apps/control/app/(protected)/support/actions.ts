@@ -6,7 +6,7 @@ export async function getTickets() {
   const supabase = getSupabaseServer();
   
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from("support_tickets")
     .select("*")
     .order("created_at", { ascending: false });

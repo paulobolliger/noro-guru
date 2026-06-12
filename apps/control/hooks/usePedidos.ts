@@ -48,7 +48,7 @@ export function usePedidos(filters: PedidoFilters = {}) {
         const supabase = createClient();
         
         let query = supabase
-          .from('noro_pedidos')
+          .schema('sales').from('orders')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -103,7 +103,7 @@ export function usePedido(pedidoId: string | null) {
         const supabase = createClient();
         
         const { data, error: fetchError } = await supabase
-          .from('noro_pedidos')
+          .schema('sales').from('orders')
           .select('*')
           .eq('id', id)
           .single();
@@ -146,7 +146,7 @@ export function usePedidosStats() {
         
         // RLS já filtra por tenant
         const { data: allPedidos } = await supabase
-          .from('noro_pedidos')
+          .schema('sales').from('orders')
           .select('status, valor_total, valor_pago, valor_pendente');
 
         if (allPedidos) {

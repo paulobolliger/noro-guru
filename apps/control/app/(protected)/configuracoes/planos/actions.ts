@@ -8,7 +8,7 @@ export async function getPlans() {
   const supabase = createServerSupabaseClient()
 
   const { data: plans, error } = await supabase
-    .from('subscription_plans')
+    .schema('platform').from('subscription_plans')
     .select('*')
     .order('sort_order', { ascending: true })
 
@@ -20,7 +20,7 @@ export async function getPlan(id: string) {
   const supabase = createServerSupabaseClient()
 
   const { data: plan, error } = await supabase
-    .from('subscription_plans')
+    .schema('platform').from('subscription_plans')
     .select('*')
     .eq('id', id)
     .single()
@@ -33,7 +33,7 @@ export async function createPlan(plan: Partial<Plan>) {
   const supabase = createServerSupabaseClient()
 
   const { data, error } = await supabase
-    .from('subscription_plans')
+    .schema('platform').from('subscription_plans')
     .insert(plan)
     .select()
     .single()
@@ -46,7 +46,7 @@ export async function updatePlan(id: string, plan: Partial<Plan>) {
   const supabase = createServerSupabaseClient()
 
   const { data, error } = await supabase
-    .from('subscription_plans')
+    .schema('platform').from('subscription_plans')
     .update(plan)
     .eq('id', id)
     .select()
@@ -60,7 +60,7 @@ export async function deletePlan(id: string) {
   const supabase = createServerSupabaseClient()
 
   const { error } = await supabase
-    .from('subscription_plans')
+    .schema('platform').from('subscription_plans')
     .delete()
     .eq('id', id)
 

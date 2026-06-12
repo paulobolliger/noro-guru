@@ -17,7 +17,7 @@ async function fetchPedidoDetalhes(id: string): Promise<PedidoComRelacionamentos
   const supabase = createServerSupabaseClient();
 
   const { data: pedido, error } = await supabase
-    .from('pedidos')
+    .schema('sales').from('orders')
     .select(
       `
         *,

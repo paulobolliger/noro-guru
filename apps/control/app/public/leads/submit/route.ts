@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     value_cents = Number(form.get('value_cents') || 0) || 0;
   }
   if (!organization_name) return NextResponse.json({ error: 'organization_name required' }, { status: 400 });
-  const { error } = await supabase.schema('cp').from('leads').insert({ organization_name, email, phone, source, value_cents });
+  const { error } = await supabase.schema('platform_crm').from('leads').insert({ organization_name, email, phone, source, value_cents });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }

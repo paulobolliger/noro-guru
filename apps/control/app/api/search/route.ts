@@ -37,7 +37,7 @@ export async function GET(request: Request) {
   try {
     // Buscar Leads (RLS filtra automaticamente por tenant)
     const { data: leads } = await supabase
-      .from('noro_leads')
+      .schema('crm').from('leads')
       .select('id, nome, email, empresa, status')
       .or(`nome.ilike.%${query}%,email.ilike.%${query}%,empresa.ilike.%${query}%`)
       .limit(5);
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
 
     // Buscar Clientes (RLS filtra automaticamente)
     const { data: clientes } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .select('id, nome, email, tipo')
       .or(`nome.ilike.%${query}%,email.ilike.%${query}%`)
       .limit(5);
@@ -73,7 +73,7 @@ export async function GET(request: Request) {
 
     // Buscar Pedidos (RLS filtra automaticamente)
     const { data: pedidos } = await supabase
-      .from('noro_pedidos')
+      .schema('sales').from('orders')
       .select('id, titulo, valor_total, status')
       .ilike('titulo', `%${query}%`)
       .limit(5);
@@ -93,7 +93,7 @@ export async function GET(request: Request) {
 
     // Buscar Orçamentos (RLS filtra automaticamente)
     const { data: orcamentos } = await supabase
-      .from('noro_orcamentos')
+      .schema('sales').from('proposals')
       .select('id, titulo, valor_total, status')
       .ilike('titulo', `%${query}%`)
       .limit(5);

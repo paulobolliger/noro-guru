@@ -27,7 +27,7 @@ async function checkPermission(permissionId: string): Promise<boolean> {
   }
 
   const { data: user } = await supabase
-    .from('control_plane_users')
+    .schema('platform').from('users')
     .select('role, permissoes')
     .eq('id', session.user.id)
     .single();
@@ -53,7 +53,7 @@ async function checkPermission(permissionId: string): Promise<boolean> {
 export async function getControlPlaneUsers(): Promise<ControlPlaneUser[]> {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
-    .from('control_plane_users')
+    .schema('platform').from('users')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -64,7 +64,7 @@ export async function getControlPlaneUsers(): Promise<ControlPlaneUser[]> {
 export async function getUserActivities(userId?: string): Promise<UserActivity[]> {
   const supabase = await createServerSupabaseClient();
   const query = supabase
-    .from('control_plane_user_activities')
+    .schema('platform').from('user_activities')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(100);
@@ -86,14 +86,14 @@ export async function updateUserRole(
     const supabase = await createServerSupabaseClient();
     
     const { error } = await supabase
-      .from('control_plane_users')
+      .schema('platform').from('users')
       .update({ role: newRole })
       .eq('id', userId);
 
     if (error) throw error;
 
     // Registrar atividade
-    await supabase.from('control_plane_user_activities').insert({
+    await supabase.schema('platform').from('user_activities').insert({
       user_id: userId,
       tipo: 'usuario_alterado',
       descricao: `Role atualizada para ${newRole}`,
@@ -121,14 +121,14 @@ export async function updateUserStatus(
     const supabase = await createServerSupabaseClient();
     
     const { error } = await supabase
-      .from('control_plane_users')
+      .schema('platform').from('users')
       .update({ status: newStatus })
       .eq('id', userId);
 
     if (error) throw error;
 
     // Registrar atividade
-    await supabase.from('control_plane_user_activities').insert({
+    await supabase.schema('platform').from('user_activities').insert({
       user_id: userId,
       tipo: 'usuario_alterado',
       descricao: `Status atualizado para ${newStatus}`,
@@ -156,14 +156,14 @@ export async function updateUserPermissions(
     const supabase = await createServerSupabaseClient();
     
     const { error } = await supabase
-      .from('control_plane_users')
+      .schema('platform').from('users')
       .update({ permissoes: permissions })
       .eq('id', userId);
 
     if (error) throw error;
 
     // Registrar atividade
-    await supabase.from('control_plane_user_activities').insert({
+    await supabase.schema('platform').from('user_activities').insert({
       user_id: userId,
       tipo: 'permissao_alterada',
       descricao: `Permissões atualizadas`,
@@ -190,7 +190,7 @@ export async function deleteUser(
     const supabase = await createServerSupabaseClient();
     
     const { error } = await supabase
-      .from('control_plane_users')
+      .schema('platform').from('users')
       .delete()
       .eq('id', userId);
 
@@ -227,7 +227,7 @@ export async function inviteUser(
 
     // Criar usuário pendente
     const { data: user, error: createError } = await supabase
-      .from('control_plane_users')
+      .schema('platform').from('users')
       .insert({
         email,
         role,
@@ -263,7 +263,7 @@ export async function inviteUser(
     });
 
     // Registrar atividade
-    await supabase.from('control_plane_user_activities').insert({
+    await supabase.schema('platform').from('user_activities').insert({
       user_id: user.id,
       tipo: 'usuario_criado',
       descricao: `Usuário convidado com role ${role}`,

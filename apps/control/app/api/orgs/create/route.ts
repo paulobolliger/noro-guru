@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     // Check if slug already exists
     const { data: existing } = await supabase
-      .schema('cp')
+      .schema('platform')
       .from('tenants')
       .select('id')
       .eq('slug', slug)
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     // Create tenant
     const { data, error } = await supabase
-      .schema('cp')
+      .schema('platform')
       .from('tenants')
       .insert({
         name,

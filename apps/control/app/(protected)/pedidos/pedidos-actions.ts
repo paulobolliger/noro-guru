@@ -29,7 +29,7 @@ type OrcamentoItemParaPedido = {
 
 async function recalculatePedidoTotal(pedidoId: string, supabase: ReturnType<typeof createServerSupabaseClient>): Promise<number | null> {
     const { data: itens, error: fetchError } = await supabase
-        .from('pedido_itens')
+        .schema('sales').from('order_items')
         .select('valor_total')
         .eq('pedido_id', pedidoId);
 
@@ -41,7 +41,7 @@ async function recalculatePedidoTotal(pedidoId: string, supabase: ReturnType<typ
     const newTotal = itens.reduce((sum, item) => sum + (item.valor_total || 0), 0);
 
     const { error: updateError } = await supabase
-        .from('pedidos')
+        .schema('sales').from('orders')
         .update({ valor_total: newTotal })
         .eq('id', pedidoId);
 
@@ -63,14 +63,14 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
     try {
         await supabase.from('orcamentos').update({ status: 'CONVERTIDO' }).eq('id', orcamentoId).throwOnError();
         
-        const { data: orcamento } = await supabase.from('noro_orcamentos').select('*, orcamento_itens:noro_orcamentos_itens(*)').eq('id', orcamentoId).single().throwOnError();
+        const { data: orcamento } = await supabase.schema('sales').from('proposals').select('*, orcamento_itens:noro_orcamentos_itens(*)').eq('id', orcamentoId).single().throwOnError();
         if(!orcamento) throw new Error('Orçamento não encontrado');
 
-        const { data: novoPedido } = await supabase.from('pedidos').insert({ orcamento_id: orcamento.id, cliente_id: orcamento.lead_id, valor_total: orcamento.valor_total, status: 'EM_PROCESSAMENTO', }).select('id').single().throwOnError();
+        const { data: novoPedido } = await supabase.schema('sales').from('orders').insert({ orcamento_id: orcamento.id, cliente_id: orcamento.lead_id, valor_total: orcamento.valor_total, status: 'EM_PROCESSAMENTO', }).select('id').single().throwOnError();
         if(!novoPedido) throw new Error('Falha ao criar o pedido');
 
         const pedidoItensPayload = ((orcamento.orcamento_itens || []) as OrcamentoItemParaPedido[]).map((item) => ({ pedido_id: novoPedido.id, servico_nome: item.descricao, quantidade: item.quantidade, valor_unitario: item.valor_unitario, valor_total: item.valor_final }));
-        if (pedidoItensPayload.length > 0) { await supabase.from('pedido_itens').insert(pedidoItensPayload).throwOnError(); }
+        if (pedidoItensPayload.length > 0) { await supabase.schema('sales').from('order_items').insert(pedidoItensPayload).throwOnError(); }
 
         revalidatePath('/admin/orcamentos');
         revalidatePath(`/admin/pedidos/${novoPedido.id}`);
@@ -90,7 +90,7 @@ export async function updatePedido(pedidoId: string, payload: PedidoUpdatePayloa
     const supabase = createServerSupabaseClient();
     if (!pedidoId) return { success: false, message: 'ID do Pedido é obrigatório.' };
     try {
-        await supabase.from('pedidos').update(payload).eq('id', pedidoId).throwOnError();
+        await supabase.schema('sales').from('orders').update(payload).eq('id', pedidoId).throwOnError();
         revalidatePath('/admin/pedidos');
         revalidatePath(`/admin/pedidos/${pedidoId}`);
         revalidatePath('/admin/pagamentos');
@@ -105,7 +105,7 @@ export async function addPedidoItem(payload: PedidoItemPayload): Promise<ServerA
     const supabase = createServerSupabaseClient();
     try {
         const valor_total = payload.quantidade * payload.valor_unitario;
-        const { data } = await supabase.from('pedido_itens').insert({ ...payload, valor_total }).select('id').single().throwOnError();
+        const { data } = await supabase.schema('sales').from('order_items').insert({ ...payload, valor_total }).select('id').single().throwOnError();
         await recalculatePedidoTotal(payload.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${payload.pedido_id}`);
         return { success: true, message: 'Item adicionado com sucesso!', data };
@@ -117,7 +117,7 @@ export async function addPedidoItem(payload: PedidoItemPayload): Promise<ServerA
 export async function updatePedidoItem(itemId: string, payload: Partial<PedidoItemPayload>): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
-        const { data: currentItem } = await supabase.from('pedido_itens').select('*').eq('id', itemId).single();
+        const { data: currentItem } = await supabase.schema('sales').from('order_items').select('*').eq('id', itemId).single();
         if (!currentItem) throw new Error('Item não encontrado.');
         
         const newQty = payload.quantidade ?? currentItem.quantidade;
@@ -128,7 +128,7 @@ export async function updatePedidoItem(itemId: string, payload: Partial<PedidoIt
             valor_total: (newQty || 0) * (newValorUnit || 0)
         }
 
-        const { data: itemData } = await supabase.from('pedido_itens').update(updates).eq('id', itemId).select('pedido_id').single().throwOnError();
+        const { data: itemData } = await supabase.schema('sales').from('order_items').update(updates).eq('id', itemId).select('pedido_id').single().throwOnError();
         if(!itemData) throw new Error('Item não encontrado após atualização');
         await recalculatePedidoTotal(itemData.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${itemData.pedido_id}`);
@@ -141,9 +141,9 @@ export async function updatePedidoItem(itemId: string, payload: Partial<PedidoIt
 export async function deletePedidoItem(itemId: string): Promise<ServerActionReturn> {
     const supabase = createServerSupabaseClient();
     try {
-        const { data: item } = await supabase.from('pedido_itens').select('pedido_id').eq('id', itemId).single().throwOnError();
+        const { data: item } = await supabase.schema('sales').from('order_items').select('pedido_id').eq('id', itemId).single().throwOnError();
         if(!item) throw new Error('Item não encontrado');
-        await supabase.from('pedido_itens').delete().eq('id', itemId).throwOnError();
+        await supabase.schema('sales').from('order_items').delete().eq('id', itemId).throwOnError();
         await recalculatePedidoTotal(item.pedido_id, supabase);
         revalidatePath(`/admin/pedidos/${item.pedido_id}`);
         return { success: true, message: 'Item excluído com sucesso!' };
@@ -162,7 +162,7 @@ export async function emitirCobranca(payload: EmitirCobrancaPayload): Promise<Se
     const { pedido_id, provider, data_vencimento, cartaoToken, parcelas = 1 } = payload; 
     
     try {
-        const { data: pedido } = await supabase.from('pedidos').select('*, pedido_itens(*), clientes:noro_clientes(*)').eq('id', pedido_id).single().throwOnError();
+        const { data: pedido } = await supabase.schema('sales').from('orders').select('*, pedido_itens(*), clientes:noro_clientes(*)').eq('id', pedido_id).single().throwOnError();
         if (!pedido || !pedido.valor_total) throw new Error('Pedido não encontrado ou sem valor.');
         
         const pedidoComRelacionamentos = pedido as PedidoComRelacionamentos;
@@ -187,7 +187,7 @@ export async function emitirCobranca(payload: EmitirCobrancaPayload): Promise<Se
         }
         
         await supabase.from('cobrancas').update({ status: 'AGUARDANDO_PAGAMENTO', transaction_id: providerResult.data?.collectionId || providerResult.data?.sessionId, provider_data: providerResult.data || null }).eq('id', novaCobranca.id);
-        await supabase.from('pedidos').update({ status: 'AGUARDANDO_PAGAMENTO' }).eq('id', pedido_id);
+        await supabase.schema('sales').from('orders').update({ status: 'AGUARDANDO_PAGAMENTO' }).eq('id', pedido_id);
 
         revalidatePath(`/admin/pedidos/${pedido_id}`);
         revalidatePath('/admin/pagamentos');
@@ -203,7 +203,7 @@ export async function registerPayment(pedidoId: string, payload: RegisterPayment
     try {
         if (!pedidoId) throw new Error("ID do Pedido não fornecido.");
 
-        const { error } = await supabase.from('pedidos').update({ status: 'CONCLUIDO', valor_pago: payload.valor_pago }).eq('id', pedidoId);
+        const { error } = await supabase.schema('sales').from('orders').update({ status: 'CONCLUIDO', valor_pago: payload.valor_pago }).eq('id', pedidoId);
         if (error) throw error;
         
         revalidatePath(`/admin/pedidos/${pedidoId}`);

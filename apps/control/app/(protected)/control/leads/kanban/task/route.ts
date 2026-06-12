@@ -7,9 +7,9 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const { id, title } = await req.json();
   if (!id || !title) return NextResponse.json({ error: 'invalid' }, { status: 400 });
-  const { data: lead, error: lerr } = await supabase.schema('cp').from('leads').select('tenant_id').eq('id', id).maybeSingle();
+  const { data: lead, error: lerr } = await supabase.schema('platform_crm').from('leads').select('tenant_id').eq('id', id).maybeSingle();
   if (lerr || !lead) return NextResponse.json({ error: lerr?.message || 'not_found' }, { status: 400 });
-  const { error } = await supabase.schema('cp').from('tasks').insert({
+  const { error } = await supabase.schema('platform').from('tasks').insert({
     tenant_id: lead.tenant_id,
     title,
     status: 'aberta',

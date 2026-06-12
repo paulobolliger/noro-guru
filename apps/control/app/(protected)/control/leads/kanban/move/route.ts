@@ -6,12 +6,12 @@ export async function POST(req: Request) {
   if (!id || !stage) return NextResponse.json({ error: 'invalid' }, { status: 400 });
   const supabase = createAdminSupabaseClient();
   // Fetch old stage
-  const { data: lead } = await supabase.schema('cp').from('leads').select('id, stage').eq('id', id).maybeSingle();
+  const { data: lead } = await supabase.schema('platform_crm').from('leads').select('id, stage').eq('id', id).maybeSingle();
   const oldStage = lead?.stage || null;
-  const { error } = await supabase.schema('cp').from('leads').update({ stage }).eq('id', id);
+  const { error } = await supabase.schema('platform_crm').from('leads').update({ stage }).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   // Log activity (best-effort)
-  await supabase.schema('cp').from('lead_activity').insert({
+  await supabase.schema('platform_crm').from('lead_activity').insert({
     lead_id: id,
     action: 'status_changed',
     details: { from: oldStage, to: stage }

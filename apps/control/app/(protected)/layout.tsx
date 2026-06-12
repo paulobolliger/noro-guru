@@ -34,7 +34,7 @@ export default async function ProtectedAdminLayout({
   }
 
   const { data: userProfile } = await supabase
-    .from('noro_users')
+    .schema('noro_auth').from('users_legado')
     .select('*')
     .eq('id', user.id)
     .single();

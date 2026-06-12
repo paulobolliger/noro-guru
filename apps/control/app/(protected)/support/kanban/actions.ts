@@ -6,7 +6,7 @@ export async function listTicketsByStatus() {
   const supabase = createServerSupabaseClient();
   
   const { data: tickets, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .select('id, subject, tenant_id, priority, status, created_at, updated_at')
     .order('created_at', { ascending: false });
@@ -41,7 +41,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: string) {
   const supabase = createServerSupabaseClient();
   
   const { error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .update({ 
       status: newStatus,

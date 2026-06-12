@@ -21,7 +21,7 @@ async function fetchPedidosParaPagamento(): Promise<PedidoParaPagamento[]> {
   const statusesAguardandoCobranca = ['AGUARDANDO_PAGAMENTO', 'EM_PROCESSAMENTO'];
 
   const { data: pedidos, error } = await supabase
-    .from('pedidos')
+    .schema('sales').from('orders')
     .select(
       `
         id,

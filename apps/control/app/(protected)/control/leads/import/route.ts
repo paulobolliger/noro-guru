@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'no valid rows' }, { status: 400 });
   }
 
-  const { error } = await supabase.schema('cp').from('leads').insert(rows);
+  const { error } = await supabase.schema('platform_crm').from('leads').insert(rows);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true, imported: rows.length });
 }

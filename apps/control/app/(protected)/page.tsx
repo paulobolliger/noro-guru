@@ -18,7 +18,7 @@
       const supabaseAdmin = getSupabaseAdmin();
 
       const { data: userProfile } = await supabase
-        .from('noro_users')
+        .schema('noro_auth').from('users_legado')
         .select('*')
         .eq('id', authUser.id)
         .single();
@@ -27,7 +27,7 @@
         // ... (código para criar perfil, mantenha como está)
         const nomePadrao = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Novo Admin';
         const { error: insertError } = await supabaseAdmin
-          .from('noro_users')
+          .schema('noro_auth').from('users_legado')
           .insert({ id: authUser.id, email: authUser.email!, nome: nomePadrao, role: 'admin' });
         if (insertError) {
           console.error('❌ Erro ao criar perfil:', insertError);

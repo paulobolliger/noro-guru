@@ -26,7 +26,7 @@ async function fetchPedidoDetalhesParaEdicao(id: string): Promise<PedidoComRelac
 
   // Garante que todos os dados necessários para o formulário sejam buscados
   const { data: pedido, error } = await supabase
-    .from('pedidos')
+    .schema('sales').from('orders')
     .select(
       `
         *,

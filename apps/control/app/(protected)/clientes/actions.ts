@@ -12,7 +12,7 @@ export async function getClientes() {
     const supabase = createServerSupabaseClient();
     
     const { data, error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .select(`
         id,
         nome,
@@ -54,7 +54,7 @@ export async function getClienteById(clienteId: string) {
     const supabase = createServerSupabaseClient();
     
     const { data, error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .select(`
         id,
         nome,
@@ -177,7 +177,7 @@ export async function createClienteAction(formData: FormData) {
     };
 
     const { data, error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .insert(novoCliente)
       .select()
       .single();
@@ -222,7 +222,7 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
     };
 
     const { error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .update(updates)
       .eq('id', clienteId);
 
@@ -250,7 +250,7 @@ export async function deleteClienteAction(clienteId: string) {
     
     // Soft delete
     const { error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .update({ 
         deleted_at: new Date().toISOString(),
         status: 'inativo'
@@ -276,7 +276,7 @@ export async function getClientesStats() {
     const supabase = createServerSupabaseClient();
     
     const { data, error } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .select('status, tipo, nivel')
       .is('deleted_at', null);
 

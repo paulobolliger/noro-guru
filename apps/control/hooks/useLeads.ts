@@ -54,7 +54,7 @@ export function useLeads(filters: LeadFilters = {}) {
         const supabase = createClient();
         
         let query = supabase
-          .from('noro_leads')
+          .schema('crm').from('leads')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -109,7 +109,7 @@ export function useLead(leadId: string | null) {
         const supabase = createClient();
         
         const { data, error: fetchError } = await supabase
-          .from('noro_leads')
+          .schema('crm').from('leads')
           .select('*')
           .eq('id', id)
           .single();
@@ -152,7 +152,7 @@ export function useLeadsStats() {
         
         // RLS já filtra por tenant
         const { data: allLeads } = await supabase
-          .from('noro_leads')
+          .schema('crm').from('leads')
           .select('status');
 
         if (allLeads) {
@@ -208,7 +208,7 @@ export function useLeadsPipeline() {
         
         // RLS já filtra por tenant
         const { data: allLeads } = await supabase
-          .from('noro_leads')
+          .schema('crm').from('leads')
           .select('status, valor_estimado');
 
         if (allLeads) {

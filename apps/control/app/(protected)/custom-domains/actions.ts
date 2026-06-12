@@ -6,7 +6,7 @@ export async function listAllCustomDomains() {
   
   // 1. Fetch all domains
   const { data: domains, error } = await supabase
-    .from('noro_domains')
+    .schema('sites').from('domains')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -21,7 +21,7 @@ export async function listAllCustomDomains() {
   const tenantIds = Array.from(new Set(domains.map((d: any) => d.tenant_id)));
   
   const { data: companies } = await supabase
-    .from('noro_empresa')
+    .schema('sites').from('empresa')
     .select('tenant_id, nome_empresa')
     .in('tenant_id', tenantIds);
 

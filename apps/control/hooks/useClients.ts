@@ -48,7 +48,7 @@ export function useClients(filters: ClientFilters = {}) {
         const supabase = createClient();
         
         let query = supabase
-          .from('noro_clientes')
+          .schema('crm').from('clients')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -106,7 +106,7 @@ export function useClient(clientId: string | null) {
         const supabase = createClient();
         
         const { data, error: fetchError } = await supabase
-          .from('noro_clientes')
+          .schema('crm').from('clients')
           .select('*')
           .eq('id', id)
           .single();
@@ -150,7 +150,7 @@ export function useClientsStats() {
         
         // RLS já filtra por tenant
         const { data: allClients } = await supabase
-          .from('noro_clientes')
+          .schema('crm').from('clients')
           .select('status, nivel');
 
         if (allClients) {

@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   }
 
   const { error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('leads')
     .insert({ organization_name, email, phone, source, value_cents, owner_id: uid });
 

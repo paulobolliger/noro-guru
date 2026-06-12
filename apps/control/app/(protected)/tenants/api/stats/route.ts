@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = createServerSupabaseClient();
 
   const { data: tenants, error } = await supabase
-    .schema("cp")
+    .schema('platform')
     .from("tenants")
     .select("id, status, plan")
     .order("created_at", { ascending: false });

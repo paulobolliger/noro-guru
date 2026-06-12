@@ -22,7 +22,7 @@ async function main() {
   
   // Primeiro, vamos verificar se a coluna já existe tentando fazer uma query
   const { data: testData, error: testError } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .select('id, source')
     .limit(1);

@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         const stripe_invoice_id = inv.id;
         const tenant_id = (inv.metadata?.tenant_id as string) || null;
         await supabase
-          .schema("cp")
+          .schema('platform')
           .from("invoices")
           .insert({
             tenant_id,
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         const inv = event.data.object as Stripe.Invoice;
         const stripe_invoice_id = inv.id;
         const { data: updated } = await supabase
-          .schema("cp")
+          .schema('platform')
           .from("invoices")
           .update({ status: "paid", paid_at: new Date().toISOString() })
           .eq("stripe_invoice_id", stripe_invoice_id)
@@ -62,15 +62,15 @@ export async function POST(req: Request) {
 
         // Ensure default accounts exist
         const ensureAccount = async (code: string, name: string, type: string) => {
-          const { data: acc } = await supabase.schema("cp").from("ledger_accounts").select("id").eq("code", code).maybeSingle();
+          const { data: acc } = await supabase.schema('platform').from("ledger_accounts").select("id").eq("code", code).maybeSingle();
           if (acc?.id) return acc.id as string;
-          const { data: created } = await supabase.schema("cp").from("ledger_accounts").insert({ code, name, type }).select("id").maybeSingle();
+          const { data: created } = await supabase.schema('platform').from("ledger_accounts").insert({ code, name, type }).select("id").maybeSingle();
           return created?.id as string;
         };
         const revenueId = await ensureAccount("4000", "Receita Plataforma", "revenue");
         const cashId = await ensureAccount("1000", "Caixa", "asset");
 
-        await supabase.schema("cp").from("ledger_entries").insert([
+        await supabase.schema('platform').from("ledger_entries").insert([
           { account_id: revenueId, tenant_id, amount_cents: amount, memo: `Stripe invoice ${stripe_invoice_id}` },
           { account_id: cashId, tenant_id, amount_cents: amount, memo: `Stripe invoice ${stripe_invoice_id}` },
         ]);

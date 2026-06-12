@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: { token: strin
     const token = params.token;
     const supabase = createServerSupabaseClient();
     const { data: tokenData, error: tokenError } = await supabase
-      .from('noro_update_tokens')
+      .schema('noro_auth').from('update_tokens')
       .select('*, cliente:noro_clientes(*)')
       .eq('token', token)
       .single();
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     const supabase = createServerSupabaseClient();
 
     const { data: tokenData, error: tokenError } = await supabase
-      .from('noro_update_tokens')
+      .schema('noro_auth').from('update_tokens')
       .select('cliente_id, expires_at, used_at')
       .eq('token', token)
       .single();
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     };
 
     const { error: updateError } = await supabase
-      .from('noro_clientes')
+      .schema('crm').from('clients')
       .update(updates)
       .eq('id', cliente_id);
 
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     }
 
     await supabase
-      .from('noro_update_tokens')
+      .schema('noro_auth').from('update_tokens')
       .update({ used_at: new Date().toISOString() })
       .eq('token', token);
 

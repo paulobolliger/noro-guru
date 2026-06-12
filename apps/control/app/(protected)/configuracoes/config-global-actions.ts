@@ -8,7 +8,7 @@ export async function getConfiguracoesGlobais(): Promise<ConfiguracaoGlobal> {
   
   // Buscar configurações da tabela control_plane_config
   const { data, error } = await supabase
-    .from('control_plane_config')
+    .schema('platform').from('config')
     .select('*')
     .single();
 
@@ -26,7 +26,7 @@ export async function salvarConfiguracaoGlobal(
 
     // Atualizar apenas a seção específica
     const { error } = await supabase
-      .from('control_plane_config')
+      .schema('platform').from('config')
       .update({ [secao]: dados })
       .eq('id', 1); // Assumindo que temos apenas uma linha de config
 

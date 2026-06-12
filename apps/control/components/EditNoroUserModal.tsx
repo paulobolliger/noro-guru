@@ -34,7 +34,7 @@ export default function EditNoroUserModal({ user, isOpen, onClose, onSuccess }: 
       const supabase = createClient();
 
       const { error: updateError } = await supabase
-        .from('noro_users')
+        .schema('noro_auth').from('users_legado')
         .update({
           nome: formData.nome || null,
           telefone: formData.telefone || null,

@@ -17,7 +17,7 @@ async function fetchPedidos(): Promise<Pedido[]> {
 
   // Busca os pedidos de forma simples por enquanto, ordenando pelo mais recente
   const { data, error } = await supabase
-    .from('pedidos')
+    .schema('sales').from('orders')
     .select('*')
     .order('created_at', { ascending: false });
 

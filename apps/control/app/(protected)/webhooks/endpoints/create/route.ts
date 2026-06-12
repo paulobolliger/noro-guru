@@ -7,7 +7,7 @@ async function resolveActiveTenantId() {
   const uid = auth?.user?.id;
   if (uid) {
     const { data: utr } = await admin
-      .schema('cp')
+      .schema('platform')
       .from('user_tenant_roles')
       .select('tenant_id')
       .eq('user_id', uid)
@@ -15,7 +15,7 @@ async function resolveActiveTenantId() {
       .maybeSingle();
     if (utr?.tenant_id) return utr.tenant_id as string;
   }
-  const { data: tenantNoro } = await admin.schema('cp').from('tenants').select('id').eq('slug', 'noro').maybeSingle();
+  const { data: tenantNoro } = await admin.schema('platform').from('tenants').select('id').eq('slug', 'noro').maybeSingle();
   return tenantNoro?.id ?? null;
 }
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   const is_active = !!form.get('is_active');
   if (!code || !url) return NextResponse.json({ error: 'code and url required' }, { status: 400 });
   const tenant_id = await resolveActiveTenantId();
-  const { error } = await admin.schema('cp').from('webhooks').insert({ tenant_id, code, url, secret, is_active });
+  const { error } = await admin.schema('platform').from('webhooks').insert({ tenant_id, code, url, secret, is_active });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }

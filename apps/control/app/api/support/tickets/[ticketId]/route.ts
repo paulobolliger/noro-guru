@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Params }) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth?.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .select('*')
     .eq('id', params.ticketId)
@@ -30,7 +30,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   if (typeof body?.priority === 'string') patch.priority = body.priority;
   if (!Object.keys(patch).length) return NextResponse.json({ error: 'no updates' }, { status: 400 });
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_tickets')
     .update(patch)
     .eq('id', params.ticketId)

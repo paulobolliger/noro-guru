@@ -19,7 +19,7 @@ export async function getOrcamentos(): Promise<OrcamentoRow[]> {
   
   // Busca todos os orçamentos, ordenados pelo mais recente
   const { data, error } = await supabase
-    .from('noro_orcamentos')
+    .schema('sales').from('proposals')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -39,7 +39,7 @@ export async function getOrcamentoById(orcamentoId: string) {
   const supabase = createServerSupabaseClient();
   
   const { data, error } = await supabase
-    .from('noro_orcamentos')
+    .schema('sales').from('proposals')
     .select('*')
     .eq('id', orcamentoId)
     .single();
@@ -92,7 +92,7 @@ export async function createOrcamento(formData: FormData) {
   };
 
   const { data, error } = await supabase
-    .from('noro_orcamentos')
+    .schema('sales').from('proposals')
     .insert(orcamentoData)
     .select()
     .single();
@@ -153,7 +153,7 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
     };
 
     const { data: orcamento } = await supabase
-      .from('noro_orcamentos')
+      .schema('sales').from('proposals')
       .select('lead_id')
       .eq('id', orcamentoId)
       .limit(1)
@@ -161,7 +161,7 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
     
     
     const { error } = await supabase
-        .from('noro_orcamentos')
+        .schema('sales').from('proposals')
         .update(updates)
         .eq('id', orcamentoId);
 
@@ -186,7 +186,7 @@ export async function deleteOrcamento(orcamentoId: string) {
     const supabase = createServerSupabaseClient();
 
     const { data: orcamento } = await supabase
-      .from('noro_orcamentos')
+      .schema('sales').from('proposals')
       .select('lead_id')
       .eq('id', orcamentoId)
       .limit(1)
@@ -194,7 +194,7 @@ export async function deleteOrcamento(orcamentoId: string) {
       
 
     const { error } = await supabase
-        .from('noro_orcamentos')
+        .schema('sales').from('proposals')
         .delete()
         .eq('id', orcamentoId);
 

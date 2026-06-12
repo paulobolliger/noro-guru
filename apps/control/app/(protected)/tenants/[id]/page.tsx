@@ -7,7 +7,7 @@ import KpiCard from "@/components/dashboard/KpiCard";
 async function getTenant(id: string) {
     const supabase = createAdminSupabaseClient();
     const { data, error } = await supabase
-        .schema('cp')
+        .schema('platform')
         .from('tenants')
         .select('*')
         .eq('id', id)
@@ -22,7 +22,7 @@ async function getTenantStats(id: string) {
 
     // Get API keys count
     const { data: apiKeys } = await supabase
-        .schema('cp')
+        .schema('platform')
         .from('api_keys')
         .select('id')
         .eq('tenant_id', id);

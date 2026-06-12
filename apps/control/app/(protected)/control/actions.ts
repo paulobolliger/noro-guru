@@ -7,12 +7,12 @@ export async function loadControlMetrics(rangeDays: number = 30, tenantId?: stri
   since.setDate(since.getDate() - Math.max(1, Math.min(90, rangeDays)));
 
   const [{ count: tenants }, { count: keys }] = await Promise.all([
-    supabase.schema('cp').from('tenants').select('*', { count: 'exact', head: true }),
-    supabase.schema('cp').from('api_keys').select('*', { count: 'exact', head: true }),
+    supabase.schema('platform').from('tenants').select('*', { count: 'exact', head: true }),
+    supabase.schema('platform').from('api_keys').select('*', { count: 'exact', head: true }),
   ]);
 
   const { data: webhooks } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('webhooks')
     .select('id, tenant_id, provider, event, status, created_at')
     .order('created_at', { ascending: false })
@@ -22,7 +22,7 @@ export async function loadControlMetrics(rangeDays: number = 30, tenantId?: stri
   let usage: any[] = [];
   {
     const base = supabase
-      .schema('cp')
+      .schema('platform')
       .from('v_api_key_usage_daily') as any;
 
     // tentativa com latências e filtro por tenant
@@ -66,7 +66,7 @@ export async function loadControlMetrics(rangeDays: number = 30, tenantId?: stri
 
   // Tenants (para KPIs e distribuição por plano)
   let qTenants = supabase
-    .schema('cp')
+    .schema('platform')
     .from('tenants')
     .select('id, name, plan, status, created_at')
     .order('created_at', { ascending: false })

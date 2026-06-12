@@ -11,7 +11,7 @@ export default function ChatBadge() {
     const fetchUnread = async () => {
       try {
         const { data, error } = await supabase
-          .from('conversations')
+          .schema('comunicacao').from('conversations')
           .select('unread_count')
           .in('status', ['active', 'waiting']);
         

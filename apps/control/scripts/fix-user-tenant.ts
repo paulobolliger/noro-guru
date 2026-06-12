@@ -32,7 +32,7 @@ async function main() {
   
   console.log('📋 Verificando tenants existentes...');
   const { data: tenants, error: tenantsError } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('tenants')
     .select('id, name, slug')
     .limit(10);
@@ -50,7 +50,7 @@ async function main() {
   if (!tenants || tenants.length === 0) {
     console.log('\n🏢 Criando tenant de teste...');
     const { data: newTenant, error: createError } = await supabase
-      .schema('cp')
+      .schema('platform')
       .from('tenants')
       .insert({
         name: 'Empresa Teste',
@@ -73,7 +73,7 @@ async function main() {
   
   console.log(`\n👤 Associando usuário ${userId} ao tenant ${tenantId}...`);
   const { data: association, error: assocError } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('user_tenant_roles')
     .insert({
       user_id: userId,
@@ -96,7 +96,7 @@ async function main() {
   
   console.log('\n🔍 Verificando associações do usuário...');
   const { data: userTenants, error: checkError } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('user_tenant_roles')
     .select(`
       user_id,

@@ -8,7 +8,7 @@ export default async function WebhooksPage({ searchParams }: { searchParams?: Re
   const supabase = createAdminSupabaseClient();
   const q = (searchParams?.q || '').trim();
   let query = supabase
-    .schema("cp")
+    .schema('platform')
     .from("webhook_logs")
     .select("*")
     .order("created_at", { ascending: false })

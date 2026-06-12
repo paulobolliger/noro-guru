@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   const slug = slugIn || slugify(name);
 
   const { data: inserted, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('tenants')
     .insert({ name, slug, plan, status })
     .select('id')
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const userId = auth?.user?.id;
     if (userId && inserted?.id) {
       await supabase
-        .schema('cp')
+        .schema('platform')
         .from('user_tenant_roles')
         .upsert({ user_id: userId, tenant_id: inserted.id, role: 'owner' }, { onConflict: 'user_id,tenant_id' });
       const res = NextResponse.redirect(new URL('/control/orgs', req.url));

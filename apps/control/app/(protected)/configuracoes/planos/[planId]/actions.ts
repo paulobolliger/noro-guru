@@ -8,7 +8,7 @@ export async function getPlan(planId: string) {
   const supabase = createServerSupabaseClient()
   
   const { data: plan, error } = await supabase
-    .from("subscription_plans")
+    .schema('platform').from('subscription_plans')
     .select("*")
     .eq("id", planId)
     .single()
@@ -34,7 +34,7 @@ export async function updatePlan(planId: string, updates: any) {
   }
   
   const { error } = await supabase
-    .from("subscription_plans")
+    .schema('platform').from('subscription_plans')
     .update(updates)
     .eq("id", planId)
 
@@ -176,7 +176,7 @@ export async function validatePlanChanges(planId: string, changes: any) {
   
   // Busca plano atual
   const { data: currentPlan } = await supabase
-    .from("subscription_plans")
+    .schema('platform').from('subscription_plans')
     .select("*")
     .eq("id", planId)
     .single()

@@ -5,7 +5,7 @@ import EndpointsPageClient from './EndpointsPageClient';
 export default async function WebhookEndpointsPage() {
   const supabase = createAdminSupabaseClient();
   const { data: endpoints, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('webhooks')
     .select('*')
     .order('created_at', { ascending: false });
@@ -15,7 +15,7 @@ export default async function WebhookEndpointsPage() {
     "use server";
     const id = String(formData.get('id') || '');
     const admin = createAdminSupabaseClient();
-    await admin.schema('cp').from('webhooks').delete().eq('id', id);
+    await admin.schema('platform').from('webhooks').delete().eq('id', id);
     revalidatePath('/webhooks/endpoints');
   }
 
@@ -24,7 +24,7 @@ export default async function WebhookEndpointsPage() {
     const id = String(formData.get('id') || '');
     const active = String(formData.get('active') || '') === 'true';
     const admin = createAdminSupabaseClient();
-    await admin.schema('cp').from('webhooks').update({ is_active: !active }).eq('id', id);
+    await admin.schema('platform').from('webhooks').update({ is_active: !active }).eq('id', id);
     revalidatePath('/webhooks/endpoints');
   }
 

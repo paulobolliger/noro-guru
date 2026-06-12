@@ -5,7 +5,7 @@ export default async function OrgDetail({ params }: { params: { id: string } }) 
   const org = await getOrg(params.id);
   const notes = await listNotes(params.id);
   const supabase = createAdminSupabaseClient();
-  const { data: contacts } = await supabase.schema('cp').from('contacts').select('*').eq('tenant_id', params.id).order('is_primary', { ascending: false });
+  const { data: contacts } = await supabase.schema('platform_crm').from('contacts').select('*').eq('tenant_id', params.id).order('is_primary', { ascending: false });
 
   async function create(formData: FormData) {
     "use server";

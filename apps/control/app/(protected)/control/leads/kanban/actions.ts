@@ -9,7 +9,7 @@ export async function listLeadsByStage() {
   // Fetch stages globais (Control Plane não usa tenant_id para stages)
   const admin = createAdminSupabaseClient();
   const { data: stagesData } = await admin
-    .schema("cp")
+    .schema('platform')
     .from("lead_stages")
     .select("slug,label,ord")
     .is("tenant_id", null) // Stages globais do Control Plane
@@ -25,7 +25,7 @@ export async function listLeadsByStage() {
   // Buscar TODOS os leads do Control Plane (não filtrar por tenant)
   // Leads no Control Plane são prospects para virar tenants, não têm tenant_id ainda
   let q = admin
-    .schema("cp")
+    .schema('platform')
     .from("leads")
     .select("*")
     .order("position", { ascending: true })
@@ -47,7 +47,7 @@ export async function moveLead(formData: FormData) {
   const id = String(formData.get("id") || "");
   const stage = String(formData.get("stage") || "");
   if (!id || !stage) throw new Error("Parametros invalidos");
-  const { error } = await supabase.schema("cp").from("leads").update({ stage }).eq("id", id);
+  const { error } = await supabase.schema('platform_crm').from('leads').update({ stage }).eq("id", id);
   if (error) throw new Error(error.message);
 }
 
@@ -55,7 +55,7 @@ export async function convertLeadToTenant(formData: FormData) {
   const supabase = createServerSupabaseClient();
   const id = String(formData.get("id") || "");
   if (!id) throw new Error("Lead invalido");
-  const { data: lead } = await supabase.schema("cp").from("leads").select("*").eq("id", id).maybeSingle();
+  const { data: lead } = await supabase.schema('platform_crm').from('leads').select("*").eq("id", id).maybeSingle();
   if (!lead) throw new Error("Lead nao encontrado");
   const slug = (lead.organization_name || "org")
     .toLowerCase()
@@ -63,12 +63,12 @@ export async function convertLeadToTenant(formData: FormData) {
     .replace(/^-+|-+$/g, "")
     .slice(0, 30);
   const { data: tenant, error: terr } = await supabase
-    .schema("cp")
+    .schema('platform')
     .from("tenants")
     .insert({ name: lead.organization_name || slug, slug, status: "active" })
     .select("*")
     .maybeSingle();
   if (terr) throw new Error(terr.message);
-  await supabase.schema("cp").from("leads").update({ tenant_id: tenant?.id, stage: "ganho" }).eq("id", id);
+  await supabase.schema('platform_crm').from('leads').update({ tenant_id: tenant?.id, stage: "ganho" }).eq("id", id);
 }
 

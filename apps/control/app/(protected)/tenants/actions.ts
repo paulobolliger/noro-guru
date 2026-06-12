@@ -14,7 +14,7 @@ export async function getUserTenants(): Promise<Tenant[]> {
     }
     
     const { data, error } = await supabase
-      .schema('cp')
+      .schema('platform')
       .from("user_tenant_roles")
       .select("role, tenants!user_tenant_roles_tenant_fkey(id, name, slug)")
       .eq("user_id", user.id);

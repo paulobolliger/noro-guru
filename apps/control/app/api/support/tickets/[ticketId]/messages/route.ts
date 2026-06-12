@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Params }) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth?.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_messages')
     .select('*')
     .eq('ticket_id', params.ticketId)
@@ -29,7 +29,7 @@ export async function POST(request: Request, { params }: { params: Params }) {
   const tenant_id = String(body?.tenant_id || '').trim();
   if (!content || !tenant_id) return NextResponse.json({ error: 'body and tenant_id required' }, { status: 400 });
   const { data, error } = await supabase
-    .schema('cp')
+    .schema('platform')
     .from('support_messages')
     .insert({ ticket_id: params.ticketId, tenant_id, sender_id: auth.user.id, sender_role: 'agent', body: content, internal })
     .select('*')

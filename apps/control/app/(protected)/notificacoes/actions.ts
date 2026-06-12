@@ -7,7 +7,7 @@ export async function markNotificationAsRead(notificationId: string) {
   const supabase = createServerSupabaseClient();
   
   const { error } = await supabase
-    .from('noro_notificacoes')
+    .schema('comunicacao').from('notificacoes')
     .update({ lida: true })
     .eq('id', notificationId);
   
