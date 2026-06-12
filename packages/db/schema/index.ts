@@ -13,7 +13,10 @@ import { paymentProviderAccounts } from './payment-provider-accounts';
 import { paymentWebhookEvents } from './payment-webhook-events';
 import { pricingRules } from './pricing-rules';
 import { products } from './products';
+import { emergencyContacts } from './emergency-contacts';
 import { proposalDocuments } from './proposal-documents';
+import { proposalItineraryItems } from './proposal-itinerary';
+import { proposalMessages } from './proposal-messages';
 import { proposalItems, proposals } from './proposals';
 import { platformRoleAssignments } from './roles';
 import { suppliers } from './suppliers';
@@ -36,7 +39,10 @@ export * from './payment-provider-accounts';
 export * from './payment-webhook-events';
 export * from './pricing-rules';
 export * from './products';
+export * from './emergency-contacts';
 export * from './proposal-documents';
+export * from './proposal-itinerary';
+export * from './proposal-messages';
 export * from './proposals';
 export * from './roles';
 export * from './suppliers';
@@ -195,6 +201,9 @@ export const proposalsRelations = relations(proposals, ({ one, many }) => ({
   }),
   items: many(proposalItems),
   documents: many(proposalDocuments),
+  itineraryItems: many(proposalItineraryItems),
+  messages: many(proposalMessages),
+  emergencyContacts: many(emergencyContacts),
 }));
 
 export const proposalDocumentsRelations = relations(proposalDocuments, ({ one }) => ({
@@ -234,5 +243,30 @@ export const pricingRulesRelations = relations(pricingRules, ({ one }) => ({
   plan: one(plans, {
     fields: [pricingRules.planId],
     references: [plans.id],
+  }),
+}));
+
+export const proposalItineraryItemsRelations = relations(proposalItineraryItems, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [proposalItineraryItems.proposalId],
+    references: [proposals.id],
+  }),
+  document: one(proposalDocuments, {
+    fields: [proposalItineraryItems.documentId],
+    references: [proposalDocuments.id],
+  }),
+}));
+
+export const proposalMessagesRelations = relations(proposalMessages, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [proposalMessages.proposalId],
+    references: [proposals.id],
+  }),
+}));
+
+export const emergencyContactsRelations = relations(emergencyContacts, ({ one }) => ({
+  proposal: one(proposals, {
+    fields: [emergencyContacts.proposalId],
+    references: [proposals.id],
   }),
 }));

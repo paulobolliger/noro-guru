@@ -227,6 +227,9 @@ export default async function ClienteDashboardPage() {
           { label: 'Propostas', href: '/propostas', emoji: '📋' },
           { label: 'Pagamentos', href: '/pagamentos', emoji: '💳' },
           { label: 'Documentos', href: '/documentos', emoji: '📂' },
+          { label: 'Itinerário', href: '/itinerario', emoji: '🗓️' },
+          { label: 'Mensagens', href: '/mensagens', emoji: '💬' },
+          { label: 'Emergência', href: '/emergencia', emoji: '🆘' },
         ].map((item) => (
           <a
             key={item.href}

@@ -22,7 +22,7 @@ const SESSION_COOKIE = 'portal_session_id';
 
 // Rotas que exigem sessão autenticada do viajante
 // Correspondem ao route group app/(cliente)/
-const PROTECTED_PREFIXES = ['/', '/propostas', '/pagamentos', '/documentos'];
+const PROTECTED_PREFIXES = ['/', '/propostas', '/pagamentos', '/documentos', '/itinerario', '/mensagens', '/emergencia'];
 
 function isProtectedPath(pathname: string): boolean {
   // A raiz `/` é protegida mas não é prefixo de `/login`, `/auth`, `/proposta`

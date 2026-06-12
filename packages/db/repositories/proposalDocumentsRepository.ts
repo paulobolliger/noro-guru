@@ -29,6 +29,21 @@ export async function getDocumentsByProposal(
   });
 }
 
+// Versão admin: retorna todos os documentos, incluindo ocultos para o cliente
+export async function getAllDocumentsByProposal(
+  db: NoroDatabase,
+  tenantId: string,
+  proposalId: string,
+) {
+  return db.query.proposalDocuments.findMany({
+    where: and(
+      eq(proposalDocuments.tenantId, tenantId),
+      eq(proposalDocuments.proposalId, proposalId),
+    ),
+    orderBy: [desc(proposalDocuments.createdAt)],
+  });
+}
+
 export type DocumentWithProposal = Awaited<ReturnType<typeof getDocumentsByClient>>[number];
 
 export async function getDocumentsByClient(

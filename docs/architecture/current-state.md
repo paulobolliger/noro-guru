@@ -239,3 +239,15 @@ Antes de alterar arquitetura de produto, fazer uma Sprint Docs curta:
 5. Migrar billing conforme `docs/architecture/billing-asaas-migration-plan.md`.
 
 Isso reduz o risco de novas decisoes serem tomadas com base em documentacao obsoleta.
+
+## Reorganização de Schema — Decisão aprovada (2026-06-01)
+
+O schema `public` será eliminado. Todas as tabelas migram para schemas funcionais.
+Ver proposta completa em: `docs/architecture/db-schema-reorganization-proposal.md`
+
+Schemas aprovados:
+- Plataforma: `platform`, `platform_billing`, `platform_crm`, `auth`, `audit`
+- Tenant: `crm`, `sales`, `fin`, `catalog`, `portal`, `comunicacao`, `mkt`, `ai`, `sites`, `visa`
+
+Nenhuma tabela será eliminada nesta fase — apenas reorganizada.
+A migração é gradual e controlada, sprint a sprint.

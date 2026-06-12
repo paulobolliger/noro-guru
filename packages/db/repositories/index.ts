@@ -18,3 +18,6 @@ export * as paymentProviderAccountsRepository from './paymentProviderAccountsRep
 export * as paymentCustomersRepository from './paymentCustomersRepository';
 export * as paymentChargesRepository from './paymentChargesRepository';
 export * as paymentWebhookEventsRepository from './paymentWebhookEventsRepository';
+export * as proposalItineraryRepository from './proposalItineraryRepository';
+export * as proposalMessagesRepository from './proposalMessagesRepository';
+export * as emergencyContactsRepository from './emergencyContactsRepository';
