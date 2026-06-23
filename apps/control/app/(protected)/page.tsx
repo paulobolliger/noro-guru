@@ -1,78 +1,45 @@
-    // app/admin/(protected)/page.tsx
-    import { getDashboardMetrics, getSupabaseAdmin } from "@noro/lib/supabase/admin";
-    import AdminDashboard from "@/components/AdminDashboard";
-    import { createServerSupabaseClient } from "@noro/lib/supabase/server";
-    import { redirect } from 'next/navigation';
+// app/admin/(protected)/page.tsx
+import { redirect } from 'next/navigation';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 
-    export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 
-    export default async function AdminDashboardPage() {
-      const supabase = createServerSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
+export default async function AdminDashboardPage() {
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
+  
+  if (!userId) {
+    return redirect('/auth/sign-in'); 
+  }
+  
+  const { client, close } = createDatabaseClient();
+
+  try {
+    const rows = await client`
+      SELECT id 
+      FROM noro_auth.users_legado
+      WHERE id = ${userId}
+      LIMIT 1
+    `;
+
+    if (!rows || rows.length === 0) {
+      const email = ctx.claims?.email || '';
+      const nomePadrao = ctx.claims?.name || email.split('@')[0] || 'Novo Admin';
       
-      if (!session || !session.user) {
-        return redirect('/login?redirect=/control'); 
-      }
-      
-      const authUser = session.user; 
-      const supabaseAdmin = getSupabaseAdmin();
-
-      const { data: userProfile } = await supabase
-        .schema('noro_auth').from('users_legado')
-        .select('*')
-        .eq('id', authUser.id)
-        .single();
-
-      if (!userProfile) {
-        // ... (código para criar perfil, mantenha como está)
-        const nomePadrao = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Novo Admin';
-        const { error: insertError } = await supabaseAdmin
-          .schema('noro_auth').from('users_legado')
-          .insert({ id: authUser.id, email: authUser.email!, nome: nomePadrao, role: 'admin' });
-        if (insertError) {
-          console.error('❌ Erro ao criar perfil:', insertError);
-          await supabase.auth.signOut();
-          return redirect(`/login?error=${encodeURIComponent('Erro ao criar perfil')}`);
-        }
-        return redirect('/control'); 
-      }
-
-      // --- ÁREA DE TESTE ---
-      // Vamos testar uma consulta de cada vez.
-      // Descomente uma linha, reinicie o servidor e veja se o erro acontece.
-      
-      let metrics = {};
-      let leadsRecentes = [];
-      let tarefas = [];
-
-      try {
-        // Teste 1: A função RPC
-        metrics = await getDashboardMetrics(30);
-
-        // Teste 2: A tabela de Leads
-        // leadsRecentes = await getLeads({ limit: 5 });
-        // console.log('✅ getLeads funcionou.');
-
-        // Teste 3: A tabela de Tarefas
-        // tarefas = await getTarefas({ status: 'pendente', responsavel: authUser.id });
-        // console.log('✅ getTarefas funcionou.');
-
-      } catch (error: any) {
-        console.error('🔴 FALHA NA CONSULTA AO BANCO DE DADOS 🔴');
-        console.error(error.message);
-        // Exibe uma mensagem de erro na página em vez de quebrar
-        return (
-          <div>
-            <h1>Erro ao buscar dados do Dashboard</h1>
-            <pre style={{ color: 'red', backgroundColor: '#333', padding: '1rem' }}>
-              {error.message}
-            </pre>
-          </div>
-        );
-      }
-      
-      // Até migrarmos a UI do Control, envia para o Dashboard do Control
-      return redirect('/control');
+      await client`
+        INSERT INTO noro_auth.users_legado (id, email, nome, role, created_at)
+        VALUES (${userId}, ${email}, ${nomePadrao}, 'admin', NOW())
+      `;
     }
+  } catch (error: any) {
+    console.error('❌ Erro ao criar/verificar perfil:', error);
+  } finally {
+    await close();
+  }
+  
+  return redirect('/control');
+}
     
 

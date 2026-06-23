@@ -1,6 +1,7 @@
+// app/admin/(protected)/clientes/actions.ts
 'use server';
 
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from '@noro/db';
 import { revalidatePath } from 'next/cache';
 
 // ============================================================================
@@ -8,12 +9,10 @@ import { revalidatePath } from 'next/cache';
 // ============================================================================
 
 export async function getClientes() {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
-    const { data, error } = await supabase
-      .schema('crm').from('clients')
-      .select(`
+    const data = await client`
+      SELECT 
         id,
         nome,
         email,
@@ -29,19 +28,16 @@ export async function getClientes() {
         data_ultimo_contato,
         created_at,
         updated_at
-      `)
-      .is('deleted_at', null)
-      .order('updated_at', { ascending: false });
-
-    if (error) {
-      console.error('Erro ao buscar clientes:', error);
-      return [];
-    }
-
-    return data || [];
+      FROM crm.clients
+      WHERE deleted_at IS NULL
+      ORDER BY updated_at DESC
+    `;
+    return (data || []) as any;
   } catch (error: any) {
     console.error('Erro ao buscar clientes:', error);
     return [];
+  } finally {
+    await close();
   }
 }
 
@@ -50,12 +46,10 @@ export async function getClientes() {
 // ============================================================================
 
 export async function getClienteById(clienteId: string) {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
-    const { data, error } = await supabase
-      .schema('crm').from('clients')
-      .select(`
+    const [data] = await client`
+      SELECT 
         id,
         nome,
         email,
@@ -83,16 +77,16 @@ export async function getClienteById(clienteId: string) {
         inscricao_estadual,
         responsavel_nome,
         responsavel_cargo
-      `)
-      .eq('id', clienteId)
-      .is('deleted_at', null)
-      .single();
-
-    if (error) throw error; // Lança o erro para o bloco catch
-    return data; // Retorna os dados do cliente diretamente
+      FROM crm.clients
+      WHERE id = ${clienteId} AND deleted_at IS NULL
+      LIMIT 1
+    `;
+    return data || null;
   } catch (error: any) {
     console.error('Erro ao buscar cliente:', error);
-    return null; // Retorna null em caso de erro
+    return null;
+  } finally {
+    await close();
   }
 }
 
@@ -116,7 +110,7 @@ export async function createClienteAction(formData: FormData) {
   
   // Campos para Pessoa Física
   const cpf = formData.get('cpf') as string;
-  const passaporte = formData.get('passaporte') as string; // CORRIGIDO: Adicionado campo Passaporte
+  const passaporte = formData.get('passaporte') as string;
   const data_nascimento = formData.get('data_nascimento') as string;
   const nacionalidade = formData.get('nacionalidade') as string;
   const profissao = formData.get('profissao') as string;
@@ -129,7 +123,6 @@ export async function createClienteAction(formData: FormData) {
   const responsavel_nome = formData.get('responsavel_nome') as string;
   const responsavel_cargo = formData.get('responsavel_cargo') as string;
 
-
   if (!nome || !email) {
     return { success: false, message: 'Nome e e-mail são obrigatórios.' };
   }
@@ -138,10 +131,10 @@ export async function createClienteAction(formData: FormData) {
     return { success: false, message: 'Tipo de cliente (PF/PJ) é obrigatório.' };
   }
 
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
-    const novoCliente = {
+    const isPf = tipo === 'pessoa_fisica';
+    const insertData = {
       nome,
       email,
       telefone: telefone || null,
@@ -154,41 +147,50 @@ export async function createClienteAction(formData: FormData) {
       moeda_preferida: moeda_preferida || 'EUR',
       
       // Pessoa Física
-      ...(tipo === 'pessoa_fisica' && {
-        cpf: cpf || null,
-        passaporte: passaporte || null, // CORRIGIDO: Adicionado campo Passaporte
-        data_nascimento: data_nascimento || null,
-        nacionalidade: nacionalidade || null,
-        profissao: profissao || null,
-      }),
+      cpf: isPf ? (cpf || null) : null,
+      passaporte: isPf ? (passaporte || null) : null,
+      data_nascimento: isPf ? (data_nascimento || null) : null,
+      nacionalidade: isPf ? (nacionalidade || null) : null,
+      profissao: isPf ? (profissao || null) : null,
       
       // Pessoa Jurídica
-      ...(tipo === 'pessoa_juridica' && {
-        cnpj: cnpj || null,
-        razao_social: razao_social || null,
-        nome_fantasia: nome_fantasia || null,
-        inscricao_estadual: inscricao_estadual || null, // Adicionado IE
-        responsavel_nome: responsavel_nome || null,
-        responsavel_cargo: responsavel_cargo || null, // Adicionado Cargo
-      }),
+      cnpj: !isPf ? (cnpj || null) : null,
+      razao_social: !isPf ? (razao_social || null) : null,
+      nome_fantasia: !isPf ? (nome_fantasia || null) : null,
+      inscricao_estadual: !isPf ? (inscricao_estadual || null) : null,
+      responsavel_nome: !isPf ? (responsavel_nome || null) : null,
+      responsavel_cargo: !isPf ? (responsavel_cargo || null) : null,
       
       observacoes: observacoes || null,
       data_primeiro_contato: new Date().toISOString(),
     };
 
-    const { data, error } = await supabase
-      .schema('crm').from('clients')
-      .insert(novoCliente)
-      .select()
-      .single();
-
-    if (error) throw error;
+    const [data] = await client`
+      INSERT INTO crm.clients (
+        nome, email, telefone, whatsapp, tipo, status, nivel, segmento, idioma_preferido, moeda_preferida,
+        cpf, passaporte, data_nascimento, nacionalidade, profissao,
+        cnpj, razao_social, nome_fantasia, inscricao_estadual, responsavel_nome, responsavel_cargo,
+        observacoes, data_primeiro_contato
+      ) VALUES (
+        ${insertData.nome}, ${insertData.email}, ${insertData.telefone}, ${insertData.whatsapp},
+        ${insertData.tipo}, ${insertData.status}, ${insertData.nivel}, ${insertData.segmento},
+        ${insertData.idioma_preferido}, ${insertData.moeda_preferida},
+        ${insertData.cpf}, ${insertData.passaporte}, ${insertData.data_nascimento},
+        ${insertData.nacionalidade}, ${insertData.profissao},
+        ${insertData.cnpj}, ${insertData.razao_social}, ${insertData.nome_fantasia},
+        ${insertData.inscricao_estadual}, ${insertData.responsavel_nome}, ${insertData.responsavel_cargo},
+        ${insertData.observacoes}, ${insertData.data_primeiro_contato}
+      )
+      RETURNING *
+    `;
 
     revalidatePath('/admin/clientes');
     return { success: true, message: 'Cliente adicionado com sucesso!', data };
   } catch (error: any) {
     console.error('Erro ao criar cliente:', error);
     return { success: false, message: `Erro: ${error.message}` };
+  } finally {
+    await close();
   }
 }
 
@@ -208,9 +210,8 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
   const status = formData.get('status') as string;
   const observacoes = formData.get('observacoes') as string;
 
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
     const updates = {
       nome,
       email,
@@ -221,18 +222,26 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .schema('crm').from('clients')
-      .update(updates)
-      .eq('id', clienteId);
-
-    if (error) throw error;
+    await client`
+      UPDATE crm.clients
+      SET
+        nome = ${updates.nome},
+        email = ${updates.email},
+        telefone = ${updates.telefone},
+        whatsapp = ${updates.whatsapp},
+        status = ${updates.status},
+        observacoes = ${updates.observacoes},
+        updated_at = ${updates.updated_at}
+      WHERE id = ${clienteId}
+    `;
 
     revalidatePath('/admin/clientes');
     return { success: true, message: 'Cliente atualizado com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao atualizar cliente:', error);
     return { success: false, message: `Erro: ${error.message}` };
+  } finally {
+    await close();
   }
 }
 
@@ -245,25 +254,23 @@ export async function deleteClienteAction(clienteId: string) {
     return { success: false, message: 'ID do cliente não fornecido.' };
   }
 
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
-    // Soft delete
-    const { error } = await supabase
-      .schema('crm').from('clients')
-      .update({ 
-        deleted_at: new Date().toISOString(),
-        status: 'inativo'
-      })
-      .eq('id', clienteId);
-
-    if (error) throw error;
+    await client`
+      UPDATE crm.clients
+      SET 
+        deleted_at = ${new Date().toISOString()},
+        status = 'inativo'
+      WHERE id = ${clienteId}
+    `;
 
     revalidatePath('/admin/clientes');
     return { success: true, message: 'Cliente removido com sucesso!' };
   } catch (error: any) {
     console.error('Erro ao deletar cliente:', error);
     return { success: false, message: `Erro: ${error.message}` };
+  } finally {
+    await close();
   }
 }
 
@@ -272,15 +279,13 @@ export async function deleteClienteAction(clienteId: string) {
 // ============================================================================
 
 export async function getClientesStats() {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = createServerSupabaseClient();
-    
-    const { data, error } = await supabase
-      .schema('crm').from('clients')
-      .select('status, tipo, nivel')
-      .is('deleted_at', null);
-
-    if (error) throw error;
+    const data = await client`
+      SELECT status, tipo, nivel
+      FROM crm.clients
+      WHERE deleted_at IS NULL
+    `;
 
     const stats = {
       total: data?.length || 0,
@@ -300,5 +305,7 @@ export async function getClientesStats() {
       pessoa_fisica: 0,
       pessoa_juridica: 0,
     };
+  } finally {
+    await close();
   }
 }

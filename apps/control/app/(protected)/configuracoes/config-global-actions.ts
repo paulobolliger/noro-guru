@@ -1,36 +1,38 @@
 'use server';
 
-import { createServerSupabaseClient } from '@/../../packages/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 import type { ConfiguracaoGlobal } from '@/../../packages/types/control-plane';
 
 export async function getConfiguracoesGlobais(): Promise<ConfiguracaoGlobal> {
-  const supabase = await createServerSupabaseClient();
-  
-  // Buscar configurações da tabela control_plane_config
-  const { data, error } = await supabase
-    .schema('platform').from('config')
-    .select('*')
-    .single();
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT * 
+      FROM platform.config
+      LIMIT 1
+    `;
 
-  if (error) throw new Error('Erro ao buscar configurações globais');
+    if (!rows || rows.length === 0) throw new Error('Erro ao buscar configurações globais');
 
-  return data as ConfiguracaoGlobal;
+    return rows[0] as unknown as ConfiguracaoGlobal;
+  } finally {
+    await close();
+  }
 }
 
 export async function salvarConfiguracaoGlobal(
   secao: keyof ConfiguracaoGlobal,
   dados: any
 ): Promise<{ success: boolean; message: string }> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-
-    // Atualizar apenas a seção específica
-    const { error } = await supabase
-      .schema('platform').from('config')
-      .update({ [secao]: dados })
-      .eq('id', 1); // Assumindo que temos apenas uma linha de config
-
-    if (error) throw error;
+    const jsonStr = JSON.stringify(dados);
+    // Atualizar apenas a seção específica usando dynamic column name
+    await client`
+      UPDATE platform.config
+      SET ${client(secao)} = ${jsonStr}::jsonb
+      WHERE id = 1
+    `;
 
     return {
       success: true,
@@ -42,5 +44,7 @@ export async function salvarConfiguracaoGlobal(
       success: false,
       message: error.message || 'Erro ao salvar configurações'
     };
+  } finally {
+    await close();
   }
 }

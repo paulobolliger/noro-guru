@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createDatabaseClient } from '@noro/db';
 import OpenAI from 'openai';
 import { SimpleBlueprintSchema, adaptSimpleBlueprint, BlueprintSchema } from '@noro/types/blueprint';
+import { getCurrentUser, logtoSessionAdapter } from '@noro/auth';
+import { logtoConfig } from '@/lib/logto';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,18 +17,16 @@ function slugify(text: string): string {
     .substring(0, 50);
 }
 
-async function generateUniqueSlug(base: string, supabase: SupabaseClient): Promise<string> {
+async function generateUniqueSlug(base: string, client: any): Promise<string> {
   let slug = slugify(base);
   let counter = 1;
 
   while (true) {
-    const { data } = await supabase
-      .from('sites')
-      .select('id')
-      .eq('slug', slug)
-      .single();
+    const rows = await client`
+      SELECT id FROM sites.agency_sites WHERE slug = ${slug} LIMIT 1
+    `;
 
-    if (!data) break;
+    if (!rows || rows.length === 0) break;
 
     slug = `${slugify(base)}-${counter}`;
     counter++;
@@ -164,18 +164,41 @@ Return ONLY the JSON. NO markdown, NO explanations, NO code blocks.`;
 }
 
 export async function POST(req: Request) {
-  // Create clients inside handler so env vars are read at request time
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const { client, db, close } = createDatabaseClient();
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
   try {
+    // 1. Resolve and verify the Logto session
+    const userCtx = await getCurrentUser({
+      db,
+      sessionAdapter: logtoSessionAdapter(logtoConfig),
+    });
+
+    if (!userCtx) {
+      return NextResponse.json(
+        { error: 'Acesso não autorizado. Por favor, faça login ou cadastre-se primeiro.' },
+        { status: 401 }
+      );
+    }
+
+    // 2. Resolve their real tenant ID
+    const membership = await db.query.tenantMemberships.findFirst({
+      where: (tbl, { eq }) => eq(tbl.userId, userCtx.user.id),
+    });
+
+    if (!membership?.tenantId) {
+      return NextResponse.json(
+        { error: 'Nenhuma conta (tenant) ativa associada ao usuário' },
+        { status: 400 }
+      );
+    }
+
+    const tenantId = membership.tenantId;
+    const email = userCtx.user.email;
+
     const body = await req.json();
     const { 
       agencyName, 
-      email, 
       language, 
       market, 
       positioning, 
@@ -195,7 +218,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log('[GENERATE] Received wizard data:', {
+    console.log('[GENERATE] Received wizard data for tenant:', tenantId, {
       agencyName,
       email,
       logoUrl,
@@ -246,38 +269,46 @@ export async function POST(req: Request) {
     console.log('[GENERATE] Custom theme:', customTheme);
 
     // Generate slug from agency name
-    const slug = await generateUniqueSlug(agencyName, supabase);
+    const slug = await generateUniqueSlug(agencyName, client);
 
-    // Save to Supabase
-    // TODO: Get real tenant_id from auth context when implementing multi-tenant auth
-    // For now, using a placeholder UUID - update this when auth is implemented
-    const TEMP_TENANT_ID = '00000000-0000-0000-0000-000000000001';
-    
-    const { data: site, error } = await supabase
-      .from('sites')
-      .insert({
-        tenant_id: TEMP_TENANT_ID,
+    // Save to Postgres VPS
+    const rows = await client`
+      INSERT INTO sites.agency_sites (
+        tenant_id,
         slug,
-        name: agencyName,
-        blueprint_data: {
+        name,
+        blueprint_data,
+        theme,
+        status,
+        created_at,
+        updated_at
+      )
+      VALUES (
+        ${tenantId},
+        ${slug},
+        ${agencyName},
+        ${JSON.stringify({
           ...fullBlueprint,
           theme: customTheme,
-        },
-        theme: customTheme,
-        status: 'published',
-      })
-      .select()
-      .single();
+        })},
+        ${JSON.stringify(customTheme)},
+        'published',
+        NOW(),
+        NOW()
+      )
+      RETURNING id, slug
+    `;
 
-    if (error) {
-      console.error('Supabase error:', error);
+    if (!rows || rows.length === 0) {
       throw new Error('Erro ao salvar site no banco de dados');
     }
+
+    const site = rows[0];
 
     return NextResponse.json({
       site_id: site.id,
       slug: site.slug,
-      public_url: `http://localhost:3001/${site.slug}`,
+      public_url: `${process.env.SITES_URL || 'http://localhost:3001'}/${site.slug}`,
     });
   } catch (error: any) {
     console.error('Generation error:', error);
@@ -286,5 +317,7 @@ export async function POST(req: Request) {
       { error: error.message || 'Erro ao gerar site' },
       { status: 500 }
     );
+  } finally {
+    await close();
   }
 }

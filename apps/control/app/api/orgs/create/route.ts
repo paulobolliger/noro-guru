@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { createDatabaseClient } from '@noro/db';
 
 export async function POST(request: Request) {
+  const { client, close } = createDatabaseClient();
   try {
     const body = await request.json();
     const { name, slug, plan } = body;
@@ -13,15 +14,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = createAdminSupabaseClient();
-
     // Check if slug already exists
-    const { data: existing } = await supabase
-      .schema('platform')
-      .from('tenants')
-      .select('id')
-      .eq('slug', slug)
-      .maybeSingle();
+    const [existing] = await client`
+      SELECT id 
+      FROM platform.tenants 
+      WHERE slug = ${slug} 
+      LIMIT 1
+    `;
 
     if (existing) {
       return NextResponse.json(
@@ -31,21 +30,11 @@ export async function POST(request: Request) {
     }
 
     // Create tenant
-    const { data, error } = await supabase
-      .schema('platform')
-      .from('tenants')
-      .insert({
-        name,
-        slug,
-        plan: plan || 'free',
-        status: 'active',
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
+    const [data] = await client`
+      INSERT INTO platform.tenants (name, slug, plan, status)
+      VALUES (${name}, ${slug}, ${plan || 'free'}, 'active')
+      RETURNING *
+    `;
 
     return NextResponse.json(data, { status: 201 });
   } catch (error: any) {
@@ -54,5 +43,7 @@ export async function POST(request: Request) {
       { message: error.message || 'Erro ao criar empresa' },
       { status: 500 }
     );
+  } finally {
+    await close();
   }
 }

@@ -28,9 +28,15 @@ export default function LeadsView({ leads }: LeadsViewProps) {
 
   const handleLeadMove = (leadId: string, newStatus: Lead['status']) => {
     startTransition(async () => {
-      await updateLeadStageAction(leadId, newStatus)
-    })
-  }
+      let mappedStatus: any = newStatus;
+      if (newStatus === 'contato') mappedStatus = 'em_contato';
+      else if (newStatus === 'qualificado') mappedStatus = 'briefing_coletado';
+      else if (newStatus === 'proposta') mappedStatus = 'proposta_enviada';
+      else if (newStatus === 'convertido') mappedStatus = 'ganho';
+
+      await updateLeadStageAction(leadId, mappedStatus);
+    });
+  };
 
   return (
     <div className="space-y-6">

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Save, Loader2 } from 'lucide-react';
 import type { NoroUser, NoroUserRole } from '@/../../packages/types/noro-users';
-import { createClient } from '@/../../packages/lib/supabase/client';
+import { updateNoroUserAction } from '@/app/(protected)/configuracoes/actions';
 
 interface EditNoroUserModalProps {
   user: NoroUser;
@@ -31,20 +31,16 @@ export default function EditNoroUserModal({ user, isOpen, onClose, onSuccess }: 
     setIsSaving(true);
 
     try {
-      const supabase = createClient();
+      const result = await updateNoroUserAction(user.id, {
+        nome: formData.nome || null,
+        telefone: formData.telefone || null,
+        whatsapp: formData.whatsapp || null,
+        role: formData.role,
+      });
 
-      const { error: updateError } = await supabase
-        .schema('noro_auth').from('users_legado')
-        .update({
-          nome: formData.nome || null,
-          telefone: formData.telefone || null,
-          whatsapp: formData.whatsapp || null,
-          role: formData.role,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id);
-
-      if (updateError) throw updateError;
+      if (!result.success) {
+        throw new Error(result.message);
+      }
 
       onSuccess();
       onClose();

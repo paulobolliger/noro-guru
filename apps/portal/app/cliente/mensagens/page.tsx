@@ -28,7 +28,7 @@ export default async function MensagensPage() {
       session.clientId,
     );
     // Marca mensagens do agente como lidas ao abrir a página
-    const proposalIds = [...new Set(messages.map((m) => m.proposalId))];
+    const proposalIds = Array.from(new Set(messages.map((m) => m.proposalId).filter((id): id is string => !!id)));
     for (const pid of proposalIds) {
       await proposalMessagesRepository.markMessagesReadByClient(db, tenant.tenantId, pid);
     }

@@ -1,23 +1,41 @@
 // app/(protected)/auditoria/page.tsx
-import { createAdminSupabaseClient } from '@/lib/supabase/admin';
+import { createDatabaseClient } from '@noro/db';
 import PageContainer from "@/components/layout/PageContainer";
 import SectionHeader from "@/components/layout/SectionHeader";
 import { FileSearch } from 'lucide-react';
 
 export default async function AuditoriaPage() {
-  const supabase = createAdminSupabaseClient();
-  // Try a few known tables/views; fall back gracefully if they don't exist
+  const { client, close } = createDatabaseClient();
+  
   const tryQueries = [
     { label: 'API Key Logs', schema: 'cp', table: 'api_key_logs' },
     { label: 'Webhooks', schema: 'cp', table: 'webhook_logs' },
     { label: 'Invoices', schema: 'cp', table: 'invoices' },
+    { label: 'Log de Atividades do Catálogo (Vistos)', schema: 'vistos', table: 'admin_activity_log' },
   ];
 
   const sections: { label: string; rows: any[] }[] = [];
-  for (const q of tryQueries) {
-    const { data, error } = await supabase.schema(q.schema).from(q.table).select('*').order('created_at', { ascending: false }).limit(20);
-    if (!error && data) sections.push({ label: q.label, rows: data });
+  try {
+    for (const q of tryQueries) {
+      try {
+        // Query dynamic table names using helper
+        const rows = await client`
+          SELECT * 
+          FROM ${client(q.schema + '.' + q.table)} 
+          ORDER BY created_at DESC 
+          LIMIT 20
+        `;
+        if (rows && rows.length > 0) {
+          sections.push({ label: q.label, rows });
+        }
+      } catch (err) {
+        // Ignore table not found errors or other query errors gracefully
+      }
+    }
+  } finally {
+    await close();
   }
+
   return (
     <div className="container-app py-8 space-y-6">
       <PageContainer>
@@ -51,7 +69,7 @@ export default async function AuditoriaPage() {
                   {s.rows.map((r: any) => (
                     <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                       <td className="px-3 py-2 align-top text-gray-900 dark:text-white">{r.id}</td>
-                      <td className="px-3 py-2 align-top text-gray-700 dark:text-gray-300">{r.created_at}</td>
+                      <td className="px-3 py-2 align-top text-gray-700 dark:text-gray-300">{String(r.created_at)}</td>
                       <td className="px-3 py-2 align-top text-gray-700 dark:text-gray-300">
                         <pre className="whitespace-pre-wrap break-words text-xs">{JSON.stringify(r, null, 2)}</pre>
                       </td>

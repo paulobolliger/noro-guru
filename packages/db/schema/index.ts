@@ -23,6 +23,18 @@ import { suppliers } from './suppliers';
 import { tenantModules } from './tenant-modules';
 import { tenants } from './tenants';
 import { users } from './users';
+import { bookings } from './bookings';
+import { bookingItems } from './booking-items';
+import { bookingComponentFinancials } from './booking-component-financials';
+import { financialLedgerEntries } from './financial-ledger-entries';
+import { trafficDocuments } from './traffic-documents';
+import { trafficDocumentCoupons } from './traffic-document-coupons';
+import { travelCredits } from './travel-credits';
+import { travelCreditMovements } from './travel-credit-movements';
+import { fiscalDocuments } from './fiscal-documents';
+import { bspIngestions } from './bsp-ingestions';
+import { bspRecords } from './bsp-records';
+import { agencyMemos } from './agency-memos';
 
 export * from './_schema';
 export * from './audit';
@@ -49,6 +61,24 @@ export * from './suppliers';
 export * from './tenant-modules';
 export * from './tenants';
 export * from './users';
+export * from './bookings';
+export * from './booking-items';
+export * from './booking-component-financials';
+export * from './financial-ledger-entries';
+export * from './traffic-documents';
+export * from './traffic-document-coupons';
+export * from './travel-credits';
+export * from './travel-credit-movements';
+export * from './fiscal-documents';
+export * from './bsp-ingestions';
+export * from './bsp-records';
+export * from './agency-memos';
+export * from './vistos';
+export * from './partner-api-keys';
+
+
+
+
 
 export const usersRelations = relations(users, ({ many }) => ({
   identityLinks: many(identityLinks),
@@ -268,5 +298,58 @@ export const emergencyContactsRelations = relations(emergencyContacts, ({ one })
   proposal: one(proposals, {
     fields: [emergencyContacts.proposalId],
     references: [proposals.id],
+  }),
+}));
+
+export const bookingsRelations = relations(bookings, ({ one, many }) => ({
+  tenant: one(tenants, {
+    fields: [bookings.tenantId],
+    references: [tenants.id],
+  }),
+  client: one(clients, {
+    fields: [bookings.clientId],
+    references: [clients.id],
+  }),
+  items: many(bookingItems),
+  financials: many(bookingComponentFinancials),
+  ledgerEntries: many(financialLedgerEntries),
+}));
+
+export const bookingItemsRelations = relations(bookingItems, ({ one, many }) => ({
+  booking: one(bookings, {
+    fields: [bookingItems.bookingId],
+    references: [bookings.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [bookingItems.supplierId],
+    references: [suppliers.id],
+  }),
+  financials: many(bookingComponentFinancials),
+  ledgerEntries: many(financialLedgerEntries),
+}));
+
+export const bookingComponentFinancialsRelations = relations(bookingComponentFinancials, ({ one }) => ({
+  booking: one(bookings, {
+    fields: [bookingComponentFinancials.bookingId],
+    references: [bookings.id],
+  }),
+  component: one(bookingItems, {
+    fields: [bookingComponentFinancials.componentId],
+    references: [bookingItems.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [bookingComponentFinancials.supplierId],
+    references: [suppliers.id],
+  }),
+}));
+
+export const financialLedgerEntriesRelations = relations(financialLedgerEntries, ({ one }) => ({
+  booking: one(bookings, {
+    fields: [financialLedgerEntries.bookingId],
+    references: [bookings.id],
+  }),
+  component: one(bookingItems, {
+    fields: [financialLedgerEntries.componentId],
+    references: [bookingItems.id],
   }),
 }));

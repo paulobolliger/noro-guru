@@ -1,19 +1,35 @@
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { DollarSign, FileText, Layout, TrendingUp } from "lucide-react";
 
 export default async function BillingPage() {
-  const supabase = createServerSupabaseClient();
-  const [{ count: plans }, { count: subs }, { count: accounts }] = await Promise.all([
-    supabase.schema('platform').from('plans').select('*', { count: 'exact', head: true }),
-    supabase.schema('platform').from('subscriptions').select('*', { count: 'exact', head: true }),
-    supabase.schema('platform').from('ledger_accounts').select('*', { count: 'exact', head: true }),
-  ]);
-  const { data: invoices } = await supabase
-    .schema('platform')
-    .from('invoices')
-    .select('tenant_id, amount_cents, currency, status, issued_at, created_at')
-    .order('created_at', { ascending: false })
-    .limit(20);
+  const { client, close } = createDatabaseClient();
+  let plans = 0;
+  let subs = 0;
+  let accounts = 0;
+  let invoices: any[] = [];
+
+  try {
+    const [plansRows, subsRows, accountsRows, invoicesRows] = await Promise.all([
+      client`SELECT count(*)::int as count FROM platform.plans`,
+      client`SELECT count(*)::int as count FROM platform.subscriptions`,
+      client`SELECT count(*)::int as count FROM platform.ledger_accounts`,
+      client`
+        SELECT tenant_id, amount_cents, currency, status, issued_at, created_at 
+        FROM platform.invoices
+        ORDER BY created_at DESC
+        LIMIT 20
+      `
+    ]);
+
+    plans = plansRows[0]?.count ?? 0;
+    subs = subsRows[0]?.count ?? 0;
+    accounts = accountsRows[0]?.count ?? 0;
+    invoices = invoicesRows || [];
+  } catch (error) {
+    console.error("Error loading billing metrics:", error);
+  } finally {
+    await close();
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">

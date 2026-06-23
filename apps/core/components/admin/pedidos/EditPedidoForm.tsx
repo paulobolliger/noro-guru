@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useTransition } from 'react';
 import { PedidoComRelacionamentos } from '@/types/pedidos';
@@ -64,7 +64,7 @@ export default function EditPedidoForm({ initialPedido }: EditPedidoFormProps) {
           variant: 'default',
         });
         // Após o sucesso, redireciona para a página de detalhes
-        router.push(`/admin/pedidos/${initialPedido.id}`);
+        router.push(`/pedidos/${initialPedido.id}`);
       } else {
         toast({
           title: 'Erro na Atualização',

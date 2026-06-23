@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { OrcamentoDetalhes } from "@/components/orcamentos/OrcamentoDetalhes";
 import { getOrcamentoById } from '../orcamentos-actions'; 
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
 
 interface PageProps {
   params: { id: string };
@@ -44,5 +43,5 @@ export default async function OrcamentoDetalhesPage({ params }: PageProps) {
   };
 
 
-  return <OrcamentoDetalhes orcamento={orcamentoComLead} />;
+  return <OrcamentoDetalhes orcamento={orcamentoComLead as any} />;
 }

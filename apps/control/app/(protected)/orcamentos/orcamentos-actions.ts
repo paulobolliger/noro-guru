@@ -1,34 +1,33 @@
 // app/admin/(protected)/orcamentos/orcamentos-actions.ts
 'use server';
 
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
-import type { Database } from "@noro-types/supabase";
+import { createDatabaseClient } from "@noro/db";
 import { revalidatePath } from 'next/cache';
 
-// Tipos baseados na estrutura do Supabase para garantir segurança
-type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];
-type OrcamentoInsert = Database['public']['Tables']['noro_orcamentos']['Insert'];
-type OrcamentoUpdate = Database['public']['Tables']['noro_orcamentos']['Update'];
+// Tipos definidos localmente
+type OrcamentoRow = any;
+type OrcamentoInsert = any;
+type OrcamentoUpdate = any;
 
 // ============================================================================
 // BUSCAR ORÇAMENTOS (LISTAGEM)
 // ============================================================================
 
 export async function getOrcamentos(): Promise<OrcamentoRow[]> {
-  const supabase = createServerSupabaseClient();
-  
-  // Busca todos os orçamentos, ordenados pelo mais recente
-  const { data, error } = await supabase
-    .schema('sales').from('proposals')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT * 
+      FROM sales.proposals
+      ORDER BY created_at DESC
+    `;
+    return rows || [];
+  } catch (error: any) {
     console.error('Erro ao buscar orçamentos:', error.message);
     return [];
+  } finally {
+    await close();
   }
-
-  return data || [];
 }
 
 // ============================================================================
@@ -36,20 +35,24 @@ export async function getOrcamentos(): Promise<OrcamentoRow[]> {
 // ============================================================================
 
 export async function getOrcamentoById(orcamentoId: string) {
-  const supabase = createServerSupabaseClient();
-  
-  const { data, error } = await supabase
-    .schema('sales').from('proposals')
-    .select('*')
-    .eq('id', orcamentoId)
-    .single();
-
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT * 
+      FROM sales.proposals
+      WHERE id = ${orcamentoId}
+      LIMIT 1
+    `;
+    if (!rows || rows.length === 0) {
+      return { success: false, error: 'Orçamento não encontrado' };
+    }
+    return { success: true, data: rows[0] };
+  } catch (error: any) {
     console.error(`Erro ao buscar orçamento ${orcamentoId}:`, error.message);
     return { success: false, error: error.message };
+  } finally {
+    await close();
   }
-
-  return { success: true, data };
 }
 
 // ============================================================================
@@ -57,125 +60,129 @@ export async function getOrcamentoById(orcamentoId: string) {
 // ============================================================================
 
 export async function createOrcamento(formData: FormData) {
-  const supabase = createServerSupabaseClient();
-  
-  const itensString = formData.get('itens') as string;
-  let itensParsed: any = [];
+  const { client, close } = createDatabaseClient();
   try {
+    const itensString = formData.get('itens') as string;
+    let itensParsed: any = [];
+    try {
       itensParsed = JSON.parse(itensString);
-  } catch (e) {
+    } catch (e) {
       console.warn("Erro ao parsear itens do orçamento. Salvando como array vazio.");
-  }
+    }
 
-  // Corrigindo a inserção: garantimos que os itens sejam inseridos como JSONB.
-  // O tipo `OrcamentoInsert` deve tratar isso automaticamente, mas para forçar
-  // o DB a aceitar o JSON, passamos o objeto (que é o que `JSON.parse` retorna).
-  
-  const orcamentoData: OrcamentoInsert = {
-    titulo: formData.get('titulo') as string,
-    lead_id: formData.get('lead_id') as string || null,
-    roteiro_base_id: formData.get('roteiro_base_id') as string || null,
-    valor_total: parseFloat(formData.get('valor_total') as string) || 0,
-    valor_sinal: parseFloat(formData.get('valor_sinal') as string) || null,
-    status: (formData.get('status') as Database['public']['Enums']['orcamento_status']) || 'rascunho',
-    descricao: formData.get('descricao') as string || null,
-    data_viagem_inicio: formData.get('data_viagem_inicio') as string || null,
-    data_viagem_fim: formData.get('data_viagem_fim') as string || null,
-    num_pessoas: parseInt(formData.get('num_pessoas') as string) || null,
-    num_dias: parseInt(formData.get('num_dias') as string) || null,
-    validade_ate: formData.get('validade_ate') as string || null,
-    observacoes: formData.get('observacoes') as string || null,
-    termos_condicoes: formData.get('termos_condicoes') as string || null,
-    // CORREÇÃO AQUI: Passamos o objeto parseado. Se o erro persistir, 
-    // significa que o cache ou a tipagem no `types/supabase.ts` está errada
-    itens: itensParsed, 
-  };
+    const payload = {
+      titulo: formData.get('titulo') as string,
+      lead_id: formData.get('lead_id') as string || null,
+      roteiro_base_id: formData.get('roteiro_base_id') as string || null,
+      valor_total: parseFloat(formData.get('valor_total') as string) || 0,
+      valor_sinal: parseFloat(formData.get('valor_sinal') as string) || null,
+      status: formData.get('status') as string || 'rascunho',
+      descricao: formData.get('descricao') as string || null,
+      data_viagem_inicio: formData.get('data_viagem_inicio') as string || null,
+      data_viagem_fim: formData.get('data_viagem_fim') as string || null,
+      num_pessoas: parseInt(formData.get('num_pessoas') as string) || null,
+      num_dias: parseInt(formData.get('num_dias') as string) || null,
+      validade_ate: formData.get('validade_ate') as string || null,
+      observacoes: formData.get('observacoes') as string || null,
+      termos_condicoes: formData.get('termos_condicoes') as string || null,
+      itens: client.json(itensParsed)
+    };
 
-  const { data, error } = await supabase
-    .schema('sales').from('proposals')
-    .insert(orcamentoData)
-    .select()
-    .single();
+    const rows = await client`
+      INSERT INTO sales.proposals (
+        titulo, lead_id, roteiro_base_id, valor_total, valor_sinal, 
+        status, descricao, data_viagem_inicio, data_viagem_fim, 
+        num_pessoas, num_dias, validade_ate, observacoes, termos_condicoes, itens
+      ) VALUES (
+        ${payload.titulo}, ${payload.lead_id}, ${payload.roteiro_base_id}, ${payload.valor_total}, ${payload.valor_sinal},
+        ${payload.status}, ${payload.descricao}, ${payload.data_viagem_inicio}, ${payload.data_viagem_fim},
+        ${payload.num_pessoas}, ${payload.num_dias}, ${payload.validade_ate}, ${payload.observacoes}, ${payload.termos_condicoes}, ${payload.itens}
+      ) RETURNING *
+    `;
 
-  if (error) {
+    if (!rows || rows.length === 0) throw new Error('Falha ao criar orçamento');
+    const data = rows[0];
+
+    revalidatePath('/admin/orcamentos');
+    if (data.lead_id) {
+      revalidatePath(`/admin/clientes/${data.lead_id}`);
+    }
+
+    return { 
+      success: true, 
+      message: 'Orçamento criado com sucesso!', 
+      data 
+    };
+  } catch (error: any) {
     console.error('Erro ao criar orçamento:', error.message);
-    // Adicionamos revalidatePath aqui para forçar um refresh no cache do Next.js
     revalidatePath('/admin/orcamentos'); 
     return { success: false, message: `Erro ao criar orçamento: ${error.message}. Tente recarregar a página.` };
+  } finally {
+    await close();
   }
-
-  revalidatePath('/admin/orcamentos');
-  if (data.lead_id) {
-    revalidatePath(`/admin/clientes/${data.lead_id}`);
-  }
-
-  return { 
-    success: true, 
-    message: 'Orçamento criado com sucesso!', 
-    data 
-  };
 }
-
 
 // ============================================================================
 // ATUALIZAR ORÇAMENTO
 // ============================================================================
 
 export async function updateOrcamento(orcamentoId: string, formData: FormData) {
-    const supabase = createServerSupabaseClient();
-    
+  const { client, close } = createDatabaseClient();
+  try {
     const itensString = formData.get('itens') as string;
     let itensParsed: any = undefined;
 
     if (itensString !== null) {
-        try {
-            itensParsed = JSON.parse(itensString);
-        } catch (e) {
-            console.warn("Erro ao parsear itens do orçamento durante atualização.");
-        }
+      try {
+        itensParsed = JSON.parse(itensString);
+      } catch (e) {
+        console.warn("Erro ao parsear itens do orçamento durante atualização.");
+      }
     }
 
-    const updates: OrcamentoUpdate = {
-        titulo: formData.get('titulo') as string,
-        valor_total: parseFloat(formData.get('valor_total') as string) || 0,
-        valor_sinal: parseFloat(formData.get('valor_sinal') as string) || null,
-        status: (formData.get('status') as Database['public']['Enums']['orcamento_status']),
-        descricao: formData.get('descricao') as string || null,
-        data_viagem_inicio: formData.get('data_viagem_inicio') as string || null,
-        data_viagem_fim: formData.get('data_viagem_fim') as string || null,
-        num_pessoas: parseInt(formData.get('num_pessoas') as string) || null,
-        num_dias: parseInt(formData.get('num_dias') as string) || null,
-        validade_ate: formData.get('validade_ate') as string || null,
-        observacoes: formData.get('observacoes') as string || null,
-        termos_condicoes: formData.get('termos_condicoes') as string || null,
-        updated_at: new Date().toISOString(),
-        ...(itensParsed !== undefined && { itens: itensParsed })
+    const updates: any = {
+      titulo: formData.get('titulo') as string,
+      valor_total: parseFloat(formData.get('valor_total') as string) || 0,
+      valor_sinal: parseFloat(formData.get('valor_sinal') as string) || null,
+      status: formData.get('status') as string,
+      descricao: formData.get('descricao') as string || null,
+      data_viagem_inicio: formData.get('data_viagem_inicio') as string || null,
+      data_viagem_fim: formData.get('data_viagem_fim') as string || null,
+      num_pessoas: parseInt(formData.get('num_pessoas') as string) || null,
+      num_dias: parseInt(formData.get('num_dias') as string) || null,
+      validade_ate: formData.get('validade_ate') as string || null,
+      observacoes: formData.get('observacoes') as string || null,
+      termos_condicoes: formData.get('termos_condicoes') as string || null,
+      updated_at: new Date()
     };
 
-    const { data: orcamento } = await supabase
-      .schema('sales').from('proposals')
-      .select('lead_id')
-      .eq('id', orcamentoId)
-      .limit(1)
-      .single();
-    
-    
-    const { error } = await supabase
-        .schema('sales').from('proposals')
-        .update(updates)
-        .eq('id', orcamentoId);
-
-    if (error) {
-        console.error('Erro ao atualizar orçamento:', error.message);
-        return { success: false, message: `Erro ao atualizar orçamento: ${error.message}` };
+    if (itensParsed !== undefined) {
+      updates.itens = client.json(itensParsed);
     }
+
+    const orcamentos = await client`
+      SELECT lead_id FROM sales.proposals WHERE id = ${orcamentoId} LIMIT 1
+    `;
+    const orcamento = orcamentos[0];
+
+    await client`
+      UPDATE sales.proposals
+      SET ${client(updates)}
+      WHERE id = ${orcamentoId}
+    `;
 
     revalidatePath(`/admin/orcamentos/${orcamentoId}`);
     if (orcamento?.lead_id) {
-        revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
+      revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
     }
     
     return { success: true, message: 'Orçamento atualizado com sucesso!' };
+  } catch (error: any) {
+    console.error('Erro ao atualizar orçamento:', error.message);
+    return { success: false, message: `Erro ao atualizar orçamento: ${error.message}` };
+  } finally {
+    await close();
+  }
 }
 
 // ============================================================================
@@ -183,30 +190,28 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
 // ============================================================================
 
 export async function deleteOrcamento(orcamentoId: string) {
-    const supabase = createServerSupabaseClient();
+  const { client, close } = createDatabaseClient();
+  try {
+    const orcamentos = await client`
+      SELECT lead_id FROM sales.proposals WHERE id = ${orcamentoId} LIMIT 1
+    `;
+    const orcamento = orcamentos[0];
 
-    const { data: orcamento } = await supabase
-      .schema('sales').from('proposals')
-      .select('lead_id')
-      .eq('id', orcamentoId)
-      .limit(1)
-      .single();
-      
-
-    const { error } = await supabase
-        .schema('sales').from('proposals')
-        .delete()
-        .eq('id', orcamentoId);
-
-    if (error) {
-        console.error('Erro ao deletar orçamento:', error.message);
-        return { success: false, message: `Erro ao deletar orçamento: ${error.message}` };
-    }
+    await client`
+      DELETE FROM sales.proposals
+      WHERE id = ${orcamentoId}
+    `;
 
     revalidatePath('/admin/orcamentos');
     if (orcamento?.lead_id) {
-        revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
+      revalidatePath(`/admin/clientes/${orcamento.lead_id}`);
     }
     
     return { success: true, message: 'Orçamento deletado com sucesso.' };
+  } catch (error: any) {
+    console.error('Erro ao deletar orçamento:', error.message);
+    return { success: false, message: `Erro ao deletar orçamento: ${error.message}` };
+  } finally {
+    await close();
+  }
 }

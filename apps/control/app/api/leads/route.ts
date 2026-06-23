@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 
 function buildCorsHeaders(origin: string | null) {
   const allowed = (process.env.ALLOWED_ORIGINS || '*')
@@ -61,8 +61,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json() as LeadData;
-    const { name, email, phone, company, interest, message, source } = body;
+    const body = (await req.json().catch(() => null)) as LeadData | null;
+    if (!body) {
+      return NextResponse.json(
+        { error: 'Corpo da requisição inválido' },
+        { status: 400, headers: cors }
+      );
+    }
+
+    const { name, email, phone, company, source } = body;
 
     // Validação básica
     if (!name || !email) {
@@ -72,83 +79,63 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Criar cliente Supabase
-    const supabase = await createClient();
+    const { client, close } = createDatabaseClient();
+    try {
+      // Verificar se já existe lead com este email
+      const [existingLead] = await client`
+        SELECT id
+        FROM platform_crm.leads
+        WHERE email = ${email}
+        LIMIT 1
+      `;
 
-    // Verificar se já existe lead com este email
-    const { data: existingLead } = await supabase
-      .from('leads')
-      .select('id')
-      .eq('email', email)
-      .single();
+      let leadId: string;
 
-    let leadId: string;
-
-    if (existingLead) {
-      // Atualizar lead existente
-      const { data: updatedLead, error: updateError } = await supabase
-        .from('leads')
-        .update({
-          name,
-          phone,
-          company,
-          interest,
-          message,
-          source: source || 'website',
-          last_contact_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingLead.id)
-        .select()
-        .single();
-
-      if (updateError) {
-        console.error('Erro ao atualizar lead:', updateError);
-        return NextResponse.json(
-          { error: 'Erro ao atualizar lead' },
-          { status: 500, headers: cors }
-        );
+      if (existingLead) {
+        // Atualizar lead existente
+        const [updatedLead] = await client`
+          UPDATE platform_crm.leads
+          SET
+            organization_name = ${company || name},
+            phone = ${phone || null},
+            source = ${source || 'website'},
+            updated_at = NOW()
+          WHERE id = ${existingLead.id}
+          RETURNING id
+        `;
+        leadId = updatedLead.id;
+      } else {
+        // Criar novo lead
+        const [newLead] = await client`
+          INSERT INTO platform_crm.leads (
+            organization_name,
+            email,
+            phone,
+            source,
+            stage
+          ) VALUES (
+            ${company || name},
+            ${email},
+            ${phone || null},
+            ${source || 'website'},
+            'new'
+          )
+          RETURNING id
+        `;
+        leadId = newLead.id;
       }
 
-      leadId = updatedLead.id;
-    } else {
-      // Criar novo lead
-      const { data: newLead, error: insertError } = await supabase
-        .from('leads')
-        .insert({
-          name,
-          email,
-          phone,
-          company,
-          interest,
-          message,
-          source: source || 'website',
-          status: 'new',
-          last_contact_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error('Erro ao criar lead:', insertError);
-        return NextResponse.json(
-          { error: 'Erro ao criar lead' },
-          { status: 500, headers: cors }
-        );
-      }
-
-      leadId = newLead.id;
+      return NextResponse.json(
+        {
+          success: true,
+          leadId,
+          message: 'Lead salvo com sucesso',
+        },
+        { status: 200, headers: cors }
+      );
+    } finally {
+      await close();
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        leadId,
-        message: 'Lead salvo com sucesso',
-      },
-      { status: 200, headers: cors }
-    );
-
   } catch (err) {
     console.error('Erro no servidor:', err);
     return NextResponse.json(
@@ -170,27 +157,22 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const { client, close } = createDatabaseClient();
+    try {
+      const leads = await client`
+        SELECT *
+        FROM platform_crm.leads
+        ORDER BY created_at DESC
+        LIMIT 100
+      `;
 
-    const { data: leads, error } = await supabase
-      .from('leads')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
-
-    if (error) {
-      console.error('Erro ao buscar leads:', error);
       return NextResponse.json(
-        { error: 'Erro ao buscar leads' },
-        { status: 500, headers: cors }
+        { leads: leads || [] },
+        { status: 200, headers: cors }
       );
+    } finally {
+      await close();
     }
-
-    return NextResponse.json(
-      { leads },
-      { status: 200, headers: cors }
-    );
-
   } catch (err) {
     console.error('Erro no servidor:', err);
     return NextResponse.json(

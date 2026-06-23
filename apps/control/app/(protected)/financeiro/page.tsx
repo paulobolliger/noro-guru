@@ -1,12 +1,30 @@
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import FinanceiroTablesClient from './FinanceiroTablesClient';
 import SectionHeader from '@/components/layout/SectionHeader';
 import { DollarSign } from 'lucide-react';
 
 export default async function FinanceiroPage() {
-  const supabase = createServerSupabaseClient();
-  const { data: accounts } = await supabase.schema('platform').from('ledger_accounts').select('*').order('code');
-  const { data: entries } = await supabase.schema('platform').from('ledger_entries').select('account_id, tenant_id, amount_cents, memo, occurred_at').order('occurred_at', { ascending: false }).limit(50);
+  const { client, close } = createDatabaseClient();
+  let accounts: any[] = [];
+  let entries: any[] = [];
+
+  try {
+    const [accountsRows, entriesRows] = await Promise.all([
+      client`SELECT * FROM platform.ledger_accounts ORDER BY code`,
+      client`
+        SELECT account_id, tenant_id, amount_cents, memo, occurred_at 
+        FROM platform.ledger_entries 
+        ORDER BY occurred_at DESC 
+        LIMIT 50
+      `
+    ]);
+    accounts = accountsRows || [];
+    entries = entriesRows || [];
+  } catch (error) {
+    console.error("Error loading financeiro data:", error);
+  } finally {
+    await close();
+  }
   
   // Calculate metrics
   const totalEntries = entries?.length || 0;

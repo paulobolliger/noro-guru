@@ -42,11 +42,23 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
     // Extrai o link de pagamento ou linha digitável do provider_data
     const getPaymentDetail = (cobranca: Cobranca) => {
         const data = cobranca.provider_data as any;
-        if (!data) return { link: null, detail: null, copyValue: null };
+        if (!data) return { link: null, detail: cobranca.transaction_id || 'N/A', copyValue: null };
 
-            // e.Rede PIX — copia e cola (EMV)
+        // Asaas PIX Copia e Cola
+        if (data.pixCopyPaste) {
+            return { link: data.checkoutUrl || data.bankSlipUrl || null, detail: 'PIX (copia e cola)', copyValue: data.pixCopyPaste };
+        }
+        // e.Rede PIX — copia e cola (EMV)
         if (data.qrCode) {
             return { link: null, detail: 'PIX (copia e cola)', copyValue: data.qrCode };
+        }
+        // Asaas Boleto Link
+        if (data.bankSlipUrl) {
+            return { link: data.bankSlipUrl, detail: 'Linha Digitável / Boleto PDF', copyValue: data.bankSlipUrl };
+        }
+        // Asaas / Stripe Checkout Link
+        if (data.checkoutUrl) {
+            return { link: data.checkoutUrl, detail: 'Link de Checkout / Fatura', copyValue: data.checkoutUrl };
         }
         // e.Rede Cartão — TID/NSU
         if (data.tid) {

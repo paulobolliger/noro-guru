@@ -1,50 +1,76 @@
 "use server";
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
+import { getLogtoContext } from "@logto/next/server-actions";
+import { logtoConfig } from "@/lib/logto";
 
 export async function listTasks() {
-  const supabase = createServerSupabaseClient();
-  const { data, error } = await supabase.schema('platform').from('tasks').select('*').order('created_at', { ascending: false }).limit(100);
-  if (error) throw new Error(error.message);
-  return data;
+  const { client, close } = createDatabaseClient();
+  try {
+    const data = await client`
+      SELECT * 
+      FROM platform.tasks
+      ORDER BY created_at DESC
+      LIMIT 100
+    `;
+    return data.map(row => ({
+      ...row,
+      created_at: row.created_at ? new Date(row.created_at).toISOString() : null,
+      due_date: row.due_date ? new Date(row.due_date).toISOString() : null,
+    })) as any[];
+  } finally {
+    await close();
+  }
 }
 
 export async function createTask(formData: FormData) {
-  const supabase = createServerSupabaseClient();
-  const { data: auth } = await supabase.auth.getUser();
-  const uid = auth?.user?.id;
-  const payload = {
-    title: String(formData.get('title') || ''),
-    tenant_id: String(formData.get('tenant_id') || '') || null,
-    due_date: String(formData.get('due_date') || '') || null,
-    assigned_to: uid || null,
-    entity_type: String(formData.get('entity_type') || '') || null,
-    entity_id: String(formData.get('entity_id') || '') || null,
-  } as any;
-  if (!payload.title) throw new Error('Título é obrigatório');
-  const { error } = await supabase.schema('platform').from('tasks').insert(payload);
-  if (error) throw new Error(error.message);
+  const { client, close } = createDatabaseClient();
+  try {
+    const ctx = await getLogtoContext(logtoConfig);
+    const uid = ctx.claims?.sub || null;
+    
+    const payload = {
+      title: String(formData.get('title') || '').trim(),
+      tenant_id: String(formData.get('tenant_id') || '') || null,
+      due_date: String(formData.get('due_date') || '') || null,
+      assigned_to: uid,
+      entity_type: String(formData.get('entity_type') || '') || null,
+      entity_id: String(formData.get('entity_id') || '') || null,
+    };
+    
+    if (!payload.title) throw new Error('Título é obrigatório');
+    
+    await client`
+      INSERT INTO platform.tasks (title, tenant_id, due_date, assigned_to, entity_type, entity_id)
+      VALUES (${payload.title}, ${payload.tenant_id}, ${payload.due_date}, ${payload.assigned_to}, ${payload.entity_type}, ${payload.entity_id})
+    `;
+  } finally {
+    await close();
+  }
 }
 
 export async function createTicket(formData: FormData) {
-  const supabase = createServerSupabaseClient();
-  const { data: auth } = await supabase.auth.getUser();
-  const subject = String(formData.get('subject') || '').trim();
-  const summary = String(formData.get('description') || '').trim() || null;
-  const priority = String(formData.get('priority') || 'normal').trim().toLowerCase() || 'normal';
-  const tenantId = String(formData.get('tenant_id') || '').trim() || null;
+  const { client, close } = createDatabaseClient();
+  try {
+    const ctx = await getLogtoContext(logtoConfig);
+    const uid = ctx.claims?.sub || null;
+    const email = ctx.claims?.email || null;
+    
+    const subject = String(formData.get('subject') || '').trim();
+    const summary = String(formData.get('description') || '').trim() || null;
+    const priority = String(formData.get('priority') || 'normal').trim().toLowerCase() || 'normal';
+    const tenantId = String(formData.get('tenant_id') || '').trim() || null;
 
-  if (!subject) throw new Error('Assunto é obrigatório');
+    if (!subject) throw new Error('Assunto é obrigatório');
 
-  const { error } = await supabase.schema('platform').from('support_tickets').insert({
-    subject,
-    summary,
-    priority,
-    tenant_id: tenantId,
-    source: 'manual',
-    requester_id: auth?.user?.id || null,
-    requester_email: auth?.user?.email || null,
-  });
-
-  if (error) throw new Error(error.message);
+    await client`
+      INSERT INTO platform.support_tickets (
+        subject, summary, priority, tenant_id, source, requester_id, requester_email
+      ) VALUES (
+        ${subject}, ${summary}, ${priority}, ${tenantId}, 'manual', ${uid}, ${email}
+      )
+    `;
+  } finally {
+    await close();
+  }
 }
 

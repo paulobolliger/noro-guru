@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@noro/auth": "*",
+    "@noro/db": "*",
     "@noro/renderer": "file:../../packages/renderer",
     "@noro/types": "file:../../packages/types",
-    "@supabase/supabase-js": "^2.39.0",
     "canvas": "^3.2.1",
     "lucide-react": "^0.446.0",
     "next": "14.2.4",

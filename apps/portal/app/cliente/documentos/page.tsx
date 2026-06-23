@@ -58,7 +58,9 @@ export default async function DocumentosPage() {
   const docsWithUrls: DocWithUrl[] = await Promise.all(
     docs.map(async (d) => {
       try {
-        const signedUrl = await createSignedDownloadUrl(d.fileUrl);
+        const signedUrl = d.fileUrl.startsWith('http')
+          ? d.fileUrl
+          : await createSignedDownloadUrl(d.fileUrl);
         return { ...d, signedUrl };
       } catch {
         return { ...d, signedUrl: null };

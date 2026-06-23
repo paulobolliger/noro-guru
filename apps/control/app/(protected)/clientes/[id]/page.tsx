@@ -18,7 +18,7 @@ export default async function ClienteDetalhesPage({ params }: PageProps) {
     notFound();
   }
 
-  return <ClienteDetalhes360 cliente={result.data} />;
+  return <ClienteDetalhes360 cliente={result.data as any} />;
 }
 
 // Corrigindo a função de metadados também

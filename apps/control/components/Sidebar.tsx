@@ -8,7 +8,7 @@ import {
   Home, Users, MessageSquare, DollarSign,
   Settings, Key as KeyIcon,
   BookOpenText, ShieldCheck, LifeBuoy, CheckSquare, Globe,
-  Building2, Layers, GlobeLock, Webhook
+  Building2, Layers, GlobeLock, Webhook, Compass, Handshake
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -39,11 +39,14 @@ export default function Sidebar({ isOpen, setIsOpen, mobileOpen, setMobileOpen }
   const areaOperacoes = [
     { href: '/tenants', icon: 'Layers', label: 'Tenants', color: 'text-emerald-400' },
     { href: '/custom-domains', icon: 'Globe', label: 'Domínios Clientes', color: 'text-teal-400' },
+    { href: '/control/vistos', icon: 'Compass', label: 'Catálogo de Vistos', color: 'text-amber-400' },
+    { href: '/control/parceiros', icon: 'Handshake', label: 'Parceiros B2B', color: 'text-rose-400' },
     { href: '/support', icon: 'LifeBuoy', label: 'Suporte', color: 'text-cyan-400' },
   ] as const;
 
   const areaBilling = [
     { href: '/billing', icon: 'DollarSign', label: 'Billing', color: 'text-amber-400' },
+    { href: '/bsp', icon: 'CheckSquare', label: 'Conciliação BSP', color: 'text-yellow-400' },
   ] as const;
 
   const areaAdministracao = [
@@ -57,7 +60,8 @@ export default function Sidebar({ isOpen, setIsOpen, mobileOpen, setMobileOpen }
 
   const iconMap: Record<string, any> = {
     Home, Users, MessageSquare, DollarSign, Settings, KeyIcon, BookOpenText,
-    ShieldCheck, LifeBuoy, CheckSquare, Globe, Building2, Layers, GlobeLock, Webhook
+    ShieldCheck, LifeBuoy, CheckSquare, Globe, Building2, Layers, GlobeLock, Webhook,
+    Compass, Handshake
   };
 
   const NavGroup = ({ title, items }: { title: string, items: readonly { href: string; icon: string; label: string; color: string }[] }) => (

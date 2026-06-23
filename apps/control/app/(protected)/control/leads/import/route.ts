@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from '@noro/db';
 
 export async function POST(req: Request) {
-  const supabase = createAdminSupabaseClient();
   const body = await req.json().catch(() => null);
   if (!body || !Array.isArray(body.rows)) {
     return NextResponse.json({ error: 'rows required' }, { status: 400 });
@@ -20,8 +19,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'no valid rows' }, { status: 400 });
   }
 
-  const { error } = await supabase.schema('platform_crm').from('leads').insert(rows);
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ ok: true, imported: rows.length });
-}
+  const { client, close } = createDatabaseClient();
+  try {
+    await client.begin(async (sql) => {
+      for (const row of rows) {
+        await sql`
+          INSERT INTO platform_crm.leads (organization_name, email, phone, source, value_cents, stage)
+          VALUES (${row.organization_name}, ${row.email}, ${row.phone}, ${row.source}, ${row.value_cents}, ${row.stage})
+        `;
+      }
+    });
 
+    return NextResponse.json({ ok: true, imported: rows.length });
+  } catch (error: any) {
+    console.error('Erro no import route:', error);
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  } finally {
+    await close();
+  }
+}

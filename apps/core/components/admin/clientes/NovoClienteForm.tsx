@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -111,7 +111,7 @@ export default function NovoClienteForm() {
         }, 1500);
 
       } else {
-        setStatus(result);
+        setStatus({ success: false, message: result.message || 'Erro ao criar cliente' });
         setTimeout(() => setStatus(null), 5000);
       }
     });

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { Plug, Users, SlidersHorizontal, Building, CreditCard, Check, LifeBuoy, Send, MessageCircle } from 'lucide-react';
@@ -11,6 +11,10 @@ import PreferenciasTab from './PreferenciasTab';
 import EmpresaTab from './EmpresaTab';
 import type { ConfiguracaoSistema, ConfiguracaoUsuario } from '@/app/(protected)/configuracoes/config-actions';
 import type { EmpresaDados } from '@/app/(protected)/configuracoes/empresa-actions';
+import { ativarBillingAsaasAction } from '@/app/(protected)/configuracoes/billing-actions';
+import { Landmark, AlertCircle, Loader2, ShieldCheck, Key } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 type User = { id: string; nome: string | null; email: string; role: string; avatar_url?: string | null; };
 type Tab = 'utilizadores' | 'preferencias' | 'empresa' | 'integracoes' | 'assinatura' | 'suporte';
@@ -22,6 +26,13 @@ interface ConfiguracoesClientProps {
   empresaDados: EmpresaDados;
   currentUserId: string;
   uploadPostStatus: 'connected' | 'disconnected';
+  billingAccount: {
+    providerAccountId: string | null;
+    providerWalletId: string | null;
+    onboardingStatus: string;
+    status: string;
+    metadata: any;
+  } | null;
 }
 
 export default function ConfiguracoesClient({
@@ -30,7 +41,8 @@ export default function ConfiguracoesClient({
   configUsuario,
   empresaDados,
   currentUserId,
-  uploadPostStatus
+  uploadPostStatus,
+  billingAccount
 }: ConfiguracoesClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('empresa');
 
@@ -38,6 +50,50 @@ export default function ConfiguracoesClient({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState<string | null>(null);
+  const [localBillingAccount, setLocalBillingAccount] = useState(billingAccount);
+
+  const [billingForm, setBillingForm] = useState({
+    name: empresaDados.nome_empresa || '',
+    email: empresaDados.email_principal || '',
+    cpfCnpj: '',
+    mobilePhone: empresaDados.telefone_comercial || '',
+    incomeValue: 5000,
+    address: '',
+    addressNumber: '',
+    province: '',
+    postalCode: '',
+    complement: '',
+    companyType: 'MEI' as 'MEI' | 'LIMITED' | 'INDIVIDUAL' | 'ASSOCIATION',
+  });
+
+  const handleBillingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBillingLoading(true);
+    setBillingError(null);
+
+    try {
+      const result = await ativarBillingAsaasAction(billingForm);
+      if (result.success) {
+        alert('Integração financeira ativada com sucesso!');
+        setLocalBillingAccount({
+          providerAccountId: 'approved',
+          providerWalletId: result.walletId || null,
+          onboardingStatus: 'approved',
+          status: 'active',
+          metadata: { createdAt: new Date().toISOString() },
+        });
+      } else {
+        setBillingError(result.message || 'Erro ao ativar onboarding.');
+      }
+    } catch (err: any) {
+      setBillingError(err.message || 'Erro inesperado ao conectar ao Asaas.');
+    } finally {
+      setBillingLoading(false);
+    }
+  };
 
   return (
     <>
@@ -192,65 +248,227 @@ export default function ConfiguracoesClient({
 
           {activeTab === 'assinatura' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">Seu Plano</h2>
-                    <p className="text-gray-500 mt-1">Gerencie sua assinatura e faturas.</p>
-                    <div className="mt-4 flex items-center gap-2">
-                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">PLANO PRO</span>
-                      <span className="text-gray-500 text-sm">• Renovação em 25/01/2026</span>
-                    </div>
-                  </div>
-                  <button className="text-blue-600 font-semibold hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors">
-                    Mudar Plano
-                  </button>
-                </div>
-
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-500 mb-1">Valor Mensal</p>
-                    <p className="text-2xl font-bold text-gray-900">€ 49,90</p>
-                  </div>
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-500 mb-1">Próxima Fatura</p>
-                    <p className="text-xl font-semibold text-gray-900">25 Jan, 2026</p>
-                  </div>
-                  <div className="p-4 bg-gray-50 rounded-lg flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200">
-                      <CreditCard size={20} className="text-gray-600" />
+              {localBillingAccount?.status === 'active' ? (
+                <div className="bg-white border border-gray-200 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-lg bg-emerald-100 text-emerald-600">
+                      <ShieldCheck size={24} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">•••• 4242</p>
-                      <p className="text-xs text-gray-500">Expira em 12/28</p>
+                      <h3 className="text-lg font-bold text-gray-900">Integração Financeira Ativa</h3>
+                      <p className="text-sm text-gray-500">A subconta do Asaas está ativa para sua agência.</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4 text-sm">
+                    <div>
+                      <span className="text-gray-500 font-medium block">ID da Subconta</span>
+                      <span className="font-mono text-gray-900 bg-gray-50 px-2 py-1 rounded border border-gray-200 inline-block mt-1">
+                        {localBillingAccount.providerAccountId}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 font-medium block">ID da Carteira (Wallet ID)</span>
+                      <span className="font-mono text-gray-900 bg-gray-50 px-2 py-1 rounded border border-gray-200 inline-block mt-1">
+                        {localBillingAccount.providerWalletId}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 font-medium block">Status do Onboarding</span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mt-1 uppercase">
+                        {localBillingAccount.onboardingStatus}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 font-medium block">Data de Ativação</span>
+                      <span className="text-gray-600 block mt-1">
+                        {localBillingAccount.metadata?.createdAt ? new Date(localBillingAccount.metadata.createdAt).toLocaleDateString('pt-BR') : 'N/A'}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <form onSubmit={handleBillingSubmit} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <Landmark className="text-blue-600" size={22} />
+                        Ativar Subconta Asaas (Integração Financeira)
+                      </h3>
+                      <p className="text-sm text-gray-500">Preencha os dados regulatórios da agência para criar a carteira de recebimentos.</p>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={billingLoading}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+                    >
+                      {billingLoading ? (
+                        <>
+                          <Loader2 className="animate-spin h-4 w-4" />
+                          Ativando...
+                        </>
+                      ) : (
+                        'Ativar Integração'
+                      )}
+                    </button>
+                  </div>
 
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="font-bold text-gray-900">Histórico de Pagamentos</h3>
-                </div>
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-gray-50 text-gray-600 border-b border-gray-100">
-                    <tr>
-                      <th className="px-6 py-3 font-medium">Data</th>
-                      <th className="px-6 py-3 font-medium">Valor</th>
-                      <th className="px-6 py-3 font-medium">Status</th>
-                      <th className="px-6 py-3 font-medium text-right">Fatura</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    <tr>
-                      <td className="px-6 py-4">25 Dez, 2025</td>
-                      <td className="px-6 py-4">€ 49,90</td>
-                      <td className="px-6 py-4"><span className="items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 inline-flex gap-1"><Check size={12} /> Pago</span></td>
-                      <td className="px-6 py-4 text-right"><button className="text-blue-600 hover:underline">Download</button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  {billingError && (
+                    <div className="p-4 mx-6 mt-6 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-2 text-sm">
+                      <AlertCircle size={20} className="shrink-0" />
+                      <span>{billingError}</span>
+                    </div>
+                  )}
+
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label htmlFor="name" className="text-sm font-semibold text-gray-700">Razão Social / Nome da Agência</label>
+                        <input
+                          type="text"
+                          id="name"
+                          value={billingForm.name}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, name: e.target.value }))}
+                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="email" className="text-sm font-semibold text-gray-700">E-mail Financeiro</label>
+                        <input
+                          type="email"
+                          id="email"
+                          value={billingForm.email}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, email: e.target.value }))}
+                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="cpfCnpj" className="text-sm font-semibold text-gray-700">CPF ou CNPJ (apenas números)</label>
+                        <input
+                          type="text"
+                          id="cpfCnpj"
+                          value={billingForm.cpfCnpj}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, cpfCnpj: e.target.value }))}
+                          placeholder="ex: 12345678909"
+                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="mobilePhone" className="text-sm font-semibold text-gray-700">Celular / Telefone com DDD</label>
+                        <input
+                          type="text"
+                          id="mobilePhone"
+                          value={billingForm.mobilePhone}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, mobilePhone: e.target.value }))}
+                          placeholder="ex: 11999998888"
+                          required
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="companyType" className="text-sm font-semibold text-gray-700">Tipo de Empresa</label>
+                        <select
+                          id="companyType"
+                          value={billingForm.companyType}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, companyType: e.target.value as any }))}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                          <option value="MEI">MEI (Microempreendedor Individual)</option>
+                          <option value="LIMITED">LTDA (Sociedade Limitada)</option>
+                          <option value="INDIVIDUAL">EI (Empresa Individual)</option>
+                          <option value="ASSOCIATION">Associação / Terceiro Setor</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label htmlFor="incomeValue" className="text-sm font-semibold text-gray-700">Faturamento Mensal Estimado (R$)</label>
+                        <input
+                          type="number"
+                          id="incomeValue"
+                          value={billingForm.incomeValue}
+                          onChange={(e) => setBillingForm(prev => ({ ...prev, incomeValue: parseFloat(e.target.value) || 0 }))}
+                          required
+                          min="1"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-100 pt-4 mt-2">
+                      <h4 className="text-sm font-bold text-gray-950 mb-3">Endereço Comercial</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-1 md:col-span-2">
+                          <label htmlFor="address" className="text-sm font-semibold text-gray-700">Logradouro / Rua</label>
+                          <input
+                            type="text"
+                            id="address"
+                            value={billingForm.address}
+                            onChange={(e) => setBillingForm(prev => ({ ...prev, address: e.target.value }))}
+                            placeholder="Rua, Avenida, etc."
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="addressNumber" className="text-sm font-semibold text-gray-700">Número</label>
+                          <input
+                            type="text"
+                            id="addressNumber"
+                            value={billingForm.addressNumber}
+                            onChange={(e) => setBillingForm(prev => ({ ...prev, addressNumber: e.target.value }))}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="province" className="text-sm font-semibold text-gray-700">Bairro</label>
+                          <input
+                            type="text"
+                            id="province"
+                            value={billingForm.province}
+                            onChange={(e) => setBillingForm(prev => ({ ...prev, province: e.target.value }))}
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="postalCode" className="text-sm font-semibold text-gray-700">CEP (apenas números)</label>
+                          <input
+                            type="text"
+                            id="postalCode"
+                            value={billingForm.postalCode}
+                            onChange={(e) => setBillingForm(prev => ({ ...prev, postalCode: e.target.value }))}
+                            placeholder="ex: 01001000"
+                            required
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label htmlFor="complement" className="text-sm font-semibold text-gray-700">Complemento (opcional)</label>
+                          <input
+                            type="text"
+                            id="complement"
+                            value={billingForm.complement}
+                            onChange={(e) => setBillingForm(prev => ({ ...prev, complement: e.target.value }))}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
           )}
 
@@ -280,6 +498,28 @@ export default function ConfiguracoesClient({
                   <TestPublishCard />
                 </div>
               )}
+
+              {/* Card de Gerenciamento de Chaves de API */}
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 text-indigo-600">
+                    <Key size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Chaves de API (Integrações Externas)
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Gerencie credenciais para integrar outros sistemas e consultar dados de vistos.
+                    </p>
+                  </div>
+                </div>
+                <Link href="/configuracoes/api-keys">
+                  <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold">
+                    Gerenciar Chaves
+                  </Button>
+                </Link>
+              </div>
 
               <div className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-200">
                 <div className="flex items-start justify-between">

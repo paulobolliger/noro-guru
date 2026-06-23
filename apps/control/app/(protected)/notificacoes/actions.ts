@@ -1,20 +1,23 @@
 'use server';
 
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { revalidatePath } from 'next/cache';
 
 export async function markNotificationAsRead(notificationId: string) {
-  const supabase = createServerSupabaseClient();
-  
-  const { error } = await supabase
-    .schema('comunicacao').from('notificacoes')
-    .update({ lida: true })
-    .eq('id', notificationId);
-  
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    await client`
+      UPDATE comunicacao.notificacoes
+      SET lida = TRUE
+      WHERE id = ${notificationId}
+    `;
+    
+    revalidatePath('/notificacoes');
+    return { ok: true };
+  } catch (error) {
+    console.error('Falha ao marcar notificação como lida:', error);
     throw new Error('Falha ao marcar notificação como lida');
+  } finally {
+    await close();
   }
-  
-  revalidatePath('/notificacoes');
-  return { ok: true };
 }

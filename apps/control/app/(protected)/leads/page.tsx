@@ -1,35 +1,27 @@
-// app/admin/(protected)/leads/page.tsx
-import { getSupabaseAdmin } from "@noro/lib/supabase/admin";
-import type { Database } from "@noro-types/supabase";
-import { format } from 'date-fns';
-import LeadsClientPage from "@/components/LeadsClientPage"; // Vamos usar um componente de cliente
+import { createDatabaseClient } from "@noro/db";
+import LeadsClientPage from "@/components/LeadsClientPage";
 
-type Lead = Database['public']['Tables']['noro_leads']['Row'];
+export const dynamic = 'force-dynamic';
 
-async function fetchLeads(): Promise<Lead[]> {
-    const supabaseAdmin = getSupabaseAdmin();
+async function fetchLeads(): Promise<any[]> {
+    const { client, close } = createDatabaseClient();
     try {
-        const { data, error } = await supabaseAdmin
-            .schema('crm').from('leads')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Erro ao buscar leads:', error);
-            throw error;
-        }
-
+        const data = await client`
+            SELECT *
+            FROM platform_crm.leads
+            ORDER BY created_at DESC
+            LIMIT 200
+        `;
         return data || [];
     } catch (err) {
-        // Retorna um array vazio em caso de erro para não quebrar a página
+        console.error('Erro ao buscar leads:', err);
         return [];
+    } finally {
+        await close();
     }
 }
 
 export default async function LeadsPage() {
     const leads = await fetchLeads();
-
-    // Passa os dados para um componente de cliente que irá gerir o estado da visualização
     return <LeadsClientPage leads={leads} />;
 }
-

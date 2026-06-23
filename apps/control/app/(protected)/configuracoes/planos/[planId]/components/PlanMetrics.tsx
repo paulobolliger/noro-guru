@@ -33,7 +33,7 @@ export function PlanMetrics({ planId }: PlanMetricsProps) {
   async function loadMetrics() {
     try {
       const data = await getPlanMetrics(planId, period)
-      setMetrics(data)
+      setMetrics(data as any)
     } catch (error) {
       console.error("Erro ao carregar métricas:", error)
     } finally {

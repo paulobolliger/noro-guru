@@ -1,20 +1,38 @@
 import { NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from '@noro/db';
 
 export async function POST(req: Request) {
   const { id, stage } = await req.json();
   if (!id || !stage) return NextResponse.json({ error: 'invalid' }, { status: 400 });
-  const supabase = createAdminSupabaseClient();
-  // Fetch old stage
-  const { data: lead } = await supabase.schema('platform_crm').from('leads').select('id, stage').eq('id', id).maybeSingle();
-  const oldStage = lead?.stage || null;
-  const { error } = await supabase.schema('platform_crm').from('leads').update({ stage }).eq('id', id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  // Log activity (best-effort)
-  await supabase.schema('platform_crm').from('lead_activity').insert({
-    lead_id: id,
-    action: 'status_changed',
-    details: { from: oldStage, to: stage }
-  });
-  return NextResponse.json({ ok: true });
+
+  const { client, close } = createDatabaseClient();
+  try {
+    const [lead] = await client`
+      SELECT stage
+      FROM platform_crm.leads
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    const oldStage = lead?.stage || null;
+
+    await client.begin(async (sql) => {
+      await sql`
+        UPDATE platform_crm.leads
+        SET stage = ${stage}
+        WHERE id = ${id}
+      `;
+
+      await sql`
+        INSERT INTO platform_crm.lead_activity (lead_id, action, details)
+        VALUES (${id}, 'status_changed', ${JSON.stringify({ from: oldStage, to: stage })}::jsonb)
+      `;
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
+    console.error('Erro no move route:', error);
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  } finally {
+    await close();
+  }
 }

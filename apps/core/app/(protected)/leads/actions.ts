@@ -2,7 +2,9 @@
 
 import { createDatabaseClient } from '@noro/db';
 import { leadsRepository } from '@noro/db';
-import type { LeadSource, LeadStatus } from '@noro/db';
+import type { LeadSource, LeadStatus, LeadTipoViagem } from '@noro/db';
+import { requireUser, logtoSessionAdapter } from '@noro/auth';
+import { logtoConfig } from '@/lib/logto';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -68,7 +70,7 @@ export async function createLeadAction(tenantId: string, data: {
   dataViagemInicio?: string;
   dataViagemFim?: string;
   numPax?: number;
-  tipoViagem?: string;
+  tipoViagem?: LeadTipoViagem;
 }) {
   const { db, close } = getDb();
   try {
@@ -125,6 +127,32 @@ export async function deleteLeadAction(tenantId: string, leadId: string) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Erro ao excluir lead';
     return { success: false, message };
+  } finally {
+    await close();
+  }
+}
+
+export async function updateLeadStageAction(leadId: string, status: LeadStatus) {
+  const { client, db, close } = createDatabaseClient();
+  try {
+    const userCtx = await requireUser({
+      db: client as any,
+      sessionAdapter: logtoSessionAdapter(logtoConfig),
+    });
+
+    const memberships = await client`
+      SELECT tenant_id FROM noro.tenant_memberships WHERE user_id = ${userCtx.user.id} LIMIT 1
+    `;
+    if (!memberships || memberships.length === 0) {
+      return { success: false, message: 'Usuário não associado a nenhuma agência.' };
+    }
+    const tenantId = memberships[0].tenant_id;
+
+    const lead = await leadsRepository.updateLeadStatus(db, tenantId, leadId, status);
+    return { success: true, lead };
+  } catch (err: any) {
+    console.error('Error in updateLeadStageAction:', err);
+    return { success: false, message: err.message || 'Erro ao atualizar estágio' };
   } finally {
     await close();
   }

@@ -1,52 +1,57 @@
 'use server';
 
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { revalidatePath } from 'next/cache';
 
 export async function markNotificationAsRead(notificationId: string) {
-  const supabase = createServerSupabaseClient();
-  
-  const { error } = await supabase
-    .schema('comunicacao').from('notificacoes')
-    .update({ lida: true })
-    .eq('id', notificationId);
-  
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    await client`
+      UPDATE comunicacao.notificacoes
+      SET lida = TRUE
+      WHERE id = ${notificationId}
+    `;
+    revalidatePath('/notificacoes');
+    return { ok: true };
+  } catch (error) {
+    console.error('Falha ao marcar notificação como lida:', error);
     throw new Error('Falha ao marcar notificação como lida');
+  } finally {
+    await close();
   }
-  
-  revalidatePath('/notificacoes');
-  return { ok: true };
 }
 
 export async function bulkMarkAsRead(notificationIds: string[]) {
-  const supabase = createServerSupabaseClient();
-  
-  const { error } = await supabase
-    .schema('comunicacao').from('notificacoes')
-    .update({ lida: true })
-    .in('id', notificationIds);
-  
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    await client`
+      UPDATE comunicacao.notificacoes
+      SET lida = TRUE
+      WHERE id = ANY(${notificationIds})
+    `;
+    revalidatePath('/notificacoes');
+    return { ok: true, count: notificationIds.length };
+  } catch (error) {
+    console.error('Falha ao marcar notificações como lidas:', error);
     throw new Error('Falha ao marcar notificações como lidas');
+  } finally {
+    await close();
   }
-  
-  revalidatePath('/notificacoes');
-  return { ok: true, count: notificationIds.length };
 }
 
 export async function bulkDeleteNotifications(notificationIds: string[]) {
-  const supabase = createServerSupabaseClient();
-  
-  const { error } = await supabase
-    .schema('comunicacao').from('notificacoes')
-    .delete()
-    .in('id', notificationIds);
-  
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    await client`
+      DELETE FROM comunicacao.notificacoes
+      WHERE id = ANY(${notificationIds})
+    `;
+    revalidatePath('/notificacoes');
+    return { ok: true, count: notificationIds.length };
+  } catch (error) {
+    console.error('Falha ao excluir notificações:', error);
     throw new Error('Falha ao excluir notificações');
+  } finally {
+    await close();
   }
-  
-  revalidatePath('/notificacoes');
-  return { ok: true, count: notificationIds.length };
 }

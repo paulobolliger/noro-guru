@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Breadcrumbs from './layout/Breadcrumbs';
 import CommandPalette from './command/CommandPalette';
 import GlobalSearch from './GlobalSearch';
-import { createClient } from '@noro/lib/supabase/client';
+import { getClientName, getTenantSlug, getUnreadMessagesCount, markAllNotificationsAsRead } from '@/app/actions/comum';
 
 type NomadeUser = {
   id: string;
@@ -47,7 +47,6 @@ export default function TopBar({
 }: TopBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
 
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(initialNotificacoes);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -65,14 +64,10 @@ export default function TopBar({
 
       const fetchClienteName = async () => {
         setClienteNome('Carregando...');
-        const { data } = await supabase
-          .schema('crm').from('clients')
-          .select('nome')
-          .eq('id', clienteId)
-          .single();
+        const name = await getClientName(clienteId);
 
-        if (data?.nome) {
-          setClienteNome(data.nome);
+        if (name) {
+          setClienteNome(name);
         } else {
           setClienteNome(clienteId.substring(0, 8) + '...');
         }
@@ -92,36 +87,24 @@ export default function TopBar({
         // Only fetch if valid ID and not already fetched
         if (tenantId && tenantId !== 'new' && !segmentOverrides[tenantId]) {
           const fetchTenantSlug = async () => {
-            const { data } = await supabase
-              .schema('platform')
-              .from('tenants')
-              .select('slug')
-              .eq('id', tenantId)
-              .maybeSingle();
+            const slug = await getTenantSlug(tenantId);
 
-            if (data?.slug) {
-              setSegmentOverrides(prev => ({ ...prev, [tenantId]: data.slug }));
+            if (slug) {
+              setSegmentOverrides(prev => ({ ...prev, [tenantId]: slug }));
             }
           };
           fetchTenantSlug();
         }
       }
     }
-  }, [pathname, supabase, segmentOverrides]);
+  }, [pathname, segmentOverrides]);
 
   // Buscar mensagens não lidas
   useEffect(() => {
     const fetchUnreadMessages = async () => {
       try {
-        const { data, error } = await supabase
-          .schema('comunicacao').from('conversations')
-          .select('unread_count')
-          .eq('status', 'active');
-
-        if (data && !error) {
-          const total = data.reduce((sum, conv) => sum + (conv.unread_count || 0), 0);
-          setUnreadMessages(total);
-        }
+        const total = await getUnreadMessagesCount();
+        setUnreadMessages(total);
       } catch (error) {
         console.error('Error fetching unread messages:', error);
       }
@@ -133,13 +116,11 @@ export default function TopBar({
     const interval = setInterval(fetchUnreadMessages, 30000);
 
     return () => clearInterval(interval);
-  }, [supabase]);
+  }, []);
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
+    window.location.href = '/auth/sign-out';
   };
 
   const toggleSidebar = () => {
@@ -239,8 +220,10 @@ export default function TopBar({
                     className="text-xs text-gray-600 hover:text-gray-900"
                     onClick={async () => {
                       try {
-                        await supabase.schema('comunicacao').from('notificacoes').update({ lida: true }).eq('user_id', user.id);
-                        setNotificacoes(notificacoes.map(n => ({ ...n, lida: true })));
+                        const success = await markAllNotificationsAsRead();
+                        if (success) {
+                          setNotificacoes(notificacoes.map(n => ({ ...n, lida: true })));
+                        }
                       } catch (error) {
                         console.error(error);
                       }

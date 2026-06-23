@@ -1,47 +1,53 @@
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
-import { Database } from "@noro-types/supabase";
+import { createDatabaseClient } from '@noro/db';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react'; 
 import { PagamentosList } from "@/components/pagamentos/PagamentosList"; // Novo componente de lista
 import type { PedidoComRelacionamentos } from "@noro/types/admin";
 
-// Tipo de Pedido simplificado para esta listagem, mas usando o tipo completo para a busca
-export type PedidoParaPagamento = Pick<PedidoComRelacionamentos, 
-  'id' | 'valor_total' | 'status' | 'created_at' | 'cliente_id' | 'clientes'
->;
+// Tipo de Pedido simplificado para esta listagem
+export type PedidoParaPagamento = any;
 
 /**
  * Função de busca de Pedidos elegíveis para processamento de Pagamento.
  * @returns Array de pedidos com status AGUARDANDO_PAGAMENTO.
  */
 async function fetchPedidosParaPagamento(): Promise<PedidoParaPagamento[]> {
-  const supabase = createServerSupabaseClient();
-  
-  // Status que indicam que o pedido está pronto para ser cobrado/faturado
-  const statusesAguardandoCobranca = ['AGUARDANDO_PAGAMENTO', 'EM_PROCESSAMENTO'];
+  const { client, close } = createDatabaseClient();
+  try {
+    const statusesAguardandoCobranca = ['AGUARDANDO_PAGAMENTO', 'EM_PROCESSAMENTO'];
 
-  const { data: pedidos, error } = await supabase
-    .schema('sales').from('orders')
-    .select(
-      `
-        id,
-        valor_total,
-        status,
-        created_at,
-        cliente_id,
-        clientes(nome_completo, email)
-      `
-    )
-    .in('status', statusesAguardandoCobranca) // Filtra pelos status relevantes
-    .order('created_at', { ascending: false });
+    const rows = await client`
+      SELECT 
+        o.id,
+        o.valor_total,
+        o.status,
+        o.created_at,
+        o.cliente_id,
+        c.nome as cliente_nome,
+        c.email as cliente_email
+      FROM sales.orders o
+      LEFT JOIN crm.clients c ON c.id = o.cliente_id
+      WHERE o.status = ANY(${statusesAguardandoCobranca})
+      ORDER BY o.created_at DESC
+    `;
 
-  if (error) {
+    return rows.map((r: any) => ({
+      id: r.id,
+      valor_total: r.valor_total,
+      status: r.status,
+      created_at: r.created_at,
+      cliente_id: r.cliente_id,
+      clientes: r.cliente_id ? {
+        nome_completo: r.cliente_nome || 'Cliente Desconhecido',
+        email: r.cliente_email
+      } : null
+    }));
+  } catch (error) {
     console.error('Erro ao buscar pedidos para Pagamento:', error);
     return []; 
+  } finally {
+    await close();
   }
-
-  // O casting é necessário pois o Supabase Select com joins retorna o tipo base
-  return (pedidos || []) as unknown as PedidoParaPagamento[];
 }
 
 export default async function PagamentosPage() {

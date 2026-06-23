@@ -1,41 +1,46 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getSupabaseServer } from "@/lib/supabaseServer";
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 
 export async function GET() {
-  const supabase = getSupabaseServer();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth?.user) {
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
+  if (!userId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { data, error } = await supabase
-    .schema('platform')
-    .from('user_tenant_roles')
-    .select('role, tenants!user_tenant_roles_tenant_fkey(id,name,slug)')
-    .eq('user_id', auth.user.id);
+  const { client, close } = createDatabaseClient();
+  try {
+    const data = await client`
+      SELECT utr.role, t.id, t.name, t.slug
+      FROM platform.user_tenant_roles utr
+      JOIN platform.tenants t ON t.id = utr.tenant_id
+      WHERE utr.user_id = ${userId}
+    `;
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    const tenants = data.map((row: any) => ({
+      id: row.id,
+      name: row.name,
+      slug: row.slug,
+      role: row.role || null,
+    }));
+
+    const cookieStore = cookies();
+    const cookieTenant = cookieStore.get('active_tenant_id')?.value || null;
+    const activeTenantId = cookieTenant && tenants.find((t: any) => t.id === cookieTenant)
+      ? cookieTenant
+      : tenants[0]?.id || null;
+
+    return NextResponse.json({
+      tenants,
+      activeTenantId,
+      userId,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error) }, { status: 400 });
+  } finally {
+    await close();
   }
-
-  const tenants = (data || []).map((row: any) => ({
-    id: row.tenants?.id,
-    name: row.tenants?.name,
-    slug: row.tenants?.slug,
-    role: row.role || null,
-  })).filter((t: any) => t.id);
-
-  const cookieStore = cookies();
-  const cookieTenant = cookieStore.get('active_tenant_id')?.value || null;
-  const activeTenantId = cookieTenant && tenants.find((t: any) => t.id === cookieTenant)
-    ? cookieTenant
-    : tenants[0]?.id || null;
-
-  return NextResponse.json({
-    tenants,
-    activeTenantId,
-    userId: auth.user.id,
-  });
 }
-

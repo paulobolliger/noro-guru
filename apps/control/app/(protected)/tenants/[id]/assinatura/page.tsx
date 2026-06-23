@@ -2,10 +2,19 @@ import { getTenantContext, getTenantAiBalance } from '../../tenant-actions';
 import { CreditCard, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 import TenantModulesForm from './TenantModulesForm';
 import TenantCreditsForm from './TenantCreditsForm';
+import TenantAsaasOnboardingForm from './TenantAsaasOnboardingForm';
+import { getBillingStatus } from '../../../billing/actions';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
 
 export default async function TenantSubscriptionPage({ params }: { params: { id: string } }) {
     const { tenant, empresa } = await getTenantContext(params.id);
     const aiBalance = await getTenantAiBalance(params.id);
+    
+    const ctx = await getLogtoContext(logtoConfig);
+    const activatedByUserId = ctx.claims?.sub || '';
+    
+    const billingAccount = await getBillingStatus(params.id);
 
     // Mock subscription data for now as we don't have a subscriptions table yet
     const subscription = {
@@ -105,7 +114,7 @@ export default async function TenantSubscriptionPage({ params }: { params: { id:
             </div>
 
             {/* Modules Management */}
-            <div className="pt-4 border-t border-gray-100">
+            <div className="pt-4 border-t border-gray-100 space-y-6">
                 <TenantCreditsForm
                     tenantId={tenant.id}
                     initialAiBalance={aiBalance}
@@ -115,7 +124,15 @@ export default async function TenantSubscriptionPage({ params }: { params: { id:
 
                 <TenantModulesForm
                     tenantId={tenant.id}
-                    initialModules={empresa?.modulos_contratados}
+                    initialModules={empresa?.modulos_contratados || undefined}
+                />
+
+                <TenantAsaasOnboardingForm
+                    tenantId={tenant.id}
+                    activatedByUserId={activatedByUserId}
+                    initialBillingAccount={billingAccount as any}
+                    tenantName={tenant.name}
+                    tenantEmail={empresa?.email_principal || ''}
                 />
             </div>
         </div>

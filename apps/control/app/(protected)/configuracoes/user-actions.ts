@@ -1,12 +1,14 @@
 'use server';
 
 import { Resend } from 'resend';
-import { createServerSupabaseClient } from '@/../../packages/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 import { InviteUserEmail } from '@/components/emails/InviteUserEmail';
 import { CONTROL_PLANE_PERMISSIONS } from '@/../../packages/types/control-plane-users';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { nanoid } from 'nanoid';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
 import type { 
   ControlPlaneUser, 
   ControlPlaneRole, 
@@ -19,86 +21,102 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Helper para verificar permissões
 async function checkPermission(permissionId: string): Promise<boolean> {
-  const supabase = await createServerSupabaseClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
   
-  if (!session) {
+  if (!userId) {
     redirect('/login');
   }
 
-  const { data: user } = await supabase
-    .schema('platform').from('users')
-    .select('role, permissoes')
-    .eq('id', session.user.id)
-    .single();
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT role, permissoes 
+      FROM platform.users
+      WHERE id = ${userId}
+      LIMIT 1
+    `;
 
-  if (!user) return false;
+    if (!rows || rows.length === 0) return false;
+    const user = rows[0];
 
-  // Super admin tem todas as permissões
-  if (user.role === 'super_admin') return true;
+    // Super admin tem todas as permissões
+    if (user.role === 'super_admin') return true;
 
-  // Verificar permissão específica
-  const permission = CONTROL_PLANE_PERMISSIONS.find(p => p.id === permissionId);
-  if (!permission) return false;
+    // Verificar permissão específica
+    const permission = CONTROL_PLANE_PERMISSIONS.find(p => p.id === permissionId);
+    if (!permission) return false;
 
-  // Verificar se a role do usuário tem acesso a esta permissão
-  if (permission.requer_role && !permission.requer_role.includes(user.role)) {
-    return false;
+    // Verificar se a role do usuário tem acesso a esta permissão
+    if (permission.requer_role && !permission.requer_role.includes(user.role)) {
+      return false;
+    }
+
+    // Verificar se o usuário tem a permissão específica
+    const userPerms = Array.isArray(user.permissoes) ? user.permissoes : [];
+    return userPerms.some((p: ControlPlanePermission) => p.id === permissionId);
+  } finally {
+    await close();
   }
-
-  // Verificar se o usuário tem a permissão específica
-  return user.permissoes.some((p: ControlPlanePermission) => p.id === permissionId);
 }
 
 export async function getControlPlaneUsers(): Promise<ControlPlaneUser[]> {
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .schema('platform').from('users')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) throw new Error('Erro ao buscar usuários');
-  return data as ControlPlaneUser[];
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT * 
+      FROM platform.users
+      ORDER BY created_at DESC
+    `;
+    return rows as unknown as ControlPlaneUser[];
+  } finally {
+    await close();
+  }
 }
 
 export async function getUserActivities(userId?: string): Promise<UserActivity[]> {
-  const supabase = await createServerSupabaseClient();
-  const query = supabase
-    .schema('platform').from('user_activities')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(100);
-
-  if (userId) {
-    query.eq('user_id', userId);
+  const { client, close } = createDatabaseClient();
+  try {
+    let rows;
+    if (userId) {
+      rows = await client`
+        SELECT * 
+        FROM platform.user_activities
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 100
+      `;
+    } else {
+      rows = await client`
+        SELECT * 
+        FROM platform.user_activities
+        ORDER BY created_at DESC
+        LIMIT 100
+      `;
+    }
+    return rows as unknown as UserActivity[];
+  } finally {
+    await close();
   }
-
-  const { data, error } = await query;
-  if (error) throw new Error('Erro ao buscar atividades');
-  return data as UserActivity[];
 }
 
 export async function updateUserRole(
   userId: string,
   newRole: ControlPlaneRole
 ): Promise<{ success: boolean; message: string }> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-    
-    const { error } = await supabase
-      .schema('platform').from('users')
-      .update({ role: newRole })
-      .eq('id', userId);
-
-    if (error) throw error;
+    await client`
+      UPDATE platform.users
+      SET role = ${newRole}
+      WHERE id = ${userId}
+    `;
 
     // Registrar atividade
-    await supabase.schema('platform').from('user_activities').insert({
-      user_id: userId,
-      tipo: 'usuario_alterado',
-      descricao: `Role atualizada para ${newRole}`,
-      metadata: { newRole }
-    });
+    await client`
+      INSERT INTO platform.user_activities (user_id, tipo, descricao, metadata)
+      VALUES (${userId}, 'usuario_alterado', ${`Role atualizada para ${newRole}`}, ${client.json({ newRole })})
+    `;
 
     return {
       success: true,
@@ -110,6 +128,8 @@ export async function updateUserRole(
       success: false,
       message: error.message || 'Erro ao atualizar role'
     };
+  } finally {
+    await close();
   }
 }
 
@@ -117,23 +137,19 @@ export async function updateUserStatus(
   userId: string,
   newStatus: UserStatus
 ): Promise<{ success: boolean; message: string }> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-    
-    const { error } = await supabase
-      .schema('platform').from('users')
-      .update({ status: newStatus })
-      .eq('id', userId);
-
-    if (error) throw error;
+    await client`
+      UPDATE platform.users
+      SET status = ${newStatus}
+      WHERE id = ${userId}
+    `;
 
     // Registrar atividade
-    await supabase.schema('platform').from('user_activities').insert({
-      user_id: userId,
-      tipo: 'usuario_alterado',
-      descricao: `Status atualizado para ${newStatus}`,
-      metadata: { newStatus }
-    });
+    await client`
+      INSERT INTO platform.user_activities (user_id, tipo, descricao, metadata)
+      VALUES (${userId}, 'usuario_alterado', ${`Status atualizado para ${newStatus}`}, ${client.json({ newStatus })})
+    `;
 
     return {
       success: true,
@@ -145,6 +161,8 @@ export async function updateUserStatus(
       success: false,
       message: error.message || 'Erro ao atualizar status'
     };
+  } finally {
+    await close();
   }
 }
 
@@ -152,23 +170,19 @@ export async function updateUserPermissions(
   userId: string,
   permissions: ControlPlanePermission[]
 ): Promise<{ success: boolean; message: string }> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-    
-    const { error } = await supabase
-      .schema('platform').from('users')
-      .update({ permissoes: permissions })
-      .eq('id', userId);
-
-    if (error) throw error;
+    await client`
+      UPDATE platform.users
+      SET permissoes = ${client.json(permissions as any)}
+      WHERE id = ${userId}
+    `;
 
     // Registrar atividade
-    await supabase.schema('platform').from('user_activities').insert({
-      user_id: userId,
-      tipo: 'permissao_alterada',
-      descricao: `Permissões atualizadas`,
-      metadata: { permissions }
-    });
+    await client`
+      INSERT INTO platform.user_activities (user_id, tipo, descricao, metadata)
+      VALUES (${userId}, 'permissao_alterada', 'Permissões atualizadas', ${client.json({ permissions } as any)})
+    `;
 
     return {
       success: true,
@@ -180,21 +194,20 @@ export async function updateUserPermissions(
       success: false,
       message: error.message || 'Erro ao atualizar permissões'
     };
+  } finally {
+    await close();
   }
 }
 
 export async function deleteUser(
   userId: string
 ): Promise<{ success: boolean; message: string }> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-    
-    const { error } = await supabase
-      .schema('platform').from('users')
-      .delete()
-      .eq('id', userId);
-
-    if (error) throw error;
+    await client`
+      DELETE FROM platform.users
+      WHERE id = ${userId}
+    `;
 
     return {
       success: true,
@@ -206,6 +219,8 @@ export async function deleteUser(
       success: false,
       message: error.message || 'Erro ao remover usuário'
     };
+  } finally {
+    await close();
   }
 }
 
@@ -217,33 +232,22 @@ export async function inviteUser(
     return { success: false, message: 'Sem permissão para convidar usuários' };
   }
 
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = await createServerSupabaseClient();
-    
     // Gerar token de convite
     const inviteToken = nanoid(32);
     const inviteExpires = new Date();
     inviteExpires.setHours(inviteExpires.getHours() + 24);
 
     // Criar usuário pendente
-    const { data: user, error: createError } = await supabase
-      .schema('platform').from('users')
-      .insert({
-        email,
-        role,
-        status: 'pendente',
-        nome: null,
-        two_factor_enabled: false,
-        permissoes: [],
-        metadata: {
-          invite_token: inviteToken,
-          invite_expires: inviteExpires.toISOString()
-        }
-      })
-      .select()
-      .single();
+    const rows = await client`
+      INSERT INTO platform.users (email, role, status, nome, two_factor_enabled, permissoes, metadata)
+      VALUES (${email}, ${role}, 'pendente', NULL, FALSE, ${client.json([])}, ${client.json({ invite_token: inviteToken, invite_expires: inviteExpires.toISOString() })})
+      RETURNING *
+    `;
 
-    if (createError) throw createError;
+    if (!rows || rows.length === 0) throw new Error('Falha ao criar usuário pendente');
+    const user = rows[0];
 
     // Construir link de convite
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -263,12 +267,10 @@ export async function inviteUser(
     });
 
     // Registrar atividade
-    await supabase.schema('platform').from('user_activities').insert({
-      user_id: user.id,
-      tipo: 'usuario_criado',
-      descricao: `Usuário convidado com role ${role}`,
-      metadata: { email, role }
-    });
+    await client`
+      INSERT INTO platform.user_activities (user_id, tipo, descricao, metadata)
+      VALUES (${user.id}, 'usuario_criado', ${`Usuário convidado com role ${role}`}, ${client.json({ email, role })})
+    `;
 
     return {
       success: true,
@@ -280,5 +282,7 @@ export async function inviteUser(
       success: false,
       message: error.message || 'Erro ao enviar convite'
     };
+  } finally {
+    await close();
   }
 }

@@ -2,7 +2,7 @@
 
 import { createDatabaseClient } from '@noro/db';
 import { clientsRepository } from '@noro/db';
-import type { ClientStatus, ClientTipo } from '@noro/db';
+import type { ClientStatus, ClientTipo, ClientNivel, ClientSegmento } from '@noro/db';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -82,8 +82,8 @@ export async function createClienteAction(tenantId: string, data: {
   nivelMobilidade?: string;
   aptoAtividadeFisica?: boolean;
   status?: ClientStatus;
-  nivel?: string;
-  segmento?: string;
+  nivel?: ClientNivel;
+  segmento?: ClientSegmento;
   assignedTo?: string;
   destinosVisitados?: string[];
   destinosDesejados?: string[];

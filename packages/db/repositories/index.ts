@@ -21,3 +21,22 @@ export * as paymentWebhookEventsRepository from './paymentWebhookEventsRepositor
 export * as proposalItineraryRepository from './proposalItineraryRepository';
 export * as proposalMessagesRepository from './proposalMessagesRepository';
 export * as emergencyContactsRepository from './emergencyContactsRepository';
+export * as bookingsRepository from './bookingsRepository';
+export * as bookingItemsRepository from './bookingItemsRepository';
+export * as bookingComponentFinancialsRepository from './bookingComponentFinancialsRepository';
+export * as financialLedgerEntriesRepository from './financialLedgerEntriesRepository';
+export * as trafficDocumentsRepository from './trafficDocumentsRepository';
+export * as trafficDocumentCouponsRepository from './trafficDocumentCouponsRepository';
+export * as travelCreditsRepository from './travelCreditsRepository';
+export * as travelCreditMovementsRepository from './travelCreditMovementsRepository';
+export * as fiscalDocumentsRepository from './fiscalDocumentsRepository';
+export * as bspIngestionsRepository from './bspIngestionsRepository';
+export * as bspRecordsRepository from './bspRecordsRepository';
+export * as agencyMemosRepository from './agencyMemosRepository';
+export * as visaInfoRepository from './visaInfoRepository';
+export * as partnerApiKeysRepository from './partnerApiKeysRepository';
+
+
+
+
+

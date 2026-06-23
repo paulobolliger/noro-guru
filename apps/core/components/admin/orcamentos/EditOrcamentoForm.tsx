@@ -167,7 +167,7 @@ export default function EditOrcamentoForm({ orcamentoInicial, clientes }: EditOr
                     router.push(`/admin/orcamentos/${orcamentoInicial.id}`);
                 }, 1500);
             } else {
-                setStatus(result);
+                setStatus({ success: false, message: result.message || 'Erro ao atualizar orçamento' });
                 setTimeout(() => setStatus(null), 5000);
             }
         });

@@ -7,6 +7,7 @@ import { Shield, User2, Search, Plus, Edit2, Trash2, Mail, Phone } from 'lucide-
 import type { NoroUser, NoroUserRole } from '@/../../packages/types/noro-users';
 import EditNoroUserModal from './EditNoroUserModal';
 import DeleteNoroUserModal from './DeleteNoroUserModal';
+import InviteUserModal from './InviteUserModal';
 
 interface UtilizadoresTabProps {
   users: NoroUser[];
@@ -20,6 +21,7 @@ export default function UtilizadoresTab({ users, currentUserId, refetchUsers }: 
   const [selectedUser, setSelectedUser] = useState<NoroUser | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   if (!users?.length) {
     return (
@@ -29,12 +31,19 @@ export default function UtilizadoresTab({ users, currentUserId, refetchUsers }: 
           <h3 className="text-lg font-semibold text-primary mb-2">Nenhum usuário encontrado</h3>
           <p className="text-description mb-6">Não há usuários registrados no sistema NORO.</p>
           <button
-            onClick={() => {/* TODO: Implementar criação de usuário */}}
+            onClick={() => setIsInviteModalOpen(true)}
             className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 mx-auto"
           >
             <Plus size={16} />
             Adicionar Usuário
           </button>
+          <InviteUserModal
+            isOpen={isInviteModalOpen}
+            onClose={() => {
+              setIsInviteModalOpen(false);
+              refetchUsers();
+            }}
+          />
         </div>
       </div>
     );
@@ -87,6 +96,14 @@ export default function UtilizadoresTab({ users, currentUserId, refetchUsers }: 
         </>
       )}
 
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={() => {
+          setIsInviteModalOpen(false);
+          refetchUsers();
+        }}
+      />
+
       {/* Header com Filtros */}
       <div className="surface-card rounded-xl border border-default p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -97,7 +114,7 @@ export default function UtilizadoresTab({ users, currentUserId, refetchUsers }: 
             </p>
           </div>
           <button
-            onClick={() => {/* TODO: Implementar criação */}}
+            onClick={() => setIsInviteModalOpen(true)}
             className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2"
           >
             <Plus size={16} />

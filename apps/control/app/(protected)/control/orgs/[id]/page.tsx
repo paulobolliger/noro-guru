@@ -1,11 +1,28 @@
 import { addNote, getOrg, listNotes, createContact, deleteContact, updateContact } from "./actions";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from "@noro/db";
+
+async function getContacts(tenantId: string) {
+  const { client, close } = createDatabaseClient();
+  try {
+    const data = await client`
+      SELECT * 
+      FROM platform_crm.contacts 
+      WHERE tenant_id = ${tenantId} 
+      ORDER BY is_primary DESC
+    `;
+    return data || [];
+  } catch (err) {
+    console.error('Error fetching contacts:', err);
+    return [];
+  } finally {
+    await close();
+  }
+}
 
 export default async function OrgDetail({ params }: { params: { id: string } }) {
   const org = await getOrg(params.id);
   const notes = await listNotes(params.id);
-  const supabase = createAdminSupabaseClient();
-  const { data: contacts } = await supabase.schema('platform_crm').from('contacts').select('*').eq('tenant_id', params.id).order('is_primary', { ascending: false });
+  const contacts = await getContacts(params.id);
 
   async function create(formData: FormData) {
     "use server";

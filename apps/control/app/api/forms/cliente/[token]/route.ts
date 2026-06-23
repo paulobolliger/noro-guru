@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 
 function buildCorsHeaders(origin: string | null) {
   const allowed = (process.env.ALLOWED_ORIGINS || '*')
@@ -23,18 +23,34 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function GET(req: NextRequest, { params }: { params: { token: string } }) {
   const cors = buildCorsHeaders(req.headers.get('origin'));
+  const { client, close } = createDatabaseClient();
   try {
     const token = params.token;
-    const supabase = createServerSupabaseClient();
-    const { data: tokenData, error: tokenError } = await supabase
-      .schema('noro_auth').from('update_tokens')
-      .select('*, cliente:noro_clientes(*)')
-      .eq('token', token)
-      .single();
+    
+    const rows = await client`
+      SELECT 
+        t.*,
+        c.id as client_id,
+        c.nome as client_nome,
+        c.email as client_email,
+        c.telefone as client_telefone,
+        c.whatsapp as client_whatsapp,
+        c.cpf as client_cpf,
+        c.passaporte as client_passaporte,
+        c.data_nascimento as client_data_nascimento,
+        c.nacionalidade as client_nacionalidade,
+        c.profissao as client_profissao
+      FROM noro_auth.update_tokens t
+      LEFT JOIN crm.clients c ON c.id = t.cliente_id
+      WHERE t.token = ${token}
+      LIMIT 1
+    `;
 
-    if (tokenError || !tokenData) {
+    if (!rows || rows.length === 0) {
       return NextResponse.json({ success: false, error: 'Token inválido ou não encontrado.' }, { status: 404, headers: cors });
     }
+    const tokenData = rows[0];
+
     if (tokenData.used_at) {
       return NextResponse.json({ success: false, error: 'Este link já foi utilizado.' }, { status: 400, headers: cors });
     }
@@ -42,29 +58,47 @@ export async function GET(req: NextRequest, { params }: { params: { token: strin
       return NextResponse.json({ success: false, error: 'Este link expirou.' }, { status: 400, headers: cors });
     }
 
-    return NextResponse.json({ success: true, data: tokenData.cliente }, { headers: cors });
+    const cliente = tokenData.client_id ? {
+      id: tokenData.client_id,
+      nome: tokenData.client_nome,
+      email: tokenData.client_email,
+      telefone: tokenData.client_telefone,
+      whatsapp: tokenData.client_whatsapp,
+      cpf: tokenData.client_cpf,
+      passaporte: tokenData.client_passaporte,
+      data_nascimento: tokenData.client_data_nascimento,
+      nacionalidade: tokenData.client_nacionalidade,
+      profissao: tokenData.client_profissao
+    } : null;
+
+    return NextResponse.json({ success: true, data: cliente }, { headers: cors });
   } catch (err) {
     console.error('Erro GET forms/cliente:', err);
     return NextResponse.json({ success: false, error: 'Erro interno.' }, { status: 500, headers: cors });
+  } finally {
+    await close();
   }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
   const cors = buildCorsHeaders(req.headers.get('origin'));
+  const { client, close } = createDatabaseClient();
   try {
     const token = params.token;
     const payload = await req.json();
-    const supabase = createServerSupabaseClient();
 
-    const { data: tokenData, error: tokenError } = await supabase
-      .schema('noro_auth').from('update_tokens')
-      .select('cliente_id, expires_at, used_at')
-      .eq('token', token)
-      .single();
+    const rows = await client`
+      SELECT cliente_id, expires_at, used_at
+      FROM noro_auth.update_tokens
+      WHERE token = ${token}
+      LIMIT 1
+    `;
 
-    if (tokenError || !tokenData) {
+    if (!rows || rows.length === 0) {
       return NextResponse.json({ success: false, message: 'Token de atualização inválido.' }, { status: 400, headers: cors });
     }
+    const tokenData = rows[0];
+
     if (tokenData.used_at) {
       return NextResponse.json({ success: false, message: 'Este link de atualização já foi utilizado.' }, { status: 400, headers: cors });
     }
@@ -72,7 +106,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       return NextResponse.json({ success: false, message: 'Este link de atualização expirou.' }, { status: 400, headers: cors });
     }
 
-    const { cliente_id } = tokenData as { cliente_id: string };
+    const { cliente_id } = tokenData;
 
     const updates = {
       nome: payload.nome as string,
@@ -84,28 +118,27 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       data_nascimento: payload.data_nascimento as string,
       nacionalidade: payload.nacionalidade as string,
       profissao: payload.profissao as string,
-      updated_at: new Date().toISOString(),
+      updated_at: new Date(),
     };
 
-    const { error: updateError } = await supabase
-      .schema('crm').from('clients')
-      .update(updates)
-      .eq('id', cliente_id);
+    await client`
+      UPDATE crm.clients
+      SET ${client(updates)}
+      WHERE id = ${cliente_id}
+    `;
 
-    if (updateError) {
-      console.error('Erro ao atualizar cliente via formulário público:', updateError);
-      return NextResponse.json({ success: false, message: `Erro ao salvar os dados: ${updateError.message}` }, { status: 500, headers: cors });
-    }
-
-    await supabase
-      .schema('noro_auth').from('update_tokens')
-      .update({ used_at: new Date().toISOString() })
-      .eq('token', token);
+    await client`
+      UPDATE noro_auth.update_tokens
+      SET used_at = NOW()
+      WHERE token = ${token}
+    `;
 
     return NextResponse.json({ success: true, message: 'Seus dados foram atualizados com sucesso!' }, { headers: cors });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erro POST forms/cliente:', err);
-    return NextResponse.json({ success: false, message: 'Erro interno.' }, { status: 500, headers: cors });
+    return NextResponse.json({ success: false, message: err.message || 'Erro interno.' }, { status: 500, headers: cors });
+  } finally {
+    await close();
   }
 }
 

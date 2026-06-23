@@ -1,9 +1,8 @@
-﻿// components/admin/pedidos/PedidoDetalhesCard.tsx
+// components/admin/pedidos/PedidoDetalhesCard.tsx
 'use client'; 
 
 import React from 'react';
 import Link from 'next/link';
-import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 import { PedidoComRelacionamentos } from '@/types/pedidos';
 import { Badge } from '@/components/ui/badge'; 
@@ -16,6 +15,7 @@ import { AlertTriangle } from 'lucide-react';
 
 interface PedidoDetalhesCardProps {
   pedido: PedidoComRelacionamentos;
+  visaRequirements?: any;
 }
 
 const statusMap: Record<string, string> = {
@@ -26,7 +26,7 @@ const statusMap: Record<string, string> = {
   'CONVERTIDO': 'bg-indigo-100 text-indigo-800',
 };
 
-export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) {
+export default function PedidoDetalhesCard({ pedido, visaRequirements }: PedidoDetalhesCardProps) {
   const cliente = pedido.clientes;
   
   // Condição para exibir o formulário de emissão de cobrança
@@ -37,6 +37,56 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
   
   return (
     <div className="space-y-6">
+      {/* Alerta de Visto e Saúde para o Agente */}
+      {visaRequirements && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 shadow-sm flex items-start gap-4 mb-6">
+          <div className="p-2 bg-amber-100 text-amber-800 rounded-lg shrink-0">
+            <AlertTriangle className="h-6 w-6" />
+          </div>
+          <div className="flex-1 space-y-1">
+            <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <span>{visaRequirements.flagEmoji}</span>
+              Aviso Operacional: Regras para {visaRequirements.country}
+            </h3>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              O destino principal deste pedido é {visaRequirements.country}. Por favor, confira e instrua o passageiro sobre as regras obrigatórias de viagem:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 text-xs">
+              <div className="bg-white p-3 rounded-lg border border-amber-100">
+                <span className="font-bold text-gray-800 block mb-1">🛂 Visto de Entrada</span>
+                <span className="text-gray-600">
+                  {visaRequirements.isVisaExempt 
+                    ? `Isento de visto por até ${visaRequirements.allowedStayDays ?? 90} dias.` 
+                    : visaRequirements.eVisaAvailable 
+                      ? 'Exige E-Visa (Visto Eletrônico online).' 
+                      : visaRequirements.visaOnArrival 
+                        ? 'Visto obtido na chegada.' 
+                        : 'Exige visto consular tradicional.'}
+                </span>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-amber-100">
+                <span className="font-bold text-gray-800 block mb-1">💉 Vacinas & Saúde</span>
+                <span className="text-gray-600">
+                  {(() => {
+                    const health = visaRequirements.healthInfo as { vaccines?: string; notes?: string } | null;
+                    return health?.vaccines 
+                      ? `Exige vacina: ${health.vaccines}.` 
+                      : 'Nenhuma vacina obrigatória registrada.';
+                  })()}
+                </span>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-amber-100">
+                <span className="font-bold text-gray-800 block mb-1">🛡️ Seguro de Saúde</span>
+                <span className="text-gray-600">
+                  {visaRequirements.travelInsuranceRequired 
+                    ? '⚠️ Seguro viagem internacional é OBRIGATÓRIO.' 
+                    : 'Seguro viagem é altamente recomendado.'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Detalhes Principais e Cliente */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
@@ -59,7 +109,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
               </Badge>
               
               <div className="text-sm font-medium text-gray-500">Ações:</div>
-              <Link href={`/admin/pedidos/${pedido.id}/editar`}>
+              <Link href={`/pedidos/${pedido.id}/editar`}>
                   <Button variant="outline" size="sm" disabled={isFinalizado}>
                       Editar Dados Principais
                   </Button>

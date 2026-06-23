@@ -1,15 +1,14 @@
 "use client";
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@noro/lib/supabase/client';
+import { searchCommandPalette } from '@/app/actions/comum';
 import Portal from "@/components/ui/portal";
 
 type Item = { type: 'page'|'action'|'tenant'|'lead'; label: string; href?: string; onClick?: () => void };
 
 export default function CommandPalette() {
   const router = useRouter();
-  const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [items, setItems] = useState<Item[]>([]);
@@ -43,15 +42,13 @@ export default function CommandPalette() {
       const results: Item[] = [...base];
       const term = q.trim();
       if (term) {
-        const { data: t } = await supabase.schema('platform').from('tenants').select('id, name, slug').ilike('name', `%${term}%`).limit(5);
-        const { data: l } = await supabase.schema('platform_crm').from('leads').select('id, organization_name').ilike('organization_name', `%${term}%`).limit(5);
-        (t||[]).forEach((r: any) => results.push({ type: 'tenant', label: `Tenant: ${r.name}`, href: `/control/orgs/${r.id}` }));
-        (l||[]).forEach((r: any) => results.push({ type: 'lead', label: `Lead: ${r.organization_name}`, href: `/control/leads` }));
+        const searchResults = await searchCommandPalette(term);
+        results.push(...(searchResults as Item[]));
       }
       if (!abort) setItems(results);
     })();
     return () => { abort = true; };
-  }, [q, supabase]);
+  }, [q]);
 
   const onSelect = (it: Item) => {
     if (it.onClick) it.onClick();

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -56,7 +56,7 @@ export function PedidosList({ pedidos }: PedidosListProps) {
           {pedidos.map((pedido) => (
             <tr key={pedido.id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
-                <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
+                <Link href={`/pedidos/${pedido.id}`} className="hover:underline">
                   {pedido.id.slice(0, 8)}...
                 </Link>
               </td>
@@ -76,7 +76,7 @@ export function PedidosList({ pedidos }: PedidosListProps) {
                 {pedido.created_at ? format(new Date(pedido.created_at), 'dd/MM/yyyy') : '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <Link href={`/admin/pedidos/${pedido.id}`} className="text-indigo-600 hover:text-indigo-900">
+                <Link href={`/pedidos/${pedido.id}`} className="text-indigo-600 hover:text-indigo-900">
                   Ver Detalhes
                 </Link>
               </td>

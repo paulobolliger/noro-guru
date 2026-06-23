@@ -1,45 +1,43 @@
 "use server";
 import { cookies } from "next/headers";
-import { getSupabaseServer } from "@/lib/supabaseServer";
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 
 export type Tenant = { id: string; name: string; slug: string; role?: string };
 
 export async function getUserTenants(): Promise<Tenant[]> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabase = getSupabaseServer();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const ctx = await getLogtoContext(logtoConfig);
+    const userId = ctx.claims?.sub;
     
-    if (!user) {
+    if (!userId) {
       return [];
     }
     
-    const { data, error } = await supabase
-      .schema('platform')
-      .from("user_tenant_roles")
-      .select("role, tenants!user_tenant_roles_tenant_fkey(id, name, slug)")
-      .eq("user_id", user.id);
+    const rows = await client`
+      SELECT utr.role, t.id, t.name, t.slug
+      FROM platform.user_tenant_roles utr
+      JOIN platform.tenants t ON t.id = utr.tenant_id
+      WHERE utr.user_id = ${userId}
+    `;
     
-    if (error) {
-      console.error('[getUserTenants] Error:', error);
-      throw new Error(error.message);
-    }
-    
-    const tenants = (data || []).map((r: any) => ({ 
-      id: r.tenants.id, 
-      name: r.tenants.name, 
-      slug: r.tenants.slug, 
+    return rows.map((r: any) => ({ 
+      id: r.id, 
+      name: r.name, 
+      slug: r.slug, 
       role: r.role 
     }));
-    
-    return tenants;
   } catch (err) {
     console.error('[getUserTenants] Exception:', err);
     return [];
+  } finally {
+    await close();
   }
 }
 
 export async function getActiveTenantId(): Promise<string | null> {
-  const supabase = getSupabaseServer();
   const all = await getUserTenants();
   if (!all.length) return null;
   const c = cookies();

@@ -95,6 +95,24 @@ export function FooterSection({ config, primaryColor }: FooterSectionProps) {
                     <p style={{ fontSize: '0.875rem', color: '#9CA3AF', margin: 0 }}>
                         {config.copyright || `© ${new Date().getFullYear()} ${config.companyName || 'Todos os direitos reservados'}`}
                     </p>
+
+                    {/* Powered by Noro Guru branding - shown only on free sites.noro.guru domains */}
+                    {typeof window !== 'undefined' && 
+                     (window.location.hostname.endsWith('sites.noro.guru') || 
+                      window.location.hostname.includes('localhost') || 
+                      window.location.hostname.includes('127.0.0.1')) && (
+                        <p style={{ fontSize: '0.875rem', color: '#9CA3AF', margin: 0 }}>
+                          Criado com{' '}
+                          <a 
+                            href="https://noro.guru" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={{ color: '#1DD3C0', fontWeight: '700', textDecoration: 'none' }}
+                          >
+                            Noro Guru
+                          </a>
+                        </p>
+                    )}
                 </div>
             </div>
         </footer>

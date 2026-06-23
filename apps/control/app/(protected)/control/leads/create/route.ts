@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from '@noro/db';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
 
 export async function POST(req: Request) {
-  const supabase = createAdminSupabaseClient();
-  const form = await req.formData();
-  // Admin client bypasses RLS; owner_id será preenchido por trigger quando autenticado.
-  const uid = null;
+  const ctx = await getLogtoContext(logtoConfig);
+  const uid = ctx.isAuthenticated && ctx.claims?.sub ? ctx.claims.sub : null;
 
+  const form = await req.formData();
   const organization_name = String(form.get('organization_name') || '').trim();
   const email = String(form.get('email') || '').trim();
   const phone = String(form.get('phone') || '').trim();
@@ -17,13 +18,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'organization_name required' }, { status: 400 });
   }
 
-  const { error } = await supabase
-    .schema('platform')
-    .from('leads')
-    .insert({ organization_name, email, phone, source, value_cents, owner_id: uid });
-
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    await client`
+      INSERT INTO platform_crm.leads (organization_name, email, phone, source, value_cents, owner_id)
+      VALUES (${organization_name}, ${email}, ${phone}, ${source}, ${value_cents}, ${uid})
+    `;
+    return NextResponse.redirect(new URL('/control/leads', req.url));
+  } catch (error: any) {
+    console.error('Erro no create lead route:', error);
     return NextResponse.json({ error: error.message }, { status: 400 });
+  } finally {
+    await close();
   }
-  return NextResponse.redirect(new URL('/control/leads', req.url));
 }

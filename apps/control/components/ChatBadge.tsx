@@ -1,27 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@noro/lib/supabase/client';
+import { getUnreadMessagesCount } from '@/app/actions/comum';
 
 export default function ChatBadge() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchUnread = async () => {
-      try {
-        const { data, error } = await supabase
-          .schema('comunicacao').from('conversations')
-          .select('unread_count')
-          .in('status', ['active', 'waiting']);
-        
-        if (data && !error) {
-          const total = data.reduce((sum, conv) => sum + (conv.unread_count || 0), 0);
-          setUnreadCount(total);
-        }
-      } catch (error) {
-        console.error('Error fetching unread:', error);
-      }
+      const total = await getUnreadMessagesCount();
+      setUnreadCount(total);
     };
 
     fetchUnread();
@@ -30,7 +18,7 @@ export default function ChatBadge() {
     const interval = setInterval(fetchUnread, 30000);
     
     return () => clearInterval(interval);
-  }, [supabase]);
+  }, []);
 
   if (unreadCount === 0) return null;
 

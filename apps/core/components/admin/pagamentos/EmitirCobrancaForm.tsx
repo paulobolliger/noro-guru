@@ -30,6 +30,7 @@ const PAYMENT_PROVIDERS: { value: PaymentProvider; label: string; icon: React.Re
   { value: 'EREDE_PIX',     label: 'e.Rede — PIX',     icon: <QrCode className="h-4 w-4" /> },
   { value: 'EREDE_CREDITO', label: 'e.Rede — Crédito', icon: <CreditCard className="h-4 w-4" /> },
   { value: 'EREDE_DEBITO',  label: 'e.Rede — Débito',  icon: <CreditCard className="h-4 w-4" /> },
+  { value: 'ASAAS',         label: 'Asaas — PIX/Boleto', icon: <DollarSign className="h-4 w-4" /> },
 ];
 
 const STATUS_STYLES: Record<string, string> = {
@@ -46,7 +47,7 @@ const STATUS_STYLES: Record<string, string> = {
 const isCardProvider = (p: PaymentProvider) =>
   p === 'EREDE_CREDITO' || p === 'EREDE_DEBITO';
 
-const isPixProvider = (p: PaymentProvider) => p === 'EREDE_PIX';
+const isPixProvider = (p: PaymentProvider) => p === 'EREDE_PIX' || p === 'ASAAS';
 
 export default function EmitirCobrancaForm({
   pedidoId,
@@ -147,17 +148,25 @@ export default function EmitirCobrancaForm({
 
   const getPaymentDetail = (cobranca: Cobranca) => {
     const data = cobranca.provider_data as any;
-    if (!data) return { pixCode: null, copyValue: '' };
+    if (!data) return { pixCode: null, copyValue: '', checkoutUrl: null, bankSlipUrl: null };
 
+    // Asaas PIX Copia e Cola
+    if (data.pixCopyPaste) {
+      return { pixCode: data.pixCopyPaste, copyValue: data.pixCopyPaste, checkoutUrl: data.checkoutUrl ?? null, bankSlipUrl: data.bankSlipUrl ?? null };
+    }
     // e.Rede PIX — copia e cola (EMV)
     if (data.qrCode) {
-      return { pixCode: data.qrCode, copyValue: data.qrCode };
+      return { pixCode: data.qrCode, copyValue: data.qrCode, checkoutUrl: null, bankSlipUrl: null };
+    }
+    // Asaas Boleto / Fatura / Checkout
+    if (data.bankSlipUrl || data.checkoutUrl) {
+      return { pixCode: null, copyValue: data.checkoutUrl || data.bankSlipUrl, checkoutUrl: data.checkoutUrl ?? null, bankSlipUrl: data.bankSlipUrl ?? null };
     }
     // e.Rede Cartão — TID
     if (data.tid) {
-      return { pixCode: null, copyValue: data.tid };
+      return { pixCode: null, copyValue: data.tid, checkoutUrl: null, bankSlipUrl: null };
     }
-    return { pixCode: null, copyValue: '' };
+    return { pixCode: null, copyValue: '', checkoutUrl: null, bankSlipUrl: null };
   };
 
   const handleCopy = (text: string) => {
@@ -300,10 +309,16 @@ export default function EmitirCobrancaForm({
             )}
 
             {/* Info PIX */}
-            {isPixProvider(provider) && (
+            {provider === 'EREDE_PIX' && (
               <div className="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
                 <QrCode className="h-4 w-4 text-slate-500 shrink-0" />
                 <span>Um QR Code PIX com validade de <strong>1 hora</strong> será gerado. O cliente efetua o pagamento pelo app do banco.</span>
+              </div>
+            )}
+            {provider === 'ASAAS' && (
+              <div className="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+                <DollarSign className="h-4 w-4 text-slate-500 shrink-0" />
+                <span>Uma cobrança será gerada via Asaas. O cliente poderá visualizar a fatura e pagar por PIX ou Boleto Bancário.</span>
               </div>
             )}
 
@@ -347,7 +362,7 @@ export default function EmitirCobrancaForm({
             {cobrancasExistentes
               .filter((c) => !['PAGO', 'CANCELADO', 'ERRO_API', 'ESTORNADO'].includes(c.status))
               .map((cobranca) => {
-                const { copyValue } = getPaymentDetail(cobranca);
+                const { copyValue, checkoutUrl, bankSlipUrl } = getPaymentDetail(cobranca);
                 return (
                   <div
                     key={cobranca.id}
@@ -358,17 +373,33 @@ export default function EmitirCobrancaForm({
                         {cobranca.status.replace(/_/g, ' ')}
                       </Badge>
                       <span className="ml-2 text-xs text-gray-500">
-                        via {cobranca.provider.replace('EREDE_', 'e.Rede ')} · vence{' '}
+                        via {cobranca.provider.toUpperCase()} · vence{' '}
                         {cobranca.data_vencimento
                           ? format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')
                           : '—'}
                       </span>
                     </div>
-                    {copyValue && (
-                      <Button variant="secondary" size="sm" onClick={() => handleCopy(copyValue)}>
-                        <Copy className="h-4 w-4 mr-1" /> Copiar
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {checkoutUrl && (
+                        <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" size="sm">
+                            Fatura
+                          </Button>
+                        </a>
+                      )}
+                      {bankSlipUrl && (
+                        <a href={bankSlipUrl} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" size="sm">
+                            Boleto PDF
+                          </Button>
+                        </a>
+                      )}
+                      {copyValue && (
+                        <Button variant="secondary" size="sm" onClick={() => handleCopy(copyValue)}>
+                          <Copy className="h-4 w-4 mr-1" /> Copiar
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 );
               })}

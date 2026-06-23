@@ -1,36 +1,47 @@
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from "@noro/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Building2, CreditCard, Users, Globe } from "lucide-react";
 import KpiCard from "@/components/dashboard/KpiCard";
 
 async function getTenant(id: string) {
-    const supabase = createAdminSupabaseClient();
-    const { data, error } = await supabase
-        .schema('platform')
-        .from('tenants')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
-
-    if (error || !data) return null;
-    return data;
+    const { client, close } = createDatabaseClient();
+    try {
+        const [data] = await client`
+            SELECT *
+            FROM platform.tenants
+            WHERE id = ${id}
+            LIMIT 1
+        `;
+        return data || null;
+    } catch (err) {
+        console.error('Error fetching tenant:', err);
+        return null;
+    } finally {
+        await close();
+    }
 }
 
 async function getTenantStats(id: string) {
-    const supabase = createAdminSupabaseClient();
+    const { client, close } = createDatabaseClient();
+    try {
+        // Get API keys count
+        const apiKeys = await client`
+            SELECT id
+            FROM platform.api_keys
+            WHERE tenant_id = ${id}
+        `;
 
-    // Get API keys count
-    const { data: apiKeys } = await supabase
-        .schema('platform')
-        .from('api_keys')
-        .select('id')
-        .eq('tenant_id', id);
-
-    return {
-        apiKeysCount: apiKeys?.length || 0,
-        usersCount: 0, // TODO: Add users query when available
-    };
+        return {
+            apiKeysCount: apiKeys?.length || 0,
+            usersCount: 0, // TODO: Add users query when available
+        };
+    } catch (err) {
+        console.error('Error fetching stats:', err);
+        return { apiKeysCount: 0, usersCount: 0 };
+    } finally {
+        await close();
+    }
 }
 
 export default async function TenantDetailsPage({ params }: { params: { id: string } }) {

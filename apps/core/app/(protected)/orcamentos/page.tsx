@@ -1,6 +1,6 @@
 // apps/core/(protected)/orcamentos/page.tsx
 import OrcamentosClientPage from '@/components/admin/OrcamentosClientPage';
-import { getOrcamentos } from './orcamentos-actions';
+import { getOrcamentos } from '@/app/orcamentos/orcamentos-actions';
 
 export const dynamic = 'force-dynamic';
 

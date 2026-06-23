@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+import { createDatabaseClient } from '@noro/db';
 import PreviewClient from './PreviewClient';
 
 export const dynamic = 'force-dynamic';
@@ -9,19 +9,28 @@ export default async function PreviewPage({
 }: {
     params: { id: string };
 }) {
-    // Create client inside the function so env vars are read at request time
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const { client, close } = createDatabaseClient();
+    let siteData: any = null;
+    let dbError: string | null = null;
 
-    const { data: siteData, error } = await supabase
-        .from('sites')
-        .select('id, slug, name, blueprint_data')
-        .eq('id', params.id)
-        .single();
+    try {
+        const rows = await client`
+            SELECT id, slug, name, blueprint_data
+            FROM sites.agency_sites
+            WHERE id = ${params.id}
+            LIMIT 1
+        `;
+        if (rows && rows.length > 0) {
+            siteData = rows[0];
+        }
+    } catch (error: any) {
+        console.error('Error fetching preview site:', error);
+        dbError = error.message || 'Erro de banco de dados';
+    } finally {
+        await close();
+    }
 
-    if (error) {
+    if (dbError) {
         return (
             <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
                 <div style={{
@@ -34,7 +43,7 @@ export default async function PreviewPage({
                     color: '#991B1B',
                 }}>
                     <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Erro ao carregar preview</h2>
-                    <p>{error.message}</p>
+                    <p>{dbError}</p>
                 </div>
             </div>
         );

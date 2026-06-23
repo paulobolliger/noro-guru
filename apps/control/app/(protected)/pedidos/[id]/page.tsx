@@ -1,11 +1,10 @@
 // app/admin/(protected)/pedidos/[id]/page.tsx
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { notFound } from 'next/navigation';
 import PedidoDetalhesCard from "@/components/pedidos/PedidoDetalhesCard";
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@ui/button";
-import type { PedidoComRelacionamentos } from "@noro/types/admin";
 
 interface PedidoDetalhesPageProps {
   params: {
@@ -13,28 +12,33 @@ interface PedidoDetalhesPageProps {
   };
 }
 
-async function fetchPedidoDetalhes(id: string): Promise<PedidoComRelacionamentos | null> {
-  const supabase = createServerSupabaseClient();
+async function fetchPedidoDetalhes(id: string): Promise<any | null> {
+  const { client, close } = createDatabaseClient();
+  try {
+    const orders = await client`
+      SELECT * FROM sales.orders WHERE id = ${id} LIMIT 1
+    `;
+    if (!orders || orders.length === 0) return null;
+    const order = orders[0];
 
-  const { data: pedido, error } = await supabase
-    .schema('sales').from('orders')
-    .select(
-      `
-        *,
-        pedido_itens(*),
-        clientes(*),
-        cobrancas(*)
-      `
-    )
-    .eq('id', id)
-    .single();
+    const [items, clients, charges] = await Promise.all([
+      client`SELECT * FROM sales.order_items WHERE pedido_id = ${id}`,
+      client`SELECT * FROM crm.clients WHERE id = ${order.cliente_id} LIMIT 1`,
+      order.orcamento_id ? client`SELECT * FROM noro.payment_charges WHERE proposal_id = ${order.orcamento_id}` : Promise.resolve([])
+    ]);
 
-  if (error || !pedido) {
+    return {
+      ...order,
+      pedido_itens: items,
+      clientes: clients[0] || null,
+      cobrancas: charges || []
+    };
+  } catch (error) {
     console.error('Erro ao buscar detalhes do pedido:', error);
     return null;
+  } finally {
+    await close();
   }
-
-  return pedido as PedidoComRelacionamentos; 
 }
 
 export default async function PedidoDetalhesPage({ params }: PedidoDetalhesPageProps) {

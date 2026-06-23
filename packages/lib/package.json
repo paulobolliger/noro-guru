@@ -14,9 +14,6 @@
         "./services/visaService": "./services/visaService.ts",
         "./providers/asaas-provider": "./providers/asaas-provider.ts",
         "./providers/payment-provider": "./providers/payment-provider.ts",
-        "./supabase": "./supabase/index.ts",
-        "./supabase/admin": "./supabase/admin.ts",
-        "./supabase/client": "./supabase/client.ts",
-        "./supabase/server": "./supabase/server.ts"
+        "./providers/cloudflare-provider": "./providers/cloudflare-provider.ts"
     }
 }

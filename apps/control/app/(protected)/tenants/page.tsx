@@ -1,34 +1,45 @@
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createDatabaseClient } from "@noro/db";
 import KpiCard from "@/components/dashboard/KpiCard";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
+async function fetchTenantsData() {
+  const { client, close } = createDatabaseClient();
+  try {
+    const tenantsData = await client`
+      SELECT id, name, slug, plan, status, created_at
+      FROM platform.tenants
+      ORDER BY created_at DESC
+      LIMIT 100
+    `;
+
+    const apiKeysData = await client`
+      SELECT tenant_id
+      FROM platform.api_keys
+    `;
+
+    return {
+      tenants: tenantsData || [],
+      apiKeys: apiKeysData || []
+    };
+  } catch (err) {
+    console.error('Error fetching tenants data:', err);
+    return { tenants: [], apiKeys: [] };
+  } finally {
+    await close();
+  }
+}
+
 export default async function TenantsPage() {
-  const supabase = createAdminSupabaseClient();
+  const { tenants, apiKeys } = await fetchTenantsData();
 
-  // Get tenants
-  const { data: tenantsData, error } = await supabase
-    .schema('platform')
-    .from('tenants')
-    .select('id, name, slug, plan, status, created_at')
-    .order('created_at', { ascending: false })
-    .limit(100);
-  if (error) throw new Error(error.message);
-
-  const tenants = tenantsData || [];
-
-  // Get API keys count per tenant
-  const { data: apiKeysData } = await supabase
-    .schema('platform')
-    .from('api_keys')
-    .select('tenant_id');
-
-  const apiKeysByTenant = (apiKeysData || []).reduce((acc: Record<string, number>, key: any) => {
+  const apiKeysByTenant = apiKeys.reduce((acc: Record<string, number>, key: any) => {
     acc[key.tenant_id] = (acc[key.tenant_id] || 0) + 1;
     return acc;
   }, {});
 
-  // Enrich tenants with service info
-  const enrichedTenants = tenants.map(t => ({
+  const enrichedTenants = tenants.map((t: any) => ({
     ...t,
     apiKeysCount: apiKeysByTenant[t.id] || 0,
   }));
@@ -109,11 +120,9 @@ export default async function TenantsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-1.5">
-                      {/* Tenant Badge - Always present */}
                       <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-100 text-indigo-700">
                         Tenant
                       </span>
-                      {/* API Badge - If has API keys */}
                       {t.apiKeysCount > 0 && (
                         <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
                           API ({t.apiKeysCount})

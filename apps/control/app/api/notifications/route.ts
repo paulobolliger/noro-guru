@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 
 function buildCorsHeaders(origin: string | null) {
   const allowed = (process.env.ALLOWED_ORIGINS || '*')
@@ -58,7 +58,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json() as NotificationData;
+    const body = (await req.json().catch(() => null)) as NotificationData | null;
+    if (!body) {
+      return NextResponse.json(
+        { error: 'Corpo da requisição inválido' },
+        { status: 400, headers: cors }
+      );
+    }
+
     const { title, message, type, userId, metadata } = body;
 
     // Validação básica
@@ -69,72 +76,68 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const { client, close } = createDatabaseClient();
+    try {
+      // Se não houver userId específico, buscar usuários admin
+      let targetUserIds: string[] = [];
 
-    // Se não houver userId específico, buscar usuários admin
-    let targetUserIds: string[] = [];
+      if (userId) {
+        targetUserIds = [userId];
+      } else {
+        // Buscar user_id de usuários com role admin ou owner no platform.user_tenant_roles
+        const adminUsers = await client`
+          SELECT DISTINCT user_id 
+          FROM platform.user_tenant_roles 
+          WHERE role IN ('admin', 'owner')
+          LIMIT 10
+        `;
 
-    if (userId) {
-      targetUserIds = [userId];
-    } else {
-      // Buscar auth_user_id de usuários com role admin ou owner
-      const { data: adminUsers } = await supabase
-        .from('users')
-        .select('auth_user_id, user_tenants!inner(role)')
-        .in('user_tenants.role', ['admin', 'owner'])
-        .eq('user_tenants.ativo', true)
-        .limit(10);
-
-      if (adminUsers && adminUsers.length > 0) {
-        targetUserIds = adminUsers
-          .filter(u => u.auth_user_id)
-          .map(u => u.auth_user_id as string);
+        if (adminUsers && adminUsers.length > 0) {
+          targetUserIds = adminUsers
+            .filter((u: any) => u.user_id)
+            .map((u: any) => u.user_id as string);
+        }
       }
-    }
 
-    // Se não encontrou nenhum usuário, apenas loga
-    if (targetUserIds.length === 0) {
+      // Se não encontrou nenhum usuário, apenas loga
+      if (targetUserIds.length === 0) {
+        return NextResponse.json(
+          {
+            success: true,
+            message: 'Nenhum usuário encontrado para notificar',
+          },
+          { status: 200, headers: cors }
+        );
+      }
+
+      // Criar notificações para cada usuário
+      let createdCount = 0;
+      for (const authUserId of targetUserIds) {
+        await client`
+          INSERT INTO comunicacao.notificacoes (user_id, titulo, mensagem, tipo, lida, link)
+          VALUES (
+            ${authUserId}, 
+            ${title}, 
+            ${message}, 
+            ${type || 'info'}, 
+            false, 
+            ${metadata?.link || metadata?.href || null}
+          )
+        `;
+        createdCount++;
+      }
+
       return NextResponse.json(
         {
           success: true,
-          message: 'Nenhum usuário encontrado para notificar',
+          notificationsCreated: createdCount,
+          message: 'Notificações criadas com sucesso',
         },
         { status: 200, headers: cors }
       );
+    } finally {
+      await close();
     }
-
-    // Criar notificações para cada usuário (usar auth_user_id)
-    const notifications = targetUserIds.map(authUserId => ({
-      user_id: authUserId,
-      title,
-      message,
-      type: type || 'info',
-      metadata: metadata || {},
-      read: false,
-    }));
-
-    const { data, error } = await supabase
-      .schema('comunicacao').from('notifications')
-      .insert(notifications)
-      .select();
-
-    if (error) {
-      console.error('Erro ao criar notificações:', error);
-      return NextResponse.json(
-        { error: 'Erro ao criar notificações' },
-        { status: 500, headers: cors }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        notificationsCreated: data?.length || 0,
-        message: 'Notificações criadas com sucesso',
-      },
-      { status: 200, headers: cors }
-    );
-
   } catch (err) {
     console.error('Erro no servidor:', err);
     return NextResponse.json(
@@ -156,28 +159,35 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const { client, close } = createDatabaseClient();
+    try {
+      // Buscar notificações recentes
+      const notifications = await client`
+        SELECT *
+        FROM comunicacao.notificacoes
+        ORDER BY created_at DESC
+        LIMIT 50
+      `;
 
-    // Buscar notificações recentes
-    const { data: notifications, error } = await supabase
-      .schema('comunicacao').from('notifications')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
+      const mapped = (notifications || []).map((n: any) => ({
+        id: n.id,
+        user_id: n.user_id,
+        title: n.titulo,
+        message: n.mensagem,
+        type: n.tipo,
+        read: n.lida,
+        created_at: n.created_at,
+        link: n.link,
+        tenant_id: n.tenant_id
+      }));
 
-    if (error) {
-      console.error('Erro ao buscar notificações:', error);
       return NextResponse.json(
-        { error: 'Erro ao buscar notificações' },
-        { status: 500, headers: cors }
+        { notifications: mapped },
+        { status: 200, headers: cors }
       );
+    } finally {
+      await close();
     }
-
-    return NextResponse.json(
-      { notifications },
-      { status: 200, headers: cors }
-    );
-
   } catch (err) {
     console.error('Erro no servidor:', err);
     return NextResponse.json(

@@ -3,9 +3,6 @@
 
 import { useState } from 'react';
 import { Plug, Users, SlidersHorizontal, CreditCard, Settings } from 'lucide-react';
-import InviteUserModal from './InviteUserModal';
-import EditUserModal from './EditUserModal';
-import DeleteUserModal from './DeleteUserModal';
 import PreferenciasTab from './PreferenciasTab';
 import UtilizadoresTab from './UtilizadoresTab';
 import IntegracoesTab from './IntegracoesTab';
@@ -33,16 +30,9 @@ interface ConfiguracoesClientProps {
 
 export default function ConfiguracoesClient({ serverUsers, configSistema, configUsuario, currentUserId, envVariables }: ConfiguracoesClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('utilizadores');
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<NoroUser | null>(null);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <InviteUserModal isOpen={isInviteModalOpen} onClose={() => setIsInviteModalOpen(false)} />
-      <EditUserModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} user={selectedUser} />
-      <DeleteUserModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} user={selectedUser} />
 
       {/* Header */}
       <div>

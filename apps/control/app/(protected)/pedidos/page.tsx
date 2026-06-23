@@ -1,33 +1,31 @@
 // app/admin/(protected)/pedidos/page.tsx
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { PedidosList } from "@/components/pedidos/PedidosList";
-import { Database } from "@noro-types/supabase";
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
 // Alias para o tipo de Pedido
-export type Pedido = Database['public']['Tables']['pedidos']['Row'];
+export type Pedido = any;
 
 /**
- * Função de busca de pedidos no Supabase.
+ * Função de busca de pedidos no Postgres VPS.
  * @returns Array de pedidos ou um array vazio em caso de erro.
  */
 async function fetchPedidos(): Promise<Pedido[]> {
-  const supabase = createServerSupabaseClient();
-
-  // Busca os pedidos de forma simples por enquanto, ordenando pelo mais recente
-  const { data, error } = await supabase
-    .schema('sales').from('orders')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
+  const { client, close } = createDatabaseClient();
+  try {
+    const rows = await client`
+      SELECT * 
+      FROM sales.orders
+      ORDER BY created_at DESC
+    `;
+    return rows;
+  } catch (error) {
     console.error('Erro ao buscar pedidos:', error);
-    // Em um ambiente de produção, um tratamento de erro mais sofisticado seria ideal.
     return []; 
+  } finally {
+    await close();
   }
-
-  return data || [];
 }
 
 export default async function PedidosPage() {

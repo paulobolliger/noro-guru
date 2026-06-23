@@ -40,7 +40,7 @@ export async function deletePedidoItem(itemId: string) {
 
 export async function emitirCobranca(payload: {
 	pedido_id: string;
-	provider: 'EREDE_CREDITO' | 'EREDE_DEBITO' | 'EREDE_PIX';
+	provider: 'EREDE_CREDITO' | 'EREDE_DEBITO' | 'EREDE_PIX' | 'ASAAS';
 	data_vencimento: string;
 	cardholderName?: string;
 	cardNumber?: string;

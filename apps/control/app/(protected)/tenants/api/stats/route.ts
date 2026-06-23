@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 
 export async function GET() {
-  const supabase = createServerSupabaseClient();
+  const { client, close } = createDatabaseClient();
+  try {
+    const tenants = await client`
+      SELECT id, status, plan 
+      FROM platform.tenants
+    `;
 
-  const { data: tenants, error } = await supabase
-    .schema('platform')
-    .from("tenants")
-    .select("id, status, plan")
-    .order("created_at", { ascending: false });
+    const stats = {
+      total: tenants?.length || 0,
+      active: tenants?.filter((t: any) => t.status === "active").length || 0,
+      trial: tenants?.filter((t: any) => t.plan === "trial").length || 0,
+      inactive: tenants?.filter((t: any) => t.status === "inactive").length || 0,
+    };
 
-  if (error) {
+    return NextResponse.json(stats);
+  } catch (error) {
     console.error("Erro ao buscar tenants:", error);
     return NextResponse.json({ total: 0, active: 0, trial: 0, inactive: 0 }, { status: 500 });
+  } finally {
+    await close();
   }
-
-  const stats = {
-    total: tenants?.length || 0,
-    active: tenants?.filter((t) => t.status === "active").length || 0,
-    trial: tenants?.filter((t) => t.plan === "trial").length || 0,
-    inactive: tenants?.filter((t) => t.status === "inactive").length || 0,
-  };
-
-  return NextResponse.json(stats);
 }

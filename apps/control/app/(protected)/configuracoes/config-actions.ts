@@ -1,7 +1,7 @@
 // app/admin/(protected)/configuracoes/config-actions.ts
 'use server';
 
-import { getSupabaseAdmin } from "@noro/lib/supabase/admin";
+import { createDatabaseClient } from "@noro/db";
 import { revalidatePath } from "next/cache";
 
 // Tipos para as configurações
@@ -26,16 +26,13 @@ export interface ConfiguracaoUsuario {
 // --- Funções de Sistema ---
 
 export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    
-    const { data, error } = await supabaseAdmin
-      .schema('sites').from('configuracoes')
-      .select('*')
-      .eq('tipo', 'sistema')
-      .is('user_id', null);
-
-    if (error) throw error;
+    const rows = await client`
+      SELECT chave, valor 
+      FROM sites.configuracoes 
+      WHERE tipo = 'sistema' AND user_id IS NULL
+    `;
 
     // Valores padrão se não existir configuração
     const defaultConfig: ConfiguracaoSistema = {
@@ -48,11 +45,11 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
       topbar_color: '#232452' // Cor secundária padrão
     };
 
-    if (!data || data.length === 0) return defaultConfig;
+    if (!rows || rows.length === 0) return defaultConfig;
 
     // Agregar todas as configurações em um objeto
     const config: any = { ...defaultConfig };
-    data.forEach(item => {
+    rows.forEach(item => {
       config[item.chave] = item.valor;
     });
 
@@ -68,13 +65,14 @@ export async function getConfiguracaoSistema(): Promise<ConfiguracaoSistema> {
       logo_url_admin: '',
       topbar_color: '#232452'
     };
+  } finally {
+    await close();
   }
 }
 
 export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    
     // Preparar os dados para inserção/atualização
     const configs = Object.entries(config).map(([chave, valor]) => ({
       tipo: 'sistema',
@@ -85,20 +83,12 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
 
     // Upsert (inserir ou atualizar)
     for (const item of configs) {
-      const { error } = await supabaseAdmin
-        .schema('sites').from('configuracoes')
-        .upsert({
-          tipo: item.tipo,
-          chave: item.chave,
-          valor: item.valor,
-          user_id: item.user_id,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'tipo,chave,user_id',
-          ignoreDuplicates: false
-        });
-
-      if (error) throw error;
+      await client`
+        INSERT INTO sites.configuracoes (tipo, chave, valor, user_id, updated_at)
+        VALUES (${item.tipo}, ${item.chave}, ${item.valor}, ${item.user_id}, NOW())
+        ON CONFLICT (tipo, chave, user_id) 
+        DO UPDATE SET valor = EXCLUDED.valor, updated_at = NOW()
+      `;
     }
 
     revalidatePath('/admin', 'layout'); // Revalida todo o layout do admin
@@ -106,22 +96,21 @@ export async function saveConfiguracaoSistema(config: ConfiguracaoSistema) {
   } catch (error: any) {
     console.error('Erro ao salvar configurações do sistema:', error);
     return { success: false, message: `Erro: ${error.message}` };
+  } finally {
+    await close();
   }
 }
 
-// --- Funções de Usuário (sem alterações) ---
+// --- Funções de Usuário ---
 
 export async function getConfiguracaoUsuario(userId: string): Promise<ConfiguracaoUsuario> {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    
-    const { data, error } = await supabaseAdmin
-      .schema('sites').from('configuracoes')
-      .select('*')
-      .eq('tipo', 'usuario')
-      .eq('user_id', userId);
-
-    if (error) throw error;
+    const rows = await client`
+      SELECT chave, valor 
+      FROM sites.configuracoes 
+      WHERE tipo = 'usuario' AND user_id = ${userId}
+    `;
 
     const defaultConfig: ConfiguracaoUsuario = {
       tema: 'light',
@@ -131,46 +120,42 @@ export async function getConfiguracaoUsuario(userId: string): Promise<Configurac
       notificacoes_push: false
     };
 
-    if (!data || data.length === 0) return defaultConfig;
+    if (!rows || rows.length === 0) return defaultConfig;
 
     const config: any = { ...defaultConfig };
-    data.forEach(item => {
-      config[item.chave] = item.valor;
+    rows.forEach(item => {
+      let val: any = item.valor;
+      if (val === 'true') val = true;
+      if (val === 'false') val = false;
+      config[item.chave] = val;
     });
 
     return config as ConfiguracaoUsuario;
   } catch (error: any) {
     console.error('Erro ao buscar configurações do usuário:', error);
     throw error;
+  } finally {
+    await close();
   }
 }
 
 export async function saveConfiguracaoUsuario(userId: string, config: ConfiguracaoUsuario) {
+  const { client, close } = createDatabaseClient();
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    
     const configs = Object.entries(config).map(([chave, valor]) => ({
       tipo: 'usuario',
       chave,
-      valor,
+      valor: String(valor),
       user_id: userId
     }));
 
     for (const item of configs) {
-      const { error } = await supabaseAdmin
-        .schema('sites').from('configuracoes')
-        .upsert({
-          tipo: item.tipo,
-          chave: item.chave,
-          valor: item.valor,
-          user_id: item.user_id,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'tipo,chave,user_id',
-          ignoreDuplicates: false
-        });
-
-      if (error) throw error;
+      await client`
+        INSERT INTO sites.configuracoes (tipo, chave, valor, user_id, updated_at)
+        VALUES (${item.tipo}, ${item.chave}, ${item.valor}, ${item.user_id}, NOW())
+        ON CONFLICT (tipo, chave, user_id) 
+        DO UPDATE SET valor = EXCLUDED.valor, updated_at = NOW()
+      `;
     }
 
     revalidatePath('/admin/configuracoes');
@@ -178,5 +163,7 @@ export async function saveConfiguracaoUsuario(userId: string, config: Configurac
   } catch (error: any) {
     console.error('Erro ao salvar configurações do usuário:', error);
     return { success: false, message: `Erro: ${error.message}` };
+  } finally {
+    await close();
   }
 }

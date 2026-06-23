@@ -1,37 +1,58 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
 
 export async function GET(req: Request) {
+  const { client, close } = createDatabaseClient();
   try {
     const url = new URL(req.url);
     const page = Math.max(1, Number(url.searchParams.get('page') || '1'));
     const pageSize = Math.max(1, Math.min(100, Number(url.searchParams.get('pageSize') || '10')));
     const q = (url.searchParams.get('q') || '').trim();
 
-    const supabase = createServerSupabaseClient();
+    const offset = (page - 1) * pageSize;
 
-    let query = supabase
-      .schema('platform')
-      .from('tenants')
-      .select('id, name, slug, plan, status, created_at', { count: 'exact' })
-      .order('created_at', { ascending: false });
+    let items;
+    let totalCount;
 
     if (q) {
-      // busca básica em name, slug e plan
-      const escaped = q.replace(/%/g, '\\%');
-      query = query.or(`name.ilike.%${escaped}%,slug.ilike.%${escaped}%,plan.ilike.%${escaped}%`);
+      const searchPattern = `%${q}%`;
+      items = await client`
+        SELECT id, name, slug, plan, status, created_at
+        FROM platform.tenants
+        WHERE name ILIKE ${searchPattern} 
+           OR slug ILIKE ${searchPattern} 
+           OR plan ILIKE ${searchPattern}
+        ORDER BY created_at DESC
+        LIMIT ${pageSize} OFFSET ${offset}
+      `;
+
+      const countResult = await client`
+        SELECT count(*)::int as count
+        FROM platform.tenants
+        WHERE name ILIKE ${searchPattern} 
+           OR slug ILIKE ${searchPattern} 
+           OR plan ILIKE ${searchPattern}
+      `;
+      totalCount = countResult[0]?.count ?? 0;
+    } else {
+      items = await client`
+        SELECT id, name, slug, plan, status, created_at
+        FROM platform.tenants
+        ORDER BY created_at DESC
+        LIMIT ${pageSize} OFFSET ${offset}
+      `;
+
+      const countResult = await client`
+        SELECT count(*)::int as count
+        FROM platform.tenants
+      `;
+      totalCount = countResult[0]?.count ?? 0;
     }
 
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize - 1;
-
-    const { data, count, error } = await query.range(from, to);
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ items: data || [], total: count || 0, page, pageSize });
+    return NextResponse.json({ items: items || [], total: totalCount, page, pageSize });
   } catch (err: any) {
     return NextResponse.json({ error: String(err?.message || err) }, { status: 500 });
+  } finally {
+    await close();
   }
 }

@@ -1,4 +1,4 @@
-﻿// components/admin/ClienteModal.tsx
+// components/admin/ClienteModal.tsx
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -39,8 +39,7 @@ export default function ClienteModal({ isOpen, onClose, cliente }: ClienteModalP
       const result = isEditMode
         ? await updateClienteAction(cliente.id!, formData)
         : await createClienteAction(formData);
-
-      setStatus(result);
+      setStatus({ success: result.success, message: result.message || 'Operação realizada com sucesso!' });
 
       if (result.success) {
         setTimeout(() => {

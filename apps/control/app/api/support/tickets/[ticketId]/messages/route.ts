@@ -1,42 +1,61 @@
 import { NextResponse } from "next/server";
-import { getSupabaseServer } from "@/lib/supabaseServer";
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 import { sendSupportEmail } from "@/lib/supportEmail";
 
 type Params = { ticketId: string };
 
 export async function GET(_request: Request, { params }: { params: Params }) {
-  const supabase = getSupabaseServer();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth?.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  const { data, error } = await supabase
-    .schema('platform')
-    .from('support_messages')
-    .select('*')
-    .eq('ticket_id', params.ticketId)
-    .order('created_at', { ascending: true })
-    .limit(200);
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ messages: data || [] });
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
+  if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
+  const { client, close } = createDatabaseClient();
+  try {
+    const data = await client`
+      SELECT *
+      FROM platform.support_messages
+      WHERE ticket_id = ${params.ticketId}
+      ORDER BY created_at ASC
+      LIMIT 200
+    `;
+    return NextResponse.json({ messages: data || [] });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error) }, { status: 400 });
+  } finally {
+    await close();
+  }
 }
 
 export async function POST(request: Request, { params }: { params: Params }) {
-  const supabase = getSupabaseServer();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth?.user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
+  if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+
   const body = await request.json().catch(() => null);
   const content = String(body?.body || '').trim();
   const internal = !!body?.internal;
   const tenant_id = String(body?.tenant_id || '').trim();
   if (!content || !tenant_id) return NextResponse.json({ error: 'body and tenant_id required' }, { status: 400 });
-  const { data, error } = await supabase
-    .schema('platform')
-    .from('support_messages')
-    .insert({ ticket_id: params.ticketId, tenant_id, sender_id: auth.user.id, sender_role: 'agent', body: content, internal })
-    .select('*')
-    .single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  await sendSupportEmail({ type: 'message_created', ticketId: params.ticketId, messageId: data.id, tenantId: tenant_id });
+  const { client, close } = createDatabaseClient();
+  try {
+    const [data] = await client`
+      INSERT INTO platform.support_messages (
+        ticket_id, tenant_id, sender_id, sender_role, body, internal
+      ) VALUES (
+        ${params.ticketId}, ${tenant_id}, ${userId}, 'agent', ${content}, ${internal}
+      )
+      RETURNING *
+    `;
 
-  return NextResponse.json({ message: data });
+    await sendSupportEmail({ type: 'message_created', ticketId: params.ticketId, messageId: data.id, tenantId: tenant_id });
+
+    return NextResponse.json({ message: data });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error) }, { status: 400 });
+  } finally {
+    await close();
+  }
 }

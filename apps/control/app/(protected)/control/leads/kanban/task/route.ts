@@ -1,23 +1,41 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
+import { createDatabaseClient } from '@noro/db';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
 
 export async function POST(req: Request) {
-  const supabase = createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const ctx = await getLogtoContext(logtoConfig);
+  if (!ctx.isAuthenticated) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  const userId = ctx.claims?.sub;
+  if (!userId) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
   const { id, title } = await req.json();
   if (!id || !title) return NextResponse.json({ error: 'invalid' }, { status: 400 });
-  const { data: lead, error: lerr } = await supabase.schema('platform_crm').from('leads').select('tenant_id').eq('id', id).maybeSingle();
-  if (lerr || !lead) return NextResponse.json({ error: lerr?.message || 'not_found' }, { status: 400 });
-  const { error } = await supabase.schema('platform').from('tasks').insert({
-    tenant_id: lead.tenant_id,
-    title,
-    status: 'aberta',
-    assigned_to: user.id,
-    entity_type: 'lead',
-    entity_id: id,
-  });
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ ok: true });
-}
 
+  const { client, close } = createDatabaseClient();
+  try {
+    const [lead] = await client`
+      SELECT tenant_id
+      FROM platform_crm.leads
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    if (!lead) return NextResponse.json({ error: 'not_found' }, { status: 400 });
+
+    await client`
+      INSERT INTO platform.tasks (tenant_id, title, status, assigned_to, entity_type, entity_id)
+      VALUES (${lead.tenant_id}, ${title}, 'aberta', ${userId}, 'lead', ${id})
+    `;
+
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
+    console.error('Erro no task route:', error);
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  } finally {
+    await close();
+  }
+}

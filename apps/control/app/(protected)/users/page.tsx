@@ -1,37 +1,62 @@
 // app/(protected)/users/page.tsx
-import { createServerSupabaseClient } from "@noro/lib/supabase/server";
+import { createDatabaseClient } from "@noro/db";
 import { redirect } from 'next/navigation';
 import UsersTableClient from '@/app/(protected)/users/UsersTableClient';
 import SectionHeader from '@/components/layout/SectionHeader';
 import { UserCog } from 'lucide-react';
+import { getLogtoContext } from "@logto/next/server-actions";
+import { logtoConfig } from "@/lib/logto";
 
 export default async function UsersPage() {
-  const supabase = createServerSupabaseClient();
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
+  if (!userId) {
+    redirect('/auth/sign-in');
   }
 
-  // Buscar vínculos user-tenant com dados relacionados (email do usuário e nome do tenant)
-  const { data: userTenantRoles, error } = await supabase
-    .from('user_tenant_roles')
-    .select(`
-      id,
-      user_id,
-      tenant_id,
-      role,
-      created_at,
-      tenant:tenants(name, slug, status, plan),
-      user:users(email)
-    `)
-    .order('created_at', { ascending: false });
+  const { client, close } = createDatabaseClient();
+  let userTenantRoles: any[] = [];
 
-  if (error) {
+  try {
+    const rows = await client`
+      SELECT 
+        utr.id,
+        utr.user_id,
+        utr.tenant_id,
+        utr.role,
+        utr.created_at,
+        t.name as tenant_name,
+        t.slug as tenant_slug,
+        t.status as tenant_status,
+        t.plan as tenant_plan,
+        u.email as user_email
+      FROM platform.user_tenant_roles utr
+      LEFT JOIN platform.tenants t ON t.id = utr.tenant_id
+      LEFT JOIN platform.users u ON u.id = utr.user_id
+      ORDER BY utr.created_at DESC
+    `;
+
+    userTenantRoles = rows.map((r: any) => ({
+      id: r.id,
+      user_id: r.user_id,
+      tenant_id: r.tenant_id,
+      role: r.role,
+      created_at: r.created_at,
+      tenant: r.tenant_id ? {
+        name: r.tenant_name,
+        slug: r.tenant_slug,
+        status: r.tenant_status,
+        plan: r.tenant_plan
+      } : null,
+      user: r.user_id ? {
+        email: r.user_email
+      } : null
+    }));
+  } catch (error) {
     console.error('Error fetching user-tenant roles:', error);
+  } finally {
+    await close();
   }
 
   // Calculate metrics

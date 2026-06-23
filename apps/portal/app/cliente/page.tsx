@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect, notFound } from 'next/navigation';
 import { getSessionFromCookie } from '@/lib/magic-link';
 import { resolveTenantFromRequest } from '@/lib/tenant-context';
-import { createDatabaseClient, proposalsRepository, paymentChargesRepository } from '@noro/db';
+import { createDatabaseClient, proposalsRepository, paymentChargesRepository, visaInfoRepository } from '@noro/db';
 
 const SESSION_COOKIE = 'portal_session_id';
 
@@ -51,6 +51,7 @@ export default async function ClienteDashboardPage() {
   let nextTrip: Awaited<ReturnType<typeof proposalsRepository.getProposalsByTenant>>[number] | null = null;
   let lastProposal: Awaited<ReturnType<typeof proposalsRepository.getProposalsByTenant>>[number] | null = null;
   let pendingCharge: Awaited<ReturnType<typeof paymentChargesRepository.getChargesByClient>>[number] | null = null;
+  let visaRequirements: Awaited<ReturnType<typeof visaInfoRepository.searchVisaInfo>> | null = null;
 
   try {
     const todayStr = new Date().toISOString().split('T')[0]!;
@@ -65,6 +66,10 @@ export default async function ClienteDashboardPage() {
       .filter((p) => p.dataViagemInicio != null && p.dataViagemInicio >= todayStr)
       .sort((a, b) => (a.dataViagemInicio ?? '').localeCompare(b.dataViagemInicio ?? ''))
       [0] ?? null;
+
+    if (nextTrip?.destinoPrincipal) {
+      visaRequirements = await visaInfoRepository.searchVisaInfo(db, nextTrip.destinoPrincipal);
+    }
 
     // Última proposta
     const proposals = await proposalsRepository.getProposalsByTenant(db, tenant.tenantId, {
@@ -139,6 +144,94 @@ export default async function ClienteDashboardPage() {
           <p style={{ fontSize: '1.75rem', marginBottom: 8 }}>✈️</p>
           <p style={{ color: '#64748b', fontWeight: 600 }}>Nenhuma viagem programada</p>
           <p style={{ fontSize: 13, marginTop: 4 }}>Quando sua proposta for aceita, ela aparecerá aqui.</p>
+        </div>
+      )}
+
+      {/* Requisitos de Entrada / Preparativos card */}
+      {visaRequirements && (
+        <div style={{
+          border: '1px solid #e2e8f0',
+          borderRadius: 20,
+          padding: 24,
+          background: '#fff',
+          marginBottom: 24,
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <span style={{ fontSize: 24 }}>{visaRequirements.flagEmoji ?? '✈️'}</span>
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>
+                Preparativos & Requisitos de Entrada: {visaRequirements.country}
+              </h3>
+              <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0 0' }}>
+                Verificado em {visaRequirements.lastVerified ? new Date(visaRequirements.lastVerified).toLocaleDateString('pt-BR') : 'Junho de 2026'}
+              </p>
+            </div>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+            {/* Visto / Isenção */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ fontSize: 20 }}>🛂</div>
+              <div>
+                <p style={{ fontWeight: 600, fontSize: 14, color: '#334155', margin: '0 0 4px 0' }}>Visto de Turismo</p>
+                <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.4 }}>
+                  {visaRequirements.isVisaExempt 
+                    ? `Isento de visto por até ${visaRequirements.allowedStayDays ?? 90} dias.` 
+                    : visaRequirements.eVisaAvailable 
+                      ? 'Exige E-Visa (Visto Eletrônico online).' 
+                      : visaRequirements.visaOnArrival 
+                        ? 'Visto obtido na chegada ao aeroporto.' 
+                        : 'Necessário visto consular tradicional antes do embarque.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Vacinas / Saúde */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ fontSize: 20 }}>💉</div>
+              <div>
+                <p style={{ fontWeight: 600, fontSize: 14, color: '#334155', margin: '0 0 4px 0' }}>Saúde & Vacinas</p>
+                <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.4 }}>
+                  {(() => {
+                    const health = visaRequirements.healthInfo as { vaccines?: string; notes?: string } | null;
+                    if (health?.vaccines) {
+                      return `Obrigatório: ${health.vaccines}. ${health.notes ?? ''}`;
+                    }
+                    return 'Nenhuma vacina obrigatória registrada. Recomendamos estar com o certificado internacional de vacinação em dia.';
+                  })()}
+                </p>
+              </div>
+            </div>
+
+            {/* Seguro Viagem */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ fontSize: 20 }}>🛡️</div>
+              <div>
+                <p style={{ fontWeight: 600, fontSize: 14, color: '#334155', margin: '0 0 4px 0' }}>Seguro Viagem</p>
+                <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.4 }}>
+                  {visaRequirements.travelInsuranceRequired 
+                    ? '⚠️ Seguro saúde internacional é OBRIGATÓRIO por lei para entrada no país.' 
+                    : 'Seguro viagem é altamente recomendado para cobrir imprevistos e emergências médicas.'}
+                </p>
+                <a href="/cliente/seguros" style={{ display: 'inline-block', marginTop: 6, fontSize: 12, fontWeight: 600, color: 'var(--color-primary, #0f172a)', textDecoration: 'underline' }}>
+                  Fazer cotação de seguro →
+                </a>
+              </div>
+            </div>
+
+            {/* Validade de Passaporte */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ fontSize: 20 }}>📖</div>
+              <div>
+                <p style={{ fontWeight: 600, fontSize: 14, color: '#334155', margin: '0 0 4px 0' }}>Passaporte & Entrada</p>
+                <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.4 }}>
+                  Deve ter validade mínima de 6 meses na data de entrada.
+                  {visaRequirements.financialProofRequired && ' Exige comprovação de fundos na imigração.'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

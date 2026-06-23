@@ -1,6 +1,0 @@
--- Ensure service_role can write to cp schema (admin routes)
-GRANT USAGE ON SCHEMA cp TO service_role;
-GRANT ALL ON ALL TABLES IN SCHEMA cp TO service_role;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA cp TO service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA cp GRANT ALL ON TABLES TO service_role;
-ALTER DEFAULT PRIVILEGES IN SCHEMA cp GRANT USAGE, SELECT ON SEQUENCES TO service_role;

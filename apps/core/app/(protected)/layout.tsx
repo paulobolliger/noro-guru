@@ -8,13 +8,40 @@ import { Toaster } from '@/components/ui/use-toast';
 import { getConfiguracaoSistema } from './configuracoes/config-actions';
 
 export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
-  const { db, close } = createDatabaseClient();
+  const { db, client, close } = createDatabaseClient();
 
   try {
     const userCtx = await requireUser({
       db,
       sessionAdapter: logtoSessionAdapter(logtoConfig),
     });
+
+    // Resolve tenantId
+    const memberships = await client`
+      SELECT tenant_id FROM noro.tenant_memberships WHERE user_id = ${userCtx.user.id} LIMIT 1
+    `;
+    const tenantId = memberships[0]?.tenant_id;
+
+    // Fetch dynamic modules config from sites.empresa
+    let modules: Record<string, boolean> = {};
+    let companyName = "NORO";
+
+    if (tenantId) {
+      const [empresa] = await client`
+        SELECT nome_empresa as "nomeEmpresa", modulos_contratados as "modulosContratados"
+        FROM sites.empresa
+        WHERE tenant_id = ${tenantId}
+        LIMIT 1
+      `;
+      if (empresa) {
+        if (empresa.nomeEmpresa) {
+          companyName = empresa.nomeEmpresa;
+        }
+        if (empresa.modulosContratados) {
+          modules = empresa.modulosContratados;
+        }
+      }
+    }
 
     const configSistema = await getConfiguracaoSistema();
 
@@ -34,8 +61,8 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
           user={profile as any}
           notificacoes={[]}
           configSistema={configSistema}
-          companyName="NORO"
-          modules={{}}
+          companyName={companyName}
+          modules={modules}
         >
           {children}
           <Toaster />

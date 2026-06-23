@@ -1,7 +1,7 @@
 'use server';
 
-import { getClientes as getClientesProtected } from '../../../(protected)/clientes/actions';
+import { getClientes as getClientesPublic } from '../../../clientes/actions';
 
 export async function getClientes() {
-	return getClientesProtected();
+	return getClientesPublic();
 }

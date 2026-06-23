@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
 import type { NoroUser } from '@/../../packages/types/noro-users';
-import { createClient } from '@/../../packages/lib/supabase/client';
+import { deleteUserAction } from '@/app/(protected)/configuracoes/actions';
 
 interface DeleteNoroUserModalProps {
   user: NoroUser | null;
@@ -29,15 +29,11 @@ export default function DeleteNoroUserModal({ user, isOpen, onClose, onSuccess }
     setIsDeleting(true);
 
     try {
-      const supabase = createClient();
+      const result = await deleteUserAction(user.id);
 
-      // Deletar usuário
-      const { error: deleteError } = await supabase
-        .schema('noro_auth').from('users_legado')
-        .delete()
-        .eq('id', user.id);
-
-      if (deleteError) throw deleteError;
+      if (!result.success) {
+        throw new Error(result.message);
+      }
 
       onSuccess();
       onClose();

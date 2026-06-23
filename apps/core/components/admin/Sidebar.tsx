@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Columns2, UserCheck, MessageSquare, CheckSquare,
   FileText, Package, DollarSign, Sparkles, Megaphone,
   Share2, TrendingUp, BarChart3, Settings, Globe, LogOut,
-  ChevronLeft, ChevronRight, X, Loader2,
+  ChevronLeft, ChevronRight, X, Loader2, Lock,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -203,9 +203,6 @@ export default function Sidebar({
         style={{ padding: '10px 8px', gap: 12 }}
       >
         {MENU_GROUPS.map((group) => {
-          const visible = group.items.filter((item) => isEnabled(item.moduleId));
-          if (visible.length === 0) return null;
-
           return (
             <div key={group.label} style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* Section label */}
@@ -223,15 +220,24 @@ export default function Sidebar({
                 </div>
               )}
 
-              {visible.map((item) => {
+              {group.items.map((item) => {
                 const active = isActive(item.href);
+                const enabled = isEnabled(item.moduleId);
                 const Icon = item.icon;
+                const targetHref = enabled ? item.href : '/configuracoes';
 
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
-                    title={collapsed ? item.label : undefined}
+                    href={targetHref}
+                    onClick={(e) => {
+                      if (!enabled) {
+                        e.preventDefault();
+                        alert(`O módulo "${item.label}" não está habilitado para a sua agência. Você será redirecionado para a área de Configurações para ativá-lo.`);
+                        router.push('/configuracoes');
+                      }
+                    }}
+                    title={collapsed ? `${item.label} ${!enabled ? '(Bloqueado)' : ''}` : undefined}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -239,20 +245,26 @@ export default function Sidebar({
                       padding: collapsed ? '8px 0' : '7px 10px',
                       justifyContent: collapsed ? 'center' : 'flex-start',
                       borderRadius: 7,
-                      background: active ? 'rgba(255,255,255,0.10)' : 'transparent',
-                      color: active ? '#ffffff' : 'rgba(255,255,255,0.78)',
-                      fontWeight: active ? 600 : 500,
+                      background: active && enabled ? 'rgba(255,255,255,0.10)' : 'transparent',
+                      color: enabled
+                        ? (active ? '#ffffff' : 'rgba(255,255,255,0.78)')
+                        : 'rgba(255,255,255,0.35)',
+                      fontWeight: active && enabled ? 600 : 500,
                       fontSize: 13,
                       textDecoration: 'none',
                       transition: 'background 0.1s, color 0.1s',
+                      position: 'relative',
                     }}
-                    className="hover:bg-white/[0.07] hover:text-white"
+                    className={`hover:bg-white/[0.07] ${enabled ? 'hover:text-white' : 'hover:text-gray-300'}`}
                   >
-                    <Icon size={17} strokeWidth={active ? 2.25 : 1.75} className="flex-shrink-0" />
+                    <Icon size={17} strokeWidth={active && enabled ? 2.25 : 1.75} className="flex-shrink-0" />
                     {!collapsed && (
                       <>
                         <span className="flex-1 truncate">{item.label}</span>
-                        {item.pill && (
+                        {!enabled && (
+                          <Lock size={12} className="text-amber-500/80 flex-shrink-0" />
+                        )}
+                        {enabled && item.pill && (
                           <span
                             className="text-white font-bold"
                             style={{
@@ -268,6 +280,11 @@ export default function Sidebar({
                           </span>
                         )}
                       </>
+                    )}
+                    {collapsed && !enabled && (
+                      <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-amber-500 border border-indigo-950 rounded-full flex items-center justify-center">
+                        <Lock size={8} className="text-black font-bold" />
+                      </span>
                     )}
                   </Link>
                 );

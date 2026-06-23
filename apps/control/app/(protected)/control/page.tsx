@@ -1,8 +1,9 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import { loadControlMetrics } from "./actions";
 import KpiCard from "@/components/dashboard/KpiCard";
 import SystemHealth from "@/components/dashboard/SystemHealth";
 import QuickActions from "@/components/dashboard/QuickActions";
+import ApiUsageCharts from "@/components/dashboard/ApiUsageCharts";
 
 export default async function ControlDashboard({ searchParams }: { searchParams?: Record<string, string | string[]> }) {
   const range = Number(typeof searchParams?.range === 'string' ? searchParams?.range : 30) || 30;
@@ -67,12 +68,10 @@ export default async function ControlDashboard({ searchParams }: { searchParams?
         </div>
       </div>
 
-      {/* Recent Activity / Charts - Placeholder for future */}
-      <div className="surface-card rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Atividade Recente</h2>
-        <div className="flex items-center justify-center h-48 text-gray-400">
-          <p className="text-sm">Gráficos e atividades em breve...</p>
-        </div>
+      {/* Recent Activity / Charts */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">Atividade & Métricas do Sistema</h2>
+        <ApiUsageCharts usage={metrics.usage} createdDaily={metrics.createdDaily} />
       </div>
     </div>
   );

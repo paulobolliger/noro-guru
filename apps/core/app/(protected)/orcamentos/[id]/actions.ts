@@ -14,9 +14,48 @@ import {
   type ItineraryTipo,
   type EmergencyContactTipo,
 } from '@noro/db';
-import { getSupabaseAdmin } from '@noro/lib/supabase/admin';
+import { createHash } from 'crypto';
 
-const BUCKET = 'portal-documents';
+async function uploadToCloudinary(file: File, folder: string): Promise<string | null> {
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+  if (!apiKey || !apiSecret || !cloudName) {
+    console.warn('Cloudinary credentials missing. Skipping upload.');
+    return null;
+  }
+
+  try {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const toSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+    const signature = createHash('sha1').update(toSign).digest('hex');
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('api_key', apiKey);
+    formData.append('signature', signature);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      console.error('Cloudinary upload error response:', errBody);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.secure_url || data.url || null;
+  } catch (err) {
+    console.error('Error uploading to Cloudinary:', err);
+    return null;
+  }
+}
 
 async function getAuthContext() {
   const user = await getCurrentUser();
@@ -42,18 +81,9 @@ export async function uploadDocumentAction(proposalId: string, formData: FormDat
   }
 
   try {
-    const ext = file.name.split('.').pop() ?? '';
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const path = `${tenantId}/${proposalId}/${Date.now()}-${safeName}`;
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const admin = getSupabaseAdmin();
-    const { error: uploadError } = await admin.storage
-      .from(BUCKET)
-      .upload(path, buffer, { contentType: file.type || 'application/octet-stream', upsert: false });
-
-    if (uploadError) {
-      return { success: false, error: `Upload falhou: ${uploadError.message}` };
+    const uploadedUrl = await uploadToCloudinary(file, `proposals/${tenantId}/${proposalId}`);
+    if (!uploadedUrl) {
+      return { success: false, error: 'Upload falhou: Erro ao fazer upload para Cloudinary.' };
     }
 
     const { db, close } = createDatabaseClient();
@@ -63,7 +93,7 @@ export async function uploadDocumentAction(proposalId: string, formData: FormDat
         proposalId,
         name,
         tipo,
-        fileUrl: path,
+        fileUrl: uploadedUrl,
         mimeType: file.type || null,
         sizeBytes: file.size,
         uploadedBy: userId,

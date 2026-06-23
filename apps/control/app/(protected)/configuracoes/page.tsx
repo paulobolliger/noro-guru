@@ -1,40 +1,46 @@
 // app/admin/(protected)/configuracoes/page.tsx
 import ConfiguracoesClient from "@/components/ConfiguracoesClient";
-import { createServerSupabaseClient } from "@/../../packages/lib/supabase/server";
 import { redirect } from 'next/navigation';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 import { getConfiguracaoSistema, getConfiguracaoUsuario } from './config-actions';
 import { getEnvVariables } from './env-actions';
 
 export default async function ConfiguracoesPage() {
-  const supabase = createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
 
-  if (!user) {
-    return redirect('/login');
+  if (!userId) {
+    return redirect('/auth/sign-in');
   }
 
-  // Busca todos os dados em paralelo
-  const [
-    noroUsersData,
-    configSistema,
-    configUsuario,
-    envVariables
-  ] = await Promise.all([
-    supabase.schema('noro_auth').from('users_legado').select('*').order('created_at', { ascending: false }),
-    getConfiguracaoSistema(),
-    getConfiguracaoUsuario(user.id),
-    getEnvVariables()
-  ]);
+  const { client, close } = createDatabaseClient();
 
-  const { data: noroUsers } = noroUsersData;
+  try {
+    // Busca todos os dados em paralelo
+    const [
+      noroUsers,
+      configSistema,
+      configUsuario,
+      envVariables
+    ] = await Promise.all([
+      client`SELECT * FROM noro_auth.users_legado ORDER BY created_at DESC`,
+      getConfiguracaoSistema(),
+      getConfiguracaoUsuario(userId),
+      getEnvVariables()
+    ]);
 
-  return (
-    <ConfiguracoesClient 
-      serverUsers={noroUsers || []} 
-      configSistema={configSistema}
-      configUsuario={configUsuario}
-      currentUserId={user.id}
-      envVariables={envVariables}
-    />
-  );
+    return (
+      <ConfiguracoesClient 
+        serverUsers={noroUsers as any || []} 
+        configSistema={configSistema}
+        configUsuario={configUsuario}
+        currentUserId={userId}
+        envVariables={envVariables}
+      />
+    );
+  } finally {
+    await close();
+  }
 }

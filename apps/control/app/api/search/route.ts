@@ -1,8 +1,8 @@
-// app/api/search/route.ts
-// API de busca global com suporte multi-tenant via RLS
-
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@noro/lib/supabase/server';
+import { cookies } from 'next/headers';
+import { getLogtoContext } from '@logto/next/server-actions';
+import { logtoConfig } from '@/lib/logto';
+import { createDatabaseClient } from '@noro/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,45 +23,56 @@ export async function GET(request: Request) {
     return NextResponse.json({ results: [] });
   }
 
-  const supabase = createServerSupabaseClient();
-  
-  // Verificar autenticação
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
+  // Verificar autenticação via Logto
+  const ctx = await getLogtoContext(logtoConfig);
+  const userId = ctx.claims?.sub;
+  if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const activeTenantId = cookies().get('active_tenant_id')?.value;
+  if (!activeTenantId) {
+    return NextResponse.json({ results: [] });
+  }
+
   const results: SearchResult[] = [];
-  const searchLower = query.toLowerCase();
+  const { client, close } = createDatabaseClient();
 
   try {
-    // Buscar Leads (RLS filtra automaticamente por tenant)
-    const { data: leads } = await supabase
-      .schema('crm').from('leads')
-      .select('id, nome, email, empresa, status')
-      .or(`nome.ilike.%${query}%,email.ilike.%${query}%,empresa.ilike.%${query}%`)
-      .limit(5);
+    const term = `%${query}%`;
 
-    if (leads) {
-      results.push(...leads.map(lead => ({
+    // Buscar Leads
+    const leads = await client`
+      SELECT id, organization_name, email, source, stage
+      FROM platform_crm.leads
+      WHERE tenant_id = ${activeTenantId}
+        AND (organization_name ILIKE ${term} OR email ILIKE ${term} OR source ILIKE ${term})
+      LIMIT 5
+    `;
+
+    if (leads && leads.length > 0) {
+      results.push(...leads.map((lead: any) => ({
         id: lead.id,
         type: 'lead' as const,
-        title: lead.nome || 'Lead sem nome',
-        subtitle: lead.email || lead.empresa || '',
+        title: lead.organization_name || 'Lead sem nome',
+        subtitle: lead.email || lead.source || '',
         href: `/control/leads?id=${lead.id}`,
-        metadata: lead.status || 'novo'
+        metadata: lead.stage || 'novo'
       })));
     }
 
-    // Buscar Clientes (RLS filtra automaticamente)
-    const { data: clientes } = await supabase
-      .schema('crm').from('clients')
-      .select('id, nome, email, tipo')
-      .or(`nome.ilike.%${query}%,email.ilike.%${query}%`)
-      .limit(5);
+    // Buscar Clientes
+    const clientes = await client`
+      SELECT id, nome, email, tipo
+      FROM crm.clients
+      WHERE tenant_id = ${activeTenantId}
+        AND deleted_at IS NULL
+        AND (nome ILIKE ${term} OR email ILIKE ${term})
+      LIMIT 5
+    `;
 
-    if (clientes) {
-      results.push(...clientes.map(cliente => ({
+    if (clientes && clientes.length > 0) {
+      results.push(...clientes.map((cliente: any) => ({
         id: cliente.id,
         type: 'cliente' as const,
         title: cliente.nome || 'Cliente sem nome',
@@ -71,15 +82,18 @@ export async function GET(request: Request) {
       })));
     }
 
-    // Buscar Pedidos (RLS filtra automaticamente)
-    const { data: pedidos } = await supabase
-      .schema('sales').from('orders')
-      .select('id, titulo, valor_total, status')
-      .ilike('titulo', `%${query}%`)
-      .limit(5);
+    // Buscar Pedidos
+    const pedidos = await client`
+      SELECT id, titulo, valor_total, status
+      FROM sales.orders
+      WHERE tenant_id = ${activeTenantId}
+        AND deleted_at IS NULL
+        AND (titulo ILIKE ${term})
+      LIMIT 5
+    `;
 
-    if (pedidos) {
-      results.push(...pedidos.map(pedido => ({
+    if (pedidos && pedidos.length > 0) {
+      results.push(...pedidos.map((pedido: any) => ({
         id: pedido.id,
         type: 'pedido' as const,
         title: pedido.titulo || `Pedido ${pedido.id.substring(0, 8)}`,
@@ -91,15 +105,18 @@ export async function GET(request: Request) {
       })));
     }
 
-    // Buscar Orçamentos (RLS filtra automaticamente)
-    const { data: orcamentos } = await supabase
-      .schema('sales').from('proposals')
-      .select('id, titulo, valor_total, status')
-      .ilike('titulo', `%${query}%`)
-      .limit(5);
+    // Buscar Orçamentos
+    const orcamentos = await client`
+      SELECT id, titulo, valor_total, status
+      FROM sales.proposals
+      WHERE tenant_id = ${activeTenantId}
+        AND deleted_at IS NULL
+        AND (titulo ILIKE ${term})
+      LIMIT 5
+    `;
 
-    if (orcamentos) {
-      results.push(...orcamentos.map(orcamento => ({
+    if (orcamentos && orcamentos.length > 0) {
+      results.push(...orcamentos.map((orcamento: any) => ({
         id: orcamento.id,
         type: 'orcamento' as const,
         title: orcamento.titulo || `Orçamento ${orcamento.id.substring(0, 8)}`,
@@ -122,5 +139,7 @@ export async function GET(request: Request) {
       { error: 'Erro ao buscar', results: [] },
       { status: 500 }
     );
+  } finally {
+    await close();
   }
 }

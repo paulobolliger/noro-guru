@@ -29,6 +29,7 @@ const PAYMENT_PROVIDERS: { value: PaymentProvider, label: string }[] = [
   { value: 'STRIPE', label: 'Stripe (Cartão/Link de Pagamento)' },
   { value: 'CIELO', label: 'Cielo (Transação Direta - Cartão)' }, // Mantido como Transação Direta
   { value: 'BTG', label: 'BTG Pactual (PIX/Boleto)' },
+  { value: 'ASAAS', label: 'Asaas (PIX/Boleto/Cartão)' },
 ];
 
 // Mapeamento de status para cores (para uso na seção de Ações Ativas)
@@ -124,6 +125,12 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
     // Ordem de prioridade para exibição/cópia
     if (data.checkoutUrl) { // Stripe e Link de Pagamento BTG/Cielo (se implementado)
         return { link: data.checkoutUrl, detail: 'Link de Checkout', isCopiable: true, copyValue: data.checkoutUrl };
+    }
+    if (data.bankSlipUrl) { // Asaas Boleto Link
+        return { link: data.bankSlipUrl, detail: 'Linha Digitável / Boleto PDF', isCopiable: true, copyValue: data.bankSlipUrl };
+    }
+    if (data.pixCopyPaste) { // Asaas PIX Copia e Cola
+        return { link: null, detail: 'PIX Copia e Cola', isCopiable: true, copyValue: data.pixCopyPaste };
     }
     if (data.digitableLine) { // BTG Boleto (Linha Digitável)
          return { link: null, detail: data.digitableLine, isCopiable: true, copyValue: data.digitableLine };
