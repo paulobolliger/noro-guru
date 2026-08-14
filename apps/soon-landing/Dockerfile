@@ -1,6 +1,10 @@
 # ---- Build ----
 FROM node:22-alpine AS builder
 WORKDIR /app
+# apps/web declara "canvas" como dependencia (npm workspaces instala o
+# monorepo inteiro num `npm ci` so); precisa da toolchain nativa pra compilar
+# o addon, mesmo que este app (soon-landing) nao use canvas em nada.
+RUN apk add --no-cache python3 make g++ pkgconfig pixman-dev cairo-dev pango-dev jpeg-dev giflib-dev
 COPY . .
 RUN npm ci
 RUN npm run build --workspace=apps/soon-landing
