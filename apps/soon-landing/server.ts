@@ -8,9 +8,13 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
-  const PORT = 3009;
+  const PORT = Number(process.env.PORT) || 3009;
 
   app.use(express.json());
+
+  app.get("/api/health", (_req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
 
   // Gemini API Endpoint - uses the Vercel Serverless handler
   app.post("/api/chat", chatHandler as any);
