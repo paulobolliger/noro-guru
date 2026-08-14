@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 import chatHandler from "./api/chat.js";
 
@@ -22,6 +21,11 @@ async function startServer() {
 
   // Setup Vite & static assets rendering using middleware patterns
   if (process.env.NODE_ENV !== "production") {
+    // Import dinamico: vite e devDependency, removida em producao por
+    // `npm prune --omit=dev`. Um import estatico no topo do arquivo seria
+    // sempre executado pelo esbuild (--packages=external vira require()
+    // incondicional), mesmo so sendo usado aqui dentro do bloco de dev.
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
