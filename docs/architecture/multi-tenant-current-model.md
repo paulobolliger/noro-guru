@@ -63,6 +63,22 @@ Separacao recomendada:
 | Usuario | Identidade autenticada via Logto e permissao interna por membership. |
 | Cliente final | Pessoa atendida/compradora da agencia, sempre sob tenant. |
 
+### Separação de Sistemas de CRM (Plataforma × Tenant)
+
+A arquitetura de dados e de aplicações da Noro separa rigidamente as duas operações de CRM existentes no ecossistema:
+
+1. **CRM da Plataforma (Noro Platform CRM)**
+   - **Localização:** `apps/control` (`admin.noro.guru`).
+   - **Objetivo:** Gestão, prospecção e aquisição de novos clientes para a própria plataforma Noro Guru (ou seja, captar e gerenciar novas agências de viagens/tenants).
+   - **Schema de Banco:** `platform_crm` (contém tabelas como `leads`, `contacts`, `lead_stages`, `lead_activity`).
+   - **Isolamento:** Global da plataforma Noro, sem escopo de tenant.
+
+2. **CRM do Core (Tenant Backoffice CRM)**
+   - **Localização:** `apps/core` (`app.noro.guru`).
+   - **Objetivo:** Gestão de relacionamento comercial das agências/tenants para com os seus próprios clientes finais (os viajantes que compram propostas e pacotes).
+   - **Schema de Banco:** `crm` (contém tabelas como `clients`, `client_addresses`, `client_documents`, `client_miles`, `client_preferences`, `leads`, `interactions`, `tasks`).
+   - **Isolamento:** Multi-tenant estrito, onde cada linha deve ter `tenant_id` obrigatório para isolar os viajantes de cada agência.
+
 ## 5. Identidade E Membership
 
 Logto deve responder quem e o usuario.

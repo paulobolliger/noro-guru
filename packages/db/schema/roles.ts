@@ -10,6 +10,7 @@ export const tenantRoleValues = [
   'tenant_agent',
   'tenant_finance',
   'tenant_viewer',
+  'client',
 ] as const;
 
 export const platformRoleValues = [

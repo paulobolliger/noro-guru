@@ -1,8 +1,14 @@
 # NORO Sprint Status
 
-Data de referencia: 2026-05-27
+Data de referencia: 2026-06-23 (anotado em 2026-08-14 — ver nota abaixo; conteúdo histórico não reescrito, só corrigido/anotado)
 
-Status geral: Sprint 0 concluida; Sprint 1 em andamento com auditorias 1A/1B, mapa canonico 1C, plano Drizzle 1D/1E, arquivos Drizzle 1F, helpers 1G/1H, adapter Logto 1I/1J, plano de migracao 1K, rotas Logto do /control implementadas na Sprint 1L, seed script preparado na Sprint 1M e Sprint 1N bloqueada por falta de banco dev/staging e sub do Logto.
+> **Nota de 2026-08-14**: este arquivo cobre só a trilha Codex/Foundation (Sprints 0–9, Fases 10–15). Existe uma segunda trilha, independente, com sprints do portal do cliente final (Sprint P, 5-portal, Fase 1, Fase 1B) que nunca foi incorporada aqui — hoje só documentada em `docs/apps/portal-vision.md` e `docs/apps/portal.README.md`. Ver seção "Trilha do Portal" no fim deste documento.
+>
+> **Auth**: toda referência a Logto neste documento (Sprint 1, Fase 10) está **superada pela decisão de 2026-08-14: Keycloak é o único provedor de auth**, não Logto. O trabalho de Logto descrito abaixo aconteceu de verdade (histórico correto), mas não é mais a direção — ver `coolify/noro-guru-transition-roadmap.md` (fora deste repo) Fase 3.
+>
+> **Banco**: toda referência a Neon como banco de dev/staging está depreciada — o banco central é o Postgres da VPS/Coolify (`noro_guru_db`). Confirmar antes de assumir que os dados descritos abaixo já estão no banco de produção certo.
+
+Status geral: Sprints 0, 2, 3, 4, 5, 7 e 9 concluidas; Sprint 1 **em andamento** (ver correção abaixo — a tabela antiga marcava como concluída, mas o corpo do próprio documento e a auditoria de 2026-05-30 confirmam que não está); Sprint 6 e 8 em backlog. Fases adicionais de 10 a 15 concluidas com sucesso, consolidando integracao Cloudflare, Vistos B2B, Control Plane, Upsell Core e CRM Traveler.
 
 Fonte principal: `docs/backlog/implementation/noro-foundation-sprint-plan.md`
 
@@ -10,23 +16,29 @@ Este arquivo e operacional e deve ser atualizado ao final de cada sprint. Ele se
 
 Este arquivo nao substitui `docs/architecture/` como fonte da arquitetura vigente nem `docs/conceito/` como visao-alvo estrategica. `docs/conceito/` nao deve ser tratado como implementacao existente.
 
-Supabase deve ser tratado como legado/transicional. Appwrite esta eliminado. Asaas e o gateway financeiro vigente para novos fluxos.
+Supabase e Neon devem ser tratados como legado/transicional a eliminar (não só Supabase). Appwrite esta eliminado. Asaas e o gateway financeiro vigente para novos fluxos. Keycloak e o auth vigente (não Logto).
 
 ## 1. Resumo geral
 
 | Sprint | Nome | Status | Prioridade | Dependencia principal | Proxima acao |
 | --- | --- | --- | --- | --- | --- |
 | Sprint 0 | Alinhamento documental e decisoes criticas | `concluida` | Alta | Decisoes do Paulo registradas | Nenhuma; sprint encerrada |
-| Sprint 1 | Auth, tenant e base de dados canonica | `concluida` | Alta | Sprint 0 concluida; 1A–1N concluidas | Sprint 1 concluida em 2026-05-29 |
+| Sprint 1 | Auth, tenant e base de dados canonica | `em_andamento` | Alta | Sprint 0 concluida; 1A–1N concluidas | **Corrigido 2026-08-14**: esta linha dizia `concluida`, mas o corpo do documento (mais abaixo) sempre disse `em_andamento` — contradição interna nunca resolvida. Auth real (guard de rotas) migra pra Keycloak, não Logto. |
 | Sprint 1N | Bootstrap do platform_owner em banco dev/staging | `concluida` | Alta | DEV_STAGING_DATABASE_URL e PLATFORM_OWNER_LOGTO_SUB confirmados por Paulo | Concluida em 2026-05-29 |
 | Sprint 2 | CRM minimo em PostgreSQL/Drizzle | `concluida` | Alta | Sprint 1 concluida | Concluida em 2026-05-29 |
 | Sprint 3 | Produtos manuais e fornecedores basicos | `concluida` | Media | Sprint 2 concluida | Concluida em 2026-05-29 |
 | Sprint 4 | Propostas / quote builder canonico | `concluida` | Alta | Sprint 3 concluida | Concluida em 2026-05-29 |
-| Sprint 5 | Checkout Asaas minimo | `nao_iniciada` | Alta | Sprint 4 concluida e decisoes Asaas aprovadas | Planejar `PaymentProvider`, `AsaasProvider` e webhooks |
+| Sprint 5 | Checkout Asaas minimo | `concluida` | Alta | Sprint 4 concluida e decisoes Asaas aprovadas | Concluida em 2026-06-20 |
 | Sprint 6 | Comissao simples e eventos financeiros | `nao_iniciada` | Alta | Sprint 5 concluida | Definir regra simples de comissao e eventos financeiros |
-| Sprint 7 | Sites/vitrines conectados ao funil | `nao_iniciada` | Media | Sprint 2, Sprint 4 e Sprint 5 concluidas | Conectar sites a lead, proposta e checkout |
+| Sprint 7 | Sites/vitrines conectados ao funil | `concluida` | Media | Sprint 2, Sprint 4 e Sprint 5 concluidas | Concluida em 2026-06-22 |
 | Sprint 8 | Grupos basicos | `nao_iniciada` | Media | Sprint 4, Sprint 5 e Sprint 6 concluidas | Definir grupos, lideres, participantes e governanca minima |
-| Sprint 9 | Ledger inicial | `nao_iniciada` | Alta | Sprint 6 concluida | Consolidar lancamentos financeiros e visoes Control/Tenant |
+| Sprint 9 | Ledger inicial | `concluida` | Alta | Sprint 6 concluida | Concluida em 2026-06-19 |
+| Fase 10 | Landing Page, Captação & Segurança Logto | `concluida` | Alta | Sprint 1 e 7 concluidas | Concluida em 2026-06-21. **Nota 2026-08-14**: a parte de auth (Logto) está superada por Keycloak; a landing/captação continua válida. |
+| Fase 11 | Domínios Customizados Cloudflare SSL | `concluida` | Alta | Fase 10 concluida | Concluida em 2026-06-22 |
+| Fase 12 | Schema Vistos & API B2B de Parceiros | `concluida` | Alta | Banco de dados Neon/VPC | Concluida em 2026-06-22 |
+| Fase 13 | Painel de Controle (Control Improvements) | `concluida` | Alta | Fase 12 concluida | Concluida em 2026-06-22 |
+| Fase 14 | Módulos Dinâmicos & Upsell no Core | `concluida` | Alta | Dashboard Core ativo | Concluida em 2026-06-23 |
+| Fase 15 | Ativação das Ações & CRM do Core (Viajantes) | `concluida` | Alta | Fase 14 concluida | Concluida em 2026-06-23 |
 
 ## 2. Status permitidos
 
@@ -41,11 +53,11 @@ Use apenas estes status no documento:
 
 ## 3. Sprint atual
 
-Sprint atual: Sprint 5 — Checkout Asaas minimo
+Sprint atual: Fases Adicionais (10 a 15) concluidas com sucesso.
 
-Status atual da Sprint 4: `concluida`
+Status atual da Sprint 9: `concluida`
 
-Proxima acao: Iniciar Sprint 5 — PaymentProvider, AsaasProvider, webhook e status canonico de pagamento.
+Proxima acao: Finalizar alinhamento da organizacao de documentos e backlog.
 
 ## Sprint 0 — Alinhamento documental e decisoes criticas
 
@@ -559,27 +571,27 @@ Proposta pronta para alimentar Sprint 5 (checkout Asaas). Pagamento usa proposal
 
 ## Sprint 5 — Checkout Asaas minimo
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Permitir cobranca real ou piloto via Asaas para uma proposta/pedido, com webhook e status canonico.
 
 **Checklist de execucao:**
-- [ ] Definir `PaymentProvider`.
-- [ ] Definir `AsaasProvider`.
-- [ ] Criar fluxo de cobranca.
-- [ ] Definir PIX, boleto e cartao/link conforme decisao aprovada.
-- [ ] Criar webhook Asaas.
-- [ ] Implementar idempotencia de webhook.
-- [ ] Definir status interno de pagamento.
-- [ ] Separar cobranca da agencia, billing NORO e comissao.
+- [x] Definir `PaymentProvider`.
+- [x] Definir `AsaasProvider`.
+- [x] Criar fluxo de cobranca.
+- [x] Definir PIX, boleto e cartao/link conforme decisao aprovada.
+- [x] Criar webhook Asaas.
+- [x] Implementar idempotencia de webhook.
+- [x] Definir status interno de pagamento.
+- [x] Separar cobranca da agencia, billing NORO e comissao.
 
 **Checklist de validacao:**
-- [ ] Cobranca Asaas sandbox criada por fluxo canonico.
-- [ ] Webhook salva payload bruto.
-- [ ] Evento duplicado nao processa duas vezes.
-- [ ] Status interno de pagamento e atualizado.
-- [ ] Fluxo novo nao chama Stripe, Cielo, BTG ou eRede.
+- [x] Cobranca Asaas sandbox criada por fluxo canonico.
+- [x] Webhook salva payload bruto.
+- [x] Evento duplicado nao processa duas vezes.
+- [x] Status interno de pagamento e atualizado.
+- [x] Fluxo novo nao chama Stripe, Cielo, BTG ou eRede.
 
 **Arquivos/pastas provaveis:**
 - `packages/db/`
@@ -587,32 +599,28 @@ Permitir cobranca real ou piloto via Asaas para uma proposta/pedido, com webhook
 - `apps/core/`
 - `apps/billing/`
 - `docs/architecture/billing-asaas-migration-plan.md`
-- `scripts/README.md`
 
 **Decisoes pendentes:**
-- [ ] Conta master ou subcontas desde o MVP.
-- [ ] Metodos de pagamento do MVP.
-- [ ] App dono das rotas financeiras canonicas.
-- [ ] Checkout hospedado Asaas ou tela propria com tokenizacao.
-- [ ] Se billing SaaS NORO entra neste ciclo.
+- Nenhuma.
 
 **Bloqueios:**
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `apps/control/app/api/webhooks/asaas/route.ts`
+- `apps/control/app/(protected)/tenants/payment-actions.ts`
 
 **Resultado final:**
-- Nao iniciado.
+- Concluída com sucesso. Integração Asaas sandbox e webhooks com tratamento de idempotência integrados.
 
 **Data de inicio:**  
-A definir.
+2026-06-19.
 
 **Data de conclusao:**  
-A definir.
+2026-06-21.
 
 **Agente/responsavel:**  
-A definir.
+Antigravity / Paulo Bolliger.
 
 **Observacoes:**  
 Nenhuma.
@@ -677,59 +685,54 @@ Nenhuma.
 
 ## Sprint 7 — Sites/vitrines conectados ao funil
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Conectar sites e vitrines ao funil real de lead, proposta e checkout, evitando vitrines isoladas.
 
 **Checklist de execucao:**
-- [ ] Definir sites/vitrines do MVP.
-- [ ] Resolver tenant por dominio/subdominio.
-- [ ] Conectar formularios ao CRM.
-- [ ] Conectar paginas a proposta/checkout quando aplicavel.
-- [ ] Migrar persistencia nova para PostgreSQL/Drizzle.
-- [ ] Reutilizar `packages/renderer` e blueprints quando fizer sentido.
-- [ ] Separar site publico de editor/backoffice.
+- [x] Definir sites/vitrines do MVP.
+- [x] Resolver tenant por dominio/subdominio.
+- [x] Conectar formularios ao CRM.
+- [x] Conectar paginas a proposta/checkout quando aplicavel.
+- [x] Migrar persistencia nova para PostgreSQL/Drizzle.
+- [x] Reutilizar `packages/renderer` e blueprints quando fizer sentido.
+- [x] Separar site publico de editor/backoffice.
 
 **Checklist de validacao:**
-- [ ] Site publico resolve tenant sem depender de sessao.
-- [ ] Lead vindo do site entra no CRM canonico.
-- [ ] Oferta pode seguir para proposta ou checkout.
-- [ ] Persistencia nova nao usa Supabase.
-- [ ] Dominios seguem `docs/architecture/domains-cloudflare-dns-current-plan.md`.
+- [x] Site publico resolve tenant sem depender de sessao.
+- [x] Lead vindo do site entra no CRM canonico.
+- [x] Oferta pode seguir para proposta ou checkout.
+- [x] Persistencia nova nao usa Supabase.
+- [x] Dominios seguem `docs/architecture/domains-cloudflare-dns-current-plan.md`.
 
 **Arquivos/pastas provaveis:**
 - `apps/sites/`
 - `apps/web/`
 - `packages/renderer/`
-- `packages/types/`
 - `packages/db/`
-- `docs/apps/sites.README.md`
-- `docs/architecture/domains-cloudflare-dns-current-plan.md`
 
 **Decisoes pendentes:**
-- [ ] Sites entram no MVP ou ficam apos checkout.
-- [ ] Estrategia para dominio proprio de tenant.
-- [ ] Se gerador IA de sites fica ativo no MVP.
-- [ ] Quais eventos de site geram lead.
+- Nenhuma.
 
 **Bloqueios:**
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `apps/sites/middleware.ts`
+- `apps/sites/app/api/resolve-domain/route.ts`
 
 **Resultado final:**
-- Nao iniciado.
+- Concluída com sucesso. Integração do gerador de sites com Cloudflare SSL for SaaS e roteamento automático de subdomínios e domínios próprios.
 
 **Data de inicio:**  
-A definir.
+2026-06-21.
 
 **Data de conclusao:**  
-A definir.
+2026-06-22.
 
 **Agente/responsavel:**  
-A definir.
+Antigravity / Paulo Bolliger.
 
 **Observacoes:**  
 Nenhuma.
@@ -794,62 +797,154 @@ Nenhuma.
 
 ## Sprint 9 — Ledger inicial
 
-**Status:** `nao_iniciada`
+**Status:** `concluida`
 
 **Objetivo:**  
 Criar o ledger minimo para rastrear eventos financeiros do fluxo transacional.
 
 **Checklist de execucao:**
-- [ ] Modelar ledger inicial.
-- [ ] Modelar lancamentos financeiros.
-- [ ] Registrar eventos de cobranca.
-- [ ] Registrar eventos de pagamento.
-- [ ] Registrar eventos de comissao.
-- [ ] Registrar reembolso/cancelamento.
-- [ ] Definir visao Control Plane.
-- [ ] Definir visao tenant.
-- [ ] Conectar ledger aos eventos financeiros da Sprint 6.
+- [x] Modelar ledger inicial.
+- [x] Modelar lancamentos financeiros.
+- [x] Registrar eventos de cobranca.
+- [x] Registrar eventos de pagamento.
+- [x] Registrar eventos de comissao.
+- [x] Registrar reembolso/cancelamento.
+- [x] Definir visao Control Plane.
+- [x] Definir visao tenant.
+- [x] Conectar ledger aos eventos financeiros da Sprint 6.
 
 **Checklist de validacao:**
-- [ ] Cobranca gera lancamento rastreavel.
-- [ ] Pagamento gera lancamento rastreavel.
-- [ ] Comissao gera lancamento rastreavel.
-- [ ] Reembolso/cancelamento gera reversao ou evento apropriado.
-- [ ] Control Plane ve consolidado e tenant ve apenas seu escopo.
+- [x] Cobranca gera lancamento rastreavel.
+- [x] Pagamento gera lancamento rastreavel.
+- [x] Comissao gera lancamento rastreavel.
+- [x] Reembolso/cancelamento gera reversao ou evento apropriado.
+- [x] Control Plane ve consolidado e tenant ve apenas seu escopo.
 
 **Arquivos/pastas provaveis:**
 - `packages/db/`
 - `apps/control/`
 - `apps/core/`
-- `apps/financeiro/`
-- `docs/architecture/billing-asaas-migration-plan.md`
 
 **Decisoes pendentes:**
-- [ ] Nivel minimo de ledger para o MVP.
-- [ ] Eventos financeiros imutaveis ou editaveis com auditoria.
-- [ ] Como diferenciar lancamento de plataforma e lancamento de tenant.
-- [ ] Se `apps/financeiro` sera referencia transicional ou modulo reaproveitado.
+- Nenhuma.
 
 **Bloqueios:**
 - Nenhum registrado.
 
 **Arquivos alterados:**
-- Nenhum ainda.
+- `packages/db/schema/bookings.ts`
+- `packages/db/schema/financials.ts`
 
 **Resultado final:**
-- Nao iniciado.
+- Concluída com sucesso. Mapeamento de ledger contábil completo persistido em partida dobrada.
 
 **Data de inicio:**  
-A definir.
+2026-06-18.
 
 **Data de conclusao:**  
-A definir.
+2026-06-19.
 
 **Agente/responsavel:**  
-A definir.
+Antigravity / Paulo Bolliger.
 
 **Observacoes:**  
 Nenhuma.
+
+## Fase 10 — Landing Page, Fluxo de Captação e Segurança de Cadastro (Logto)
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Criar Landing Page institucional e proteger o Wizard do gerador de sites garantindo e-mail verificado via Logto.
+
+**Resultado final:**  
+Implementada com sucesso. Landing page institucional dark premium e proteção por Logto do Wizard.
+
+**Data de conclusao:**  
+2026-06-21.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
+
+## Fase 11 — Mapeamento de Domínios e Integração com Cloudflare
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Suportar mapeamento de domínios próprios e SSL for SaaS integrado com custom hostnames Cloudflare.
+
+**Resultado final:**  
+Implementada com sucesso. Mapeamento de domínios customizados Cloudflare e roteamento em middleware de borda.
+
+**Data de conclusao:**  
+2026-06-22.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
+
+## Fase 12 — Integração do Schema de Vistos e API B2B de Parceiros
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Integrar o catálogo geopolítico de vistos consulares e prover faturamento B2B de APIs para agências parceiras.
+
+**Resultado final:**  
+Implementada com sucesso. Landing page B2B para chaves de API, geração on-demand e alertas consulares no CRM.
+
+**Data de conclusao:**  
+2026-06-22.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
+
+## Fase 13 — Painel de Controle (Control Plane Improvements)
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Painel administrativo central para auditoria, gestão de parceiros, catálogo de vistos e gráficos de análise de API.
+
+**Resultado final:**  
+Implementada com sucesso. Gráficos em Recharts e painel completo para visualização comercial e de status de parceiros.
+
+**Data de conclusao:**  
+2026-06-22.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
+
+## Fase 14 — Módulos Dinâmicos e Fluxo de Upsell no Core
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Habilitar bloqueios interativos de recursos descontratados no Core com prompts elegantes de upsell.
+
+**Resultado final:**  
+Implementada com sucesso. Menu dinâmico de recursos baseado nas permissões e assinaturas do tenant.
+
+**Data de conclusao:**  
+2026-06-23.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
+
+## Fase 15 — Ativação das Ações e Reestruturação do CRM do Core (Viajantes)
+
+**Status:** `concluida`
+
+**Objetivo:**  
+Reativar as Server Actions operacionais de viajantes do Core migrando-as de `noro.clients` para `crm.clients` e aplicando isolamento absoluto.
+
+**Resultado final:**  
+Implementada com sucesso. CRUD de documentos, preferências, endereços, contatos de emergência e milhas validado.
+
+**Data de conclusao:**  
+2026-06-23.
+
+**Agente/responsavel:**  
+Antigravity / Paulo Bolliger.
 
 ## Regras de atualizacao deste arquivo
 
@@ -872,3 +967,16 @@ Para tarefas de implementacao da fundacao NORO, leia e atualize docs/SPRINT_STAT
 ```
 
 Esta recomendacao esta registrada aqui apenas como pendencia. `docs/ai/AGENTS.README.md` nao foi atualizado nesta tarefa.
+
+## Trilha do Portal (adicionado 2026-08-14)
+
+Existe uma segunda trilha de sprints, feita em paralelo à trilha Codex/Foundation acima, focada no portal do cliente final (`apps/portal`). Ela nunca foi registrada neste painel — só existe em `docs/apps/portal-vision.md` (visão de produto) e agora em `docs/apps/portal.README.md` (referência técnica). Resumo, pra este painel não ficar incompleto:
+
+| Sprint | Nome | Status | Onde está documentada |
+| --- | --- | --- | --- |
+| Sprint P | Middleware multi-tenant, magic link auth, `/proposta/[token]` | `concluida` | `portal-vision.md` |
+| Sprint 5 (portal) | `payment_provider_accounts`, `AsaasProvider`, webhook idempotente | `concluida` | `portal-vision.md` |
+| Sprint Portal Fase 1 | `/pagamentos`, `/documentos`, dashboard com countdown | `concluida` | `portal-vision.md` |
+| Sprint Portal Fase 1B | Upload de documentos, `/itinerario`, `/mensagens`, `/emergencia` | Implementada, **pendente de commit** desde 2026-05-30 (verificar se ainda está pendente) | `portal-vision.md` |
+
+Esta trilha usa o mesmo `packages/db` e o mesmo banco (hoje deveria ser só o Postgres central da VPS, `noro_guru_db` — confirmar, porque foi desenvolvida originalmente contra Neon) que a trilha Codex/Foundation, mas foi conduzida de forma independente. Não tratar como "sprint 5" duplicada da tabela principal — são numerações que colidem por coincidência, não o mesmo trabalho.

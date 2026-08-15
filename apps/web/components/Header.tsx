@@ -7,12 +7,12 @@ import { ChevronDown, X, Menu } from 'lucide-react';
 // ─── Dropdown data ───────────────────────────────────────────────────────────
 
 const PRODUTO_ITEMS = [
-  { icon: '📊', label: 'Visão Geral', desc: 'A plataforma completa', href: '/#features' },
-  { icon: '🎯', label: 'CRM & Pipeline', desc: 'Gerencie leads e oportunidades', href: '/#crm' },
-  { icon: '💰', label: 'Financeiro', desc: 'Faturamento e controle financeiro', href: '/#financeiro' },
-  { icon: '🤖', label: 'IA Operacional', desc: 'Automação inteligente', href: '/#ia' },
-  { icon: '🌐', label: 'Sites & Marketing', desc: 'Sites para sua agência', href: '/#sites' },
-  { icon: '💬', label: 'Atendimento', desc: 'Omnichannel integrado', href: '/#atendimento' },
+  { icon: '📊', label: 'Visão Geral', desc: 'A plataforma completa', href: '/features' },
+  { icon: '🎯', label: 'CRM & Pipeline', desc: 'Gerencie leads e oportunidades', href: '/features/crm' },
+  { icon: '💰', label: 'Financeiro', desc: 'Faturamento e controle financeiro', href: '/features/financeiro' },
+  { icon: '🤖', label: 'IA Operacional', desc: 'Automação inteligente', href: '/features/ia' },
+  { icon: '🌐', label: 'Sites & Marketing', desc: 'Sites para sua agência', href: '/features/sites' },
+  { icon: '💬', label: 'Atendimento', desc: 'Omnichannel integrado', href: '/features/atendimento' },
 ];
 
 const ECOSSISTEMA_ITEMS = [
@@ -20,7 +20,7 @@ const ECOSSISTEMA_ITEMS = [
   { icon: '⚙️', label: 'Core', desc: 'app.noro.guru — plataforma principal', href: 'https://app.noro.guru' },
   { icon: '🎛️', label: 'Control', desc: 'control.noro.guru — admin Noro', href: 'https://control.noro.guru' },
   { icon: '🏗️', label: 'Sites', desc: 'sites.noro.guru — builder de sites', href: 'https://sites.noro.guru' },
-  { icon: '🛂', label: 'Visa API', desc: 'Dados de vistos para agências', href: '/ecosystem/dados-de-vistos' },
+  { icon: '🛂', label: 'Visa API', desc: 'Dados de vistos para agências', href: '/vistos-api' },
   { icon: '📡', label: 'API Docs', desc: 'Documentação para devs', href: 'https://api.noro.guru' },
 ];
 
@@ -91,16 +91,21 @@ function NavDropdown({
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 8px)',
+            top: '100%',
             left: '50%',
             transform: 'translateX(-50%)',
+            paddingTop: 8,
+            minWidth: 280,
+            zIndex: 100,
+          }}
+        >
+        <div
+          style={{
             background: '#12152C',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: 12,
             boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
             padding: '8px',
-            minWidth: 280,
-            zIndex: 100,
             animation: 'fade-in .15s ease-out forwards',
           }}
         >
@@ -134,6 +139,7 @@ function NavDropdown({
               </div>
             </Link>
           ))}
+        </div>
         </div>
       )}
     </div>
@@ -169,7 +175,7 @@ export default function Header() {
           zIndex: 50,
           height: 64,
           background: scrolled
-            ? '#0B1220'
+            ? '#0D0B2A'
             : 'rgba(11,18,32,0.7)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -198,36 +204,19 @@ export default function Header() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
               textDecoration: 'none',
               flexShrink: 0,
             }}
           >
             <img
-              src="https://res.cloudinary.com/dhqvjxgue/image/upload/v1760969739/edited-photo_4_txwuti.png"
+              src="https://res.cloudinary.com/dhqvjxgue/image/upload/v1780108595/copy_of_captura_de_tela_2026-05-29_232740-removebg-preview_efky7aaa.png"
               alt="Noro Guru"
               style={{
-                height: 28,
+                height: 40,
                 width: 'auto',
                 objectFit: 'contain',
-                filter: 'brightness(0) invert(1)',
-              }}
-              onError={(e) => {
-                // Fallback text logo
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: 18,
-                color: '#fff',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Noro Guru
-            </span>
           </Link>
 
           {/* Desktop nav — hidden on mobile */}
@@ -381,7 +370,7 @@ export default function Header() {
             position: 'fixed',
             inset: 0,
             zIndex: 49,
-            background: '#0B1220',
+            background: '#0D0B2A',
             paddingTop: 64,
             display: 'flex',
             flexDirection: 'column',

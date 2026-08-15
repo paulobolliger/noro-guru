@@ -1,0 +1,18 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Viator Partner API",
+    "version": "2.0",
+    "description": "Especificação Oficial do API Público do Viator / TripAdvisor (V2) para passeios, ingressos, atrações e experiências."
+  },
+  "servers": [
+    {
+      "url": "https://api.viator.com/partner",
+      "description": "Production"
+    },
+    {
+      "url": "https://api.sandbox.viator.com/partner",
+      "description": "Sandbox"
+    }
+  ]
+}

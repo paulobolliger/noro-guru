@@ -64,7 +64,7 @@ export default function RootLayout({
       <body
         className="min-h-screen overflow-x-hidden antialiased"
         style={{
-          background: '#0B1220',
+          background: '#0D0B2A',
           color: '#E0E3FF',
           fontFamily: 'var(--font-sans, system-ui)',
         }}

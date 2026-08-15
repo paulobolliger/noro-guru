@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 const FOOTER_LINKS = {
   Produto: [
-    { label: 'CRM & Pipeline', href: '/#crm' },
-    { label: 'Financeiro & Billing', href: '/#financeiro' },
-    { label: 'IA Operacional', href: '/#ia' },
-    { label: 'Sites & Marketing', href: '/#sites' },
-    { label: 'Atendimento Omnichannel', href: '/#atendimento' },
+    { label: 'CRM & Pipeline', href: '/features/crm' },
+    { label: 'Financeiro & Billing', href: '/features/financeiro' },
+    { label: 'IA Operacional', href: '/features/ia' },
+    { label: 'Sites & Marketing', href: '/features/sites' },
+    { label: 'Atendimento Omnichannel', href: '/features/atendimento' },
   ],
   Empresa: [
     { label: 'Sobre Nós', href: '/about' },
@@ -97,41 +97,20 @@ export default function Footer() {
             <Link
               href="/"
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
+                display: 'inline-flex',
                 textDecoration: 'none',
                 marginBottom: 16,
               }}
             >
-              <div
+              <img
+                src="https://res.cloudinary.com/dhqvjxgue/image/upload/v1780108595/copy_of_captura_de_tela_2026-05-29_232740-removebg-preview_efky7aaa.png"
+                alt="Noro Guru"
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: '#342CA4',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 800,
-                  fontSize: 16,
-                  color: '#fff',
+                  height: 36,
+                  width: 'auto',
+                  objectFit: 'contain',
                 }}
-              >
-                N
-              </div>
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 700,
-                  fontSize: 16,
-                  color: '#fff',
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                Noro Guru
-              </span>
+              />
             </Link>
 
             <p

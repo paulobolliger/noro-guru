@@ -17,7 +17,7 @@ const Hero: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        background: '#0B1220',
+        background: '#0D0B2A',
         paddingTop: 80,
         paddingBottom: 80,
       }}
@@ -28,7 +28,7 @@ const Hero: React.FC = () => {
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(18,21,44,0.95) 0%, #0B1220 100%)
+            radial-gradient(ellipse 80% 60% at 50% 0%, rgba(31,25,111,0.6) 0%, #0D0B2A 100%)
           `,
         }}
       />
@@ -111,7 +111,7 @@ const Hero: React.FC = () => {
         <h1
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(44px, 7vw, 64px)',
+            fontSize: 'clamp(48px, 7vw, 80px)',
             fontWeight: 800,
             lineHeight: 1.1,
             letterSpacing: '-0.03em',
@@ -122,7 +122,7 @@ const Hero: React.FC = () => {
           O sistema operacional{' '}
           <span
             style={{
-              background: 'linear-gradient(90deg, #342CA4 0%, #1DD3C0 100%)',
+              background: 'linear-gradient(90deg, #6B54E8 0%, #1DD3C0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -291,7 +291,7 @@ const Hero: React.FC = () => {
             borderRadius: 16,
             overflow: 'hidden',
             boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
-            transform: 'perspective(1200px) rotateX(4deg)',
+            transform: 'none',
           }}
         >
           {/* Browser top bar */}

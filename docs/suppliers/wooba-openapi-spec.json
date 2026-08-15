@@ -1,0 +1,47 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "TravellinkWebApi"
+  },
+  "host": "wooba-sandbox.travellink.com.br",
+  "basePath": "/TravellinkWebApi",
+  "schemes": ["https"],
+  "paths": {
+    "/api/static/destinations": {
+      "post": {
+        "tags": ["StaticContents"],
+        "operationId": "StaticContents_Destinations",
+        "description": "Consulta de cidades/destinos estáticos para auto-complete de hospedagem."
+      }
+    },
+    "/api/static/airports": {
+      "post": {
+        "tags": ["StaticContents"],
+        "operationId": "StaticContents_Airports",
+        "description": "Consulta de aeroportos IATA estáticos para auto-complete aéreo."
+      }
+    },
+    "/api/static/bus": {
+      "post": {
+        "tags": ["StaticContents"],
+        "operationId": "StaticContents_Bus",
+        "description": "Consulta de rodoviárias e trechos estáticos rodoviários."
+      }
+    },
+    "/api/static/insurance-destinations": {
+      "post": {
+        "tags": ["StaticContents"],
+        "operationId": "StaticContents_InsuranceDestination",
+        "description": "Consulta de regiões e continentes para seguro viagem."
+      }
+    },
+    "/api/static/insurance-types": {
+      "post": {
+        "tags": ["StaticContents"],
+        "operationId": "StaticContents_InsuranceTypes",
+        "description": "Consulta de tipos e modalidades de cobertura de seguro."
+      }
+    }
+  }
+}

@@ -35,6 +35,10 @@ import { fiscalDocuments } from './fiscal-documents';
 import { bspIngestions } from './bsp-ingestions';
 import { bspRecords } from './bsp-records';
 import { agencyMemos } from './agency-memos';
+import { exchangeRates } from './exchange-rates';
+import { paymentConfigs } from './payment-configs';
+import { pricingLogs } from './pricing-logs';
+import { integrationLogs } from './integration-logs';
 
 export * from './_schema';
 export * from './audit';
@@ -75,6 +79,10 @@ export * from './bsp-records';
 export * from './agency-memos';
 export * from './vistos';
 export * from './partner-api-keys';
+export * from './exchange-rates';
+export * from './payment-configs';
+export * from './pricing-logs';
+export * from './integration-logs';
 
 
 
@@ -207,6 +215,10 @@ export const tenantsLeadsRelations = relations(tenants, ({ many }) => ({
   leads: many(leads),
   clients: many(clients),
   pricingRules: many(pricingRules),
+  exchangeRates: many(exchangeRates),
+  paymentConfigs: many(paymentConfigs),
+  pricingLogs: many(pricingLogs),
+  integrationLogs: many(integrationLogs),
 }));
 
 export const suppliersRelations = relations(suppliers, ({ many }) => ({
@@ -351,5 +363,73 @@ export const financialLedgerEntriesRelations = relations(financialLedgerEntries,
   component: one(bookingItems, {
     fields: [financialLedgerEntries.componentId],
     references: [bookingItems.id],
+  }),
+}));
+
+export const exchangeRatesRelations = relations(exchangeRates, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [exchangeRates.tenantId],
+    references: [tenants.id],
+  }),
+  createdByUser: one(users, {
+    fields: [exchangeRates.createdById],
+    references: [users.id],
+  }),
+}));
+
+export const paymentConfigsRelations = relations(paymentConfigs, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [paymentConfigs.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+export const pricingLogsRelations = relations(pricingLogs, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [pricingLogs.tenantId],
+    references: [tenants.id],
+  }),
+  product: one(products, {
+    fields: [pricingLogs.productId],
+    references: [products.id],
+  }),
+  proposal: one(proposals, {
+    fields: [pricingLogs.proposalId],
+    references: [proposals.id],
+  }),
+  booking: one(bookings, {
+    fields: [pricingLogs.bookingId],
+    references: [bookings.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [pricingLogs.supplierId],
+    references: [suppliers.id],
+  }),
+  exchangeRate: one(exchangeRates, {
+    fields: [pricingLogs.exchangeRateId],
+    references: [exchangeRates.id],
+  }),
+  markupRule: one(pricingRules, {
+    fields: [pricingLogs.markupRuleId],
+    references: [pricingRules.id],
+  }),
+  createdByUser: one(users, {
+    fields: [pricingLogs.createdById],
+    references: [users.id],
+  }),
+}));
+
+export const integrationLogsRelations = relations(integrationLogs, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [integrationLogs.tenantId],
+    references: [tenants.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [integrationLogs.supplierId],
+    references: [suppliers.id],
+  }),
+  booking: one(bookings, {
+    fields: [integrationLogs.bookingId],
+    references: [bookings.id],
   }),
 }));

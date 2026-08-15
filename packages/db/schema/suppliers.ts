@@ -14,6 +14,7 @@ export const supplierApiTipoValues = [
   'manual',
   'hotelbeds',
   'amadeus',
+  'ratehawk',
   'outro',
 ] as const;
 

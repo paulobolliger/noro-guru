@@ -50,6 +50,16 @@ export default async function FinanceiroPage() {
         subtitle="Lançamentos contábeis gerados a partir do Billing e ajustes operacionais."
         icon={<DollarSign size={28} />}
       />
+
+      <div className="flex justify-end max-w-[1200px] mx-auto px-4 md:px-6">
+        <a
+          href="/financeiro/precificacao"
+          className="bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-cyan-500/30 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center space-x-2 transition-all hover:scale-105 shadow-lg"
+        >
+          <DollarSign className="h-4 w-4" />
+          <span>⚙️ Composição de Preços & Câmbio PTAX</span>
+        </a>
+      </div>
       
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-[1200px] mx-auto px-4 md:px-6">

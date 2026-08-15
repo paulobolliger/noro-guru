@@ -1,6 +1,6 @@
 # Relatorio De Residuos Supabase
 
-Data de referencia: 2026-05-27
+Data de referencia: 2026-05-27 (anotado em 2026-08-14: Neon também está depreciado, não só Supabase; e o auth oficial agora é Keycloak, não Logto — ver notas inline abaixo. Inventário de resíduos Supabase abaixo continua útil como está, não foi reauditado nesta revisão)
 
 ## 1. Conclusao Executiva
 
@@ -22,9 +22,9 @@ Portanto, Supabase deve ser tratado como legado transicional ainda acoplado ao r
 
 | Camada | Estado desejado | Estado encontrado |
 | --- | --- | --- |
-| Banco | PostgreSQL na VPS via `DATABASE_URL` | Existe `packages/db`, mas varias rotas ainda usam Supabase client |
+| Banco | PostgreSQL na VPS via `DATABASE_URL` (`noro_guru_db`) | Existe `packages/db`, mas varias rotas ainda usam Supabase client. Neon (banco de dev/staging de outra trilha) também depreciado. |
 | ORM/acesso | Drizzle/Postgres | Muitas queries ainda usam `.from(...)` do Supabase |
-| Auth | Logto | `packages/auth` aponta Logto, mas telas/rotas ainda usam `supabase.auth` |
+| Auth | **Keycloak** (não Logto — decisão 2026-08-14) | `packages/auth` ainda aponta Logto no código; precisa trocar. Logto nunca chegou a guardar rotas de verdade em produção (ver `project-audit-2026-05-30.md`), então não há "trabalho perdido" relevante ao trocar pra Keycloak. |
 | Storage | A definir fora de Supabase | Upload de logo ainda usa Supabase Storage |
 | Migrations | Drizzle ou SQL controlado contra VPS | Pasta `supabase/migrations` ainda existe, mas esta congelada |
 | Edge functions | Substituir por API routes/workers proprios | `supabase/functions` ainda existe como historico |
@@ -112,7 +112,7 @@ Mas o runtime ainda usa Supabase Auth em varios pontos:
 
 Conclusao:
 
-Logto ainda parece ser direcao/configuracao, nao substituicao completa. Hoje o Control ainda depende de Supabase Auth para sessoes e usuario em varias telas.
+Logto foi implementado parcialmente (rotas Sprint 1L) mas nunca chegou a guardar rotas de verdade — permanece só como configuração paralela, nunca substituição completa. Hoje o Control ainda depende de Supabase Auth para sessoes e usuario em varias telas. **Decisão de 2026-08-14: o alvo mudou de Logto pra Keycloak** — o trabalho do Logto (rotas, adapter, SDK) deve ser removido, não continuado, quando a migração pra Keycloak acontecer.
 
 ### 4.4 Queries De Dados Via Supabase
 
@@ -234,19 +234,20 @@ Criterio de aceite:
 
 ### Sprint 1: Auth
 
-Objetivo: remover Supabase Auth do fluxo de login/sessao.
+Objetivo: remover Supabase Auth (e Logto) do fluxo de login/sessao.
 
-1. Implementar Logto real no `apps/control`.
+1. Implementar Keycloak real no `apps/control` e `apps/core` (não Logto — ver `docs/architecture/data-auth-transition.md`).
 2. Substituir `apps/control/app/login/page.tsx`.
 3. Substituir `supabase.auth.getUser()` e `getSession()` em layouts, APIs e actions.
 4. Criar helper canonico de usuario/sessao em `packages/auth`.
-5. Mapear `user_id` Logto para usuarios/tenants no PostgreSQL.
+5. Mapear `user_id` Keycloak (`sub` do realm `noro`) para usuarios/tenants no PostgreSQL.
+6. Remover rotas/adapter Logto da Sprint 1L (não deixar como caminho paralelo morto).
 
 Criterio de aceite:
 
-- login/logout nao usa Supabase;
-- rotas protegidas usam Logto;
-- `rg "supabase.auth" apps packages` retorna zero ocorrencias funcionais.
+- login/logout nao usa Supabase nem Logto;
+- rotas protegidas usam Keycloak;
+- `rg "supabase.auth|@logto" apps packages` retorna zero ocorrencias funcionais.
 
 ### Sprint 2: Data Access Do Control
 

@@ -68,8 +68,8 @@ Antes de reativar ou expandir o Core:
 - manter `apps/core` separado de `apps/control`;
 - tratar `app.noro.guru` como dominio oficial do portal tenant;
 - manter Appwrite fora da arvore ativa;
-- alinhar auth com Logto;
-- alinhar dados com PostgreSQL/Drizzle;
+- alinhar auth com Keycloak (não Logto);
+- alinhar dados com PostgreSQL/Drizzle no banco central da VPS (`noro_guru_db`, não Neon);
 - alinhar financeiro/billing com Asaas.
 
 Referencias obrigatorias:

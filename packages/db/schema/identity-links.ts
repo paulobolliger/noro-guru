@@ -3,7 +3,7 @@ import { jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { noro } from './_schema';
 import { users } from './users';
 
-export const identityProviderValues = ['logto', 'supabase'] as const;
+export const identityProviderValues = ['logto', 'supabase', 'keycloak'] as const;
 export type IdentityProvider = (typeof identityProviderValues)[number];
 
 export const identityLinks = noro.table(

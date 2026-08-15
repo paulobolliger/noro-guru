@@ -13,6 +13,7 @@ Os `README.md` dentro de `apps/*` devem ser apenas ponteiros curtos para estes a
 | `apps/financeiro` | `docs/apps/financeiro.README.md` |
 | `apps/sites` | `docs/apps/sites.README.md` |
 | `apps/visa-api` | `docs/apps/visa-api.README.md` |
+| `apps/portal` | `docs/apps/portal.README.md` (referência técnica) + `docs/apps/portal-vision.md` (visão de produto) |
 
 Fontes transversais:
 

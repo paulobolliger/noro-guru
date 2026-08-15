@@ -1,11 +1,8 @@
 'use server';
 
 import { createDatabaseClient, clientPortalSessionsRepository, clientsRepository } from '@noro/db';
-import { Resend } from 'resend';
+import { sendTransactionalEmail } from '@noro/lib';
 
-function getResend() {
-  return new Resend(process.env.RESEND_API_KEY);
-}
 const SESSION_COOKIE = 'portal_session_id';
 
 export async function requestMagicLink(
@@ -18,8 +15,6 @@ export async function requestMagicLink(
   try {
     // Busca o cliente pelo email dentro do tenant
     const allClients = await clientsRepository.getClientsByTenant(db, tenantId, { limit: 1 });
-    // Lookup direto por email no tenant — getClientsByTenant não tem filtro por email ainda,
-    // mas clientsRepository pode ser extendido. Por ora, usamos query direta.
     const { and, eq } = await import('drizzle-orm');
     const { clients } = await import('@noro/db');
 
@@ -41,17 +36,15 @@ export async function requestMagicLink(
 
     // Envia email apenas se o cliente existe — evita enumeração de e-mails
     if (client) {
-      await getResend().emails.send({
-        from: process.env.CONTACT_FROM ?? 'NORO <no-reply@noro.guru>',
+      await sendTransactionalEmail({
+        project_slug: 'noro_guru',
+        template: 'noro_id_magic_link',
         to: email,
-        subject: `Seu acesso ao portal — ${agencyDisplayName}`,
-        html: `
-          <p>Olá, ${client.nomePreferido ?? client.nome}!</p>
-          <p>Clique no link abaixo para acessar seu portal de viagens:</p>
-          <p><a href="${magicUrl}" style="font-size:18px;font-weight:bold;">Acessar meu portal</a></p>
-          <p>O link expira em 15 minutos e pode ser usado apenas uma vez.</p>
-          <p>${agencyDisplayName}</p>
-        `,
+        variables: {
+          client_name: client.nomePreferido ?? client.nome,
+          magic_url: magicUrl,
+          agency_display_name: agencyDisplayName || 'Portal do Viajante',
+        },
       });
     }
 

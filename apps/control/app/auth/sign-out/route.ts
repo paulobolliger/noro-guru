@@ -1,16 +1,35 @@
 import { signOut } from '@logto/next/server-actions';
 import { logtoConfig } from '@/lib/logto';
+import { getKeycloakConfig, unsealCookie } from '@/lib/keycloak';
+import { NextResponse, type NextRequest } from 'next/server';
 
-/**
- * GET /auth/sign-out
- *
- * Encerra a sessão Logto e redireciona para /login.
- * Apenas limpa o cookie de sessão Logto — não afeta sessão Supabase.
- *
- * Rota pública — não deve ser protegida pelo middleware.
- *
- * /login (Supabase) permanece como fallback de acesso.
- */
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
+  const provider = process.env.AUTH_PROVIDER || 'keycloak';
+
+  if (provider === 'keycloak') {
+    const config = getKeycloakConfig();
+    const cookieValue = request.cookies.get('keycloak_session')?.value;
+    const session = cookieValue ? unsealCookie<{ refreshToken?: string }>(cookieValue, config.cookieSecret) : null;
+
+    if (session?.refreshToken) {
+      await fetch(config.endSessionEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: config.clientId,
+          client_secret: config.clientSecret,
+          refresh_token: session.refreshToken,
+        }),
+        cache: 'no-store',
+      }).catch(() => null);
+    }
+
+    const response = NextResponse.redirect(new URL('/login', config.baseUrl));
+    response.cookies.delete('keycloak_session');
+    return response;
+  }
+
   await signOut(logtoConfig, `${logtoConfig.baseUrl}/login`);
 }

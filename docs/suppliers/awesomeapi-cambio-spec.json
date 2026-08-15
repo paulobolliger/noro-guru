@@ -1,0 +1,33 @@
+{
+  "name": "AwesomeAPI Economia — API de Cotação de Moedas e PTAX",
+  "version": "1.0",
+  "authentication": {
+    "type": "query_param_or_header",
+    "param": "token",
+    "header": "x-api-key",
+    "key_env": "AWESOME_API_KEY"
+  },
+  "endpoints": {
+    "last_quotes": {
+      "method": "GET",
+      "url": "https://economia.awesomeapi.com.br/json/last/:moedas?token={AWESOME_API_KEY}",
+      "example": "https://economia.awesomeapi.com.br/json/last/USD-BRLPTAX,EUR-BRLPTAX?token=23b7af563cd43bf96ccbfb7e253919fd9c08db31c4195d4cbd7cc5516be3f29c",
+      "description": "Retorna em tempo real a cotação PTAX Venda oficial do Banco Central para USD e EUR."
+    },
+    "daily_closing": {
+      "method": "GET",
+      "url": "https://economia.awesomeapi.com.br/json/daily/:moeda/:numero_dias?token={AWESOME_API_KEY}",
+      "description": "Retorna o histórico de fechamento diário."
+    }
+  },
+  "fields": {
+    "ask": "Valor de venda (PTAX Oficial Venda)",
+    "bid": "Valor de compra",
+    "varBid": "Variação em relação ao fechamento anterior",
+    "pctChange": "Porcentagem de variação",
+    "high": "Máxima do dia",
+    "low": "Mínima do dia",
+    "timestamp": "Timestamp UTC",
+    "create_date": "Data e hora de criação (UTC-3)"
+  }
+}

@@ -1,20 +1,25 @@
+import { NextResponse } from 'next/server';
 import { signIn } from '@logto/next/server-actions';
 import { logtoConfig } from '@/lib/logto';
+import { getKeycloakConfig } from '@/lib/keycloak';
 
-/**
- * GET /auth/sign-in
- *
- * Inicia o fluxo de login Logto.
- * Redireciona para o servidor Logto (https://auth.norotec.cloud).
- * Após autenticação, Logto redireciona para /auth/callback.
- *
- * Rota pública — não deve ser protegida pelo middleware.
- * Não faz lookup no banco. Não chama requireUser().
- *
- * Fluxo Logto paralelo ao login Supabase (/login).
- * O login Supabase permanece intacto nesta sprint.
- */
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
+  const provider = process.env.AUTH_PROVIDER || 'keycloak';
+
+  if (provider === 'keycloak') {
+    const config = getKeycloakConfig();
+    const authUrl = new URL(config.authorizationEndpoint);
+    authUrl.search = new URLSearchParams({
+      client_id: config.clientId,
+      redirect_uri: `${config.baseUrl}/auth/callback`,
+      response_type: 'code',
+      scope: 'openid profile email',
+    }).toString();
+    return NextResponse.redirect(authUrl);
+  }
+
   await signIn(logtoConfig, {
     redirectUri: `${logtoConfig.baseUrl}/auth/callback`,
     postRedirectUri: `${logtoConfig.baseUrl}/`,

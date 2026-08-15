@@ -1,0 +1,22 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "API Civitatis",
+    "version": "2.0.2",
+    "description": "Especificação Oficial do API Público da Civitatis (V2 / V3) para passeios, atividades, excursões e transfers."
+  },
+  "servers": [
+    {
+      "url": "https://api.civitatis.com/v2",
+      "description": "Production"
+    },
+    {
+      "url": "https://sandbox-api.civitatis.com/v2",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api-qa.civitatis.com/v2",
+      "description": "QA"
+    }
+  ]
+}

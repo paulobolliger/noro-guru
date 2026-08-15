@@ -2,7 +2,7 @@
 
 Documento de referencia curta sobre o estado atual do projeto NORO.
 
-Data de referencia: 2026-05-27
+Data de referencia: 2026-08-14 (revisado; substitui decisões de dominio/auth/banco de 2026-05-27, que estavam desatualizadas em relação ao código e à infraestrutura reais)
 
 ## 1. Proposito
 
@@ -20,19 +20,21 @@ O projeto esta em transicao arquitetural.
 
 Ha codigo e documentacao de fases anteriores envolvendo:
 
-- Supabase como backend principal;
+- Supabase como backend principal (banco + auth);
+- Neon como banco de staging/dev de uma trilha de sprints (Codex/Foundation) — também depreciado, ver abaixo;
 - Appwrite como tentativa de migracao, ja eliminada como arquitetura alvo;
+- Logto como provedor de auth planejado — **depreciado em 2026-08-14**, ver abaixo;
 - Stripe, Cielo, BTG e eRede como providers de pagamento;
-- hosts legados como `control.noro.guru`, `core.noro.guru` e `visa-api.noro.guru`.
+- host legado `admin.noro.guru` (o control plane real e `control.noro.guru`, nunca `admin.`).
 
-A direcao atual indicada pelos documentos e pelo codigo mais recente aponta para:
+A direcao atual (decisão do operador, 2026-08-14) e:
 
-- PostgreSQL central via `DATABASE_URL`;
-- Drizzle em `packages/db`;
-- Logto em `packages/auth`, com servico ja configurado na VPS;
-- dominios oficiais registrados na Cloudflare: `noro.guru`, `www.noro.guru`, `app.noro.guru`, `admin.noro.guru`, `sites.noro.guru`, `*.sites.noro.guru`, `api.noro.guru` e `visa-api.noro.guru`; `vistos.noro.guru` nao existe;
-- Asaas como gateway financeiro principal;
-- Supabase como camada legada/transicional a ser totalmente substituida por PostgreSQL/Drizzle/Logto;
+- **Banco**: existe **somente um banco**, o PostgreSQL central da VPS/Coolify (`noro_guru_db`, schema `noro` + `vistos`). Supabase e Neon estao depreciados — qualquer ponta solta neles precisa ser migrada pra lá, sem exceção. `DATABASE_URL` de cada app deve apontar pra esse banco.
+- Drizzle em `packages/db` como ORM.
+- **Auth**: **Keycloak é o único provedor**, não Logto. Já roda em Coolify (`keycloak-main`), realm `noro` criado. Logto (parcial em `apps/control`) e Supabase Auth (ainda ativo em `apps/control`/`apps/core`) são legado a substituir — ver `docs/architecture/data-auth-transition.md` (a ser atualizado).
+- dominios oficiais: `noro.guru` (apps/web), `app.noro.guru` (apps/core, portal de gestão de cada tenant), `control.noro.guru` (apps/control, control plane), `sites.noro.guru`/`*.sites.noro.guru` (apps/sites, sites grátis/nível free), `api.noro.guru` e `visa-api.noro.guru` (uso futuro/especulativo, não priorizar). Portal do cliente final (`apps/portal`) **não tem domínio próprio** — vive aninhado em `xyz.agencia.noro.guru/portal` ou `xyz.com.br/portal`. `admin.noro.guru` e `portal.noro.guru` estão depreciados/descartados. `vistos.noro.guru` nao existe e nao deve ser assumido (é `vistos.guru`, produto separado do operador).
+- **Email**: Brevo é o provedor de envio oficial (transacional/marketing). Titan é só recebimento (MX/caixa postal `@noro.guru`). Resend está depreciado.
+- Asaas como gateway financeiro principal.
 - Appwrite eliminado do alvo arquitetural; residuos ativos removidos da arvore de apps/packages/scripts.
 
 ## 3. Apps Atuais
@@ -40,7 +42,7 @@ A direcao atual indicada pelos documentos e pelo codigo mais recente aponta para
 | App | Papel atual | Estado recomendado |
 | --- | --- | --- |
 | `apps/web` | Site publico e marketing | Manter. README precisa substituir texto generico de AI Studio. |
-| `apps/control` | Control Plane da NORO em `admin.noro.guru` | Manter separado do portal tenant. Responsavel por gestao global da plataforma: tenants, APIs, operacao, billing, configuracoes e governanca. |
+| `apps/control` | Control Plane da NORO em `control.noro.guru` | Manter separado do portal tenant. Responsavel por gestao global da plataforma: tenants, APIs, operacao, billing, configuracoes e governanca. |
 | `apps/core` | Portal operacional de cada tenant/agencia em `app.noro.guru` | Manter como app separado. Tratar como parcialmente legado ate revisar rotas/actions desativadas. |
 | `apps/financeiro` | Financeiro legado em reavaliacao | Nao tratar como produto independente no modelo final. O dominio financeiro deve existir como modulo em `apps/control` e `apps/core`, com responsabilidades separadas. |
 | `apps/billing` | Billing/cobranca legado | Nao tratar como produto independente no modelo final. Cobranca deve existir como feature em `apps/control` e `apps/core`, usando Asaas como alvo. |
@@ -52,7 +54,7 @@ A direcao atual indicada pelos documentos e pelo codigo mais recente aponta para
 | Package | Papel | Observacao |
 | --- | --- | --- |
 | `packages/db` | Acesso PostgreSQL/Drizzle | Direcao recomendada para nova camada de dados. |
-| `packages/auth` | Auth oficial Logto | Servico Logto ja configurado na VPS; integrar runtime dos apps. |
+| `packages/auth` | Auth oficial Keycloak | Logto depreciado (decisão 2026-08-14). Keycloak já roda em Coolify (`keycloak-main`), realm `noro` criado; integração runtime dos apps ainda pendente — ver Fase 3 de `coolify/noro-guru-transition-roadmap.md`. |
 | `packages/lib` | Utilitarios compartilhados | Ainda contem Supabase legado/transicional. Residuos Appwrite ativos foram removidos. |
 | `packages/types` | Tipos compartilhados | Parte ainda baseada em Supabase; revisar conforme migração. |
 | `packages/ui` | Componentes UI compartilhados | Manter. |
@@ -83,9 +85,9 @@ Para novas implementacoes estruturais:
 
 1. Nao criar nova dependencia Appwrite.
 2. Nao rodar migrations Supabase antigas sem plano aprovado.
-3. Preferir `packages/db` e `DATABASE_URL` para nova camada de persistencia.
-4. Tratar Supabase como legado/transicional ate a remocao completa.
-5. Tratar Logto como auth oficial e implementar a integracao runtime dos apps.
+3. Preferir `packages/db` e `DATABASE_URL` (apontando pro Postgres central da VPS, `noro_guru_db`) para nova camada de persistencia. Neon também está depreciado, não só Supabase.
+4. Tratar Supabase e Neon como legado/transicional ate a remocao completa.
+5. Tratar Keycloak como auth oficial (não Logto) e implementar a integracao runtime dos apps.
 
 ### Appwrite
 
@@ -151,22 +153,24 @@ Fonte oficial atual:
 docs/architecture/domains-cloudflare-dns-current-plan.md
 ```
 
-Mapa alvo:
+Mapa alvo (revisado 2026-08-14):
 
 | Dominio | Papel |
 | --- | --- |
-| `noro.guru` | Marketing institucional |
-| `app.noro.guru` | Produto para agencias/clientes |
-| `admin.noro.guru` | Operacao interna/Control Plane |
-| `sites.noro.guru` | Sites gerados/oferta de sites IA |
-| `api.noro.guru` | APIs tecnicas, incluindo API de vistos e futuras APIs |
-| `visa-api.noro.guru` | Registrado na Cloudflare, aponta para a VPS `45.32.169.173`; possivel landing/documentacao comercial do servico de API de vistos |
+| `noro.guru` | Marketing institucional (`apps/web`; hoje ocupado por `apps/soon-landing`, landing "em breve") |
+| `app.noro.guru` | Produto de gestão para agencias/tenants (`apps/core`) |
+| `control.noro.guru` | Operacao interna/Control Plane (`apps/control`) |
+| `sites.noro.guru`, `*.sites.noro.guru` | Landing de conversão + sites grátis pra agências, nível free, só o front (`apps/sites`) |
+| `xyz.agencia.noro.guru` ou domínio próprio pago (`xyz.com.br`) | Vitrine pública da agência + `/portal` (portal B2C do cliente final), ambos no mesmo domínio (`apps/portal`) |
+| `api.noro.guru` | Reservado pra futuras APIs técnicas da plataforma — especulativo, sem compromisso de evoluir |
+| `visa-api.noro.guru` | Reservado pra futuramente oferecer os dados do produto irmão `vistos.guru` de forma raw/API — especulativo, sem compromisso de evoluir |
 
-Hosts legados/nao oficiais:
+Hosts depreciados/nao oficiais:
 
-- `control.noro.guru`;
-- `core.noro.guru`;
-- `vistos.noro.guru`, que nao existe no DNS atual.
+- `admin.noro.guru` — o control plane é `control.noro.guru`, nunca admin.
+- `core.noro.guru` — o portal de gestão é `app.noro.guru`, nunca core.
+- `portal.noro.guru` — não existe como host real; o portal do cliente final é aninhado sob o domínio de cada agência (ver acima).
+- `vistos.noro.guru`, que nao existe no DNS atual — o produto de vistos vive em `vistos.guru` (domínio próprio, produto separado).
 
 ## 8. Documentacao Vigente
 

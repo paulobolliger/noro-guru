@@ -5,7 +5,7 @@ import type {
   TenantRole,
 } from '@noro/db';
 
-export type AuthProvider = 'logto';
+export type AuthProvider = 'logto' | 'keycloak' | 'supabase';
 
 /**
  * Claims mínimas que qualquer adapter de sessão deve fornecer para os helpers de auth.
@@ -156,7 +156,9 @@ export type AuthorizationAction =
   | 'tenant:proposals:read'
   | 'tenant:proposals:write'
   | 'tenant:sites:read'
-  | 'tenant:sites:write';
+  | 'tenant:sites:write'
+  | 'client:portal:read'
+  | 'client:portal:write';
 
 export type AuthorizeInput = {
   userContext: AuthUserContext;

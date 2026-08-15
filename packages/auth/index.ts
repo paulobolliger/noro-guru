@@ -1,6 +1,6 @@
 import { getEnv, NORO_INFRA } from '@noro/config';
 
-export type AuthProvider = 'logto';
+import type { AuthProvider } from './types';
 
 export interface AuthRuntimeConfig {
   provider: AuthProvider;
@@ -11,12 +11,19 @@ export interface AuthRuntimeConfig {
 }
 
 export function getAuthRuntimeConfig(): AuthRuntimeConfig {
+  const provider = (getEnv('AUTH_PROVIDER') as AuthProvider) || 'keycloak';
+  const isKeycloak = provider === 'keycloak';
+  const endpoint = isKeycloak
+    ? getEnv('KEYCLOAK_ISSUER') || 'https://keycloak.norotec.cloud/realms/noro'
+    : getEnv('LOGTO_ENDPOINT') || NORO_INFRA.authUrl;
+  const appId = isKeycloak ? getEnv('KEYCLOAK_CLIENT_ID') : getEnv('LOGTO_APP_ID');
+
   return {
-    provider: 'logto',
-    endpoint: getEnv('LOGTO_ENDPOINT') || NORO_INFRA.authUrl,
-    appId: getEnv('LOGTO_APP_ID'),
-    hasAppSecret: Boolean(getEnv('LOGTO_APP_SECRET')),
-    hasCookieSecret: Boolean(getEnv('LOGTO_COOKIE_SECRET')),
+    provider,
+    endpoint,
+    appId,
+    hasAppSecret: Boolean(isKeycloak ? getEnv('KEYCLOAK_CLIENT_SECRET') : getEnv('LOGTO_APP_SECRET')),
+    hasCookieSecret: Boolean(isKeycloak ? getEnv('KEYCLOAK_COOKIE_SECRET') : getEnv('LOGTO_COOKIE_SECRET')),
   };
 }
 
