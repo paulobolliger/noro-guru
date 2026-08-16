@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import PoweredBy from './PoweredBy';
 
 const FOOTER_LINKS = {
   Produto: [
@@ -230,29 +231,11 @@ export default function Footer() {
                 margin: 0,
               }}
             >
-              © 2026 Noro Guru · Nomade Group. Todos os direitos reservados.
+              © {new Date().getFullYear()} Noro Guru · Nomade Group. Todos os direitos reservados.
             </p>
 
-            {/* Trust badges */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {['LGPD Compliant', 'Dados no Brasil 🇧🇷'].map((badge) => (
-                <span
-                  key={badge}
-                  style={{
-                    fontSize: 11.5,
-                    fontWeight: 600,
-                    color: 'rgba(255,255,255,0.4)',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 6,
-                    padding: '4px 10px',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
+            {/* PoweredBy */}
+            <PoweredBy />
           </div>
         </div>
       </div>

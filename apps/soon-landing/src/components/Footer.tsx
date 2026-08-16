@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from './Logo';
 import { ShieldCheck, ArrowUp } from 'lucide-react';
+import PoweredBy from './PoweredBy';
 
 export default function Footer() {
   const handleScrollToTop = () => {
@@ -37,17 +38,20 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500 text-center sm:text-left">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-noro-teal" />
-            <span>© 2024 NORO Guru. Intelligent Operational Core for Travel.</span>
+            <span>© {new Date().getFullYear()} NORO Guru. Todos os direitos reservados.</span>
           </div>
 
-          <button
-            onClick={handleScrollToTop}
-            className="flex items-center gap-1.5 hover:text-white border border-noro-purple/10 hover:border-noro-teal/30 py-1.5 px-3 rounded-full transition-all text-[11px] font-mono tracking-tight cursor-pointer"
-            id="scroll-to-top-btn"
-          >
-            VOLTAR AO TOPO
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-4">
+            <PoweredBy />
+            <button
+              onClick={handleScrollToTop}
+              className="flex items-center gap-1.5 hover:text-white border border-noro-purple/10 hover:border-noro-teal/30 py-1.5 px-3 rounded-full transition-all text-[11px] font-mono tracking-tight cursor-pointer"
+              id="scroll-to-top-btn"
+            >
+              VOLTAR AO TOPO
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>
