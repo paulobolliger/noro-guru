@@ -1,7 +1,6 @@
 import ConfiguracoesClient from '@/components/admin/ConfiguracoesClient';
 import { redirect } from 'next/navigation';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 import { getConfiguracaoSistema, getConfiguracaoUsuario } from './config-actions';
 import { getEmpresaDados } from './empresa-actions';
@@ -10,7 +9,7 @@ import { getBillingStatusAction } from './billing-actions';
 export const dynamic = 'force-dynamic';
 
 export default async function ConfiguracoesPage() {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
 
   if (!userId) {

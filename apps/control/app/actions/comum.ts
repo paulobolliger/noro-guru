@@ -1,8 +1,7 @@
 'use server';
 
 import { createDatabaseClient } from '@noro/db';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export async function getUnreadMessagesCount(): Promise<number> {
   const { client, close } = createDatabaseClient();
@@ -58,7 +57,7 @@ export async function getTenantSlug(tenantId: string): Promise<string | null> {
 }
 
 export async function markAllNotificationsAsRead(): Promise<boolean> {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   if (!userId) return false;
 

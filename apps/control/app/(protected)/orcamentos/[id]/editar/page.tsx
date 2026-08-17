@@ -44,7 +44,7 @@ export default async function EditOrcamentoPage({ params }: PageProps) {
       </div>
 
       <EditOrcamentoForm 
-        orcamentoInicial={orcamento}
+        orcamentoInicial={orcamento as any}
         clientes={clientes}
       />
     </div>

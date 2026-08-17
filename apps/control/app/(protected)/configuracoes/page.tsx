@@ -1,14 +1,13 @@
 // app/admin/(protected)/configuracoes/page.tsx
 import ConfiguracoesClient from "@/components/ConfiguracoesClient";
 import { redirect } from 'next/navigation';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 import { getConfiguracaoSistema, getConfiguracaoUsuario } from './config-actions';
 import { getEnvVariables } from './env-actions';
 
 export default async function ConfiguracoesPage() {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
 
   if (!userId) {

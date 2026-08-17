@@ -2,8 +2,7 @@
 
 import { createDatabaseClient } from "@noro/db"
 import { revalidatePath } from "next/cache"
-import { getLogtoContext } from "@logto/next/server-actions"
-import { logtoConfig } from "@/lib/logto"
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 // Função para buscar um plano específico
 export async function getPlan(planId: string) {
@@ -97,7 +96,7 @@ export async function getPlanApprovals() {
 export async function approvePlanChanges(approvalId: string) {
   const { client, close } = createDatabaseClient()
   try {
-    const ctx = await getLogtoContext(logtoConfig)
+    const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }))
     const userId = ctx.claims?.sub
 
     // Executa a procedure RPC do banco
@@ -249,7 +248,7 @@ export async function validatePlanChanges(planId: string, changes: any) {
       `
       const count = subCountRows[0]?.count || 0
       
-      const ctx = await getLogtoContext(logtoConfig)
+      const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }))
       const userId = ctx.claims?.sub
       
       const impactAnalysis = {

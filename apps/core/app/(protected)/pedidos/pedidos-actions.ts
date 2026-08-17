@@ -6,8 +6,8 @@ import {
   paymentCustomersRepository, 
   paymentProviderAccountsRepository 
 } from "@noro/db";
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { revalidatePath } from 'next/cache';
 import { createERedeCardCharge, createERedePixCharge } from './providers/erede-provider';
 import { createAsaasCharge } from './providers/asaas-provider';
@@ -104,7 +104,7 @@ export async function getPedidos(): Promise<any[]> {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -127,7 +127,7 @@ export async function getPedidoById(id: string): Promise<any | null> {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -166,7 +166,7 @@ export async function convertToPedido(orcamentoId: string): Promise<ServerAction
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
     let novoPedidoId: string | null = null;
@@ -231,7 +231,7 @@ export async function updatePedido(pedidoId: string, payload: PedidoUpdatePayloa
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -264,7 +264,7 @@ export async function addPedidoItem(payload: PedidoItemPayload): Promise<ServerA
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -299,7 +299,7 @@ export async function updatePedidoItem(itemId: string, payload: Partial<PedidoIt
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -343,7 +343,7 @@ export async function deletePedidoItem(itemId: string): Promise<ServerActionRetu
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -394,7 +394,7 @@ export async function emitirCobranca(payload: EmitirCobrancaPayload): Promise<Se
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -550,7 +550,7 @@ export async function registerPayment(pedidoId: string, payload: RegisterPayment
     if (!pedidoId) throw new Error("ID do Pedido não fornecido.");
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 

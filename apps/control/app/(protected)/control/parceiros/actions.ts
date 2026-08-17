@@ -1,8 +1,8 @@
 "use server";
 
 import { createDatabaseClient } from "@noro/db";
-import { requireUser, logtoSessionAdapter } from "@noro/auth";
-import { logtoConfig } from "@/lib/logto";
+import { requireUser, keycloakSessionAdapter } from "@noro/auth";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { revalidatePath } from "next/cache";
 
 export async function listB2BPartners(search?: string) {
@@ -59,7 +59,7 @@ export async function updatePartnerAction(
     // Auth guard
     await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const parsedExpiresAt = updates.expiresAt ? new Date(updates.expiresAt) : null;

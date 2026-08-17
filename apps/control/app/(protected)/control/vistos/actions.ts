@@ -1,8 +1,8 @@
 "use server";
 
 import { createDatabaseClient } from "@noro/db";
-import { requireUser, logtoSessionAdapter } from "@noro/auth";
-import { logtoConfig } from "@/lib/logto";
+import { requireUser, keycloakSessionAdapter } from "@noro/auth";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { revalidatePath } from "next/cache";
 
 export async function listVisaRules(search?: string, continent?: string) {
@@ -89,7 +89,7 @@ export async function updateVisaRuleAction(id: string, updates: any) {
   try {
     const userCtx = await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const adminEmail = userCtx.user.email;

@@ -1,5 +1,3 @@
-import type { Database } from './supabase';
-
 export type UserRole = 'cliente' | 'admin' | 'super_admin';
 
 export interface User {
@@ -157,10 +155,12 @@ export interface Pedido {
   updated_at: string;
 }
 
-export type PedidoComRelacionamentos = Database['public']['Tables']['pedidos']['Row'] & {
-  pedido_itens: Database['public']['Tables']['pedido_itens']['Row'][];
-  clientes: Database['public']['Tables']['noro_clientes']['Row'] | null;
-  cobrancas: Database['public']['Tables']['cobrancas']['Row'][];
+export type PedidoComRelacionamentos = Pedido & {
+  cliente_id?: string | null;
+  pedido_itens: any[];
+  clientes: any | null;
+  cobrancas: any[];
+  [key: string]: any;
 };
 
 export interface Transacao {

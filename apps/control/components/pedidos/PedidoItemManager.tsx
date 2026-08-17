@@ -9,10 +9,20 @@ import { Input } from "@ui/input";
 import { Button } from "@ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Trash2, Plus, Pencil, Loader2 } from 'lucide-react';
-import { Database } from "@noro-types/supabase"; // Importe o tipo Database
 
-// Tipo do item do pedido para o estado local, baseado no Supabase
-type PedidoItem = Database['public']['Tables']['pedido_itens']['Row'];
+// Tipo do item do pedido para o estado local
+export type PedidoItem = {
+  id: string;
+  pedido_id?: string;
+  servico_nome: string;
+  descricao?: string | null;
+  quantidade: number;
+  valor_unitario: number;
+  valor_total?: number;
+  moeda?: string;
+  metadata?: any;
+  [key: string]: any;
+};
 
 interface PedidoItemManagerProps {
   initialItems: PedidoItem[];

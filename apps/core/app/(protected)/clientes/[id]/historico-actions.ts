@@ -1,8 +1,8 @@
 'use server';
 
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 // ============================================================================
 // HELPER: RESOLVE TENANT ID FROM SESSION
@@ -11,7 +11,7 @@ import { logtoConfig } from '@/lib/logto';
 async function resolveTenant(client: any): Promise<string> {
   const userCtx = await requireUser({
     db: client as any,
-    sessionAdapter: logtoSessionAdapter(logtoConfig),
+    sessionAdapter: keycloakSessionAdapter(getServerSession),
   });
 
   const memberships = await client`

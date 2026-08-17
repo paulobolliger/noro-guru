@@ -7,11 +7,10 @@ import { FileText, User, Plane, Calendar, DollarSign, Loader2, AlertCircle, Chec
 import { NButton, NAlert } from '@/components/ui';
 import { updateOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";
 import { format } from 'date-fns';
-import type { Database } from "@noro-types/supabase";
+import type { Orcamento, OrcamentoStatus } from "@noro-types/admin";
 
 // Tipos baseados nas estruturas do projeto
-type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];
-type OrcamentoStatus = Database['public']['Enums']['orcamento_status'];
+type OrcamentoRow = Orcamento;
 
 interface ClienteBase {
     id: string;

@@ -1,7 +1,6 @@
 "use server";
 import { createDatabaseClient } from "@noro/db";
-import { getLogtoContext } from "@logto/next/server-actions";
-import { logtoConfig } from "@/lib/logto";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export async function getOrg(id: string) {
   const { client, close } = createDatabaseClient();
@@ -41,7 +40,7 @@ export async function addNote(formData: FormData) {
     const content = String(formData.get('content') || '');
     if (!tenant_id || !content) throw new Error('Campos obrigatórios');
     
-    const ctx = await getLogtoContext(logtoConfig);
+    const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
     const uid = ctx.claims?.sub || null;
 
     await client`

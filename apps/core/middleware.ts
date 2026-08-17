@@ -21,7 +21,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Proteção real em (protected)/layout.tsx via requireUser() + logtoSessionAdapter.
+  // Proteção real em (protected)/layout.tsx via requireUser() + keycloakSessionAdapter.
   // Middleware apenas garante que /auth/* nunca seja bloqueado.
   return NextResponse.next();
 }

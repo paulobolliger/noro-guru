@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, logtoSessionAdapter, UnauthenticatedError, UserNotFoundError } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter, UnauthenticatedError, UserNotFoundError } from '@noro/auth';
+import { getServerSession } from '@/lib/session';
 import WizardClient from './WizardClient';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export default async function WizardPage() {
   try {
     const userCtx = await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const user = userCtx.user;

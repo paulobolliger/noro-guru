@@ -7,11 +7,11 @@ import { ArrowRightIcon } from 'lucide-react';
 import { convertToPedido } from "@/app/(protected)/pedidos/pedidos-actions";
 import { Button } from "@ui/button";
 import { useToast } from "@ui/use-toast";
-import type { Database } from "@noro-types/supabase";
+import type { Orcamento } from "@noro-types/admin";
 
 // Tipo local para evitar importações cruzadas
-type OrcamentoComItens = Database['public']['Tables']['noro_orcamentos']['Row'] & {
-    orcamento_itens: Database['public']['Tables']['noro_orcamentos_itens']['Row'][];
+type OrcamentoComItens = Orcamento & {
+    orcamento_itens?: any[];
     lead?: { id: string; nome: string } | null;
 };
 
@@ -24,7 +24,7 @@ export function OrcamentoDetalhes({ orcamento }: OrcamentoDetalhesProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const isConverted = orcamento.status === 'aceito' || orcamento.status === 'CONVERTIDO'; // 'aceito' também deve bloquear
+  const isConverted = orcamento.status === 'aceito' || (orcamento.status as string) === 'CONVERTIDO'; // 'aceito' também deve bloquear
 
   const handleConvertToPedido = async () => {
     if (!orcamento.id) {

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +23,7 @@ export async function GET(request: Request) {
   }
 
   // Verificar autenticação via Logto
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

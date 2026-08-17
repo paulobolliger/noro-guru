@@ -4,15 +4,14 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Plane, Calendar, DollarSign, Edit, Send, Download, CheckCircle, XCircle, RefreshCw, Loader2, AlertCircle, Trash2, User } from 'lucide-react';
-import type { Database } from "@noro-types/supabase";
+import type { Orcamento, OrcamentoStatus } from "@noro-types/admin";
 import { format } from 'date-fns';
 import { updateOrcamento, deleteOrcamento } from "@/app/(protected)/orcamentos/orcamentos-actions";
 
 // Tipos baseados nas estruturas do projeto
-type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'] & {
+type OrcamentoRow = Orcamento & {
     lead?: { id: string; nome: string } | null;
 };
-type OrcamentoStatus = Database['public']['Enums']['orcamento_status'];
 type OrcamentoItem = {
     id: string;
     tipo: 'Aéreo' | 'Hospedagem' | 'Transfer' | 'Passeio' | 'Seguro' | 'Outro';

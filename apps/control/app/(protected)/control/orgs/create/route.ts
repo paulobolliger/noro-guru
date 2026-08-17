@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createDatabaseClient } from '@noro/db';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 function slugify(input: string) {
   return input
@@ -38,7 +37,7 @@ export async function POST(req: Request) {
 
     // Vincula o usuário atual como owner do tenant criado e define como ativo
     try {
-      const ctx = await getLogtoContext(logtoConfig);
+      const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
       const userId = ctx.claims?.sub;
       if (userId && insertedId) {
         await client`

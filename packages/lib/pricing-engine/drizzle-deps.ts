@@ -6,7 +6,7 @@ import {
   pricingRules,
   pricingLogs,
   integrationLogs,
-} from '@noro/db/schema';
+} from '@noro/db';
 import type {
   PricingDependencies,
   ExchangeRate,

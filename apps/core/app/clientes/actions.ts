@@ -1,8 +1,8 @@
 'use server';
 
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import {
 	getClientes as getClientesProtected,
 	getClienteById as getClienteByIdProtected,
@@ -17,7 +17,7 @@ export async function getClientes() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const memberships = await client`
       SELECT tenant_id FROM noro.tenant_memberships WHERE user_id = ${userCtx.user.id} LIMIT 1
@@ -39,7 +39,7 @@ export async function getClienteById(clienteId: string) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const memberships = await client`
       SELECT tenant_id FROM noro.tenant_memberships WHERE user_id = ${userCtx.user.id} LIMIT 1
@@ -61,7 +61,7 @@ export async function createClienteAction(formData: FormData) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -111,7 +111,7 @@ export async function updateClienteAction(clienteId: string, formData: FormData)
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -161,7 +161,7 @@ export async function deleteClienteAction(clienteId: string) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -190,7 +190,7 @@ export async function getClientesStats() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const memberships = await client`
       SELECT tenant_id FROM noro.tenant_memberships WHERE user_id = ${userCtx.user.id} LIMIT 1

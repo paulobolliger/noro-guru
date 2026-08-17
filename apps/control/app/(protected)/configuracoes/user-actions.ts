@@ -7,8 +7,7 @@ import { CONTROL_PLANE_PERMISSIONS } from '@/../../packages/types/control-plane-
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { nanoid } from 'nanoid';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import type { 
   ControlPlaneUser, 
   ControlPlaneRole, 
@@ -21,7 +20,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Helper para verificar permissões
 async function checkPermission(permissionId: string): Promise<boolean> {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   
   if (!userId) {

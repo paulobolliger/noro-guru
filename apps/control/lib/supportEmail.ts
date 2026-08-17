@@ -8,10 +8,7 @@ type SupportEmailPayload = {
 };
 
 function getFunctionUrl() {
-  const explicit = process.env.SUPABASE_FUNCTION_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  return supabaseUrl ? supabaseUrl.replace(".supabase.co", ".functions.supabase.co") : null;
+  return process.env.SUPPORT_FUNCTION_URL || process.env.INTERNAL_SERVICES_URL || null;
 }
 
 export async function sendSupportEmail(payload: SupportEmailPayload) {
@@ -38,4 +35,3 @@ export async function sendSupportEmail(payload: SupportEmailPayload) {
     console.warn("support-email fetch error", err);
   }
 }
-

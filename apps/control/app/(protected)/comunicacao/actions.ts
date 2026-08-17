@@ -1,8 +1,7 @@
 'use server';
 
 import { createDatabaseClient } from '@noro/db';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 // Tipos
 export type Conversation = {
@@ -80,7 +79,7 @@ export async function getConversationMessages(conversationId: string): Promise<M
 }
 
 export async function sendMessage(conversationId: string, message: string): Promise<Message> {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   const userEmail = ctx.claims?.email;
 

@@ -4,14 +4,13 @@ import TenantModulesForm from './TenantModulesForm';
 import TenantCreditsForm from './TenantCreditsForm';
 import TenantAsaasOnboardingForm from './TenantAsaasOnboardingForm';
 import { getBillingStatus } from '../../../billing/actions';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export default async function TenantSubscriptionPage({ params }: { params: { id: string } }) {
     const { tenant, empresa } = await getTenantContext(params.id);
     const aiBalance = await getTenantAiBalance(params.id);
     
-    const ctx = await getLogtoContext(logtoConfig);
+    const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
     const activatedByUserId = ctx.claims?.sub || '';
     
     const billingAccount = await getBillingStatus(params.id);

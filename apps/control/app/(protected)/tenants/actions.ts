@@ -1,7 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 
 export type Tenant = { id: string; name: string; slug: string; role?: string };
@@ -9,7 +8,7 @@ export type Tenant = { id: string; name: string; slug: string; role?: string };
 export async function getUserTenants(): Promise<Tenant[]> {
   const { client, close } = createDatabaseClient();
   try {
-    const ctx = await getLogtoContext(logtoConfig);
+    const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
     const userId = ctx.claims?.sub;
     
     if (!userId) {

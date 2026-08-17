@@ -5,7 +5,7 @@ import type {
   TenantRole,
 } from '@noro/db';
 
-export type AuthProvider = 'logto' | 'keycloak' | 'supabase';
+export type AuthProvider = 'keycloak';
 
 /**
  * Claims mínimas que qualquer adapter de sessão deve fornecer para os helpers de auth.

@@ -30,10 +30,10 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
   const cliente = pedido.clientes;
   
   // Condição para exibir o formulário de emissão de cobrança
-  const showCobrancaForm = pedido.status !== 'CONCLUIDO' && pedido.status !== 'CANCELADO';
+  const showCobrancaForm = (pedido.status as string) !== 'concluido' && (pedido.status as string) !== 'cancelado' && (pedido.status as string) !== 'CONCLUIDO' && (pedido.status as string) !== 'CANCELADO';
     
   // Verifica se o pedido já está pago/cancelado para desabilitar a edição de itens
-  const isFinalizado = pedido.status === 'CONCLUIDO' || pedido.status === 'CANCELADO';
+  const isFinalizado = (pedido.status as string) === 'concluido' || (pedido.status as string) === 'cancelado' || (pedido.status as string) === 'CONCLUIDO' || (pedido.status as string) === 'CANCELADO';
   
   return (
     <div className="space-y-6">
@@ -92,7 +92,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
             ) : (
               <p className="text-sm text-red-500">Cliente não encontrado ou ID inválido.</p>
             )}
-            <Link href={`/admin/clientes/${pedido.cliente_id}`} className="block mt-4 text-sm text-indigo-600 hover:underline">
+            <Link href={`/admin/clientes/${pedido.cliente_id || pedido.clientes?.id || ''}`} className="block mt-4 text-sm text-indigo-600 hover:underline">
                 Ver Perfil
             </Link>
           </CardContent>
@@ -107,7 +107,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
           <EmitirCobrancaForm 
             pedidoId={pedido.id} 
             valorTotal={pedido.valor_total || 0} 
-            cobrancasExistentes={pedido.cobrancas || []}
+            cobrancasExistentes={(pedido.cobrancas as any) || []}
           />
       ) : (
         <div className="p-4 bg-white/10 text-center text-muted rounded-lg">
@@ -116,7 +116,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
       )}
       
       {/* Histórico de Cobranças */}
-      <PedidoCobrancasList cobrancas={pedido.cobrancas || []} />
+      <PedidoCobrancasList cobrancas={(pedido.cobrancas as any) || []} />
 
       {/* ================================================================
         Gerenciamento de Itens (Desabilitado se finalizado)
@@ -124,7 +124,7 @@ export default function PedidoDetalhesCard({ pedido }: PedidoDetalhesCardProps) 
       */}
       <div className={isFinalizado ? 'opacity-60 pointer-events-none' : ''}>
           <PedidoItemManager 
-            initialItems={pedido.pedido_itens || []} 
+            initialItems={(pedido.pedido_itens as any) || []} 
             pedidoId={pedido.id} 
           />
           {isFinalizado && (

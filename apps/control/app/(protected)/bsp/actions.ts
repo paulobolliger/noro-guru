@@ -11,8 +11,8 @@ import {
   trafficDocumentsRepository,
   suppliersRepository
 } from "@noro/db";
-import { requireUser, logtoSessionAdapter } from "@noro/auth";
-import { logtoConfig } from "@/lib/logto";
+import { requireUser, keycloakSessionAdapter } from "@noro/auth";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { parseBspFile } from "@noro/lib";
 
 // Helper to get active tenant ID for the session
@@ -40,7 +40,7 @@ export async function getBspDataAction() {
   try {
     const userCtx = await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const activeTenantId = await getActiveTenantId();
@@ -118,7 +118,7 @@ export async function uploadBspFileAction(formData: FormData) {
     // 1. Verify admin user context
     await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const fileContent = await file.text();
@@ -200,7 +200,7 @@ export async function manualReconcileAction(recordId: string, docId: string) {
   try {
     await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const updated = await bspRecordsRepository.updateBspRecord(db, activeTenantId, recordId, {
@@ -241,7 +241,7 @@ export async function createAgencyMemoAction(data: {
   try {
     await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const created = await agencyMemosRepository.createAgencyMemo(db, {
@@ -280,7 +280,7 @@ export async function updateAgencyMemoStatusAction(memoId: string, status: strin
   try {
     await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const updateObj: Record<string, any> = { status };

@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { ReactNode, Suspense } from 'react';
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, UnauthenticatedError, UserNotFoundError, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, UnauthenticatedError, UserNotFoundError, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession } from '@/lib/session';
 import AdminLayoutClient from '@/components/AdminLayoutClient';
 import { getConfiguracaoSistema } from './configuracoes/config-actions';
 import { Toaster } from '@ui/use-toast';
@@ -20,7 +20,7 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
   try {
     const userCtx = await requireUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const configSistema = await getConfiguracaoSistema().catch(() => DEFAULT_CONFIG);

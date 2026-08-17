@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 
 async function resolveActiveTenantId() {
@@ -10,7 +9,7 @@ async function resolveActiveTenantId() {
   if (activeTenantId) return activeTenantId;
 
   // Fallback to query
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const uid = ctx.claims?.sub;
   const { client, close } = createDatabaseClient();
   try {

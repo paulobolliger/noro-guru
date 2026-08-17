@@ -2,8 +2,8 @@
 
 import { createDatabaseClient } from '@noro/db';
 import crypto from 'node:crypto';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export type CreateApiKeyResult = 
   | { ok: true; plaintext: string; last4: string } 
@@ -24,7 +24,7 @@ export async function listApiKeys() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -58,7 +58,7 @@ export async function createApiKey(
     
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 
@@ -85,7 +85,7 @@ export async function revokeApiKey(id: string) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
     const tenantId = await getTenantId(client, userCtx.user.id);
 

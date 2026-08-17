@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import type { PedidoComRelacionamentos } from "@noro/types/admin";
+import type { PedidoComRelacionamentos, PedidoStatus } from "@noro/types/admin";
 import { updatePedido } from "@/app/(protected)/pedidos/pedidos-actions";
 import { useRouter } from 'next/navigation';
 
@@ -47,7 +47,7 @@ export default function EditPedidoForm({ initialPedido }: EditPedidoFormProps) {
   const handleSelectChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      status: value,
+      status: value as PedidoStatus,
     }));
   };
 

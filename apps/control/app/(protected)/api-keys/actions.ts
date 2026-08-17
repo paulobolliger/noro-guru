@@ -1,8 +1,7 @@
 "use server";
 import { createDatabaseClient } from "@noro/db";
 import crypto from "node:crypto";
-import { getLogtoContext } from "@logto/next/server-actions";
-import { logtoConfig } from "@/lib/logto";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export type CreateApiKeyResult = { ok: true; plaintext: string; last4: string } | { ok: false; error: string };
 
@@ -53,7 +52,7 @@ export async function createApiKey(name: string, scope: string[] = ["visa:read"]
     const last4 = plaintext.slice(-4);
     const hash = crypto.createHash("sha256").update(plaintext).digest("hex");
     
-    const ctx = await getLogtoContext(logtoConfig);
+    const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
     const userId = ctx.claims?.sub;
     if (!userId) return { ok: false, error: "Usuário não autenticado" };
 

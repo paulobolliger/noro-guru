@@ -1,8 +1,8 @@
 'use server';
 
 import { createDatabaseClient, proposalsRepository, proposalItems } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { eq } from 'drizzle-orm';
 
 export async function createOrcamento(formData: FormData) {
@@ -10,7 +10,7 @@ export async function createOrcamento(formData: FormData) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -95,7 +95,7 @@ export async function updateOrcamento(orcamentoId: string, formData: FormData) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -173,7 +173,7 @@ export async function getOrcamentos() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -198,7 +198,7 @@ export async function getOrcamentoById(proposalId: string) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`

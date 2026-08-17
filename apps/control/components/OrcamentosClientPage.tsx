@@ -6,12 +6,11 @@ import { useRouter } from 'next/navigation';
 import { FileText, Plus, Search } from 'lucide-react';
 import PageHeader from './layout/PageHeader';
 import { orcamentoStatusText } from '@/../../packages/ui/status';
-import type { Database } from "@noro-types/supabase";
+import type { Orcamento, OrcamentoStatus } from "@noro-types/admin";
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format';
 
-type OrcamentoRow = Database['public']['Tables']['noro_orcamentos']['Row'];
-type OrcamentoStatus = Database['public']['Enums']['orcamento_status'];
+type OrcamentoRow = Orcamento;
 
 interface OrcamentosClientPageProps {
   orcamentos: OrcamentoRow[];

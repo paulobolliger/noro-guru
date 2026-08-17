@@ -1,10 +1,8 @@
 // components/admin/KanbanBoard.tsx
 'use client';
 
-import type { Database } from "@noro-types/supabase";
+import type { Lead } from "@noro-types/admin";
 import { Users, DollarSign } from 'lucide-react';
-
-type Lead = Database['public']['Tables']['noro_leads']['Row'];
 
 interface KanbanBoardProps {
   leads: Lead[];

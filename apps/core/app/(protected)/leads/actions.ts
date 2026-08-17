@@ -3,8 +3,8 @@
 import { createDatabaseClient } from '@noro/db';
 import { leadsRepository } from '@noro/db';
 import type { LeadSource, LeadStatus, LeadTipoViagem } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -137,7 +137,7 @@ export async function updateLeadStageAction(leadId: string, status: LeadStatus) 
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`

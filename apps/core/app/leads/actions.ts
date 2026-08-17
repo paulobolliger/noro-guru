@@ -1,8 +1,8 @@
 'use server';
 
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createLeadAction as createLeadActionProtected } from '../(protected)/leads/actions';
 
 export async function createLeadAction(formData: FormData) {
@@ -10,7 +10,7 @@ export async function createLeadAction(formData: FormData) {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`

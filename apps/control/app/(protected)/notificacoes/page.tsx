@@ -5,8 +5,7 @@ import NotificacoesTableClient from '@/app/(protected)/notificacoes/Notificacoes
 import { MarkAllReadButton } from '@/app/(protected)/notificacoes/NotificacoesActions';
 import { revalidatePath } from 'next/cache';
 import { Bell } from 'lucide-react';
-import { getLogtoContext } from "@logto/next/server-actions";
-import { logtoConfig } from "@/lib/logto";
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 async function markAllRead(userId: string) {
   "use server";
@@ -24,7 +23,7 @@ async function markAllRead(userId: string) {
 }
 
 export default async function NotificacoesPage() {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   if (!userId) return null;
 

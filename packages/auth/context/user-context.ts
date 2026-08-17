@@ -4,7 +4,7 @@ import {
   UserBlockedError,
   UserNotFoundError,
 } from '../errors';
-import type { AuthClaims, AuthContextInput, AuthUserContext } from '../types';
+import type { AuthClaims, AuthContextInput, AuthUserContext, AuthProvider } from '../types';
 
 async function resolveClaims(input: AuthContextInput): Promise<AuthClaims | null> {
   if (input.claims) {
@@ -15,13 +15,12 @@ async function resolveClaims(input: AuthContextInput): Promise<AuthClaims | null
     return input.sessionAdapter();
   }
 
-  // TODO Sprint futura: ligar este adapter ao SDK/runtime Logto escolhido para Next.js.
   return null;
 }
 
 export async function requireUser(input: AuthContextInput): Promise<AuthUserContext> {
   const claims = await resolveClaims(input);
-  const provider = claims?.provider ?? 'logto';
+  const provider: AuthProvider = (claims?.provider as AuthProvider) || 'keycloak';
   const providerSubject = claims?.subject;
 
   if (!providerSubject) {

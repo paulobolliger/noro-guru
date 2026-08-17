@@ -8,8 +8,8 @@ import type { NextRequest } from 'next/server';
  * /login é o login Supabase existente — deve permanecer acessível.
  */
 const PUBLIC_PREFIXES = [
-  '/auth/',        // /auth/sign-in, /auth/callback, /auth/sign-out (Logto)
-  '/login',        // login Supabase (mantido intacto)
+  '/auth/',        // /auth/sign-in, /auth/callback, /auth/sign-out (Keycloak OIDC)
+  '/login',        // rota de login
   '/public/',      // formulários públicos (ex: /public/leads/submit)
   '/api/contato',  // API pública de contato
   '/api/leads',    // API pública de captura de leads
@@ -46,7 +46,7 @@ export function middleware(req: NextRequest) {
   // TODO Sprint 1M+: quando identity_links e platform_role_assignments estiverem
   // disponíveis em banco dev/staging, ativar proteção Logto global aqui.
   // Estratégia planejada:
-  //   const ctx = await getLogtoContext(logtoConfig);  // @logto/next/server-actions
+  //   const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));  // @logto/next/server-actions
   //   if (!ctx.isAuthenticated) {
   //     return NextResponse.redirect(new URL('/auth/sign-in', req.url));
   //   }

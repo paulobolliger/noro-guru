@@ -13,11 +13,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Badge } from "@ui/badge";
 import { Loader2, DollarSign, Copy, LinkIcon, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Database } from "@noro-types/supabase";
 import { format } from 'date-fns';
 
 // Tipo da tabela 'cobrancas'
-type Cobranca = Database['public']['Tables']['cobrancas']['Row'];
+export type Cobranca = {
+  id: string;
+  pedido_id?: string | null;
+  valor: number;
+  status: string;
+  metodo_pagamento?: string | null;
+  provedor?: string | null;
+  transacao_id?: string | null;
+  link_pagamento?: string | null;
+  pix_copia_cola?: string | null;
+  pix_qrcode_url?: string | null;
+  boleto_url?: string | null;
+  data_vencimento?: string | null;
+  pago_em?: string | null;
+  created_at?: string;
+  [key: string]: any;
+};
 
 interface EmitirCobrancaFormProps {
   pedidoId: string;
@@ -218,7 +233,7 @@ export default function EmitirCobrancaForm({ pedidoId, valorTotal, cobrancasExis
                                 <div>
                                     <p className="text-sm font-medium">
                                         <Badge className={statusMap[cobranca.status]}>{cobranca.status.replace(/_/g, ' ')}</Badge>
-                                        <span className="ml-2 text-xs text-primary">via {cobranca.provider} ({format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')})</span>
+                                        <span className="ml-2 text-xs text-primary">via {cobranca.provider} ({cobranca.data_vencimento ? format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy') : 'Sem vencimento'})</span>
                                     </p>
                                 </div>
                                 <div className="flex space-x-2">

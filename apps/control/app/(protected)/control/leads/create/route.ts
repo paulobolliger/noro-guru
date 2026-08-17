@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createDatabaseClient } from '@noro/db';
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 
 export async function POST(req: Request) {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const uid = ctx.isAuthenticated && ctx.claims?.sub ? ctx.claims.sub : null;
 
   const form = await req.formData();

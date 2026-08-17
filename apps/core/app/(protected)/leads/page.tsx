@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import LeadsClientPage from '@/components/admin/LeadsClientPage';
 import { createDatabaseClient } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { getLeads } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export default async function LeadsPage() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`

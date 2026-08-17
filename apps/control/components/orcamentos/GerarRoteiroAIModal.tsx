@@ -4,9 +4,7 @@
 import { useState, useTransition } from 'react';
 import { X, Wand2, Loader2, AlertCircle } from 'lucide-react';
 import { INTENCOES_VIAGEM } from "@lib/client-data";
-import type { Database } from "@noro-types/supabase";
-
-type Cliente = Database['public']['Tables']['noro_clientes']['Row'];
+import type { Cliente } from "@noro-types/clientes";
 
 interface AIModalProps {
   isOpen: boolean;

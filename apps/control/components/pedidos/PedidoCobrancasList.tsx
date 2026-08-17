@@ -3,7 +3,6 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { currencyFormat } from '@/utils/currency-format'; // Assumindo este utilitário
-import { Database } from "@noro-types/supabase";
 import { NBadge, NButton } from "@/components/ui";
 import { cobrancaStatusText } from "@ui/status";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -11,7 +10,23 @@ import { Copy, LinkIcon, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from "@ui/use-toast";
 
 // Tipo da tabela 'cobrancas'
-type Cobranca = Database['public']['Tables']['cobrancas']['Row'];
+type Cobranca = {
+  id: string;
+  pedido_id?: string | null;
+  valor: number;
+  status: string;
+  metodo_pagamento?: string | null;
+  provedor?: string | null;
+  transacao_id?: string | null;
+  link_pagamento?: string | null;
+  pix_copia_cola?: string | null;
+  pix_qrcode_url?: string | null;
+  boleto_url?: string | null;
+  data_vencimento?: string | null;
+  pago_em?: string | null;
+  created_at?: string;
+  [key: string]: any;
+};
 
 interface PedidoCobrancasListProps {
   cobrancas: Cobranca[];
@@ -105,7 +120,7 @@ export default function PedidoCobrancasList({ cobrancas }: PedidoCobrancasListPr
                                             </NBadge>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-muted">
-                                            {format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy')}
+                                            {cobranca.data_vencimento ? format(new Date(cobranca.data_vencimento), 'dd/MM/yyyy') : '-'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <div className="flex items-center space-x-2">

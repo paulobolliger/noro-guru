@@ -1,8 +1,8 @@
 'use server';
 
 import { createDatabaseClient, paymentProviderAccountsRepository } from '@noro/db';
-import { requireUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { requireUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createAsaasSubaccount } from '@noro/lib/providers/asaas-provider';
 
 function getDb() {
@@ -14,7 +14,7 @@ export async function getBillingStatusAction() {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`
@@ -51,7 +51,7 @@ export async function ativarBillingAsaasAction(tenantData: {
   try {
     const userCtx = await requireUser({
       db: client as any,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     const memberships = await client`

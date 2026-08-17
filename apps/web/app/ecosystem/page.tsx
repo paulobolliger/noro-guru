@@ -136,6 +136,7 @@ export default function EcosystemPage() {
             <Link
               key={app.name}
               href={app.href}
+              className="transition-all duration-300 hover:-translate-y-1 hover:border-[#342CA4] hover:shadow-[0_0_30px_rgba(52,44,164,0.15)]"
               style={{
                 background: '#12152C',
                 border: '1px solid rgba(255,255,255,0.1)',
@@ -144,19 +145,6 @@ export default function EcosystemPage() {
                 textDecoration: 'none',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'border-color .3s, transform .3s, box-shadow .3s',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
-                el.style.borderColor = '#342CA4';
-                el.style.transform = 'translateY(-4px)';
-                el.style.boxShadow = '0 0 30px rgba(52,44,164,0.15)';
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
-                el.style.borderColor = 'rgba(255,255,255,0.1)';
-                el.style.transform = 'translateY(0)';
-                el.style.boxShadow = 'none';
               }}
             >
               {/* Header row */}

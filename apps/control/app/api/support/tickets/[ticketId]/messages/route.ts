@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { getLogtoContext } from '@logto/next/server-actions';
-import { logtoConfig } from '@/lib/logto';
+import { getServerSession, getSessionClaims } from '@/lib/session';
 import { createDatabaseClient } from '@noro/db';
 import { sendSupportEmail } from "@/lib/supportEmail";
 
 type Params = { ticketId: string };
 
 export async function GET(_request: Request, { params }: { params: Params }) {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
@@ -29,7 +28,7 @@ export async function GET(_request: Request, { params }: { params: Params }) {
 }
 
 export async function POST(request: Request, { params }: { params: Params }) {
-  const ctx = await getLogtoContext(logtoConfig);
+  const ctx = await getServerSession().then(s => ({ isAuthenticated: Boolean(s?.claims?.sub), claims: s?.claims }));
   const userId = ctx.claims?.sub;
   if (!userId) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 

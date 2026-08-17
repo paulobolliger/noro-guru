@@ -1,20 +1,25 @@
 import 'server-only';
 import Stripe from 'stripe';
 import { ServerActionReturn } from '../pedidos-actions';
-import { Database } from "@noro-types/supabase"; // Para tipagem dos itens
-
-// A chave secreta deve vir do .env
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('STRIPE_SECRET_KEY is not defined in environment variables.');
-}
-
-// Inicializa o cliente Stripe para Node.js
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-06-20', // Use a versão mais recente ou a versão default da sua conta
-});
-
 // Tipo de item do pedido para o payload
-type PedidoItem = Database['public']['Tables']['pedido_itens']['Row'];
+export type PedidoItem = {
+    id?: string;
+    pedido_id?: string;
+    tipo?: string;
+    nome?: string;
+    descricao?: string | null;
+    quantidade?: number;
+    valor_unitario?: number;
+    valor_total?: number;
+    moeda?: string;
+    metadata?: any;
+    [key: string]: any;
+};
+
+const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
+const stripe = new Stripe(stripeKey, {
+    apiVersion: '2024-06-20' as any,
+});
 
 interface StripeChargePayload {
     cobrancaId: string;

@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { createDatabaseClient } from '@noro/db';
 import OpenAI from 'openai';
 import { SimpleBlueprintSchema, adaptSimpleBlueprint, BlueprintSchema } from '@noro/types/blueprint';
-import { getCurrentUser, logtoSessionAdapter } from '@noro/auth';
-import { logtoConfig } from '@/lib/logto';
+import { getCurrentUser, keycloakSessionAdapter } from '@noro/auth';
+import { getServerSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -168,10 +168,10 @@ export async function POST(req: Request) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
   try {
-    // 1. Resolve and verify the Logto session
+    // 1. Resolve and verify the session
     const userCtx = await getCurrentUser({
       db,
-      sessionAdapter: logtoSessionAdapter(logtoConfig),
+      sessionAdapter: keycloakSessionAdapter(getServerSession),
     });
 
     if (!userCtx) {
